@@ -58,9 +58,16 @@ public class XmlParserTests {
     }
     
     @Test
-    public void unmappedNamespaceUrisAreIncludedInBracesAsPrefix() {
+    public void unmappedNamespaceUrisInElementNamesAreIncludedInBracesAsPrefix() {
         assertThat(
             XmlParser.parseString("<w:body xmlns:w='word'/>"),
             is(new XmlElement("{word}body")));
+    }
+    
+    @Test
+    public void unmappedNamespaceUrisInAttributeNamesAreIncludedInBracesAsPrefix() {
+        assertThat(
+            XmlParser.parseString("<body xmlns:w='word' w:name='bob'></body>"),
+            is(new XmlElement("body", ImmutableMap.of("{word}name", "bob"))));
     }
 }
