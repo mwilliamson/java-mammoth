@@ -1,6 +1,7 @@
 package org.zwobble.mammoth.xml;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.StringReader;
 import java.util.stream.IntStream;
 
@@ -17,7 +18,15 @@ import static java.util.stream.Collectors.toMap;
 import lombok.val;
 
 public class SimpleSax {
+    public static void parseStream(InputStream input, SimpleSaxHandler handler) {
+        parseInputSource(new InputSource(input), handler);
+    }
+    
     public static void parseString(String value, SimpleSaxHandler handler) {
+        parseInputSource(new InputSource(new StringReader(value)), handler);
+    }
+
+    private static void parseInputSource(InputSource inputSource, SimpleSaxHandler handler) {
         val parserFactory = SAXParserFactory.newInstance();
         parserFactory.setNamespaceAware(true);
         try {
@@ -46,7 +55,7 @@ public class SimpleSax {
                     handler.characters(new String(ch, start, length));
                 }
             });
-            xmlReader.parse(new InputSource(new StringReader(value)));
+            xmlReader.parse(inputSource);
         } catch (ParserConfigurationException | SAXException | IOException exception) {
             throw new RuntimeException(exception);
         }

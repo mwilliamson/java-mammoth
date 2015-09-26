@@ -1,5 +1,7 @@
 package org.zwobble.mammoth.tests.xml;
 
+import java.io.ByteArrayInputStream;
+
 import org.junit.Test;
 import org.zwobble.mammoth.xml.XmlElement;
 import org.zwobble.mammoth.xml.XmlParser;
@@ -90,5 +92,12 @@ public class XmlParserTests {
         assertThat(
             parser.parseString("<body xmlns:w='word' w:name='bob'/>"),
             is(new XmlElement("body", ImmutableMap.of("x:name", "bob"))));
+    }
+    
+    @Test
+    public void canParseInputStream() {
+        assertThat(
+            parser.parseStream(new ByteArrayInputStream("<body/>".getBytes())),
+            is(new XmlElement("body")));
     }
 }

@@ -1,5 +1,6 @@
 package org.zwobble.mammoth.xml;
 
+import java.io.InputStream;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Map;
@@ -16,6 +17,12 @@ public class XmlParser {
 
     public XmlParser(BiMap<String, String> namespaces) {
         this.namespaces = namespaces;
+    }
+
+    public XmlElement parseStream(InputStream inputStream) {
+        val nodeGenerator = new NodeGenerator();
+        SimpleSax.parseStream(inputStream, nodeGenerator);
+        return nodeGenerator.getRoot();
     }
     
     public XmlElement parseString(String value) {
