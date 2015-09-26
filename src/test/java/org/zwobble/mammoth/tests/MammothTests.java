@@ -1,5 +1,6 @@
 package org.zwobble.mammoth.tests;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.zwobble.mammoth.Mammoth;
 
@@ -11,7 +12,15 @@ import lombok.val;
 public class MammothTests {
     @Test
     public void emptyParagraphsAreIgnoredByDefault() {
-        assertThat(convertToHtml("/test-data/empty.docx"), is(""));
+        assertThat(convertToHtml("empty.docx"), is(""));
+    }
+    
+    @Test
+    @Ignore("WIP")
+    public void docxContainingOneParagraphIsConvertedToSingleParagraphElement() {
+        assertThat(
+            convertToHtml("single-paragraph.docx"),
+            is("<p>Walking on imported air</p>"));
     }
 
     private String convertToHtml(String name) {

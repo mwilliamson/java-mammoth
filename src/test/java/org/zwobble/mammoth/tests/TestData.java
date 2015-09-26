@@ -6,7 +6,7 @@ import java.io.InputStream;
 public class TestData {
     public static InputStream stream(String name) {
         try {
-            return TestData.class.getResource(name).openStream();
+            return TestData.class.getResource("/test-data/" + name).openStream();
         } catch (IOException exception) {
             throw new RuntimeException(exception);
         }
