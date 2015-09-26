@@ -5,19 +5,26 @@ import java.util.Deque;
 import java.util.Map;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.BiMap;
 
 import static java.util.stream.Collectors.toMap;
 
 import lombok.val;
 
 public class XmlParser {
-    public static XmlElement parseString(String value) {
+    private final BiMap<String, String> namespaces;
+
+    public XmlParser(BiMap<String, String> namespaces) {
+        this.namespaces = namespaces;
+    }
+    
+    public XmlElement parseString(String value) {
         val nodeGenerator = new NodeGenerator();
         SimpleSax.parseString(value, nodeGenerator);
         return nodeGenerator.getRoot();
     }
     
-    private static class NodeGenerator implements SimpleSaxHandler {
+    private class NodeGenerator implements SimpleSaxHandler {
         private final Deque<XmlElementBuilder> elementStack;
         
         public NodeGenerator() {
@@ -43,6 +50,8 @@ public class XmlParser {
         private String readName(ElementName name) {
             if (Strings.isNullOrEmpty(name.getUri())) {
                 return name.getLocalName();                
+            } else if (namespaces.containsValue(name.getUri())) {
+                return namespaces.inverse().get(name.getUri()) + ":" + name.getLocalName();
             } else {
                 return "{" + name.getUri() + "}" + name.getLocalName();
             }
