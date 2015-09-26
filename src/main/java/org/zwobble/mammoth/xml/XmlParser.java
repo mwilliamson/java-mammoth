@@ -4,6 +4,8 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Map;
 
+import com.google.common.base.Strings;
+
 import static java.util.stream.Collectors.toMap;
 
 import lombok.val;
@@ -32,10 +34,19 @@ public class XmlParser {
                 .entrySet()
                 .stream()
                 .collect(toMap(
-                    entry -> entry.getKey().getLocalName(),
+                    entry -> readName(entry.getKey()),
                     entry -> entry.getValue()));
-            val element = new XmlElementBuilder(name.getLocalName(), simpleAttributes);
+            val element = new XmlElementBuilder(readName(name), simpleAttributes);
             elementStack.add(element);
+        }
+
+        private String readName(ElementName name) {
+            if (Strings.isNullOrEmpty(name.getUri())) {
+                return name.getLocalName();                
+            } else {
+                return "{" + name.getUri() + "}" + name.getLocalName();
+            }
+            
         }
 
         @Override

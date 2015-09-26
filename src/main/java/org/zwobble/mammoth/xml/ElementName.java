@@ -4,5 +4,6 @@ import lombok.Value;
 
 @Value
 public class ElementName {
+    private String uri;
     private String localName;
 }

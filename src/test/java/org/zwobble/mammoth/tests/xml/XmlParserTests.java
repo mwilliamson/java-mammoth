@@ -56,4 +56,11 @@ public class XmlParserTests {
                 new XmlTextNode("Hello!")
             ))));
     }
+    
+    @Test
+    public void unmappedNamespaceUrisAreIncludedInBracesAsPrefix() {
+        assertThat(
+            XmlParser.parseString("<w:body xmlns:w='word'/>"),
+            is(new XmlElement("{word}body")));
+    }
 }

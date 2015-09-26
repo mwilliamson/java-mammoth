@@ -26,11 +26,11 @@ public class SimpleSax {
             xmlReader.setContentHandler(new DefaultHandler() {
                 @Override
                 public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-                    final ElementName name = new ElementName(localName);
+                    final ElementName name = new ElementName(uri, localName);
                     val attributesMap = IntStream.range(0, attributes.getLength())
                         .boxed()
                         .collect(toMap(
-                            index -> new ElementName(attributes.getLocalName(index)),
+                            index -> new ElementName(attributes.getURI(index), attributes.getLocalName(index)),
                             attributes::getValue
                         ));
                     handler.startElement(name, attributesMap);
