@@ -27,4 +27,13 @@ public class XmlElement implements XmlNode {
     private final String name;
     private final Map<String, String> attributes;
     private final List<XmlNode> children;
+    
+    @Override
+    public <T> T accept(XmlNodeVisitor<T> visitor) {
+        return visitor.visit(this);
+    }
+
+    public Iterable<XmlNode> children() {
+        return children;
+    }
 }

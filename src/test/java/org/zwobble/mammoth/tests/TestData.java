@@ -1,13 +1,16 @@
 package org.zwobble.mammoth.tests;
 
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.File;
+import java.net.URISyntaxException;
+
+import lombok.val;
 
 public class TestData {
-    public static InputStream stream(String name) {
+    public static File file(String name) {
         try {
-            return TestData.class.getResource("/test-data/" + name).openStream();
-        } catch (IOException exception) {
+            val uri = TestData.class.getResource("/test-data/" + name).toURI();
+            return new File(uri);
+        } catch (URISyntaxException exception) {
             throw new RuntimeException(exception);
         }
     }

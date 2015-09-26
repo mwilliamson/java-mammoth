@@ -1,6 +1,5 @@
 package org.zwobble.mammoth.tests;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.zwobble.mammoth.Mammoth;
 
@@ -16,7 +15,6 @@ public class MammothTests {
     }
     
     @Test
-    @Ignore("WIP")
     public void docxContainingOneParagraphIsConvertedToSingleParagraphElement() {
         assertThat(
             convertToHtml("single-paragraph.docx"),
@@ -24,7 +22,7 @@ public class MammothTests {
     }
 
     private String convertToHtml(String name) {
-        val stream = TestData.stream(name);
-        return Mammoth.convertToHtml(stream);
+        val file = TestData.file(name);
+        return Mammoth.convertToHtml(file);
     }
 }
