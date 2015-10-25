@@ -14,8 +14,6 @@ import com.google.common.collect.ImmutableMap;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
-import lombok.val;
-
 public class XmlParserTests {
     private final XmlParser parser = new XmlParser(ImmutableBiMap.of());
     
@@ -80,7 +78,7 @@ public class XmlParserTests {
     
     @Test
     public void mappedNamespaceUrisInElementNamesArePrefixedToLocalNameWithColon() {
-        val parser = new XmlParser(ImmutableBiMap.of("x", "word")); 
+        XmlParser parser = new XmlParser(ImmutableBiMap.of("x", "word")); 
         assertThat(
             parser.parseString("<w:body xmlns:w='word'/>"),
             is(new XmlElement("x:body")));
@@ -88,7 +86,7 @@ public class XmlParserTests {
     
     @Test
     public void mappedNamespaceUrisInAttributeNamesArePrefixedToLocalNameWithColon() {
-        val parser = new XmlParser(ImmutableBiMap.of("x", "word")); 
+        XmlParser parser = new XmlParser(ImmutableBiMap.of("x", "word")); 
         assertThat(
             parser.parseString("<body xmlns:w='word' w:name='bob'/>"),
             is(new XmlElement("body", ImmutableMap.of("x:name", "bob"))));

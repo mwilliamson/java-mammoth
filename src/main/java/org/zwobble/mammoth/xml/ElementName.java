@@ -1,9 +1,19 @@
 package org.zwobble.mammoth.xml;
 
-import lombok.Value;
-
-@Value
 public class ElementName {
-    private String uri;
-    private String localName;
+    private final String uri;
+    private final String localName;
+    
+    public ElementName(String uri, String localName) {
+        this.uri = uri;
+        this.localName = localName;
+    }
+    
+    public String getUri() {
+        return uri;
+    }
+    
+    public String getLocalName() {
+        return localName;
+    }
 }

@@ -10,8 +10,6 @@ import com.google.common.collect.BiMap;
 
 import static java.util.stream.Collectors.toMap;
 
-import lombok.val;
-
 public class XmlParser {
     private final BiMap<String, String> namespaces;
 
@@ -20,13 +18,13 @@ public class XmlParser {
     }
 
     public XmlElement parseStream(InputStream inputStream) {
-        val nodeGenerator = new NodeGenerator();
+        NodeGenerator nodeGenerator = new NodeGenerator();
         SimpleSax.parseStream(inputStream, nodeGenerator);
         return nodeGenerator.getRoot();
     }
     
     public XmlElement parseString(String value) {
-        val nodeGenerator = new NodeGenerator();
+        NodeGenerator nodeGenerator = new NodeGenerator();
         SimpleSax.parseString(value, nodeGenerator);
         return nodeGenerator.getRoot();
     }
@@ -44,13 +42,13 @@ public class XmlParser {
 
         @Override
         public void startElement(ElementName name, Map<ElementName, String> attributes) {
-            val simpleAttributes = attributes
+            Map<String, String> simpleAttributes = attributes
                 .entrySet()
                 .stream()
                 .collect(toMap(
                     entry -> readName(entry.getKey()),
                     entry -> entry.getValue()));
-            val element = new XmlElementBuilder(readName(name), simpleAttributes);
+            XmlElementBuilder element = new XmlElementBuilder(readName(name), simpleAttributes);
             elementStack.add(element);
         }
 
@@ -68,7 +66,7 @@ public class XmlParser {
         @Override
         public void endElement() {
             if (elementStack.size() > 1) {
-                val element = elementStack.removeLast();
+                XmlElementBuilder element = elementStack.removeLast();
                 elementStack.getLast().addChild(element.build());   
             }            
         }

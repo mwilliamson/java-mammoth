@@ -1,12 +1,12 @@
 package org.zwobble.mammoth.tests;
 
+import java.io.File;
+
 import org.junit.Test;
 import org.zwobble.mammoth.Mammoth;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
-
-import lombok.val;
 
 public class MammothTests {
     @Test
@@ -22,7 +22,7 @@ public class MammothTests {
     }
 
     private String convertToHtml(String name) {
-        val file = TestData.file(name);
+        File file = TestData.file(name);
         return Mammoth.convertToHtml(file);
     }
 }

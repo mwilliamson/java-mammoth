@@ -3,6 +3,7 @@ package org.zwobble.mammoth;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import org.zwobble.mammoth.xml.XmlElement;
@@ -16,15 +17,13 @@ import com.google.common.collect.ImmutableBiMap;
 
 import static com.google.common.collect.Iterables.transform;
 
-import lombok.val;
-
 public class Mammoth {
 
     public static String convertToHtml(File file) {
-        try (val zipFile = new ZipFile(file)) {
-            val entry = zipFile.getEntry("word/document.xml");
-            val documentXml = parseXml(zipFile.getInputStream(entry));
-            val text = extractText(documentXml);
+        try (ZipFile zipFile = new ZipFile(file)) {
+            ZipEntry entry = zipFile.getEntry("word/document.xml");
+            XmlElement documentXml = parseXml(zipFile.getInputStream(entry));
+            String text = extractText(documentXml);
             if (Strings.isNullOrEmpty(text)) {
                 return "";
             } else {
