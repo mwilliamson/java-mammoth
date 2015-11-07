@@ -13,7 +13,7 @@ public class XmlTextNode implements XmlNode {
     
     @Override
     public <T> T accept(XmlNodeVisitor<T> visitor) {
-        return visitor.Visit(this);
+        return visitor.visit(this);
     }
 
     @Override

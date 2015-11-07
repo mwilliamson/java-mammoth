@@ -47,7 +47,7 @@ public class Mammoth {
             }
 
             @Override
-            public String Visit(XmlTextNode textNode) {
+            public String visit(XmlTextNode textNode) {
                 return textNode.getValue();
             }
         });
