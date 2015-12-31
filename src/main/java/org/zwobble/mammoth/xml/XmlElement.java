@@ -2,15 +2,15 @@ package org.zwobble.mammoth.xml;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Iterables;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 import static com.google.common.collect.Iterables.filter;
+import static com.google.common.collect.Iterables.getFirst;
 
-public class XmlElement implements XmlNode {
+public class XmlElement implements XmlNode, XmlElementLike {
     public XmlElement(String name) {
         this(name, ImmutableMap.of());
     }
@@ -39,7 +39,12 @@ public class XmlElement implements XmlNode {
 
     public String getAttribute(String name) {
         // TODO: throw more informative error message
-        return Optional.ofNullable(attributes.get(name)).get();
+        return getAttributeOrNone(name).get();
+    }
+
+    @Override
+    public Optional<String> getAttributeOrNone(String name) {
+        return Optional.ofNullable(attributes.get(name));
     }
 
     public List<XmlNode> getChildren() {
@@ -62,9 +67,22 @@ public class XmlElement implements XmlNode {
     }
 
     public XmlElementList findChildren(String name) {
-        Iterable<XmlElement> filtered = filter(
+        Iterable<XmlElement> filtered = findChildrenIterable(name);
+        return new XmlElementList(ImmutableList.copyOf(filtered));
+    }
+
+    public XmlElement findChild(String name) {
+        return findChildrenIterable(name).iterator().next();
+    }
+
+    @Override
+    public XmlElementLike findChildOrEmpty(String name) {
+        return getFirst(findChildrenIterable(name), NullXmlElement.INSTANCE);
+    }
+
+    private Iterable<XmlElement> findChildrenIterable(String name) {
+        return filter(
             filter(children, XmlElement.class),
             child -> child.getName().equals(name));
-        return new XmlElementList(ImmutableList.copyOf(filtered));
     }
 }
