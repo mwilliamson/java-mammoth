@@ -8,7 +8,7 @@ import java.util.zip.ZipFile;
 
 import org.zwobble.mammoth.xml.XmlElement;
 import org.zwobble.mammoth.xml.XmlNodeVisitor;
-import org.zwobble.mammoth.xml.XmlParser;
+import org.zwobble.mammoth.xml.parsing.XmlParser;
 import org.zwobble.mammoth.xml.XmlTextNode;
 
 import com.google.common.base.Joiner;

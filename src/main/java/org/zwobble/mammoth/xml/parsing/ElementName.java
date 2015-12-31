@@ -1,19 +1,19 @@
-package org.zwobble.mammoth.xml;
+package org.zwobble.mammoth.xml.parsing;
 
-public class ElementName {
+class ElementName {
     private final String uri;
     private final String localName;
     
-    public ElementName(String uri, String localName) {
+    ElementName(String uri, String localName) {
         this.uri = uri;
         this.localName = localName;
     }
     
-    public String getUri() {
+    String getUri() {
         return uri;
     }
     
-    public String getLocalName() {
+    String getLocalName() {
         return localName;
     }
 }

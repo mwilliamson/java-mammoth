@@ -1,4 +1,4 @@
-package org.zwobble.mammoth.xml;
+package org.zwobble.mammoth.xml.parsing;
 
 import java.io.InputStream;
 import java.util.ArrayDeque;
@@ -7,6 +7,8 @@ import java.util.Map;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.BiMap;
+import org.zwobble.mammoth.xml.XmlElement;
+import org.zwobble.mammoth.xml.XmlTextNode;
 
 import static java.util.stream.Collectors.toMap;
 

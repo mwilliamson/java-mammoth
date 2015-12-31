@@ -1,4 +1,7 @@
-package org.zwobble.mammoth.xml;
+package org.zwobble.mammoth.xml.parsing;
+
+import org.zwobble.mammoth.xml.XmlElement;
+import org.zwobble.mammoth.xml.XmlNode;
 
 import java.util.ArrayList;
 import java.util.List;

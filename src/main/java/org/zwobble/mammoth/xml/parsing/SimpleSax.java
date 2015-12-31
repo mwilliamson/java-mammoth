@@ -1,4 +1,4 @@
-package org.zwobble.mammoth.xml;
+package org.zwobble.mammoth.xml.parsing;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,12 +18,12 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import static java.util.stream.Collectors.toMap;
 
-public class SimpleSax {
-    public static void parseStream(InputStream input, SimpleSaxHandler handler) {
+class SimpleSax {
+    static void parseStream(InputStream input, SimpleSaxHandler handler) {
         parseInputSource(new InputSource(input), handler);
     }
     
-    public static void parseString(String value, SimpleSaxHandler handler) {
+    static void parseString(String value, SimpleSaxHandler handler) {
         parseInputSource(new InputSource(new StringReader(value)), handler);
     }
 

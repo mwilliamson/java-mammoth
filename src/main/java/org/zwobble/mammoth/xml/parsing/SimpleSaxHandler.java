@@ -1,8 +1,8 @@
-package org.zwobble.mammoth.xml;
+package org.zwobble.mammoth.xml.parsing;
 
 import java.util.Map;
 
-public interface SimpleSaxHandler {
+interface SimpleSaxHandler {
     void startElement(ElementName name, Map<ElementName, String> attributes);
     void endElement();
     void characters(String string);

@@ -9,7 +9,7 @@ import org.hamcrest.collection.IsIterableContainingInOrder;
 import org.junit.Test;
 import org.zwobble.mammoth.xml.XmlElement;
 import org.zwobble.mammoth.xml.XmlNode;
-import org.zwobble.mammoth.xml.XmlParser;
+import org.zwobble.mammoth.xml.parsing.XmlParser;
 import org.zwobble.mammoth.xml.XmlTextNode;
 
 import java.io.ByteArrayInputStream;
