@@ -1,11 +1,22 @@
 package org.zwobble.mammoth.docx;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.io.Files;
 
 import java.util.Map;
 import java.util.Optional;
 
 public class ContentTypes {
+    private static final Map<String, String> imageExtensions = ImmutableMap.<String, String>builder()
+        .put("png", "png")
+        .put("gif", "gif")
+        .put("jpeg", "jpeg")
+        .put("jpg", "jpeg")
+        .put("bmp", "bmp")
+        .put("tif", "tiff")
+        .put("tiff", "tiff")
+        .build();
+
     private final Map<String, String> extensionDefaults;
     private final Map<String, String> overrides;
 
@@ -19,7 +30,12 @@ public class ContentTypes {
             return Optional.ofNullable(overrides.get(path));
         } else {
             String extension = Files.getFileExtension(path);
-            return Optional.ofNullable(extensionDefaults.get(extension));
+            if (extensionDefaults.containsKey(extension)) {
+                return Optional.ofNullable(extensionDefaults.get(extension));
+            } else {
+                return Optional.ofNullable(imageExtensions.get(extension.toLowerCase()))
+                    .map(imageType -> "image/" + imageType);
+            }
         }
     }
 }

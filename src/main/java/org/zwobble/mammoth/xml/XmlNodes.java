@@ -7,6 +7,10 @@ import java.util.List;
 import java.util.Map;
 
 public class XmlNodes {
+    public static XmlElement element(String name) {
+        return element(name, ImmutableList.of());
+    }
+
     public static XmlElement element(String name, Map<String, String> attributes) {
         return element(name, attributes, ImmutableList.of());
     }
