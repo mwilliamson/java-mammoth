@@ -1,10 +1,14 @@
 package org.zwobble.mammoth.xml;
 
-import java.util.List;
-import java.util.Map;
-
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Iterables;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+import static com.google.common.collect.Iterables.filter;
 
 public class XmlElement implements XmlNode {
     public XmlElement(String name) {
@@ -33,6 +37,11 @@ public class XmlElement implements XmlNode {
         return attributes;
     }
 
+    public String getAttribute(String name) {
+        // TODO: throw more informative error message
+        return Optional.ofNullable(attributes.get(name)).get();
+    }
+
     public List<XmlNode> getChildren() {
         return children;
     }
@@ -50,5 +59,12 @@ public class XmlElement implements XmlNode {
     public String toString() {
         return "XmlElement(name=" + name + ", attributes=" + attributes
                + ", children=" + children + ")";
+    }
+
+    public XmlElementList findChildren(String name) {
+        Iterable<XmlElement> filtered = filter(
+            filter(children, XmlElement.class),
+            child -> child.getName().equals(name));
+        return new XmlElementList(ImmutableList.copyOf(filtered));
     }
 }
