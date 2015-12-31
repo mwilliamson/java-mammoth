@@ -66,4 +66,13 @@ public class ContentTypesXmlTests {
             Optional.of("image/tiff"),
             contentTypes.findContentType("word/media/hat.tiff"));
     }
+
+    @Test
+    public void fallbackContentTypesAreCaseInsensitive() {
+        XmlElement element = element("content-types:Types");
+        ContentTypes contentTypes = readContentTypesXmlElement(element);
+        assertEquals(
+            Optional.of("image/png"),
+            contentTypes.findContentType("word/media/hat.PnG"));
+    }
 }
