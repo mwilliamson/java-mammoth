@@ -14,7 +14,7 @@ import static org.zwobble.mammoth.xml.XmlNodes.element;
 
 public class ContentTypesXmlTests {
     @Test
-    public void contentTypesBasedOnDefaultForExtensionIfThereIsNoOverride() {
+    public void contentTypeIsBasedOnDefaultForExtensionIfThereIsNoOverride() {
         XmlElement element = element("content-types:Types", ImmutableList.of(
             element("content-types:Default", ImmutableMap.of(
                 "Extension", "png",
@@ -22,6 +22,21 @@ public class ContentTypesXmlTests {
         ContentTypes contentTypes = readContentTypesXmlElement(element);
         assertEquals(
             Optional.of("image/png"),
+            contentTypes.findContentType("word/media/hat.png"));
+    }
+
+    @Test
+    public void contentTypeIsBasedOnOverrideIfPresent() {
+        XmlElement element = element("content-types:Types", ImmutableList.of(
+            element("content-types:Default", ImmutableMap.of(
+                "Extension", "png",
+                "ContentType", "image/png")),
+            element("content-types:Override", ImmutableMap.of(
+                "PartName", "/word/media/hat.png",
+                "ContentType", "image/hat"))));
+        ContentTypes contentTypes = readContentTypesXmlElement(element);
+        assertEquals(
+            Optional.of("image/hat"),
             contentTypes.findContentType("word/media/hat.png"));
     }
 }
