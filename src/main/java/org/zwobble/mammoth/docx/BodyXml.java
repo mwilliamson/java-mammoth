@@ -14,11 +14,13 @@ import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.transform;
 
 public class BodyXml {
-    public static DocumentElement readBodyXmlElement(XmlElement element) {
-        return readElement(element).get(0);
+    private final Styles styles;
+
+    public BodyXml(Styles styles) {
+        this.styles = styles;
     }
 
-    private static List<DocumentElement> readElement(XmlElement element) {
+    public List<DocumentElement> readElement(XmlElement element) {
         switch (element.getName()) {
             case "w:t":
                 return ImmutableList.of(new TextElement(element.innerText()));
@@ -35,21 +37,21 @@ public class BodyXml {
         }
     }
 
-    private static ParagraphElement readParagraph(XmlElement element) {
+    private ParagraphElement readParagraph(XmlElement element) {
         return new ParagraphElement(readParagraphStyle(element), readElements(element.children()));
     }
 
-    private static Optional<Style> readParagraphStyle(XmlElement paragraph) {
+    private Optional<Style> readParagraphStyle(XmlElement paragraph) {
         XmlElementLike properties = paragraph.findChildOrEmpty("w:pPr");
         return properties.findChildOrEmpty("w:pStyle").getAttributeOrNone("w:val")
-            .map(styleId -> new Style(styleId, Optional.empty()));
+            .map(styleId -> styles.findParagraphStyleById(styleId).orElse(new Style(styleId, Optional.empty())));
     }
 
-    private static List<DocumentElement> readElements(Iterable<XmlNode> nodes) {
+    private List<DocumentElement> readElements(Iterable<XmlNode> nodes) {
         return ImmutableList.copyOf(
             concat(
                 transform(
                     filter(nodes, XmlElement.class),
-                    BodyXml::readElement)));
+                    this::readElement)));
     }
 }

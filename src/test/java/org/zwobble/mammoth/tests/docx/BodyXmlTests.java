@@ -2,9 +2,15 @@ package org.zwobble.mammoth.tests.docx;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.natpryce.makeiteasy.Instantiator;
+import com.natpryce.makeiteasy.Maker;
+import com.natpryce.makeiteasy.Property;
+import com.natpryce.makeiteasy.PropertyLookup;
 import org.hamcrest.Matcher;
 import org.junit.Test;
 import org.zwobble.mammoth.documents.*;
+import org.zwobble.mammoth.docx.BodyXml;
+import org.zwobble.mammoth.docx.Styles;
 import org.zwobble.mammoth.tests.DeepReflectionMatcher;
 import org.zwobble.mammoth.xml.XmlElement;
 import org.zwobble.mammoth.xml.XmlNode;
@@ -13,25 +19,37 @@ import org.zwobble.mammoth.xml.XmlNodes;
 import java.util.List;
 import java.util.Optional;
 
+import static com.natpryce.makeiteasy.MakeItEasy.a;
+import static com.natpryce.makeiteasy.MakeItEasy.with;
+import static com.natpryce.makeiteasy.Property.newProperty;
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasProperty;
-import static org.zwobble.mammoth.docx.BodyXml.readBodyXmlElement;
 import static org.zwobble.mammoth.tests.DeepReflectionMatcher.deepEquals;
 import static org.zwobble.mammoth.xml.XmlNodes.element;
 
 public class BodyXmlTests {
+    private static final Property<BodyXml, Styles> STYLES = newProperty();
+
+    private static final Instantiator<BodyXml> bodyReader = new Instantiator<BodyXml>() {
+        @Override
+        public BodyXml instantiate(PropertyLookup<BodyXml> propertyLookup) {
+            return new BodyXml(
+                propertyLookup.valueOf(STYLES, new Styles(ImmutableMap.of(), ImmutableMap.of())));
+        }
+    };
+
     @Test
     public void textFromTextElementIsRead() {
         XmlElement element = textXml("Hello!");
-        assertThat(readBodyXmlElement(element), isTextElement("Hello!"));
+        assertThat(read(a(bodyReader), element), isTextElement("Hello!"));
     }
 
     @Test
     public void canReadTextWithinRun() {
         XmlElement element = runXml(ImmutableList.of(textXml("Hello!")));
         assertThat(
-            readBodyXmlElement(element),
+            read(a(bodyReader), element),
             isRun(run(text("Hello!"))));
     }
 
@@ -39,7 +57,7 @@ public class BodyXmlTests {
     public void canReadTextWithinParagraph() {
         XmlElement element = paragraphXml(ImmutableList.of(runXml(ImmutableList.of(textXml("Hello!")))));
         assertThat(
-            readBodyXmlElement(element),
+            read(a(bodyReader), element),
             isParagraph(paragraph(run(text("Hello!")))));
     }
 
@@ -47,7 +65,7 @@ public class BodyXmlTests {
     public void paragraphHasNoStyleIfItHasNoProperties() {
         XmlElement element = paragraphXml();
         assertThat(
-            readBodyXmlElement(element),
+            read(a(bodyReader), element),
             hasStyle(Optional.empty()));
     }
 
@@ -57,8 +75,27 @@ public class BodyXmlTests {
             element("w:pPr", ImmutableList.of(
                 element("w:pStyle", ImmutableMap.of("w:val", "Heading1"))))));
         assertThat(
-            readBodyXmlElement(element),
+            read(a(bodyReader), element),
             hasStyle(Optional.of(new Style("Heading1", Optional.empty()))));
+    }
+
+    @Test
+    public void whenParagraphHasStyleIdInStylesThenStyleNameIsReadFromStyles() {
+        XmlElement element = paragraphXml(ImmutableList.of(
+            element("w:pPr", ImmutableList.of(
+                element("w:pStyle", ImmutableMap.of("w:val", "Heading1"))))));
+
+        Style style = new Style("Heading1", Optional.of("Heading 1"));
+        Styles styles = new Styles(
+            ImmutableMap.of("Heading1", style),
+            ImmutableMap.of());
+        assertThat(
+            read(a(bodyReader, with(STYLES, styles)), element),
+            hasStyle(Optional.of(style)));
+    }
+
+    private static DocumentElement read(Maker<BodyXml> reader, XmlElement element) {
+        return reader.make().readElement(element).get(0);
     }
 
     private XmlElement paragraphXml() {
