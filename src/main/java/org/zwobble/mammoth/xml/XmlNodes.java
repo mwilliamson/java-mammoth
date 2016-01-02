@@ -22,4 +22,8 @@ public class XmlNodes {
     public static XmlElement element(String name, Map<String, String> attributes, List<XmlNode> children) {
         return new XmlElement(name, attributes, children);
     }
+
+    public static XmlTextNode text(String value) {
+        return new XmlTextNode(value);
+    }
 }

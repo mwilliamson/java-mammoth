@@ -10,7 +10,12 @@ public class XmlTextNode implements XmlNode {
     public String getValue() {
         return value;
     }
-    
+
+    @Override
+    public String innerText() {
+        return value;
+    }
+
     @Override
     public <T> T accept(XmlNodeVisitor<T> visitor) {
         return visitor.visit(this);
