@@ -7,16 +7,17 @@ import org.zwobble.mammoth.documents.DocumentElement;
 import org.zwobble.mammoth.documents.ParagraphElement;
 import org.zwobble.mammoth.documents.RunElement;
 import org.zwobble.mammoth.documents.TextElement;
+import org.zwobble.mammoth.tests.DeepReflectionMatcher;
 import org.zwobble.mammoth.xml.XmlElement;
 import org.zwobble.mammoth.xml.XmlNode;
+import org.zwobble.mammoth.xml.XmlNodes;
 
 import java.util.List;
 
+import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
 import static org.zwobble.mammoth.docx.BodyXml.readBodyXmlElement;
 import static org.zwobble.mammoth.xml.XmlNodes.element;
-import static org.zwobble.mammoth.xml.XmlNodes.text;
 
 public class BodyXmlTests {
     @Test
@@ -30,7 +31,7 @@ public class BodyXmlTests {
         XmlElement element = runXml(ImmutableList.of(textXml("Hello!")));
         assertThat(
             readBodyXmlElement(element),
-            isRunElement(isTextElement("Hello!")));
+            isRun(run(text("Hello!"))));
     }
 
     @Test
@@ -38,7 +39,7 @@ public class BodyXmlTests {
         XmlElement element = paragraphXml(ImmutableList.of(runXml(ImmutableList.of(textXml("Hello!")))));
         assertThat(
             readBodyXmlElement(element),
-            isParagraphElement(isRunElement(isTextElement("Hello!"))));
+            isParagraph(paragraph(run(text("Hello!")))));
     }
 
     private XmlElement paragraphXml(List<XmlNode> children) {
@@ -50,24 +51,30 @@ public class BodyXmlTests {
     }
 
     private XmlElement textXml(String value) {
-        return element("w:t", ImmutableList.of(text(value)));
+        return element("w:t", ImmutableList.of(XmlNodes.text(value)));
     }
 
-    private Matcher<DocumentElement> isParagraphElement(Matcher<DocumentElement> child) {
-        return allOf(
-            instanceOf(ParagraphElement.class),
-            hasProperty("children", contains(child)));
+    private Matcher<DocumentElement> isParagraph(ParagraphElement expected) {
+        return new DeepReflectionMatcher<>(expected);
     }
 
-    private Matcher<DocumentElement> isRunElement(Matcher<DocumentElement> child) {
-        return allOf(
-            instanceOf(RunElement.class),
-            hasProperty("children", contains(child)));
+    private Matcher<DocumentElement> isRun(RunElement expected) {
+        return new DeepReflectionMatcher<>(expected);
     }
 
     private Matcher<DocumentElement> isTextElement(String value) {
-        return allOf(
-            instanceOf(TextElement.class),
-            hasProperty("value", equalTo(value)));
+        return new DeepReflectionMatcher<>(new TextElement(value));
+    }
+
+    private ParagraphElement paragraph(DocumentElement... children) {
+        return new ParagraphElement(asList(children));
+    }
+
+    private RunElement run(DocumentElement... children) {
+        return new RunElement(asList(children));
+    }
+
+    private TextElement text(String value) {
+        return new TextElement(value);
     }
 }
