@@ -11,6 +11,7 @@ import org.hamcrest.TypeSafeDiagnosingMatcher;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.List;
+import java.util.Optional;
 
 import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.transform;
@@ -36,6 +37,9 @@ public class DeepReflectionMatcher<T> extends TypeSafeDiagnosingMatcher<T> {
         if (!expected.getClass().equals(actual.getClass())) {
             mismatchDescription.appendText("was " + actual.getClass().getName());
             return false;
+        }
+        if (expected instanceof Optional && actual instanceof Optional) {
+            return matchesOptional(path, (Optional)expected, (Optional)actual, mismatchDescription);
         }
 
         if (expected instanceof String) {
@@ -70,6 +74,26 @@ public class DeepReflectionMatcher<T> extends TypeSafeDiagnosingMatcher<T> {
             if (!matchesSafely(path + "[" + index + "]", expected.get(index), actual.get(index), mismatchDescription)) {
                 return false;
             }
+        }
+
+        return true;
+    }
+
+    private static boolean matchesOptional(String path, Optional expected, Optional actual, Description mismatchDescription) {
+        if (actual.isPresent() && !expected.isPresent()) {
+            appendPath(mismatchDescription, path);
+            mismatchDescription.appendText("had value " + generateDescriptionOfValue(actual.get()));
+            return false;
+        }
+
+        if (expected.isPresent() && !actual.isPresent()) {
+            appendPath(mismatchDescription, path);
+            mismatchDescription.appendText("was empty");
+            return false;
+        }
+
+        if (actual.isPresent() && expected.isPresent()) {
+            return matchesSafely(path, expected.get(), actual.get(), mismatchDescription);
         }
 
         return true;

@@ -1,6 +1,7 @@
 package org.zwobble.mammoth.tests.docx;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import org.hamcrest.Matcher;
 import org.junit.Test;
 import org.zwobble.mammoth.documents.DocumentElement;
@@ -13,9 +14,12 @@ import org.zwobble.mammoth.xml.XmlNode;
 import org.zwobble.mammoth.xml.XmlNodes;
 
 import java.util.List;
+import java.util.Optional;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasProperty;
 import static org.zwobble.mammoth.docx.BodyXml.readBodyXmlElement;
 import static org.zwobble.mammoth.xml.XmlNodes.element;
 
@@ -42,6 +46,28 @@ public class BodyXmlTests {
             isParagraph(paragraph(run(text("Hello!")))));
     }
 
+    @Test
+    public void paragraphHasNoStyleIfItHasNoProperties() {
+        XmlElement element = paragraphXml();
+        assertThat(
+            readBodyXmlElement(element),
+            hasStyleId(Optional.empty()));
+    }
+
+    @Test
+    public void paragraphHasStyleIdReadFromParagraphPropertiesIfPresent() {
+        XmlElement element = paragraphXml(ImmutableList.of(
+            element("w:pPr", ImmutableList.of(
+                element("w:pStyle", ImmutableMap.of("w:val", "Heading1"))))));
+        assertThat(
+            readBodyXmlElement(element),
+            hasStyleId(Optional.of("Heading1")));
+    }
+
+    private XmlElement paragraphXml() {
+        return paragraphXml(ImmutableList.of());
+    }
+
     private XmlElement paragraphXml(List<XmlNode> children) {
         return element("w:p", children);
     }
@@ -66,8 +92,12 @@ public class BodyXmlTests {
         return new DeepReflectionMatcher<>(new TextElement(value));
     }
 
+    private Matcher<? super DocumentElement> hasStyleId(Optional<String> expected) {
+        return hasProperty("styleId", equalTo(expected));
+    }
+
     private ParagraphElement paragraph(DocumentElement... children) {
-        return new ParagraphElement(asList(children));
+        return new ParagraphElement(Optional.empty(), asList(children));
     }
 
     private RunElement run(DocumentElement... children) {
