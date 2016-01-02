@@ -1,5 +1,7 @@
 package org.zwobble.mammoth.docx;
 
+import org.zwobble.mammoth.documents.Style;
+
 import java.util.Map;
 import java.util.Optional;
 

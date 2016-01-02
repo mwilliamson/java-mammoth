@@ -1,10 +1,7 @@
 package org.zwobble.mammoth.docx;
 
 import com.google.common.collect.ImmutableList;
-import org.zwobble.mammoth.documents.DocumentElement;
-import org.zwobble.mammoth.documents.ParagraphElement;
-import org.zwobble.mammoth.documents.RunElement;
-import org.zwobble.mammoth.documents.TextElement;
+import org.zwobble.mammoth.documents.*;
 import org.zwobble.mammoth.xml.XmlElement;
 import org.zwobble.mammoth.xml.XmlElementLike;
 import org.zwobble.mammoth.xml.XmlNode;
@@ -39,12 +36,13 @@ public class BodyXml {
     }
 
     private static ParagraphElement readParagraph(XmlElement element) {
-        return new ParagraphElement(readParagraphStyleId(element), readElements(element.children()));
+        return new ParagraphElement(readParagraphStyle(element), readElements(element.children()));
     }
 
-    private static Optional<String> readParagraphStyleId(XmlElement paragraph) {
+    private static Optional<Style> readParagraphStyle(XmlElement paragraph) {
         XmlElementLike properties = paragraph.findChildOrEmpty("w:pPr");
-        return properties.findChildOrEmpty("w:pStyle").getAttributeOrNone("w:val");
+        return properties.findChildOrEmpty("w:pStyle").getAttributeOrNone("w:val")
+            .map(styleId -> new Style(styleId, Optional.empty()));
     }
 
     private static List<DocumentElement> readElements(Iterable<XmlNode> nodes) {

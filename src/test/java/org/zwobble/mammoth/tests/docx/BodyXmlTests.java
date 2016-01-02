@@ -4,10 +4,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import org.hamcrest.Matcher;
 import org.junit.Test;
-import org.zwobble.mammoth.documents.DocumentElement;
-import org.zwobble.mammoth.documents.ParagraphElement;
-import org.zwobble.mammoth.documents.RunElement;
-import org.zwobble.mammoth.documents.TextElement;
+import org.zwobble.mammoth.documents.*;
 import org.zwobble.mammoth.tests.DeepReflectionMatcher;
 import org.zwobble.mammoth.xml.XmlElement;
 import org.zwobble.mammoth.xml.XmlNode;
@@ -18,9 +15,9 @@ import java.util.Optional;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.zwobble.mammoth.docx.BodyXml.readBodyXmlElement;
+import static org.zwobble.mammoth.tests.DeepReflectionMatcher.deepEquals;
 import static org.zwobble.mammoth.xml.XmlNodes.element;
 
 public class BodyXmlTests {
@@ -51,7 +48,7 @@ public class BodyXmlTests {
         XmlElement element = paragraphXml();
         assertThat(
             readBodyXmlElement(element),
-            hasStyleId(Optional.empty()));
+            hasStyle(Optional.empty()));
     }
 
     @Test
@@ -61,7 +58,7 @@ public class BodyXmlTests {
                 element("w:pStyle", ImmutableMap.of("w:val", "Heading1"))))));
         assertThat(
             readBodyXmlElement(element),
-            hasStyleId(Optional.of("Heading1")));
+            hasStyle(Optional.of(new Style("Heading1", Optional.empty()))));
     }
 
     private XmlElement paragraphXml() {
@@ -92,8 +89,8 @@ public class BodyXmlTests {
         return new DeepReflectionMatcher<>(new TextElement(value));
     }
 
-    private Matcher<? super DocumentElement> hasStyleId(Optional<String> expected) {
-        return hasProperty("styleId", equalTo(expected));
+    private Matcher<? super DocumentElement> hasStyle(Optional<Style> expected) {
+        return hasProperty("style", deepEquals(expected));
     }
 
     private ParagraphElement paragraph(DocumentElement... children) {

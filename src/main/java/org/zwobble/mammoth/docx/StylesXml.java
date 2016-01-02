@@ -1,9 +1,11 @@
 package org.zwobble.mammoth.docx;
 
+import org.zwobble.mammoth.documents.Style;
 import org.zwobble.mammoth.xml.XmlElement;
 import org.zwobble.mammoth.xml.XmlElementList;
 
 import java.util.Map;
+import java.util.Optional;
 
 import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Maps.immutableEntry;
@@ -24,8 +26,8 @@ public class StylesXml {
     }
 
     private static Map.Entry<String, Style> readStyle(XmlElement element) {
-        return immutableEntry(
-            element.getAttribute("w:styleId"),
-            new Style(element.findChildOrEmpty("w:name").getAttributeOrNone("w:val")));
+        String styleId = element.getAttribute("w:styleId");
+        Optional<String> styleName = element.findChildOrEmpty("w:name").getAttributeOrNone("w:val");
+        return immutableEntry(styleId, new Style(styleId, styleName));
     }
 }

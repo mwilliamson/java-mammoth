@@ -18,6 +18,10 @@ import static com.google.common.collect.Iterables.transform;
 import static java.util.Arrays.asList;
 
 public class DeepReflectionMatcher<T> extends TypeSafeDiagnosingMatcher<T> {
+    public static <T> Matcher<T> deepEquals(T value) {
+        return new DeepReflectionMatcher<>(value);
+    }
+
     private final T expected;
 
     public DeepReflectionMatcher(T expected) {
