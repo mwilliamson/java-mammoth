@@ -2,6 +2,7 @@ package org.zwobble.mammoth.docx;
 
 import com.google.common.collect.ImmutableList;
 import org.zwobble.mammoth.documents.DocumentElement;
+import org.zwobble.mammoth.documents.ParagraphElement;
 import org.zwobble.mammoth.documents.RunElement;
 import org.zwobble.mammoth.documents.TextElement;
 import org.zwobble.mammoth.xml.XmlElement;
@@ -19,6 +20,8 @@ public class BodyXml {
                 return new TextElement(element.innerText());
             case "w:r":
                 return new RunElement(readElements(element.children()));
+            case "w:p":
+                return new ParagraphElement(readElements(element.children()));
             default:
                 throw new UnsupportedOperationException();
         }

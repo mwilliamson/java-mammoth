@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import org.hamcrest.Matcher;
 import org.junit.Test;
 import org.zwobble.mammoth.documents.DocumentElement;
+import org.zwobble.mammoth.documents.ParagraphElement;
 import org.zwobble.mammoth.documents.RunElement;
 import org.zwobble.mammoth.documents.TextElement;
 import org.zwobble.mammoth.xml.XmlElement;
@@ -32,12 +33,30 @@ public class BodyXmlTests {
             isRunElement(isTextElement("Hello!")));
     }
 
+    @Test
+    public void canReadTextWithinParagraph() {
+        XmlElement element = paragraphXml(ImmutableList.of(runXml(ImmutableList.of(textXml("Hello!")))));
+        assertThat(
+            readBodyXmlElement(element),
+            isParagraphElement(isRunElement(isTextElement("Hello!"))));
+    }
+
+    private XmlElement paragraphXml(List<XmlNode> children) {
+        return element("w:p", children);
+    }
+
     private XmlElement runXml(List<XmlNode> children) {
         return element("w:r", children);
     }
 
     private XmlElement textXml(String value) {
         return element("w:t", ImmutableList.of(text(value)));
+    }
+
+    private Matcher<DocumentElement> isParagraphElement(Matcher<DocumentElement> child) {
+        return allOf(
+            instanceOf(ParagraphElement.class),
+            hasProperty("children", contains(child)));
     }
 
     private Matcher<DocumentElement> isRunElement(Matcher<DocumentElement> child) {
