@@ -126,6 +126,13 @@ public class DeepReflectionMatcher<T> extends TypeSafeDiagnosingMatcher<T> {
     private static String generateDescriptionOfValue(Object value) {
         if (value instanceof String) {
             return value.toString();
+        } else if (value instanceof Optional) {
+            Optional<?> optional = (Optional)value;
+            if (optional.isPresent()) {
+                return generateDescriptionOfValue(optional.get());
+            } else {
+                return "(empty)";
+            }
         } else if (value instanceof List) {
             List<?> list = (List)value;
             return "[" + indentedList(transform(list, DeepReflectionMatcher::generateDescriptionOfValue)) + "]";

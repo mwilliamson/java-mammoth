@@ -37,6 +37,14 @@ public class BodyXml {
         }
     }
 
+    public List<DocumentElement> readElements(Iterable<XmlNode> nodes) {
+        return ImmutableList.copyOf(
+            concat(
+                transform(
+                    filter(nodes, XmlElement.class),
+                    this::readElement)));
+    }
+
     private ParagraphElement readParagraph(XmlElement element) {
         return new ParagraphElement(readParagraphStyle(element), readElements(element.children()));
     }
@@ -45,13 +53,5 @@ public class BodyXml {
         XmlElementLike properties = paragraph.findChildOrEmpty("w:pPr");
         return properties.findChildOrEmpty("w:pStyle").getAttributeOrNone("w:val")
             .map(styleId -> styles.findParagraphStyleById(styleId).orElse(new Style(styleId, Optional.empty())));
-    }
-
-    private List<DocumentElement> readElements(Iterable<XmlNode> nodes) {
-        return ImmutableList.copyOf(
-            concat(
-                transform(
-                    filter(nodes, XmlElement.class),
-                    this::readElement)));
     }
 }
