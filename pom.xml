@@ -15,6 +15,12 @@
       </plugin>
     </plugins>
   </build>
+  <repositories>
+    <repository>
+      <id>jitpack.io</id>
+      <url>https://jitpack.io</url>
+    </repository>
+  </repositories>
   <dependencies>
     <dependency>
       <groupId>org.hamcrest</groupId>
@@ -29,10 +35,17 @@
       <scope>test</scope>
     </dependency>
     <dependency>
+      <groupId>com.github.npryce</groupId>
+      <artifactId>make-it-easy</artifactId>
+      <version>dad3ac7</version>
+    </dependency>
+    <!--
+    <dependency>
       <groupId>com.natpryce</groupId>
       <artifactId>make-it-easy</artifactId>
       <version>4.0.0</version>
     </dependency>
+    -->
     <dependency>
       <groupId>com.google.guava</groupId>
       <artifactId>guava</artifactId>
