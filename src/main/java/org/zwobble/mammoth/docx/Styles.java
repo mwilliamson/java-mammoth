@@ -1,13 +1,14 @@
 package org.zwobble.mammoth.docx;
 
-import com.google.common.collect.ImmutableMap;
 import org.zwobble.mammoth.documents.Style;
 
 import java.util.Map;
 import java.util.Optional;
 
+import static org.zwobble.mammoth.util.MammothMaps.map;
+
 public class Styles {
-    public static final Styles EMPTY = new Styles(ImmutableMap.of(), ImmutableMap.of());
+    public static final Styles EMPTY = new Styles(map(), map());
 
     private final Map<String, Style> paragraphStyles;
     private final Map<String, Style> characterStyles;

@@ -1,7 +1,6 @@
 package org.zwobble.mammoth.tests.docx;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import com.natpryce.makeiteasy.Maker;
 import org.hamcrest.Matcher;
 import org.junit.Test;
@@ -16,9 +15,7 @@ import org.zwobble.mammoth.xml.XmlNodes;
 import java.util.List;
 import java.util.Optional;
 
-import static com.natpryce.makeiteasy.MakeItEasy.a;
-import static com.natpryce.makeiteasy.MakeItEasy.make;
-import static com.natpryce.makeiteasy.MakeItEasy.with;
+import static com.natpryce.makeiteasy.MakeItEasy.*;
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasProperty;
@@ -27,6 +24,7 @@ import static org.zwobble.mammoth.tests.documents.DocumentElementMakers.CHILDREN
 import static org.zwobble.mammoth.tests.documents.DocumentElementMakers.PARAGRAPH;
 import static org.zwobble.mammoth.tests.docx.BodyXmlReaderMakers.STYLES;
 import static org.zwobble.mammoth.tests.docx.BodyXmlReaderMakers.bodyReader;
+import static org.zwobble.mammoth.util.MammothMaps.map;
 import static org.zwobble.mammoth.xml.XmlNodes.element;
 
 public class BodyXmlTests {
@@ -65,7 +63,7 @@ public class BodyXmlTests {
     public void paragraphHasStyleIdReadFromParagraphPropertiesIfPresent() {
         XmlElement element = paragraphXml(ImmutableList.of(
             element("w:pPr", ImmutableList.of(
-                element("w:pStyle", ImmutableMap.of("w:val", "Heading1"))))));
+                element("w:pStyle", map("w:val", "Heading1"))))));
         assertThat(
             read(a(bodyReader), element),
             hasStyle(Optional.of(new Style("Heading1", Optional.empty()))));
@@ -75,12 +73,12 @@ public class BodyXmlTests {
     public void whenParagraphHasStyleIdInStylesThenStyleNameIsReadFromStyles() {
         XmlElement element = paragraphXml(ImmutableList.of(
             element("w:pPr", ImmutableList.of(
-                element("w:pStyle", ImmutableMap.of("w:val", "Heading1"))))));
+                element("w:pStyle", map("w:val", "Heading1"))))));
 
         Style style = new Style("Heading1", Optional.of("Heading 1"));
         Styles styles = new Styles(
-            ImmutableMap.of("Heading1", style),
-            ImmutableMap.of());
+            map("Heading1", style),
+            map());
         assertThat(
             read(a(bodyReader, with(STYLES, styles)), element),
             hasStyle(Optional.of(style)));

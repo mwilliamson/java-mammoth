@@ -1,19 +1,15 @@
 package org.zwobble.mammoth;
 
 import com.google.common.base.Joiner;
-import com.google.common.collect.ImmutableBiMap;
-import com.google.common.collect.ImmutableMap;
 import org.zwobble.mammoth.documents.*;
 import org.zwobble.mammoth.docx.BodyXmlReader;
 import org.zwobble.mammoth.docx.DocumentXmlReader;
 import org.zwobble.mammoth.docx.OfficeXml;
 import org.zwobble.mammoth.docx.Styles;
 import org.zwobble.mammoth.xml.XmlElement;
-import org.zwobble.mammoth.xml.parsing.XmlParser;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -25,7 +21,7 @@ public class Mammoth {
             ZipEntry entry = zipFile.getEntry("word/document.xml");
             XmlElement documentXml = OfficeXml.parseXml(zipFile.getInputStream(entry));
 
-            Styles styles = new Styles(ImmutableMap.of(), ImmutableMap.of());
+            Styles styles = Styles.EMPTY;
             Document document = new DocumentXmlReader(new BodyXmlReader(styles)).readElement(documentXml);
             return convertToHtml(document);
         } catch (IOException e) {

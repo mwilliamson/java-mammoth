@@ -1,7 +1,6 @@
 package org.zwobble.mammoth.tests.docx;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import org.junit.Test;
 import org.zwobble.mammoth.documents.Note;
 import org.zwobble.mammoth.docx.BodyXmlReader;
@@ -15,6 +14,7 @@ import static com.natpryce.makeiteasy.MakeItEasy.make;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.zwobble.mammoth.tests.DeepReflectionMatcher.deepEquals;
 import static org.zwobble.mammoth.tests.documents.DocumentElementMakers.PARAGRAPH;
+import static org.zwobble.mammoth.util.MammothMaps.map;
 import static org.zwobble.mammoth.xml.XmlNodes.element;
 
 public class NotesXmlReaderTests {
@@ -23,7 +23,7 @@ public class NotesXmlReaderTests {
     @Test
     public void idAndBodyOfFootnoteAreRead() {
         XmlElement element = element("w:footnotes", ImmutableList.of(
-            element("w:footnote", ImmutableMap.of("w:id", "1"), ImmutableList.of(
+            element("w:footnote", map("w:id", "1"), ImmutableList.of(
                 element("w:p")))));
 
         NotesXmlReader reader = new NotesXmlReader(bodyReader, "footnote");
@@ -46,7 +46,7 @@ public class NotesXmlReaderTests {
 
     private void assertFootnoteTypeIsIgnored(String noteType) {
         XmlElement element = element("w:footnotes", ImmutableList.of(
-            element("w:footnote", ImmutableMap.of("w:id", "1", "w:type", noteType), ImmutableList.of(
+            element("w:footnote", map("w:id", "1", "w:type", noteType), ImmutableList.of(
                 element("w:p")))));
 
         NotesXmlReader reader = new NotesXmlReader(bodyReader, "footnote");

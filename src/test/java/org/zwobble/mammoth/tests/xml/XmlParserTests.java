@@ -2,15 +2,14 @@ package org.zwobble.mammoth.tests.xml;
 
 import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import org.hamcrest.Matcher;
 import org.hamcrest.collection.IsEmptyIterable;
 import org.hamcrest.collection.IsIterableContainingInOrder;
 import org.junit.Test;
 import org.zwobble.mammoth.xml.XmlElement;
 import org.zwobble.mammoth.xml.XmlNode;
-import org.zwobble.mammoth.xml.parsing.XmlParser;
 import org.zwobble.mammoth.xml.XmlTextNode;
+import org.zwobble.mammoth.xml.parsing.XmlParser;
 
 import java.io.ByteArrayInputStream;
 import java.util.List;
@@ -18,6 +17,7 @@ import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.zwobble.mammoth.util.MammothMaps.map;
 
 public class XmlParserTests {
     private final XmlParser parser = new XmlParser(ImmutableBiMap.of());
@@ -43,15 +43,15 @@ public class XmlParserTests {
     public void canParseAttributesOfTag() {
         assertThat(
             parser.parseString("<body name='bob'></body>"),
-            isElement("body", ImmutableMap.of("name", "bob")));
+            isElement("body", map("name", "bob")));
     }
     
     @Test
     public void canParseElementWithDescendantElements() {
         assertThat(
             parser.parseString("<body><a><b/></a><a/></body>"),
-            isElement("body", ImmutableMap.of(), ImmutableList.of(
-                isElement("a", ImmutableMap.of(), ImmutableList.of(
+            isElement("body", map(), ImmutableList.of(
+                isElement("a", map(), ImmutableList.of(
                     isElement("b"))),
                 isElement("a"))));
     }
@@ -60,7 +60,7 @@ public class XmlParserTests {
     public void canParseTextNodes() {
         assertThat(
             parser.parseString("<body>Hello!</body>"),
-            isElement("body", ImmutableMap.of(), ImmutableList.of(
+            isElement("body", map(), ImmutableList.of(
                 isTextNode("Hello!"))));
     }
     
@@ -75,7 +75,7 @@ public class XmlParserTests {
     public void unmappedNamespaceUrisInAttributeNamesAreIncludedInBracesAsPrefix() {
         assertThat(
             parser.parseString("<body xmlns:w='word' w:name='bob'></body>"),
-            isElement("body", ImmutableMap.of("{word}name", "bob")));
+            isElement("body", map("{word}name", "bob")));
     }
     
     @Test
@@ -91,7 +91,7 @@ public class XmlParserTests {
         XmlParser parser = new XmlParser(ImmutableBiMap.of("x", "word")); 
         assertThat(
             parser.parseString("<body xmlns:w='word' w:name='bob'/>"),
-            isElement("body", ImmutableMap.of("x:name", "bob")));
+            isElement("body", map("x:name", "bob")));
     }
     
     @Test
@@ -102,7 +102,7 @@ public class XmlParserTests {
     }
 
     private Matcher<XmlElement> isElement(String name) {
-        return isElement(name, ImmutableMap.of());
+        return isElement(name, map());
     }
 
     private Matcher<XmlElement> isElement(String name, Map<String, String> attributes) {

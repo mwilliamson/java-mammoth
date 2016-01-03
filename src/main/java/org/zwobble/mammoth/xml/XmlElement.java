@@ -2,17 +2,17 @@ package org.zwobble.mammoth.xml;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 import static com.google.common.collect.Iterables.*;
+import static org.zwobble.mammoth.util.MammothMaps.map;
 
 public class XmlElement implements XmlNode, XmlElementLike {
     public XmlElement(String name) {
-        this(name, ImmutableMap.of());
+        this(name, map());
     }
     
     public XmlElement(String name, Map<String, String> attributes) {

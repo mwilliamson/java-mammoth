@@ -1,7 +1,6 @@
 package org.zwobble.mammoth.tests.docx;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import org.junit.Test;
 import org.zwobble.mammoth.docx.Numbering;
 import org.zwobble.mammoth.xml.XmlElement;
@@ -10,17 +9,18 @@ import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 import static org.zwobble.mammoth.docx.NumberingXml.readNumberingXmlElement;
+import static org.zwobble.mammoth.util.MammothMaps.map;
 import static org.zwobble.mammoth.xml.XmlNodes.element;
 
 public class NumberingXmlTests {
     private final static XmlElement SAMPLE_NUMBERING_XML = element("w:numbering", ImmutableList.of(
-        element("w:abstractNum", ImmutableMap.of("w:abstractNumId", "42"), ImmutableList.of(
-            element("w:lvl", ImmutableMap.of("w:ilvl", "0"), ImmutableList.of(
-                element("w:numFmt", ImmutableMap.of("w:val", "bullet")))),
-            element("w:lvl", ImmutableMap.of("w:ilvl", "1"), ImmutableList.of(
-                element("w:numFmt", ImmutableMap.of("w:val", "decimal")))))),
-        element("w:num", ImmutableMap.of("w:numId", "47"), ImmutableList.of(
-            element("w:abstractNumId", ImmutableMap.of("w:val", "42"))))));
+        element("w:abstractNum", map("w:abstractNumId", "42"), ImmutableList.of(
+            element("w:lvl", map("w:ilvl", "0"), ImmutableList.of(
+                element("w:numFmt", map("w:val", "bullet")))),
+            element("w:lvl", map("w:ilvl", "1"), ImmutableList.of(
+                element("w:numFmt", map("w:val", "decimal")))))),
+        element("w:num", map("w:numId", "47"), ImmutableList.of(
+            element("w:abstractNumId", map("w:val", "42"))))));
 
     @Test
     public void findLevelReturnsNoneIfNumWithIdCannotBeFound() {

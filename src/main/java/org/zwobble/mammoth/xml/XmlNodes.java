@@ -6,6 +6,8 @@ import com.google.common.collect.ImmutableMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.zwobble.mammoth.util.MammothMaps.map;
+
 public class XmlNodes {
     public static XmlElement element(String name) {
         return element(name, ImmutableList.of());
@@ -16,7 +18,7 @@ public class XmlNodes {
     }
 
     public static XmlElement element(String name, List<XmlNode> children) {
-        return element(name, ImmutableMap.of(), children);
+        return element(name, map(), children);
     }
 
     public static XmlElement element(String name, Map<String, String> attributes, List<XmlNode> children) {
