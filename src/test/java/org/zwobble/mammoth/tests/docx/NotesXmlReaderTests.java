@@ -1,6 +1,5 @@
 package org.zwobble.mammoth.tests.docx;
 
-import com.google.common.collect.ImmutableList;
 import org.junit.Test;
 import org.zwobble.mammoth.documents.Note;
 import org.zwobble.mammoth.docx.BodyXmlReader;
@@ -14,6 +13,7 @@ import static com.natpryce.makeiteasy.MakeItEasy.make;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.zwobble.mammoth.tests.DeepReflectionMatcher.deepEquals;
 import static org.zwobble.mammoth.tests.documents.DocumentElementMakers.PARAGRAPH;
+import static org.zwobble.mammoth.util.MammothLists.list;
 import static org.zwobble.mammoth.util.MammothMaps.map;
 import static org.zwobble.mammoth.xml.XmlNodes.element;
 
@@ -22,8 +22,8 @@ public class NotesXmlReaderTests {
 
     @Test
     public void idAndBodyOfFootnoteAreRead() {
-        XmlElement element = element("w:footnotes", ImmutableList.of(
-            element("w:footnote", map("w:id", "1"), ImmutableList.of(
+        XmlElement element = element("w:footnotes", list(
+            element("w:footnote", map("w:id", "1"), list(
                 element("w:p")))));
 
         NotesXmlReader reader = new NotesXmlReader(bodyReader, "footnote");
@@ -31,7 +31,7 @@ public class NotesXmlReaderTests {
 
         assertThat(
             notes,
-            deepEquals(ImmutableList.of(new Note("1", ImmutableList.of(make(a(PARAGRAPH)))))));
+            deepEquals(list(new Note("1", list(make(a(PARAGRAPH)))))));
     }
 
     @Test
@@ -45,13 +45,13 @@ public class NotesXmlReaderTests {
     }
 
     private void assertFootnoteTypeIsIgnored(String noteType) {
-        XmlElement element = element("w:footnotes", ImmutableList.of(
-            element("w:footnote", map("w:id", "1", "w:type", noteType), ImmutableList.of(
+        XmlElement element = element("w:footnotes", list(
+            element("w:footnote", map("w:id", "1", "w:type", noteType), list(
                 element("w:p")))));
 
         NotesXmlReader reader = new NotesXmlReader(bodyReader, "footnote");
         List<Note> notes = reader.readElement(element);
 
-        assertThat(notes, deepEquals(ImmutableList.of()));
+        assertThat(notes, deepEquals(list()));
     }
 }

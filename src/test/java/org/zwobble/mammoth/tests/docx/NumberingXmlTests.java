@@ -1,6 +1,5 @@
 package org.zwobble.mammoth.tests.docx;
 
-import com.google.common.collect.ImmutableList;
 import org.junit.Test;
 import org.zwobble.mammoth.docx.Numbering;
 import org.zwobble.mammoth.xml.XmlElement;
@@ -9,17 +8,18 @@ import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 import static org.zwobble.mammoth.docx.NumberingXml.readNumberingXmlElement;
+import static org.zwobble.mammoth.util.MammothLists.list;
 import static org.zwobble.mammoth.util.MammothMaps.map;
 import static org.zwobble.mammoth.xml.XmlNodes.element;
 
 public class NumberingXmlTests {
-    private final static XmlElement SAMPLE_NUMBERING_XML = element("w:numbering", ImmutableList.of(
-        element("w:abstractNum", map("w:abstractNumId", "42"), ImmutableList.of(
-            element("w:lvl", map("w:ilvl", "0"), ImmutableList.of(
+    private final static XmlElement SAMPLE_NUMBERING_XML = element("w:numbering", list(
+        element("w:abstractNum", map("w:abstractNumId", "42"), list(
+            element("w:lvl", map("w:ilvl", "0"), list(
                 element("w:numFmt", map("w:val", "bullet")))),
-            element("w:lvl", map("w:ilvl", "1"), ImmutableList.of(
+            element("w:lvl", map("w:ilvl", "1"), list(
                 element("w:numFmt", map("w:val", "decimal")))))),
-        element("w:num", map("w:numId", "47"), ImmutableList.of(
+        element("w:num", map("w:numId", "47"), list(
             element("w:abstractNumId", map("w:val", "42"))))));
 
     @Test

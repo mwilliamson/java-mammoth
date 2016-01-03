@@ -1,7 +1,6 @@
 package org.zwobble.mammoth.tests.xml;
 
 import com.google.common.collect.ImmutableBiMap;
-import com.google.common.collect.ImmutableList;
 import org.hamcrest.Matcher;
 import org.hamcrest.collection.IsEmptyIterable;
 import org.hamcrest.collection.IsIterableContainingInOrder;
@@ -17,6 +16,7 @@ import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.zwobble.mammoth.util.MammothLists.list;
 import static org.zwobble.mammoth.util.MammothMaps.map;
 
 public class XmlParserTests {
@@ -50,8 +50,8 @@ public class XmlParserTests {
     public void canParseElementWithDescendantElements() {
         assertThat(
             parser.parseString("<body><a><b/></a><a/></body>"),
-            isElement("body", map(), ImmutableList.of(
-                isElement("a", map(), ImmutableList.of(
+            isElement("body", map(), list(
+                isElement("a", map(), list(
                     isElement("b"))),
                 isElement("a"))));
     }
@@ -60,7 +60,7 @@ public class XmlParserTests {
     public void canParseTextNodes() {
         assertThat(
             parser.parseString("<body>Hello!</body>"),
-            isElement("body", map(), ImmutableList.of(
+            isElement("body", map(), list(
                 isTextNode("Hello!"))));
     }
     
@@ -106,7 +106,7 @@ public class XmlParserTests {
     }
 
     private Matcher<XmlElement> isElement(String name, Map<String, String> attributes) {
-        return isElement(name, attributes, ImmutableList.of());
+        return isElement(name, attributes, list());
     }
 
     private Matcher<XmlElement> isElement(String name, Map<String, String> attributes, List<Matcher<? extends XmlNode>> children) {

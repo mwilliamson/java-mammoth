@@ -9,9 +9,8 @@ import org.zwobble.mammoth.xml.XmlNode;
 import java.util.List;
 import java.util.Optional;
 
-import static com.google.common.collect.Iterables.concat;
-import static com.google.common.collect.Iterables.filter;
-import static com.google.common.collect.Iterables.transform;
+import static com.google.common.collect.Iterables.*;
+import static org.zwobble.mammoth.util.MammothLists.list;
 
 public class BodyXmlReader {
     private final Styles styles;
@@ -23,18 +22,18 @@ public class BodyXmlReader {
     public List<DocumentElement> readElement(XmlElement element) {
         switch (element.getName()) {
             case "w:t":
-                return ImmutableList.of(new Text(element.innerText()));
+                return list(new Text(element.innerText()));
             case "w:r":
-                return ImmutableList.of(new Run(readElements(element.children())));
+                return list(new Run(readElements(element.children())));
             case "w:p":
-                return ImmutableList.of(readParagraph(element));
+                return list(readParagraph(element));
 
             case "w:pPr":
-                return ImmutableList.of();
+                return list();
 
             default:
                 // TODO: emit warning
-                return ImmutableList.of();
+                return list();
         }
     }
 

@@ -1,6 +1,5 @@
 package org.zwobble.mammoth.tests.docx;
 
-import com.google.common.collect.ImmutableList;
 import org.junit.Test;
 import org.zwobble.mammoth.docx.Styles;
 import org.zwobble.mammoth.xml.XmlElement;
@@ -9,6 +8,7 @@ import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 import static org.zwobble.mammoth.docx.StylesXml.readStylesXmlElement;
+import static org.zwobble.mammoth.util.MammothLists.list;
 import static org.zwobble.mammoth.util.MammothMaps.map;
 import static org.zwobble.mammoth.xml.XmlNodes.element;
 
@@ -24,8 +24,8 @@ public class StylesXmlTests {
 
     @Test
     public void paragraphStyleCanBeFoundById() {
-        XmlElement element = element("w:styles", ImmutableList.of(
-            element("w:style", map("w:type", "paragraph", "w:styleId", "Heading1"), ImmutableList.of(
+        XmlElement element = element("w:styles", list(
+            element("w:style", map("w:type", "paragraph", "w:styleId", "Heading1"), list(
                 nameElement("Heading 1")))));
 
         Styles styles = readStylesXmlElement(element);
@@ -35,8 +35,8 @@ public class StylesXmlTests {
 
     @Test
     public void characterStyleCanBeFoundById() {
-        XmlElement element = element("w:styles", ImmutableList.of(
-            element("w:style", map("w:type", "character", "w:styleId", "Heading1Char"), ImmutableList.of(
+        XmlElement element = element("w:styles", list(
+            element("w:style", map("w:type", "character", "w:styleId", "Heading1Char"), list(
                 nameElement("Heading 1 Char")))));
 
         Styles styles = readStylesXmlElement(element);
@@ -46,10 +46,10 @@ public class StylesXmlTests {
 
     @Test
     public void paragraphAndCharacterStylesAreDistinct() {
-        XmlElement element = element("w:styles", ImmutableList.of(
-            element("w:style", map("w:type", "paragraph", "w:styleId", "Heading1"), ImmutableList.of(
+        XmlElement element = element("w:styles", list(
+            element("w:style", map("w:type", "paragraph", "w:styleId", "Heading1"), list(
                 nameElement("Heading 1"))),
-            element("w:style", map("w:type", "character", "w:styleId", "Heading1Char"), ImmutableList.of(
+            element("w:style", map("w:type", "character", "w:styleId", "Heading1Char"), list(
                 nameElement("Heading 1 Char")))));
 
         Styles styles = readStylesXmlElement(element);
@@ -60,7 +60,7 @@ public class StylesXmlTests {
 
     @Test
     public void styleNameIsNoneIfNameElementDoesNotExist() {
-        XmlElement element = element("w:styles", ImmutableList.of(
+        XmlElement element = element("w:styles", list(
             element("w:style", map("w:type", "paragraph", "w:styleId", "Heading1")),
             element("w:style", map("w:type", "character", "w:styleId", "Heading1Char"))));
 

@@ -13,6 +13,7 @@ import java.util.List;
 
 import static com.google.common.collect.Iterables.concat;
 import static com.google.common.collect.Iterables.transform;
+import static org.zwobble.mammoth.util.MammothLists.list;
 
 public class OfficeXml {
     private static ImmutableBiMap<String, String> XML_NAMESPACES = ImmutableBiMap.<String, String>builder()
@@ -44,13 +45,13 @@ public class OfficeXml {
                         element.getName(),
                         element.getAttributes(),
                         ImmutableList.copyOf(concat(transform(element.children(), OfficeXml::collapseAlternateContent))));
-                    return ImmutableList.of(collapsedElement);
+                    return list(collapsedElement);
                 }
             }
 
             @Override
             public List<XmlNode> visit(XmlTextNode textNode) {
-                return ImmutableList.of(textNode);
+                return list(textNode);
             }
         });
     }

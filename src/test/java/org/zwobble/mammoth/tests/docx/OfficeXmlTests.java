@@ -1,7 +1,6 @@
 package org.zwobble.mammoth.tests.docx;
 
 import com.google.common.base.Charsets;
-import com.google.common.collect.ImmutableList;
 import org.junit.Test;
 import org.zwobble.mammoth.docx.OfficeXml;
 import org.zwobble.mammoth.xml.XmlElement;
@@ -10,6 +9,7 @@ import java.io.ByteArrayInputStream;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.zwobble.mammoth.tests.DeepReflectionMatcher.deepEquals;
+import static org.zwobble.mammoth.util.MammothLists.list;
 import static org.zwobble.mammoth.xml.XmlNodes.element;
 
 public class OfficeXmlTests {
@@ -29,6 +29,6 @@ public class OfficeXmlTests {
             "</numbering>";
 
         XmlElement result = OfficeXml.parseXml(new ByteArrayInputStream(xmlString.getBytes(Charsets.UTF_8)));
-        assertThat(result.children(), deepEquals(ImmutableList.of(element("fallback"))));
+        assertThat(result.children(), deepEquals(list(element("fallback"))));
     }
 }

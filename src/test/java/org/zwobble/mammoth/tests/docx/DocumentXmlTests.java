@@ -1,6 +1,5 @@
 package org.zwobble.mammoth.tests.docx;
 
-import com.google.common.collect.ImmutableList;
 import org.junit.Test;
 import org.zwobble.mammoth.documents.Document;
 import org.zwobble.mammoth.documents.Run;
@@ -15,6 +14,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.zwobble.mammoth.tests.DeepReflectionMatcher.deepEquals;
 import static org.zwobble.mammoth.tests.documents.DocumentElementMakers.CHILDREN;
 import static org.zwobble.mammoth.tests.documents.DocumentElementMakers.PARAGRAPH;
+import static org.zwobble.mammoth.util.MammothLists.list;
 import static org.zwobble.mammoth.xml.XmlNodes.element;
 
 public class DocumentXmlTests {
@@ -22,20 +22,20 @@ public class DocumentXmlTests {
 
     @Test
     public void canReadTextWithinDocument() {
-        XmlElement documentElement = element("w:document", ImmutableList.of(
-            element("w:body", ImmutableList.of(
-                element("w:p", ImmutableList.of(
-                    element("w:r", ImmutableList.of(
-                        element("w:t", ImmutableList.of(
+        XmlElement documentElement = element("w:document", list(
+            element("w:body", list(
+                element("w:p", list(
+                    element("w:r", list(
+                        element("w:t", list(
                             XmlNodes.text("Hello!")))))))))));
 
         Document document = new DocumentXmlReader(bodyReader).readElement(documentElement);
 
         assertThat(
             document,
-            deepEquals(new Document(ImmutableList.of(
-                make(a(PARAGRAPH, with(CHILDREN, ImmutableList.of(
-                    new Run(ImmutableList.of(
+            deepEquals(new Document(list(
+                make(a(PARAGRAPH, with(CHILDREN, list(
+                    new Run(list(
                         new Text("Hello!")))))))))));
     }
 }

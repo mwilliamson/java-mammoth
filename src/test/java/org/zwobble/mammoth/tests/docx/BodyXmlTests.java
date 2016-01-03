@@ -1,6 +1,5 @@
 package org.zwobble.mammoth.tests.docx;
 
-import com.google.common.collect.ImmutableList;
 import com.natpryce.makeiteasy.Maker;
 import org.hamcrest.Matcher;
 import org.junit.Test;
@@ -24,6 +23,7 @@ import static org.zwobble.mammoth.tests.documents.DocumentElementMakers.CHILDREN
 import static org.zwobble.mammoth.tests.documents.DocumentElementMakers.PARAGRAPH;
 import static org.zwobble.mammoth.tests.docx.BodyXmlReaderMakers.STYLES;
 import static org.zwobble.mammoth.tests.docx.BodyXmlReaderMakers.bodyReader;
+import static org.zwobble.mammoth.util.MammothLists.list;
 import static org.zwobble.mammoth.util.MammothMaps.map;
 import static org.zwobble.mammoth.xml.XmlNodes.element;
 
@@ -37,7 +37,7 @@ public class BodyXmlTests {
 
     @Test
     public void canReadTextWithinRun() {
-        XmlElement element = runXml(ImmutableList.of(textXml("Hello!")));
+        XmlElement element = runXml(list(textXml("Hello!")));
         assertThat(
             read(a(bodyReader), element),
             isRun(run(text("Hello!"))));
@@ -45,10 +45,10 @@ public class BodyXmlTests {
 
     @Test
     public void canReadTextWithinParagraph() {
-        XmlElement element = paragraphXml(ImmutableList.of(runXml(ImmutableList.of(textXml("Hello!")))));
+        XmlElement element = paragraphXml(list(runXml(list(textXml("Hello!")))));
         assertThat(
             read(a(bodyReader), element),
-            isParagraph(make(a(PARAGRAPH, with(CHILDREN, asList(run(text("Hello!"))))))));
+            isParagraph(make(a(PARAGRAPH, with(CHILDREN, list(run(text("Hello!"))))))));
     }
 
     @Test
@@ -61,8 +61,8 @@ public class BodyXmlTests {
 
     @Test
     public void paragraphHasStyleIdReadFromParagraphPropertiesIfPresent() {
-        XmlElement element = paragraphXml(ImmutableList.of(
-            element("w:pPr", ImmutableList.of(
+        XmlElement element = paragraphXml(list(
+            element("w:pPr", list(
                 element("w:pStyle", map("w:val", "Heading1"))))));
         assertThat(
             read(a(bodyReader), element),
@@ -71,8 +71,8 @@ public class BodyXmlTests {
 
     @Test
     public void whenParagraphHasStyleIdInStylesThenStyleNameIsReadFromStyles() {
-        XmlElement element = paragraphXml(ImmutableList.of(
-            element("w:pPr", ImmutableList.of(
+        XmlElement element = paragraphXml(list(
+            element("w:pPr", list(
                 element("w:pStyle", map("w:val", "Heading1"))))));
 
         Style style = new Style("Heading1", Optional.of("Heading 1"));
@@ -89,7 +89,7 @@ public class BodyXmlTests {
     }
 
     private XmlElement paragraphXml() {
-        return paragraphXml(ImmutableList.of());
+        return paragraphXml(list());
     }
 
     private XmlElement paragraphXml(List<XmlNode> children) {
@@ -101,7 +101,7 @@ public class BodyXmlTests {
     }
 
     private XmlElement textXml(String value) {
-        return element("w:t", ImmutableList.of(XmlNodes.text(value)));
+        return element("w:t", list(XmlNodes.text(value)));
     }
 
     private Matcher<DocumentElement> isParagraph(Paragraph expected) {
