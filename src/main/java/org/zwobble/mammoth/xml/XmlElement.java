@@ -8,17 +8,8 @@ import java.util.Map;
 import java.util.Optional;
 
 import static com.google.common.collect.Iterables.*;
-import static org.zwobble.mammoth.util.MammothMaps.map;
 
 public class XmlElement implements XmlNode, XmlElementLike {
-    public XmlElement(String name) {
-        this(name, map());
-    }
-    
-    public XmlElement(String name, Map<String, String> attributes) {
-        this(name, attributes, ImmutableList.of());
-    }
-    
     private final String name;
     private final Map<String, String> attributes;
     private final List<XmlNode> children;
