@@ -21,6 +21,8 @@ import static org.zwobble.mammoth.tests.DeepReflectionMatcher.deepEquals;
 import static org.zwobble.mammoth.xml.XmlNodes.element;
 
 public class DocumentXmlTests {
+    private static final BodyXmlReader bodyReader = make(a(BodyXmlReaderMakers.bodyReader));
+
     private static final Property<HasChildren, List<DocumentElement>> CHILDREN = newProperty();
 
     private static final Instantiator<Paragraph> paragraph = new Instantiator<Paragraph>() {
@@ -41,7 +43,7 @@ public class DocumentXmlTests {
                         element("w:t", ImmutableList.of(
                             XmlNodes.text("Hello!")))))))))));
 
-        Document document = new DocumentXmlReader(new BodyXmlReader(null)).readElement(documentElement);
+        Document document = new DocumentXmlReader(bodyReader).readElement(documentElement);
 
         assertThat(
             document,

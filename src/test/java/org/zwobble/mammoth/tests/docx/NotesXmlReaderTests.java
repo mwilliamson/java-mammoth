@@ -12,18 +12,22 @@ import org.zwobble.mammoth.xml.XmlElement;
 import java.util.List;
 import java.util.Optional;
 
+import static com.natpryce.makeiteasy.MakeItEasy.a;
+import static com.natpryce.makeiteasy.MakeItEasy.make;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.zwobble.mammoth.tests.DeepReflectionMatcher.deepEquals;
 import static org.zwobble.mammoth.xml.XmlNodes.element;
 
 public class NotesXmlReaderTests {
+    private static final BodyXmlReader bodyReader = make(a(BodyXmlReaderMakers.bodyReader));
+
     @Test
     public void idAndBodyOfFootnoteAreRead() {
         XmlElement element = element("w:footnotes", ImmutableList.of(
             element("w:footnote", ImmutableMap.of("w:id", "1"), ImmutableList.of(
                 element("w:p")))));
 
-        NotesXmlReader reader = new NotesXmlReader(new BodyXmlReader(null), "footnote");
+        NotesXmlReader reader = new NotesXmlReader(bodyReader, "footnote");
         List<Note> notes = reader.readElement(element);
 
         assertThat(
@@ -46,7 +50,7 @@ public class NotesXmlReaderTests {
             element("w:footnote", ImmutableMap.of("w:id", "1", "w:type", noteType), ImmutableList.of(
                 element("w:p")))));
 
-        NotesXmlReader reader = new NotesXmlReader(new BodyXmlReader(null), "footnote");
+        NotesXmlReader reader = new NotesXmlReader(bodyReader, "footnote");
         List<Note> notes = reader.readElement(element);
 
         assertThat(notes, deepEquals(ImmutableList.of()));

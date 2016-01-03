@@ -2,10 +2,7 @@ package org.zwobble.mammoth.tests.docx;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.natpryce.makeiteasy.Instantiator;
 import com.natpryce.makeiteasy.Maker;
-import com.natpryce.makeiteasy.Property;
-import com.natpryce.makeiteasy.PropertyLookup;
 import org.hamcrest.Matcher;
 import org.junit.Test;
 import org.zwobble.mammoth.documents.*;
@@ -21,23 +18,15 @@ import java.util.Optional;
 
 import static com.natpryce.makeiteasy.MakeItEasy.a;
 import static com.natpryce.makeiteasy.MakeItEasy.with;
-import static com.natpryce.makeiteasy.Property.newProperty;
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.zwobble.mammoth.tests.DeepReflectionMatcher.deepEquals;
+import static org.zwobble.mammoth.tests.docx.BodyXmlReaderMakers.STYLES;
+import static org.zwobble.mammoth.tests.docx.BodyXmlReaderMakers.bodyReader;
 import static org.zwobble.mammoth.xml.XmlNodes.element;
 
 public class BodyXmlTests {
-    private static final Property<BodyXmlReader, Styles> STYLES = newProperty();
-
-    private static final Instantiator<BodyXmlReader> bodyReader = new Instantiator<BodyXmlReader>() {
-        @Override
-        public BodyXmlReader instantiate(PropertyLookup<BodyXmlReader> propertyLookup) {
-            return new BodyXmlReader(
-                propertyLookup.valueOf(STYLES, new Styles(ImmutableMap.of(), ImmutableMap.of())));
-        }
-    };
 
     @Test
     public void textFromTextElementIsRead() {
