@@ -23,10 +23,10 @@ import static org.zwobble.mammoth.xml.XmlNodes.element;
 public class DocumentXmlTests {
     private static final Property<HasChildren, List<DocumentElement>> CHILDREN = newProperty();
 
-    private static final Instantiator<ParagraphElement> paragraph = new Instantiator<ParagraphElement>() {
+    private static final Instantiator<Paragraph> paragraph = new Instantiator<Paragraph>() {
         @Override
-        public ParagraphElement instantiate(PropertyLookup<ParagraphElement> propertyLookup) {
-            return new ParagraphElement(
+        public Paragraph instantiate(PropertyLookup<Paragraph> propertyLookup) {
+            return new Paragraph(
                 Optional.empty(),
                 propertyLookup.valueOf(CHILDREN, ImmutableList.of()));
         }
@@ -47,7 +47,7 @@ public class DocumentXmlTests {
             document,
             deepEquals(new Document(ImmutableList.of(
                 make(a(paragraph, with(CHILDREN, ImmutableList.of(
-                    new RunElement(ImmutableList.of(
-                        new TextElement("Hello!")))))))))));
+                    new Run(ImmutableList.of(
+                        new Text("Hello!")))))))))));
     }
 }

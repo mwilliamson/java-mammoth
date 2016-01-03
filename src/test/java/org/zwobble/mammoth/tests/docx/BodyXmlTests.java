@@ -114,31 +114,31 @@ public class BodyXmlTests {
         return element("w:t", ImmutableList.of(XmlNodes.text(value)));
     }
 
-    private Matcher<DocumentElement> isParagraph(ParagraphElement expected) {
+    private Matcher<DocumentElement> isParagraph(Paragraph expected) {
         return new DeepReflectionMatcher<>(expected);
     }
 
-    private Matcher<DocumentElement> isRun(RunElement expected) {
+    private Matcher<DocumentElement> isRun(Run expected) {
         return new DeepReflectionMatcher<>(expected);
     }
 
     private Matcher<DocumentElement> isTextElement(String value) {
-        return new DeepReflectionMatcher<>(new TextElement(value));
+        return new DeepReflectionMatcher<>(new Text(value));
     }
 
     private Matcher<? super DocumentElement> hasStyle(Optional<Style> expected) {
         return hasProperty("style", deepEquals(expected));
     }
 
-    private ParagraphElement paragraph(DocumentElement... children) {
-        return new ParagraphElement(Optional.empty(), asList(children));
+    private Paragraph paragraph(DocumentElement... children) {
+        return new Paragraph(Optional.empty(), asList(children));
     }
 
-    private RunElement run(DocumentElement... children) {
-        return new RunElement(asList(children));
+    private Run run(DocumentElement... children) {
+        return new Run(asList(children));
     }
 
-    private TextElement text(String value) {
-        return new TextElement(value);
+    private Text text(String value) {
+        return new Text(value);
     }
 }

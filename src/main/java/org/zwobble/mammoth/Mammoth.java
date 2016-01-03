@@ -58,7 +58,7 @@ public class Mammoth {
     private static String convertToHtml(DocumentElement element) {
         return element.accept(new DocumentElementVisitor<String>() {
             @Override
-            public String visit(ParagraphElement paragraph) {
+            public String visit(Paragraph paragraph) {
                 String content = convertChildrenToHtml(paragraph);
                 if (content.isEmpty()) {
                     return "";
@@ -68,12 +68,12 @@ public class Mammoth {
             }
 
             @Override
-            public String visit(RunElement run) {
+            public String visit(Run run) {
                 return convertChildrenToHtml(run);
             }
 
             @Override
-            public String visit(TextElement text) {
+            public String visit(Text text) {
                 return text.getValue();
             }
         });

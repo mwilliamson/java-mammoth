@@ -23,9 +23,9 @@ public class BodyXmlReader {
     public List<DocumentElement> readElement(XmlElement element) {
         switch (element.getName()) {
             case "w:t":
-                return ImmutableList.of(new TextElement(element.innerText()));
+                return ImmutableList.of(new Text(element.innerText()));
             case "w:r":
-                return ImmutableList.of(new RunElement(readElements(element.children())));
+                return ImmutableList.of(new Run(readElements(element.children())));
             case "w:p":
                 return ImmutableList.of(readParagraph(element));
 
@@ -46,8 +46,8 @@ public class BodyXmlReader {
                     this::readElement)));
     }
 
-    private ParagraphElement readParagraph(XmlElement element) {
-        return new ParagraphElement(readParagraphStyle(element), readElements(element.children()));
+    private Paragraph readParagraph(XmlElement element) {
+        return new Paragraph(readParagraphStyle(element), readElements(element.children()));
     }
 
     private Optional<Style> readParagraphStyle(XmlElement paragraph) {

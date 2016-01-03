@@ -1,9 +1,9 @@
 package org.zwobble.mammoth.documents;
 
-public class TextElement implements DocumentElement {
+public class Text implements DocumentElement {
     private final String value;
 
-    public TextElement(String value) {
+    public Text(String value) {
         this.value = value;
     }
 
