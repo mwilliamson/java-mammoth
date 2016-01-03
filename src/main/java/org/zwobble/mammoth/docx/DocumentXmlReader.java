@@ -3,15 +3,14 @@ package org.zwobble.mammoth.docx;
 import org.zwobble.mammoth.documents.Document;
 import org.zwobble.mammoth.xml.XmlElement;
 
-public class DocumentXml {
-    private final BodyXml bodyReader;
+public class DocumentXmlReader {
+    private final BodyXmlReader bodyReader;
 
-    public DocumentXml(BodyXml bodyReader) {
-
+    public DocumentXmlReader(BodyXmlReader bodyReader) {
         this.bodyReader = bodyReader;
     }
 
-    public Document readDocumentXmlElement(XmlElement element) {
+    public Document readElement(XmlElement element) {
         XmlElement body = element.findChild("w:body");
         return new Document(bodyReader.readElements(body.children()));
     }

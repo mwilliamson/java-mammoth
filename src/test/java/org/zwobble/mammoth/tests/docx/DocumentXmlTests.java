@@ -6,8 +6,8 @@ import com.natpryce.makeiteasy.Property;
 import com.natpryce.makeiteasy.PropertyLookup;
 import org.junit.Test;
 import org.zwobble.mammoth.documents.*;
-import org.zwobble.mammoth.docx.BodyXml;
-import org.zwobble.mammoth.docx.DocumentXml;
+import org.zwobble.mammoth.docx.BodyXmlReader;
+import org.zwobble.mammoth.docx.DocumentXmlReader;
 import org.zwobble.mammoth.xml.XmlElement;
 import org.zwobble.mammoth.xml.XmlNodes;
 
@@ -41,7 +41,7 @@ public class DocumentXmlTests {
                         element("w:t", ImmutableList.of(
                             XmlNodes.text("Hello!")))))))))));
 
-        Document document = new DocumentXml(new BodyXml(null)).readDocumentXmlElement(documentElement);
+        Document document = new DocumentXmlReader(new BodyXmlReader(null)).readElement(documentElement);
 
         assertThat(
             document,

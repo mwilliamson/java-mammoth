@@ -13,10 +13,10 @@ import static com.google.common.collect.Iterables.concat;
 import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.transform;
 
-public class BodyXml {
+public class BodyXmlReader {
     private final Styles styles;
 
-    public BodyXml(Styles styles) {
+    public BodyXmlReader(Styles styles) {
         this.styles = styles;
     }
 

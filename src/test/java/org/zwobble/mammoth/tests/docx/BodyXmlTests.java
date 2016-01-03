@@ -9,7 +9,7 @@ import com.natpryce.makeiteasy.PropertyLookup;
 import org.hamcrest.Matcher;
 import org.junit.Test;
 import org.zwobble.mammoth.documents.*;
-import org.zwobble.mammoth.docx.BodyXml;
+import org.zwobble.mammoth.docx.BodyXmlReader;
 import org.zwobble.mammoth.docx.Styles;
 import org.zwobble.mammoth.tests.DeepReflectionMatcher;
 import org.zwobble.mammoth.xml.XmlElement;
@@ -29,12 +29,12 @@ import static org.zwobble.mammoth.tests.DeepReflectionMatcher.deepEquals;
 import static org.zwobble.mammoth.xml.XmlNodes.element;
 
 public class BodyXmlTests {
-    private static final Property<BodyXml, Styles> STYLES = newProperty();
+    private static final Property<BodyXmlReader, Styles> STYLES = newProperty();
 
-    private static final Instantiator<BodyXml> bodyReader = new Instantiator<BodyXml>() {
+    private static final Instantiator<BodyXmlReader> bodyReader = new Instantiator<BodyXmlReader>() {
         @Override
-        public BodyXml instantiate(PropertyLookup<BodyXml> propertyLookup) {
-            return new BodyXml(
+        public BodyXmlReader instantiate(PropertyLookup<BodyXmlReader> propertyLookup) {
+            return new BodyXmlReader(
                 propertyLookup.valueOf(STYLES, new Styles(ImmutableMap.of(), ImmutableMap.of())));
         }
     };
@@ -94,7 +94,7 @@ public class BodyXmlTests {
             hasStyle(Optional.of(style)));
     }
 
-    private static DocumentElement read(Maker<BodyXml> reader, XmlElement element) {
+    private static DocumentElement read(Maker<BodyXmlReader> reader, XmlElement element) {
         return reader.make().readElement(element).get(0);
     }
 
