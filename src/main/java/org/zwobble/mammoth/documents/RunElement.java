@@ -12,4 +12,9 @@ public class RunElement implements DocumentElement, HasChildren {
     public List<DocumentElement> getChildren() {
         return children;
     }
+
+    @Override
+    public <T> T accept(DocumentElementVisitor<T> visitor) {
+        return visitor.visit(this);
+    }
 }

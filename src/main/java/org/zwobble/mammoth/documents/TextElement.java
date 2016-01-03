@@ -10,4 +10,9 @@ public class TextElement implements DocumentElement {
     public String getValue() {
         return value;
     }
+
+    @Override
+    public <T> T accept(DocumentElementVisitor<T> visitor) {
+        return visitor.visit(this);
+    }
 }

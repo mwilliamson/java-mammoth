@@ -33,7 +33,8 @@ public class BodyXmlReader {
                 return ImmutableList.of();
 
             default:
-                throw new UnsupportedOperationException();
+                // TODO: emit warning
+                return ImmutableList.of();
         }
     }
 
