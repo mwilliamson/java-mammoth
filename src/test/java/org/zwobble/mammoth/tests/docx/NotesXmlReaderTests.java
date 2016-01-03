@@ -4,18 +4,17 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import org.junit.Test;
 import org.zwobble.mammoth.documents.Note;
-import org.zwobble.mammoth.documents.Paragraph;
 import org.zwobble.mammoth.docx.BodyXmlReader;
 import org.zwobble.mammoth.docx.NotesXmlReader;
 import org.zwobble.mammoth.xml.XmlElement;
 
 import java.util.List;
-import java.util.Optional;
 
 import static com.natpryce.makeiteasy.MakeItEasy.a;
 import static com.natpryce.makeiteasy.MakeItEasy.make;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.zwobble.mammoth.tests.DeepReflectionMatcher.deepEquals;
+import static org.zwobble.mammoth.tests.documents.DocumentElementMakers.PARAGRAPH;
 import static org.zwobble.mammoth.xml.XmlNodes.element;
 
 public class NotesXmlReaderTests {
@@ -32,7 +31,7 @@ public class NotesXmlReaderTests {
 
         assertThat(
             notes,
-            deepEquals(ImmutableList.of(new Note("1", ImmutableList.of(new Paragraph(Optional.empty(), ImmutableList.of()))))));
+            deepEquals(ImmutableList.of(new Note("1", ImmutableList.of(make(a(PARAGRAPH)))))));
     }
 
     @Test

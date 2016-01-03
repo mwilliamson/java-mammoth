@@ -17,11 +17,14 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.natpryce.makeiteasy.MakeItEasy.a;
+import static com.natpryce.makeiteasy.MakeItEasy.make;
 import static com.natpryce.makeiteasy.MakeItEasy.with;
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.zwobble.mammoth.tests.DeepReflectionMatcher.deepEquals;
+import static org.zwobble.mammoth.tests.documents.DocumentElementMakers.CHILDREN;
+import static org.zwobble.mammoth.tests.documents.DocumentElementMakers.PARAGRAPH;
 import static org.zwobble.mammoth.tests.docx.BodyXmlReaderMakers.STYLES;
 import static org.zwobble.mammoth.tests.docx.BodyXmlReaderMakers.bodyReader;
 import static org.zwobble.mammoth.xml.XmlNodes.element;
@@ -47,7 +50,7 @@ public class BodyXmlTests {
         XmlElement element = paragraphXml(ImmutableList.of(runXml(ImmutableList.of(textXml("Hello!")))));
         assertThat(
             read(a(bodyReader), element),
-            isParagraph(paragraph(run(text("Hello!")))));
+            isParagraph(make(a(PARAGRAPH, with(CHILDREN, asList(run(text("Hello!"))))))));
     }
 
     @Test
@@ -117,10 +120,6 @@ public class BodyXmlTests {
 
     private Matcher<? super DocumentElement> hasStyle(Optional<Style> expected) {
         return hasProperty("style", deepEquals(expected));
-    }
-
-    private Paragraph paragraph(DocumentElement... children) {
-        return new Paragraph(Optional.empty(), asList(children));
     }
 
     private Run run(DocumentElement... children) {
