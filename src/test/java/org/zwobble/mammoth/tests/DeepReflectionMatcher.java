@@ -3,6 +3,7 @@ package org.zwobble.mammoth.tests;
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Sets;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
@@ -11,6 +12,7 @@ import org.hamcrest.TypeSafeDiagnosingMatcher;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static com.google.common.collect.Iterables.filter;
@@ -38,6 +40,10 @@ public class DeepReflectionMatcher<T> extends TypeSafeDiagnosingMatcher<T> {
             return matchesList(path, (List)expected, (List)actual, mismatchDescription);
         }
 
+        if (expected instanceof Map && actual instanceof Map) {
+            return matchesMap(path, (Map)expected, (Map)actual, mismatchDescription);
+        }
+
         if (!expected.getClass().equals(actual.getClass())) {
             mismatchDescription.appendText("was " + actual.getClass().getName());
             return false;
@@ -63,14 +69,14 @@ public class DeepReflectionMatcher<T> extends TypeSafeDiagnosingMatcher<T> {
         if (actual.size() > expected.size()) {
             appendPath(mismatchDescription, path);
             mismatchDescription.appendText("extra elements:" +
-                indentedList(transform(Iterables.skip(actual, expected.size()), DeepReflectionMatcher::generateDescriptionOfValue)));
+                indentedList(transform(Iterables.skip(actual, expected.size()), DeepReflectionMatcher::describeValue)));
             return false;
         }
 
         if (actual.size() < expected.size()) {
             appendPath(mismatchDescription, path);
             mismatchDescription.appendText("missing elements:" +
-                indentedList(transform(Iterables.skip(expected, actual.size()), DeepReflectionMatcher::generateDescriptionOfValue)));
+                indentedList(transform(Iterables.skip(expected, actual.size()), DeepReflectionMatcher::describeValue)));
             return false;
         }
 
@@ -83,10 +89,40 @@ public class DeepReflectionMatcher<T> extends TypeSafeDiagnosingMatcher<T> {
         return true;
     }
 
+    private static <T> boolean matchesMap(String path, Map<?, ?> expected, Map<?, ?> actual, Description mismatchDescription) {
+        if (!handleExtraElements(path, expected, actual, mismatchDescription, "extra elements:")) {
+            return false;
+        }
+        if (!handleExtraElements(path, actual, expected, mismatchDescription, "missing elements:")) {
+            return false;
+        }
+
+        for (Object key : expected.keySet()) {
+            if (!matchesSafely(path + "[" + key + "]", expected.get(key), actual.get(key), mismatchDescription)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static boolean handleExtraElements(String path, Map<?, ?> expected, Map<?, ?> actual, Description mismatchDescription, String prefix) {
+        Sets.SetView<?> extraElements = Sets.difference(actual.keySet(), expected.keySet());
+        if (!extraElements.isEmpty()) {
+            appendPath(mismatchDescription, path);
+            mismatchDescription.appendText(prefix +
+                indentedList(transform(
+                    extraElements,
+                    key -> describeValue(key) + "=" + describeValue(actual.get(key)))));
+            return false;
+        }
+        return true;
+    }
+
     private static boolean matchesOptional(String path, Optional expected, Optional actual, Description mismatchDescription) {
         if (actual.isPresent() && !expected.isPresent()) {
             appendPath(mismatchDescription, path);
-            mismatchDescription.appendText("had value " + generateDescriptionOfValue(actual.get()));
+            mismatchDescription.appendText("had value " + describeValue(actual.get()));
             return false;
         }
 
@@ -120,28 +156,35 @@ public class DeepReflectionMatcher<T> extends TypeSafeDiagnosingMatcher<T> {
 
     @Override
     public void describeTo(Description description) {
-        description.appendText(generateDescriptionOfValue(expected));
+        description.appendText(describeValue(expected));
     }
 
-    private static String generateDescriptionOfValue(Object value) {
+    private static String describeValue(Object value) {
         if (value instanceof String) {
             return value.toString();
         } else if (value instanceof Optional) {
             Optional<?> optional = (Optional)value;
             if (optional.isPresent()) {
-                return generateDescriptionOfValue(optional.get());
+                return describeValue(optional.get());
             } else {
                 return "(empty)";
             }
         } else if (value instanceof List) {
             List<?> list = (List)value;
-            return "[" + indentedList(transform(list, DeepReflectionMatcher::generateDescriptionOfValue)) + "]";
+            return "[" + indentedList(transform(list, DeepReflectionMatcher::describeValue)) + "]";
+        } else if (value instanceof Map) {
+            Map<?, ?> map = (Map)value;
+            String entries = indentedList(
+                transform(
+                    map.entrySet(),
+                    entry -> describeValue(entry.getKey()) + "=" + describeValue(entry.getValue())));
+            return "{" + entries + "}";
         } else {
             Class<?> clazz = value.getClass();
             List<Field> fields = fields(clazz);
             Iterable<String> fieldStrings = transform(
                 fields,
-                field -> field.getName() + "=" + generateDescriptionOfValue(readField(value, field)));
+                field -> field.getName() + "=" + describeValue(readField(value, field)));
             return String.format("%s(%s)", clazz.getSimpleName(), indentedList(fieldStrings));
         }
     }

@@ -1,10 +1,18 @@
 package org.zwobble.mammoth.docx;
 
 import com.google.common.collect.ImmutableBiMap;
+import com.google.common.collect.ImmutableList;
 import org.zwobble.mammoth.xml.XmlElement;
+import org.zwobble.mammoth.xml.XmlNode;
+import org.zwobble.mammoth.xml.XmlNodeVisitor;
+import org.zwobble.mammoth.xml.XmlTextNode;
 import org.zwobble.mammoth.xml.parsing.XmlParser;
 
 import java.io.InputStream;
+import java.util.List;
+
+import static com.google.common.collect.Iterables.concat;
+import static com.google.common.collect.Iterables.transform;
 
 public class OfficeXml {
     private static ImmutableBiMap<String, String> XML_NAMESPACES = ImmutableBiMap.<String, String>builder()
@@ -21,6 +29,29 @@ public class OfficeXml {
         .build();
 
     public static XmlElement parseXml(InputStream inputStream) {
-        return new XmlParser(XML_NAMESPACES).parseStream(inputStream);
+        XmlParser parser = new XmlParser(XML_NAMESPACES);
+        return (XmlElement)collapseAlternateContent(parser.parseStream(inputStream)).get(0);
+    }
+
+    private static List<XmlNode> collapseAlternateContent(XmlNode node) {
+        return node.accept(new XmlNodeVisitor<List<XmlNode>>() {
+            @Override
+            public List<XmlNode> visit(XmlElement element) {
+                if (element.getName().equals("mc:AlternateContent")) {
+                    return element.findChild("mc:Fallback").getChildren();
+                } else {
+                    XmlElement collapsedElement = new XmlElement(
+                        element.getName(),
+                        element.getAttributes(),
+                        ImmutableList.copyOf(concat(transform(element.children(), OfficeXml::collapseAlternateContent))));
+                    return ImmutableList.of(collapsedElement);
+                }
+            }
+
+            @Override
+            public List<XmlNode> visit(XmlTextNode textNode) {
+                return ImmutableList.of(textNode);
+            }
+        });
     }
 }
