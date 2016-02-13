@@ -304,6 +304,14 @@ public class BodyXmlTests {
             deepEquals(Hyperlink.href("http://example.com", list(make(a(RUN))))));
     }
 
+    @Test
+    public void hyperlinkIsReadIfItHasAnAnchorAttribute() {
+        XmlElement element = element("w:hyperlink", map("w:anchor", "start"), list(runXml(list())));
+        assertThat(
+            readSuccess(a(bodyReader), element),
+            deepEquals(Hyperlink.anchor("start", list(make(a(RUN))))));
+    }
+
     private static DocumentElement readSuccess(Maker<BodyXmlReader> reader, XmlElement element) {
         Result<DocumentElement> result = read(reader, element);
         assertThat(result.getWarnings(), deepEquals(list()));

@@ -158,10 +158,18 @@ public class BodyXmlReader {
     }
 
     private ReadResult readHyperlink(XmlElement element) {
-        String relationshipId = element.getAttribute("r:id");
-        return readElements(element.children())
-            .map(children -> Hyperlink.href(
-                relationships.findRelationshipById(relationshipId).getTarget(), children));
+        Optional<String> relationshipId = element.getAttributeOrNone("r:id");
+        Optional<String> anchor = element.getAttributeOrNone("w:anchor");
+        ReadResult childrenResult = readElements(element.children());
+        if (relationshipId.isPresent()) {
+            return childrenResult.map(children -> Hyperlink.href(
+                relationships.findRelationshipById(relationshipId.get()).getTarget(), children));
+        } else if (anchor.isPresent()) {
+            return childrenResult.map(children -> Hyperlink.anchor(
+                anchor.get(), children));
+        } else {
+            return ReadResult.EMPTY_SUCCESS;
+        }
     }
 
     private Optional<String> readVal(XmlElementLike element, String name) {
