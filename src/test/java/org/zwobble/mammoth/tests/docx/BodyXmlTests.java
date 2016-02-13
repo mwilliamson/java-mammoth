@@ -3,6 +3,7 @@ package org.zwobble.mammoth.tests.docx;
 import com.natpryce.makeiteasy.Maker;
 import org.hamcrest.Matcher;
 import org.junit.Test;
+import org.zwobble.mammoth.Result;
 import org.zwobble.mammoth.documents.*;
 import org.zwobble.mammoth.docx.BodyXmlReader;
 import org.zwobble.mammoth.docx.Numbering;
@@ -22,9 +23,7 @@ import static org.hamcrest.Matchers.hasProperty;
 import static org.zwobble.mammoth.tests.DeepReflectionMatcher.deepEquals;
 import static org.zwobble.mammoth.tests.documents.DocumentElementMakers.CHILDREN;
 import static org.zwobble.mammoth.tests.documents.DocumentElementMakers.PARAGRAPH;
-import static org.zwobble.mammoth.tests.docx.BodyXmlReaderMakers.NUMBERING;
-import static org.zwobble.mammoth.tests.docx.BodyXmlReaderMakers.STYLES;
-import static org.zwobble.mammoth.tests.docx.BodyXmlReaderMakers.bodyReader;
+import static org.zwobble.mammoth.tests.docx.BodyXmlReaderMakers.*;
 import static org.zwobble.mammoth.util.MammothLists.list;
 import static org.zwobble.mammoth.util.MammothMaps.map;
 import static org.zwobble.mammoth.xml.XmlNodes.element;
@@ -34,14 +33,14 @@ public class BodyXmlTests {
     @Test
     public void textFromTextElementIsRead() {
         XmlElement element = textXml("Hello!");
-        assertThat(read(a(bodyReader), element), isTextElement("Hello!"));
+        assertThat(readSuccess(a(bodyReader), element), isTextElement("Hello!"));
     }
 
     @Test
     public void canReadTextWithinRun() {
         XmlElement element = runXml(list(textXml("Hello!")));
         assertThat(
-            read(a(bodyReader), element),
+            readSuccess(a(bodyReader), element),
             isRun(run(text("Hello!"))));
     }
 
@@ -49,7 +48,7 @@ public class BodyXmlTests {
     public void canReadTextWithinParagraph() {
         XmlElement element = paragraphXml(list(runXml(list(textXml("Hello!")))));
         assertThat(
-            read(a(bodyReader), element),
+            readSuccess(a(bodyReader), element),
             isParagraph(make(a(PARAGRAPH, with(CHILDREN, list(run(text("Hello!"))))))));
     }
 
@@ -57,7 +56,7 @@ public class BodyXmlTests {
     public void paragraphHasNoStyleIfItHasNoProperties() {
         XmlElement element = paragraphXml();
         assertThat(
-            read(a(bodyReader), element),
+            readSuccess(a(bodyReader), element),
             hasStyle(Optional.empty()));
     }
 
@@ -72,7 +71,7 @@ public class BodyXmlTests {
             map("Heading1", style),
             map());
         assertThat(
-            read(a(bodyReader, with(STYLES, styles)), element),
+            readSuccess(a(bodyReader, with(STYLES, styles)), element),
             hasStyle(Optional.of(style)));
     }
 
@@ -83,7 +82,7 @@ public class BodyXmlTests {
             element("w:pPr", list(
                 element("w:pStyle", map("w:val", "Heading1"))))));
         assertThat(
-            read(a(bodyReader), element),
+            readSuccess(a(bodyReader), element),
             hasStyle(Optional.of(new Style("Heading1", Optional.empty()))));
     }
 
@@ -91,7 +90,7 @@ public class BodyXmlTests {
     public void paragraphHasNoNumberingIfItHasNoNumberingProperties() {
         XmlElement element = paragraphXml();
         assertThat(
-            read(a(bodyReader), element),
+            readSuccess(a(bodyReader), element),
             hasNumbering(Optional.empty()));
     }
 
@@ -106,7 +105,7 @@ public class BodyXmlTests {
         Numbering numbering = new Numbering(map("42", map("1", NumberingLevel.ordered("1"))));
 
         assertThat(
-            read(a(bodyReader, with(NUMBERING, numbering)), element),
+            readSuccess(a(bodyReader, with(NUMBERING, numbering)), element),
             hasNumbering(NumberingLevel.ordered("1")));
     }
 
@@ -121,7 +120,7 @@ public class BodyXmlTests {
         Numbering numbering = new Numbering(map("42", map("1", NumberingLevel.ordered("1"))));
 
         assertThat(
-            read(a(bodyReader, with(NUMBERING, numbering)), element),
+            readSuccess(a(bodyReader, with(NUMBERING, numbering)), element),
             hasNumbering(Optional.empty()));
     }
 
@@ -136,12 +135,18 @@ public class BodyXmlTests {
         Numbering numbering = new Numbering(map("42", map("1", NumberingLevel.ordered("1"))));
 
         assertThat(
-            read(a(bodyReader, with(NUMBERING, numbering)), element),
+            readSuccess(a(bodyReader, with(NUMBERING, numbering)), element),
             hasNumbering(Optional.empty()));
     }
 
-    private static DocumentElement read(Maker<BodyXmlReader> reader, XmlElement element) {
-        return reader.make().readElement(element).get(0);
+    private static DocumentElement readSuccess(Maker<BodyXmlReader> reader, XmlElement element) {
+        // TODO: assert no warnings when they get added
+        return read(reader, element).getValue();
+    }
+
+    private static Result<DocumentElement> read(Maker<BodyXmlReader> reader, XmlElement element) {
+        return reader.make().readElement(element).toResult()
+            .map(elements -> elements.get(0));
     }
 
     private XmlElement paragraphXml() {

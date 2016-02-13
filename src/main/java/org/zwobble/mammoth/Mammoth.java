@@ -13,15 +13,16 @@ import java.util.zip.ZipFile;
 import static com.google.common.collect.Iterables.transform;
 
 public class Mammoth {
-    public static String convertToHtml(File file) {
+    public static Result<String> convertToHtml(File file) {
         try (ZipFile zipFile = new ZipFile(file)) {
             ZipEntry entry = zipFile.getEntry("word/document.xml");
             XmlElement documentXml = OfficeXml.parseXml(zipFile.getInputStream(entry));
 
             Styles styles = Styles.EMPTY;
             Numbering numbering = Numbering.EMPTY;
-            Document document = new DocumentXmlReader(new BodyXmlReader(styles, numbering)).readElement(documentXml);
-            return convertToHtml(document);
+            DocumentXmlReader reader = new DocumentXmlReader(new BodyXmlReader(styles, numbering));
+            return reader.readElement(documentXml)
+                .map(Mammoth::convertToHtml);
         } catch (IOException e) {
             throw new UnsupportedOperationException("Should return a result of failure");   
         }

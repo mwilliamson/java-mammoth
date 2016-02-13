@@ -1,6 +1,6 @@
 package org.zwobble.mammoth.docx;
 
-import com.google.common.collect.ImmutableList;
+import org.zwobble.mammoth.Result;
 import org.zwobble.mammoth.documents.Note;
 import org.zwobble.mammoth.xml.XmlElement;
 
@@ -18,9 +18,9 @@ public class NotesXmlReader {
         this.noteType = noteType;
     }
 
-    public List<Note> readElement(XmlElement element) {
+    public Result<List<Note>> readElement(XmlElement element) {
         Iterable<XmlElement> elements = filter(element.findChildren("w:" + noteType), this::isNoteElement);
-        return ImmutableList.copyOf(transform(elements, this::readNoteElement));
+        return Result.concat(transform(elements, this::readNoteElement));
     }
 
     private boolean isNoteElement(XmlElement element) {
@@ -33,9 +33,11 @@ public class NotesXmlReader {
         return type.equals("continuationSeparator") || type.equals("separator");
     }
 
-    private Note readNoteElement(XmlElement element) {
-        return new Note(
-            element.getAttribute("w:id"),
-            bodyReader.readElements(element.children()));
+    private Result<Note> readNoteElement(XmlElement element) {
+        return bodyReader.readElements(element.children())
+            .toResult()
+            .map(children -> new Note(
+                element.getAttribute("w:id"),
+                children));
     }
 }

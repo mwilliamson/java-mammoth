@@ -1,6 +1,7 @@
 package org.zwobble.mammoth.tests.docx;
 
 import org.junit.Test;
+import org.zwobble.mammoth.Result;
 import org.zwobble.mammoth.documents.Document;
 import org.zwobble.mammoth.documents.Run;
 import org.zwobble.mammoth.documents.Text;
@@ -11,6 +12,7 @@ import org.zwobble.mammoth.xml.XmlNodes;
 
 import static com.natpryce.makeiteasy.MakeItEasy.*;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.zwobble.mammoth.Result.success;
 import static org.zwobble.mammoth.tests.DeepReflectionMatcher.deepEquals;
 import static org.zwobble.mammoth.tests.documents.DocumentElementMakers.CHILDREN;
 import static org.zwobble.mammoth.tests.documents.DocumentElementMakers.PARAGRAPH;
@@ -29,13 +31,13 @@ public class DocumentXmlTests {
                         element("w:t", list(
                             XmlNodes.text("Hello!")))))))))));
 
-        Document document = new DocumentXmlReader(bodyReader).readElement(documentElement);
+        Result<Document> document = new DocumentXmlReader(bodyReader).readElement(documentElement);
 
         assertThat(
             document,
-            deepEquals(new Document(list(
+            deepEquals(success(new Document(list(
                 make(a(PARAGRAPH, with(CHILDREN, list(
                     new Run(list(
-                        new Text("Hello!")))))))))));
+                        new Text("Hello!"))))))))))));
     }
 }

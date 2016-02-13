@@ -1,27 +1,31 @@
 package org.zwobble.mammoth.tests;
 
-import java.io.File;
-
 import org.junit.Test;
 import org.zwobble.mammoth.Mammoth;
+import org.zwobble.mammoth.Result;
 
-import static org.hamcrest.core.Is.is;
+import java.io.File;
+
 import static org.junit.Assert.assertThat;
+import static org.zwobble.mammoth.Result.success;
+import static org.zwobble.mammoth.tests.DeepReflectionMatcher.deepEquals;
 
 public class MammothTests {
     @Test
     public void emptyParagraphsAreIgnoredByDefault() {
-        assertThat(convertToHtml("empty.docx"), is(""));
+        assertThat(
+            convertToHtml("empty.docx"),
+            deepEquals(success("")));
     }
     
     @Test
     public void docxContainingOneParagraphIsConvertedToSingleParagraphElement() {
         assertThat(
             convertToHtml("single-paragraph.docx"),
-            is("<p>Walking on imported air</p>"));
+            deepEquals(success("<p>Walking on imported air</p>")));
     }
 
-    private String convertToHtml(String name) {
+    private Result<String> convertToHtml(String name) {
         File file = TestData.file(name);
         return Mammoth.convertToHtml(file);
     }

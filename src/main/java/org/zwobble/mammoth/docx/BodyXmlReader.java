@@ -1,17 +1,17 @@
 package org.zwobble.mammoth.docx;
 
-import com.google.common.collect.ImmutableList;
 import org.zwobble.mammoth.documents.*;
 import org.zwobble.mammoth.util.MammothOptionals;
 import org.zwobble.mammoth.xml.XmlElement;
 import org.zwobble.mammoth.xml.XmlElementLike;
 import org.zwobble.mammoth.xml.XmlNode;
 
-import java.util.List;
 import java.util.Optional;
 
-import static com.google.common.collect.Iterables.*;
-import static org.zwobble.mammoth.util.MammothLists.list;
+import static com.google.common.collect.Iterables.filter;
+import static com.google.common.collect.Iterables.transform;
+import static org.zwobble.mammoth.docx.ReadResult.EMPTY_SUCCESS;
+import static org.zwobble.mammoth.docx.ReadResult.success;
 
 public class BodyXmlReader {
     private final Styles styles;
@@ -22,38 +22,37 @@ public class BodyXmlReader {
         this.numbering = numbering;
     }
 
-    public List<DocumentElement> readElement(XmlElement element) {
+    public ReadResult readElement(XmlElement element) {
         switch (element.getName()) {
             case "w:t":
-                return list(new Text(element.innerText()));
+                return success(new Text(element.innerText()));
             case "w:r":
-                return list(new Run(readElements(element.children())));
+                return readElements(element.children()).map(Run::new);
             case "w:p":
-                return list(readParagraph(element));
+                return readParagraph(element);
 
             case "w:pPr":
-                return list();
+                return EMPTY_SUCCESS;
 
             default:
                 // TODO: emit warning
-                return list();
+                return EMPTY_SUCCESS;
         }
     }
 
-    public List<DocumentElement> readElements(Iterable<XmlNode> nodes) {
-        return ImmutableList.copyOf(
-            concat(
-                transform(
-                    filter(nodes, XmlElement.class),
-                    this::readElement)));
+    public ReadResult readElements(Iterable<XmlNode> nodes) {
+        return ReadResult.concat(
+            transform(
+                filter(nodes, XmlElement.class),
+                this::readElement));
     }
 
-    private Paragraph readParagraph(XmlElement element) {
+    private ReadResult readParagraph(XmlElement element) {
         XmlElementLike properties = element.findChildOrEmpty("w:pPr");
-        return new Paragraph(
-            readParagraphStyle(properties),
-            readNumbering(properties),
-            readElements(element.children()));
+        Optional<Style> paragraphStyle = readParagraphStyle(properties);
+        Optional<NumberingLevel> numbering = readNumbering(properties);
+        return readElements(element.children())
+            .map(children -> new Paragraph(paragraphStyle, numbering, children));
     }
 
     private Optional<Style> readParagraphStyle(XmlElementLike properties) {
