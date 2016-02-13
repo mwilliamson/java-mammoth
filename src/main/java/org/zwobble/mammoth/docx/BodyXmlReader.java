@@ -27,25 +27,27 @@ public class BodyXmlReader {
     private static final Set<String> IMAGE_TYPES_SUPPORTED_BY_BROWSERS = ImmutableSet.of(
         "image/png", "image/gif", "image/jpeg", "image/svg+xml", "image/tiff");
 
-
     private final Styles styles;
     private final Numbering numbering;
     private final Relationships relationships;
     private final ContentTypes contentTypes;
     private final DocxFile file;
+    private final FileReader fileReader;
 
     public BodyXmlReader(
         Styles styles,
         Numbering numbering,
         Relationships relationships,
         ContentTypes contentTypes,
-        DocxFile file)
+        DocxFile file,
+        FileReader fileReader)
     {
         this.styles = styles;
         this.numbering = numbering;
         this.relationships = relationships;
         this.contentTypes = contentTypes;
         this.file = file;
+        this.fileReader = fileReader;
     }
 
     public ReadResult readElement(XmlElement element) {
@@ -276,9 +278,18 @@ public class BodyXmlReader {
     }
 
     private ReadResult readBlip(XmlElement blip, Optional<String> altText) {
-        String relationshipId = blip.getAttribute("r:embed");
-        String imagePath = relationshipIdToDocxPath(relationshipId);
-        return readImage(imagePath, altText, () -> file.getInputStream(imagePath));
+        Optional<String> embedRelationshipId = blip.getAttributeOrNone("r:embed");
+        Optional<String> linkRelationshipId = blip.getAttributeOrNone("r:link");
+        if (embedRelationshipId.isPresent()) {
+            String imagePath = relationshipIdToDocxPath(embedRelationshipId.get());
+            return readImage(imagePath, altText, () -> file.getInputStream(imagePath));
+        } else if (linkRelationshipId.isPresent()) {
+            String imagePath = relationships.findRelationshipById(linkRelationshipId.get()).getTarget();
+            return readImage(imagePath, altText, () -> fileReader.getInputStream(imagePath));
+        } else {
+            // TODO: emit warning
+            return ReadResult.EMPTY_SUCCESS;
+        }
     }
 
     private ReadResult readImage(String imagePath, Optional<String> altText, InputStreamSupplier open) {

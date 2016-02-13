@@ -419,7 +419,7 @@ public class BodyXmlTests {
             hasProperty("contentType", deepEquals(Optional.of("image/png")))));
         assertThat(
             CharStreams.toString(new InputStreamReader(image.open())),
-            equalTo("Not an image at all!"));
+            equalTo(imageBytes));
     }
 
     private class EmbeddedImage {
@@ -446,9 +446,28 @@ public class BodyXmlTests {
                 with(DOCX_FILE, file),
                 with(CONTENT_TYPES, contentTypes)),
             element);
+
         assertThat(
             result,
             hasProperty("warnings", deepEquals(list(warning("Image of type image/x-emf is unlikely to display in web browsers")))));
+    }
+
+    @Test
+    public void canReadLinkedPictures() throws IOException {
+        XmlElement element = inlineImageXml(linkedBlipXml("rId5"), "");
+        Relationships relationships = new Relationships(map(
+            "rId5", new Relationship("file:///media/hat.png")));
+        String imageBytes = "Not an image at all!";
+
+        Image image = (Image) readSuccess(
+            a(bodyReader,
+                with(RELATIONSHIPS, relationships),
+                with(FILE_READER, new InMemoryFileReader(map("file:///media/hat.png", imageBytes)))),
+            element);
+
+        assertThat(
+            CharStreams.toString(new InputStreamReader(image.open())),
+            equalTo(imageBytes));
     }
 
     private XmlElement inlineImageXml(XmlElement blip, String description) {
@@ -472,6 +491,10 @@ public class BodyXmlTests {
 
     private XmlElement embeddedBlipXml(String relationshipId) {
         return blipXml(map("r:embed", relationshipId));
+    }
+
+    private XmlElement linkedBlipXml(String relationshipId) {
+        return blipXml(map("r:link", relationshipId));
     }
 
     private XmlElement blipXml(Map<String, String> attributes) {

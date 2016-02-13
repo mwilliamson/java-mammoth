@@ -8,6 +8,7 @@ import org.zwobble.mammoth.xml.XmlElement;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.zip.ZipFile;
 
 import static com.google.common.collect.Iterables.transform;
@@ -21,12 +22,19 @@ public class Mammoth {
             Numbering numbering = Numbering.EMPTY;
             Relationships relationships = Relationships.EMPTY;
             ContentTypes contentTypes = ContentTypes.DEFAULT;
+            FileReader fileReader = new FileReader() {
+                @Override
+                public InputStream getInputStream(String uri) throws IOException {
+                    throw new UnsupportedOperationException();
+                }
+            };
             DocumentXmlReader reader = new DocumentXmlReader(new BodyXmlReader(
                 styles,
                 numbering,
                 relationships,
                 contentTypes,
-                zipFile));
+                zipFile,
+                fileReader));
             return reader.readElement(documentXml)
                 .map(Mammoth::convertToHtml);
         } catch (IOException e) {
