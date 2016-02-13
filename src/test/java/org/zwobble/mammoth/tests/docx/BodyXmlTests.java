@@ -399,9 +399,9 @@ public class BodyXmlTests {
     }
 
     private static Result<DocumentElement> read(Maker<BodyXmlReader> reader, XmlElement element) {
-        // TODO: check exactly 1 element
-        return readAll(reader, element)
-            .map(elements -> elements.get(0));
+        Result<List<DocumentElement>> result = readAll(reader, element);
+        assertThat(result.getValue(), Matchers.hasSize(1));
+        return result.map(elements -> elements.get(0));
     }
 
     private static Result<List<DocumentElement>> readAll(Maker<BodyXmlReader> reader, XmlElement element) {
