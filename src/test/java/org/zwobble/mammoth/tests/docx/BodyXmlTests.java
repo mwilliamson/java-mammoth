@@ -354,6 +354,44 @@ public class BodyXmlTests {
             deepEquals(make(a(PARAGRAPH))));
     }
 
+    @Test
+    public void ignoredElementsAreIgnoredWithoutWarning() {
+        assertIsIgnored("office-word:wrap");
+        assertIsIgnored("v:shadow");
+        assertIsIgnored("v:shapetype");
+        assertIsIgnored("w:bookmarkEnd");
+        assertIsIgnored("w:sectPr");
+        assertIsIgnored("w:proofErr");
+        assertIsIgnored("w:lastRenderedPageBreak");
+        assertIsIgnored("w:commentRangeStart");
+        assertIsIgnored("w:commentRangeEnd");
+        assertIsIgnored("w:commentReference");
+        assertIsIgnored("w:del");
+        assertIsIgnored("w:footnoteRef");
+        assertIsIgnored("w:endnoteRef");
+        assertIsIgnored("w:pPr");
+        assertIsIgnored("w:rPr");
+        assertIsIgnored("w:tblPr");
+        assertIsIgnored("w:tblGrid");
+        assertIsIgnored("w:tcPr");
+    }
+
+    private void assertIsIgnored(String name) {
+        XmlElement element = element(name, list(paragraphXml()));
+
+        assertThat(
+            readAll(a(bodyReader), element),
+            isResult(equalTo(list()), list()));
+    }
+
+    @Test
+    public void unrecognisedElementsAreIgnoredWithWarning() {
+        XmlElement element = element("w:huh");
+        assertThat(
+            readAll(a(bodyReader), element),
+            isResult(equalTo(list()), list(warning("An unrecognised element was ignored: w:huh"))));
+    }
+
     private static DocumentElement readSuccess(Maker<BodyXmlReader> reader, XmlElement element) {
         Result<DocumentElement> result = read(reader, element);
         assertThat(result.getWarnings(), deepEquals(list()));

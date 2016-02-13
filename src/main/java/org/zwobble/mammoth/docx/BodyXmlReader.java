@@ -2,6 +2,7 @@ package org.zwobble.mammoth.docx;
 
 import org.zwobble.mammoth.documents.*;
 import org.zwobble.mammoth.results.Result;
+import org.zwobble.mammoth.results.Warning;
 import org.zwobble.mammoth.util.MammothOptionals;
 import org.zwobble.mammoth.xml.XmlElement;
 import org.zwobble.mammoth.xml.XmlElementLike;
@@ -63,12 +64,29 @@ public class BodyXmlReader {
             case "w:txbxContent":
                 return readElements(element.children());
 
+            case "office-word:wrap":
+            case "v:shadow":
+            case "v:shapetype":
+            case "w:bookmarkEnd":
+            case "w:sectPr":
+            case "w:proofErr":
+            case "w:lastRenderedPageBreak":
+            case "w:commentRangeStart":
+            case "w:commentRangeEnd":
+            case "w:commentReference":
+            case "w:del":
+            case "w:footnoteRef":
+            case "w:endnoteRef":
             case "w:pPr":
+            case "w:rPr":
+            case "w:tblPr":
+            case "w:tblGrid":
+            case "w:tcPr":
                 return EMPTY_SUCCESS;
 
             default:
-                // TODO: emit warning
-                return EMPTY_SUCCESS;
+                Warning warning = warning("An unrecognised element was ignored: " + element.getName());
+                return new ReadResult(list(), list(warning));
         }
     }
 
