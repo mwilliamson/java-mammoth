@@ -26,6 +26,7 @@ public class DocumentElementMakers {
         propertyLookup -> new Run(
             false,
             false,
+            false,
             Optional.empty(),
             propertyLookup.valueOf(CHILDREN, list()));
 }

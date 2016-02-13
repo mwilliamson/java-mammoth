@@ -6,17 +6,20 @@ import java.util.Optional;
 public class Run implements DocumentElement, HasChildren {
     private final boolean isBold;
     private final boolean isItalic;
+    private final boolean isUnderline;
     private final Optional<Style> style;
     private final List<DocumentElement> children;
 
     public Run(
         boolean isBold,
         boolean isItalic,
+        boolean isUnderline,
         Optional<Style> style,
         List<DocumentElement> children)
     {
         this.isBold = isBold;
         this.isItalic = isItalic;
+        this.isUnderline = isUnderline;
         this.style = style;
         this.children = children;
     }
@@ -27,6 +30,10 @@ public class Run implements DocumentElement, HasChildren {
 
     public boolean isItalic() {
         return isItalic;
+    }
+
+    public boolean isUnderline() {
+        return isUnderline;
     }
 
     public Optional<Style> getStyle() {

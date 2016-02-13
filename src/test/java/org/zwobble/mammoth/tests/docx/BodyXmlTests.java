@@ -215,6 +215,24 @@ public class BodyXmlTests {
             hasProperty("italic", equalTo(true)));
     }
 
+    @Test
+    public void runIsNotUnderlinedIfUnderlineElementIsNotPresent() {
+        XmlElement element = runXmlWithProperties();
+
+        assertThat(
+            readSuccess(a(bodyReader), element),
+            hasProperty("underline", equalTo(false)));
+    }
+
+    @Test
+    public void runIsUnderlinedIfUnderlineElementIsPresent() {
+        XmlElement element = runXmlWithProperties(element("w:u"));
+
+        assertThat(
+            readSuccess(a(bodyReader), element),
+            hasProperty("underline", equalTo(true)));
+    }
+
     private static DocumentElement readSuccess(Maker<BodyXmlReader> reader, XmlElement element) {
         Result<DocumentElement> result = read(reader, element);
         assertThat(result.getWarnings(), deepEquals(list()));

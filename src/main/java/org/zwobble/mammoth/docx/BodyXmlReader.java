@@ -52,6 +52,7 @@ public class BodyXmlReader {
             (style, children) -> new Run(
                 isBold(properties),
                 isItalic(properties),
+                isUnderline(properties),
                 style,
                 children));
     }
@@ -62,6 +63,10 @@ public class BodyXmlReader {
 
     private boolean isItalic(XmlElementLike properties) {
         return properties.hasChild("w:i");
+    }
+
+    private boolean isUnderline(XmlElementLike properties) {
+        return properties.hasChild("w:u");
     }
 
     private Result<Optional<Style>> readRunStyle(XmlElementLike properties) {
