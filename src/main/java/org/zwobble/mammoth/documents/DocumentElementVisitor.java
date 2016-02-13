@@ -6,4 +6,8 @@ public interface DocumentElementVisitor<T> {
     T visit(Text text);
 
     T visit(Tab tab);
+
+    T visit(Table table);
+    T visit(TableRow tableRow);
+    T visit(TableCell tableCell);
 }

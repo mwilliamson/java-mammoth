@@ -262,6 +262,21 @@ public class BodyXmlTests {
             equalTo(Tab.TAB));
     }
 
+    @Test
+    public void canReadTableElements() {
+        XmlElement element = element("w:tbl", list(
+            element("w:tr", list(
+                element("w:tc", list(
+                    element("w:p")))))));
+
+        assertThat(
+            readSuccess(a(bodyReader), element),
+            deepEquals(new Table(list(
+                new TableRow(list(
+                    new TableCell(list(
+                        make(a(PARAGRAPH))))))))));
+    }
+
     private static DocumentElement readSuccess(Maker<BodyXmlReader> reader, XmlElement element) {
         Result<DocumentElement> result = read(reader, element);
         assertThat(result.getWarnings(), deepEquals(list()));

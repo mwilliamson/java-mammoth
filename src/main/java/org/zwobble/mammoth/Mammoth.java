@@ -65,6 +65,21 @@ public class Mammoth {
             public String visit(Tab tab) {
                 throw new UnsupportedOperationException();
             }
+
+            @Override
+            public String visit(Table table) {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public String visit(TableRow tableRow) {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public String visit(TableCell tableCell) {
+                throw new UnsupportedOperationException();
+            }
         });
     }
 }

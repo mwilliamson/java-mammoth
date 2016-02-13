@@ -38,6 +38,13 @@ public class BodyXmlReader {
             case "w:tab":
                 return success(Tab.TAB);
 
+            case "w:tbl":
+                return readElements(element.children()).map(Table::new);
+            case "w:tr":
+                return readElements(element.children()).map(TableRow::new);
+            case "w:tc":
+                return readElements(element.children()).map(TableCell::new);
+
             case "w:pPr":
                 return EMPTY_SUCCESS;
 
