@@ -30,7 +30,7 @@ public class BodyXmlReader {
             case "w:t":
                 return success(new Text(element.innerText()));
             case "w:r":
-                return readElements(element.children()).map(Run::new);
+                return readRun(element);
             case "w:p":
                 return readParagraph(element);
 
@@ -41,6 +41,11 @@ public class BodyXmlReader {
                 // TODO: emit warning
                 return EMPTY_SUCCESS;
         }
+    }
+
+    private ReadResult readRun(XmlElement element) {
+        return readElements(element.children())
+            .map(children -> new Run(Optional.empty(), children));
     }
 
     public ReadResult readElements(Iterable<XmlNode> nodes) {

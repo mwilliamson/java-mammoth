@@ -143,6 +143,14 @@ public class BodyXmlTests {
             hasNumbering(Optional.empty()));
     }
 
+    @Test
+    public void runHasNoStyleIfItHasNoProperties() {
+        XmlElement element = runXml(list());
+        assertThat(
+            readSuccess(a(bodyReader), element),
+            hasStyle(Optional.empty()));
+    }
+
     private static DocumentElement readSuccess(Maker<BodyXmlReader> reader, XmlElement element) {
         Result<DocumentElement> result = read(reader, element);
         assertThat(result.getWarnings(), deepEquals(list()));
@@ -201,7 +209,7 @@ public class BodyXmlTests {
     }
 
     private Run run(DocumentElement... children) {
-        return new Run(asList(children));
+        return new Run(Optional.empty(), asList(children));
     }
 
     private Text text(String value) {

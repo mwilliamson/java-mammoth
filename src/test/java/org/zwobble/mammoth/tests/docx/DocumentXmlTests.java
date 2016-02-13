@@ -10,6 +10,8 @@ import org.zwobble.mammoth.docx.DocumentXmlReader;
 import org.zwobble.mammoth.xml.XmlElement;
 import org.zwobble.mammoth.xml.XmlNodes;
 
+import java.util.Optional;
+
 import static com.natpryce.makeiteasy.MakeItEasy.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.zwobble.mammoth.results.Result.success;
@@ -37,7 +39,7 @@ public class DocumentXmlTests {
             document,
             deepEquals(success(new Document(list(
                 make(a(PARAGRAPH, with(CHILDREN, list(
-                    new Run(list(
+                    new Run(Optional.empty(), list(
                         new Text("Hello!"))))))))))));
     }
 }
