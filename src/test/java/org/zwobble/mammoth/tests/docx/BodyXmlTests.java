@@ -354,13 +354,40 @@ public class BodyXmlTests {
     }
 
     @Test
+    public void textBoxesHaveContentAppendedAfterContainingParagraph() {
+        XmlElement textBox = element("w:pict", list(
+            element("v:shape", list(
+                element("v:textbox", list(
+                    element("w:txbxContent", list(
+                        paragraphXml(list(
+                            runXml(list(textXml("[textbox-content]")))))))))))));
+        XmlElement paragraph = paragraphXml(list(
+            runXml(list(textXml("[paragragh start]"))),
+            runXml(list(textBox, textXml("[paragragh end]")))));
+
+        List<DocumentElement> expected = list(
+            make(a(PARAGRAPH, with(CHILDREN, list(
+                make(a(RUN, with(CHILDREN, list(
+                    new Text("[paragragh start]"))))),
+                make(a(RUN, with(CHILDREN, list(
+                    new Text("[paragragh end]"))))))))),
+            make(a(PARAGRAPH, with(CHILDREN, list(
+                make(a(RUN, with(CHILDREN, list(
+                    new Text("[textbox-content]"))))))))));
+
+        assertThat(
+            readAll(a(bodyReader), paragraph),
+            isResult(deepEquals(expected), list()));
+    }
+
+    @Test
     public void appropriateElementsHaveTheirChildrenReadNormally() {
         assertChildrenAreReadNormally("w:ins");
         assertChildrenAreReadNormally("w:smartTag");
         assertChildrenAreReadNormally("w:drawing");
-        assertChildrenAreReadNormally("w:roundrect");
-        assertChildrenAreReadNormally("w:shape");
-        assertChildrenAreReadNormally("w:textbox");
+        assertChildrenAreReadNormally("v:roundrect");
+        assertChildrenAreReadNormally("v:shape");
+        assertChildrenAreReadNormally("v:textbox");
         assertChildrenAreReadNormally("w:txbxContent");
     }
 

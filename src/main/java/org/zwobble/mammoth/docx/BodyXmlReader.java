@@ -59,12 +59,15 @@ public class BodyXmlReader {
             case "w:endnoteReference":
                 return readNoteReference(NoteType.ENDNOTE, element);
 
+            case "w:pict":
+                return readPict(element);
+
             case "w:ins":
             case "w:smartTag":
             case "w:drawing":
-            case "w:roundrect":
-            case "w:shape":
-            case "w:textbox":
+            case "v:roundrect":
+            case "v:shape":
+            case "v:textbox":
             case "w:txbxContent":
                 return readElements(element.children());
 
@@ -90,7 +93,7 @@ public class BodyXmlReader {
 
             default:
                 Warning warning = warning("An unrecognised element was ignored: " + element.getName());
-                return new ReadResult(list(), list(warning));
+                return ReadResult.emptyWithWarning(warning);
         }
     }
 
@@ -141,7 +144,7 @@ public class BodyXmlReader {
         return ReadResult.map(
             readParagraphStyle(properties),
             readElements(element.children()),
-            (style, children) -> new Paragraph(style, numbering, children));
+            (style, children) -> new Paragraph(style, numbering, children)).appendExtra();
     }
 
     private Result<Optional<Style>> readParagraphStyle(XmlElementLike properties) {
@@ -188,7 +191,7 @@ public class BodyXmlReader {
         if (breakType.equals("")) {
             return success(LineBreak.LINE_BREAK);
         } else {
-            return new ReadResult(list(), list(warning("Unsupported break type: " + breakType)));
+            return ReadResult.emptyWithWarning(warning("Unsupported break type: " + breakType));
         }
     }
 
@@ -219,6 +222,10 @@ public class BodyXmlReader {
     private ReadResult readNoteReference(NoteType noteType, XmlElement element) {
         String noteId = element.getAttribute("w:id");
         return success(new NoteReference(noteType, noteId));
+    }
+
+    private ReadResult readPict(XmlElement element) {
+        return readElements(element.children()).toExtra();
     }
 
     private Optional<String> readVal(XmlElementLike element, String name) {
