@@ -79,6 +79,7 @@ public class BodyXmlReader {
                 return readImagedata(element);
 
             case "wp:inline":
+            case "wp:anchor":
                 return readInline(element);
 
             case "w:ins":

@@ -398,6 +398,12 @@ public class BodyXmlTests {
             inlineImageXml(embeddedBlipXml(image.relationshipId), image.altText));
     }
 
+    @Test
+    public void canReadAnchoredPictures() throws IOException {
+        assertCanReadEmbeddedImage(image ->
+            anchoredImageXml(embeddedBlipXml(image.relationshipId), image.altText));
+    }
+
     private void assertCanReadEmbeddedImage(Function<EmbeddedImage, XmlElement> generateXml) throws IOException {
         XmlElement element = generateXml.apply(new EmbeddedImage("rId5", "It's a hat"));
         Relationships relationships = new Relationships(map(
@@ -429,6 +435,11 @@ public class BodyXmlTests {
     private XmlElement inlineImageXml(XmlElement blip, String description) {
         return element("w:drawing", list(
             element("wp:inline", imageXml(blip, description))));
+    }
+
+    private XmlElement anchoredImageXml(XmlElement blip, String description) {
+        return element("w:drawing", list(
+            element("wp:anchor", imageXml(blip, description))));
     }
 
     private List<XmlNode> imageXml(XmlElement blip, String description) {
