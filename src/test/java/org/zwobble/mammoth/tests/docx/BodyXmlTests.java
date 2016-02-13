@@ -110,6 +110,36 @@ public class BodyXmlTests {
             hasNumbering(NumberingLevel.ordered("1")));
     }
 
+    @Test
+    public void numberingPropertiesAreIgnoredIfLevelIsMissing() {
+        // TODO: emit warning
+        XmlElement element = paragraphXml(list(
+            element("w:pPr", list(
+                element("w:numPr", map(), list(
+                    element("w:numId", map("w:val", "42"))))))));
+
+        Numbering numbering = new Numbering(map("42", map("1", NumberingLevel.ordered("1"))));
+
+        assertThat(
+            read(a(bodyReader, with(NUMBERING, numbering)), element),
+            hasNumbering(Optional.empty()));
+    }
+
+    @Test
+    public void numberingPropertiesAreIgnoredIfNumIdIsMissing() {
+        // TODO: emit warning
+        XmlElement element = paragraphXml(list(
+            element("w:pPr", list(
+                element("w:numPr", map(), list(
+                    element("w:ilvl", map("w:val", "1"))))))));
+
+        Numbering numbering = new Numbering(map("42", map("1", NumberingLevel.ordered("1"))));
+
+        assertThat(
+            read(a(bodyReader, with(NUMBERING, numbering)), element),
+            hasNumbering(Optional.empty()));
+    }
+
     private static DocumentElement read(Maker<BodyXmlReader> reader, XmlElement element) {
         return reader.make().readElement(element).get(0);
     }
