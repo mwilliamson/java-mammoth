@@ -2,10 +2,7 @@ package org.zwobble.mammoth.tests.documents;
 
 import com.natpryce.makeiteasy.Instantiator;
 import com.natpryce.makeiteasy.Property;
-import org.zwobble.mammoth.documents.DocumentElement;
-import org.zwobble.mammoth.documents.HasChildren;
-import org.zwobble.mammoth.documents.Paragraph;
-import org.zwobble.mammoth.documents.Run;
+import org.zwobble.mammoth.documents.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -28,6 +25,7 @@ public class DocumentElementMakers {
             false,
             false,
             false,
+            VerticalAlignment.BASELINE,
             Optional.empty(),
             propertyLookup.valueOf(CHILDREN, list()));
 }

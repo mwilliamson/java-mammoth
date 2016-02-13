@@ -257,7 +257,14 @@ public class BodyXmlTests {
             hasProperty("strikethrough", equalTo(true)));
     }
 
-    // TODO: vertical alignment
+    @Test
+    public void runHasBaselineVerticalAlignmentIfVerticalAlignmentElementIsNotPresent() {
+        XmlElement element = runXmlWithProperties();
+
+        assertThat(
+            readSuccess(a(bodyReader), element),
+            hasProperty("verticalAlignment", equalTo(VerticalAlignment.BASELINE)));
+    }
 
     @Test
     public void canReadTabElement() {

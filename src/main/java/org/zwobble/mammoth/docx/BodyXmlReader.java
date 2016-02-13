@@ -135,6 +135,7 @@ public class BodyXmlReader {
                 isItalic(properties),
                 isUnderline(properties),
                 isStrikethrough(properties),
+                readVerticalAlignment(properties),
                 style,
                 children));
     }
@@ -153,6 +154,10 @@ public class BodyXmlReader {
 
     private boolean isStrikethrough(XmlElementLike properties) {
         return properties.hasChild("w:strike");
+    }
+
+    private VerticalAlignment readVerticalAlignment(XmlElementLike properties) {
+        return VerticalAlignment.BASELINE;
     }
 
     private Result<Optional<Style>> readRunStyle(XmlElementLike properties) {

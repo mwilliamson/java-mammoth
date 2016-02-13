@@ -8,6 +8,7 @@ public class Run implements DocumentElement, HasChildren {
     private final boolean isItalic;
     private final boolean isUnderline;
     private final boolean isStrikethrough;
+    private final VerticalAlignment verticalAlignment;
     private final Optional<Style> style;
     private final List<DocumentElement> children;
 
@@ -16,6 +17,7 @@ public class Run implements DocumentElement, HasChildren {
         boolean isItalic,
         boolean isUnderline,
         boolean isStrikethrough,
+        VerticalAlignment verticalAlignment,
         Optional<Style> style,
         List<DocumentElement> children)
     {
@@ -23,6 +25,7 @@ public class Run implements DocumentElement, HasChildren {
         this.isItalic = isItalic;
         this.isUnderline = isUnderline;
         this.isStrikethrough = isStrikethrough;
+        this.verticalAlignment = verticalAlignment;
         this.style = style;
         this.children = children;
     }
@@ -41,6 +44,10 @@ public class Run implements DocumentElement, HasChildren {
 
     public boolean isStrikethrough() {
         return isStrikethrough;
+    }
+
+    public VerticalAlignment getVerticalAlignment() {
+        return verticalAlignment;
     }
 
     public Optional<Style> getStyle() {
