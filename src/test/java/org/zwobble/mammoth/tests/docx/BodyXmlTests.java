@@ -19,6 +19,7 @@ import java.io.InputStreamReader;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
 
 import static com.natpryce.makeiteasy.MakeItEasy.*;
 import static java.util.Arrays.asList;
@@ -387,7 +388,18 @@ public class BodyXmlTests {
 
     @Test
     public void canReadImagedataElementsWithIdAttribute() throws IOException {
-        XmlElement element = element("v:imagedata", map("r:id", "rId5", "o:title", "It's a hat"));
+        assertCanReadEmbeddedImage(image ->
+            element("v:imagedata", map("r:id", image.relationshipId, "o:title", image.altText)));
+    }
+
+    @Test
+    public void canReadInlinePictures() throws IOException {
+        assertCanReadEmbeddedImage(image ->
+            inlineImageXml(embeddedBlipXml(image.relationshipId), image.altText));
+    }
+
+    private void assertCanReadEmbeddedImage(Function<EmbeddedImage, XmlElement> generateXml) throws IOException {
+        XmlElement element = generateXml.apply(new EmbeddedImage("rId5", "It's a hat"));
         Relationships relationships = new Relationships(map(
             "rId5", new Relationship("media/hat.png")));
         String imageBytes = "Not an image at all!";
@@ -404,23 +416,14 @@ public class BodyXmlTests {
             equalTo("Not an image at all!"));
     }
 
-    @Test
-    public void canReadInlinePictures() throws IOException {
-        XmlElement element = inlineImageXml(embeddedBlipXml("rId5"), "It's a hat");
-        Relationships relationships = new Relationships(map(
-            "rId5", new Relationship("media/hat.png")));
-        String imageBytes = "Not an image at all!";
-        DocxFile file = new InMemoryDocxFile(map("word/media/hat.png", imageBytes));
+    private class EmbeddedImage {
+        private final String relationshipId;
+        private final String altText;
 
-        Image image = (Image) readSuccess(
-            a(bodyReader, with(RELATIONSHIPS, relationships), with(DOCX_FILE, file)),
-            element);
-        assertThat(image, allOf(
-            hasProperty("altText", deepEquals(Optional.of("It's a hat"))),
-            hasProperty("contentType", deepEquals(Optional.of("image/png")))));
-        assertThat(
-            CharStreams.toString(new InputStreamReader(image.open())),
-            equalTo("Not an image at all!"));
+        public EmbeddedImage(String relationshipId, String altText) {
+            this.relationshipId = relationshipId;
+            this.altText = altText;
+        }
     }
 
     private XmlElement inlineImageXml(XmlElement blip, String description) {
