@@ -197,6 +197,15 @@ public class BodyXmlTests {
             hasProperty("bold", equalTo(true)));
     }
 
+    @Test
+    public void runIsNotItalicIfItalicElementIsNotPresent() {
+        XmlElement element = runXmlWithProperties();
+
+        assertThat(
+            readSuccess(a(bodyReader), element),
+            hasProperty("italic", equalTo(false)));
+    }
+
     private static DocumentElement readSuccess(Maker<BodyXmlReader> reader, XmlElement element) {
         Result<DocumentElement> result = read(reader, element);
         assertThat(result.getWarnings(), deepEquals(list()));

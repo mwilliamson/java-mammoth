@@ -5,17 +5,28 @@ import java.util.Optional;
 
 public class Run implements DocumentElement, HasChildren {
     private final boolean isBold;
+    private final boolean isItalic;
     private final Optional<Style> style;
     private final List<DocumentElement> children;
 
-    public Run(boolean isBold, Optional<Style> style, List<DocumentElement> children) {
+    public Run(
+        boolean isBold,
+        boolean isItalic,
+        Optional<Style> style,
+        List<DocumentElement> children)
+    {
         this.isBold = isBold;
-        this.children = children;
+        this.isItalic = isItalic;
         this.style = style;
+        this.children = children;
     }
 
     public boolean isBold() {
         return isBold;
+    }
+
+    public boolean isItalic() {
+        return isItalic;
     }
 
     public Optional<Style> getStyle() {

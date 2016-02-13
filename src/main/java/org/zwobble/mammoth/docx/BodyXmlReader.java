@@ -51,12 +51,17 @@ public class BodyXmlReader {
             readElements(element.children()),
             (style, children) -> new Run(
                 isBold(properties),
+                isItalic(properties),
                 style,
                 children));
     }
 
     private boolean isBold(XmlElementLike properties) {
         return properties.hasChild("w:b");
+    }
+
+    private boolean isItalic(XmlElementLike properties) {
+        return false;
     }
 
     private Result<Optional<Style>> readRunStyle(XmlElementLike properties) {

@@ -25,6 +25,7 @@ public class DocumentElementMakers {
     public static final Instantiator<Run> RUN =
         propertyLookup -> new Run(
             false,
+            false,
             Optional.empty(),
             propertyLookup.valueOf(CHILDREN, list()));
 }
