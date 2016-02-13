@@ -2,6 +2,7 @@ package org.zwobble.mammoth.docx;
 
 import com.google.common.collect.ImmutableList;
 import org.zwobble.mammoth.documents.*;
+import org.zwobble.mammoth.util.MammothOptionals;
 import org.zwobble.mammoth.xml.XmlElement;
 import org.zwobble.mammoth.xml.XmlElementLike;
 import org.zwobble.mammoth.xml.XmlNode;
@@ -63,13 +64,10 @@ public class BodyXmlReader {
 
     private Optional<NumberingLevel> readNumbering(XmlElementLike properties) {
         XmlElementLike numberingProperties = properties.findChildOrEmpty("w:numPr");
-        Optional<String> numId = readVal(numberingProperties, "w:numId");
-        Optional<String> levelIndex = readVal(numberingProperties, "w:ilvl");
-        if (numId.isPresent() && levelIndex.isPresent()) {
-            return numbering.findLevel(numId.get(), levelIndex.get());
-        } else {
-            return Optional.empty();
-        }
+        return MammothOptionals.flatMap(
+            readVal(numberingProperties, "w:numId"),
+            readVal(numberingProperties, "w:ilvl"),
+            numbering::findLevel);
     }
 
     private Optional<String> readVal(XmlElementLike element, String name) {
