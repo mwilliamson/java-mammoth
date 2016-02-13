@@ -45,6 +45,15 @@ public class BodyXmlReader {
             case "w:tc":
                 return readElements(element.children()).map(TableCell::new);
 
+            case "w:ins":
+            case "w:smartTag":
+            case "w:drawing":
+            case "w:roundrect":
+            case "w:shape":
+            case "w:textbox":
+            case "w:txbxContent":
+                return readElements(element.children());
+
             case "w:pPr":
                 return EMPTY_SUCCESS;
 

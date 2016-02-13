@@ -277,6 +277,25 @@ public class BodyXmlTests {
                         make(a(PARAGRAPH))))))))));
     }
 
+    @Test
+    public void appropriateElementsHaveTheirChildrenReadNormally() {
+        assertChildrenAreReadNormally("w:ins");
+        assertChildrenAreReadNormally("w:smartTag");
+        assertChildrenAreReadNormally("w:drawing");
+        assertChildrenAreReadNormally("w:roundrect");
+        assertChildrenAreReadNormally("w:shape");
+        assertChildrenAreReadNormally("w:textbox");
+        assertChildrenAreReadNormally("w:txbxContent");
+    }
+
+    private void assertChildrenAreReadNormally(String name) {
+        XmlElement element = element(name, list(paragraphXml()));
+
+        assertThat(
+            readSuccess(a(bodyReader), element),
+            deepEquals(make(a(PARAGRAPH))));
+    }
+
     private static DocumentElement readSuccess(Maker<BodyXmlReader> reader, XmlElement element) {
         Result<DocumentElement> result = read(reader, element);
         assertThat(result.getWarnings(), deepEquals(list()));
