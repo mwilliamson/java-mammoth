@@ -1,8 +1,9 @@
 package org.zwobble.mammoth.docx;
 
 import com.google.common.collect.ImmutableList;
-import org.zwobble.mammoth.Result;
+import org.zwobble.mammoth.results.Result;
 import org.zwobble.mammoth.documents.DocumentElement;
+import org.zwobble.mammoth.results.Warning;
 
 import java.util.List;
 import java.util.function.Function;
@@ -14,10 +15,12 @@ public class ReadResult {
 
     public static ReadResult concat(Iterable<ReadResult> results) {
         ImmutableList.Builder<DocumentElement> elements = ImmutableList.builder();
+        ImmutableList.Builder<Warning> warnings = ImmutableList.builder();
         for (ReadResult result : results) {
             elements.addAll(result.elements);
+            warnings.addAll(result.warnings);
         }
-        return new ReadResult(elements.build());
+        return new ReadResult(elements.build(), warnings.build());
     }
 
     public static ReadResult success(DocumentElement element) {
@@ -25,20 +28,22 @@ public class ReadResult {
     }
 
     public static ReadResult success(List<DocumentElement> elements) {
-        return new ReadResult(elements);
+        return new ReadResult(elements, list());
     }
 
     private final List<DocumentElement> elements;
+    private final List<Warning> warnings;
 
-    public ReadResult(List<DocumentElement> elements) {
+    public ReadResult(List<DocumentElement> elements, List<Warning> warnings) {
         this.elements = elements;
+        this.warnings = warnings;
     }
 
     public ReadResult map(Function<List<DocumentElement>, DocumentElement> function) {
-        return new ReadResult(list(function.apply(elements)));
+        return new ReadResult(list(function.apply(elements)), warnings);
     }
 
     public Result<List<DocumentElement>> toResult() {
-        return new Result<>(elements);
+        return new Result<>(elements, warnings);
     }
 }

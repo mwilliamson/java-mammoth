@@ -3,6 +3,7 @@ package org.zwobble.mammoth;
 import com.google.common.base.Joiner;
 import org.zwobble.mammoth.documents.*;
 import org.zwobble.mammoth.docx.*;
+import org.zwobble.mammoth.results.Result;
 import org.zwobble.mammoth.xml.XmlElement;
 
 import java.io.File;

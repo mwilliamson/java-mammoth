@@ -3,7 +3,7 @@ package org.zwobble.mammoth.tests.docx;
 import com.natpryce.makeiteasy.Maker;
 import org.hamcrest.Matcher;
 import org.junit.Test;
-import org.zwobble.mammoth.Result;
+import org.zwobble.mammoth.results.Result;
 import org.zwobble.mammoth.documents.*;
 import org.zwobble.mammoth.docx.BodyXmlReader;
 import org.zwobble.mammoth.docx.Numbering;
@@ -140,8 +140,9 @@ public class BodyXmlTests {
     }
 
     private static DocumentElement readSuccess(Maker<BodyXmlReader> reader, XmlElement element) {
-        // TODO: assert no warnings when they get added
-        return read(reader, element).getValue();
+        Result<DocumentElement> result = read(reader, element);
+        assertThat(result.getWarnings(), deepEquals(list()));
+        return result.getValue();
     }
 
     private static Result<DocumentElement> read(Maker<BodyXmlReader> reader, XmlElement element) {

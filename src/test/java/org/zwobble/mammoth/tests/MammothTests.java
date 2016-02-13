@@ -2,12 +2,12 @@ package org.zwobble.mammoth.tests;
 
 import org.junit.Test;
 import org.zwobble.mammoth.Mammoth;
-import org.zwobble.mammoth.Result;
+import org.zwobble.mammoth.results.Result;
 
 import java.io.File;
 
 import static org.junit.Assert.assertThat;
-import static org.zwobble.mammoth.Result.success;
+import static org.zwobble.mammoth.results.Result.success;
 import static org.zwobble.mammoth.tests.DeepReflectionMatcher.deepEquals;
 
 public class MammothTests {

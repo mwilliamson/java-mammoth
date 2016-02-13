@@ -1,6 +1,6 @@
 package org.zwobble.mammoth.docx;
 
-import org.zwobble.mammoth.Result;
+import org.zwobble.mammoth.results.Result;
 import org.zwobble.mammoth.documents.Note;
 import org.zwobble.mammoth.xml.XmlElement;
 
