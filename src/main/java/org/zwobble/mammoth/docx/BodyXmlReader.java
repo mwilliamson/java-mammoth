@@ -168,7 +168,7 @@ public class BodyXmlReader {
             return childrenResult.map(children -> Hyperlink.anchor(
                 anchor.get(), children));
         } else {
-            return ReadResult.EMPTY_SUCCESS;
+            return childrenResult;
         }
     }
 

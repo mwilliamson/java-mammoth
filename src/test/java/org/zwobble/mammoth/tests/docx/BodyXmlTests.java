@@ -312,6 +312,14 @@ public class BodyXmlTests {
             deepEquals(Hyperlink.anchor("start", list(make(a(RUN))))));
     }
 
+    @Test
+    public void hyperlinkIsIgnoredIfItDoesNotHaveARelationshipIdNorAnchor() {
+        XmlElement element = element("w:hyperlink", list(runXml(list())));
+        assertThat(
+            readSuccess(a(bodyReader), element),
+            deepEquals(make(a(RUN))));
+    }
+
     private static DocumentElement readSuccess(Maker<BodyXmlReader> reader, XmlElement element) {
         Result<DocumentElement> result = read(reader, element);
         assertThat(result.getWarnings(), deepEquals(list()));
