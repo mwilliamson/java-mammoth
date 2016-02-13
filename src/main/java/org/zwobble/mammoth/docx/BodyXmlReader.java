@@ -1,6 +1,7 @@
 package org.zwobble.mammoth.docx;
 
 import org.zwobble.mammoth.documents.*;
+import org.zwobble.mammoth.results.Result;
 import org.zwobble.mammoth.util.MammothOptionals;
 import org.zwobble.mammoth.xml.XmlElement;
 import org.zwobble.mammoth.xml.XmlElementLike;
@@ -12,6 +13,8 @@ import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.transform;
 import static org.zwobble.mammoth.docx.ReadResult.EMPTY_SUCCESS;
 import static org.zwobble.mammoth.docx.ReadResult.success;
+import static org.zwobble.mammoth.results.Warning.warning;
+import static org.zwobble.mammoth.util.MammothLists.list;
 
 public class BodyXmlReader {
     private final Styles styles;
@@ -49,16 +52,28 @@ public class BodyXmlReader {
 
     private ReadResult readParagraph(XmlElement element) {
         XmlElementLike properties = element.findChildOrEmpty("w:pPr");
-        Optional<Style> paragraphStyle = readParagraphStyle(properties);
         Optional<NumberingLevel> numbering = readNumbering(properties);
-        return readElements(element.children())
-            .map(children -> new Paragraph(paragraphStyle, numbering, children));
+        return ReadResult.map(
+            readParagraphStyle(properties),
+            readElements(element.children()),
+            (paragraphStyle, children) -> new Paragraph(paragraphStyle, numbering, children));
     }
 
-    private Optional<Style> readParagraphStyle(XmlElementLike properties) {
+    private Result<Optional<Style>> readParagraphStyle(XmlElementLike properties) {
         return readVal(properties, "w:pStyle")
-            .map(styleId -> styles.findParagraphStyleById(styleId)
-                .orElse(new Style(styleId, Optional.empty())));
+            .map(this::findParagraphStyleById)
+            .orElse(Result.empty());
+    }
+
+    private Result<Optional<Style>> findParagraphStyleById(String styleId) {
+        Optional<Style> style = styles.findParagraphStyleById(styleId);
+        if (style.isPresent()) {
+            return Result.success(style);
+        } else {
+            return new Result<>(
+                Optional.of(new Style(styleId, Optional.empty())),
+                list(warning("Paragraph style with ID " + styleId + " was referenced but not defined in the document")));
+        }
     }
 
     private Optional<NumberingLevel> readNumbering(XmlElementLike properties) {

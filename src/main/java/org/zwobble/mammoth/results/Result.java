@@ -1,8 +1,10 @@
 package org.zwobble.mammoth.results;
 
 import com.google.common.collect.ImmutableList;
+import org.zwobble.mammoth.documents.Style;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 
 import static org.zwobble.mammoth.util.MammothLists.list;
@@ -16,6 +18,10 @@ public class Result<T> {
             warnings.addAll(result.warnings);
         }
         return new Result<>(elements.build(), warnings.build());
+    }
+
+    public static Result<Optional<Style>> empty() {
+        return new Result<>(Optional.empty(), list());
     }
 
     public static <T> Result<T> success(T value) {

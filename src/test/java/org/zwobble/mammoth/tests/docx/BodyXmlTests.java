@@ -2,12 +2,14 @@ package org.zwobble.mammoth.tests.docx;
 
 import com.natpryce.makeiteasy.Maker;
 import org.hamcrest.Matcher;
+import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.zwobble.mammoth.results.Result;
 import org.zwobble.mammoth.documents.*;
 import org.zwobble.mammoth.docx.BodyXmlReader;
 import org.zwobble.mammoth.docx.Numbering;
 import org.zwobble.mammoth.docx.Styles;
+import org.zwobble.mammoth.results.Warning;
 import org.zwobble.mammoth.tests.DeepReflectionMatcher;
 import org.zwobble.mammoth.xml.XmlElement;
 import org.zwobble.mammoth.xml.XmlNode;
@@ -20,6 +22,7 @@ import static com.natpryce.makeiteasy.MakeItEasy.*;
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasProperty;
+import static org.zwobble.mammoth.results.Warning.warning;
 import static org.zwobble.mammoth.tests.DeepReflectionMatcher.deepEquals;
 import static org.zwobble.mammoth.tests.documents.DocumentElementMakers.CHILDREN;
 import static org.zwobble.mammoth.tests.documents.DocumentElementMakers.PARAGRAPH;
@@ -77,13 +80,14 @@ public class BodyXmlTests {
 
     @Test
     public void paragraphHasStyleIdReadFromParagraphPropertiesIfPresent() {
-        // TODO: emit warning due to missing style
         XmlElement element = paragraphXml(list(
             element("w:pPr", list(
                 element("w:pStyle", map("w:val", "Heading1"))))));
         assertThat(
-            readSuccess(a(bodyReader), element),
-            hasStyle(Optional.of(new Style("Heading1", Optional.empty()))));
+            read(a(bodyReader), element),
+            isResult(
+                hasStyle(Optional.of(new Style("Heading1", Optional.empty()))),
+                list(warning("Paragraph style with ID Heading1 was referenced but not defined in the document"))));
     }
 
     @Test
@@ -188,6 +192,12 @@ public class BodyXmlTests {
 
     private Matcher<? super DocumentElement> hasNumbering(Optional<NumberingLevel> expected) {
         return hasProperty("numbering", deepEquals(expected));
+    }
+
+    private <T> Matcher<Result<? extends T>> isResult(Matcher<T> valueMatcher, List<Warning> warnings) {
+        return Matchers.allOf(
+            hasProperty("value", valueMatcher),
+            hasProperty("warnings", deepEquals(warnings)));
     }
 
     private Run run(DocumentElement... children) {

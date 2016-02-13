@@ -1,11 +1,12 @@
 package org.zwobble.mammoth.docx;
 
 import com.google.common.collect.ImmutableList;
-import org.zwobble.mammoth.results.Result;
 import org.zwobble.mammoth.documents.DocumentElement;
+import org.zwobble.mammoth.results.Result;
 import org.zwobble.mammoth.results.Warning;
 
 import java.util.List;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import static org.zwobble.mammoth.util.MammothLists.list;
@@ -21,6 +22,20 @@ public class ReadResult {
             warnings.addAll(result.warnings);
         }
         return new ReadResult(elements.build(), warnings.build());
+    }
+
+    public static <T> ReadResult map(
+        Result<T> first,
+        ReadResult second,
+        BiFunction<T, List<DocumentElement>, DocumentElement> function)
+    {
+        ImmutableList.Builder<Warning> warnings = ImmutableList.builder();
+        warnings.addAll(first.getWarnings());
+        warnings.addAll(second.warnings);
+
+        return new ReadResult(
+            list(function.apply(first.getValue(), second.elements)),
+            warnings.build());
     }
 
     public static ReadResult success(DocumentElement element) {
