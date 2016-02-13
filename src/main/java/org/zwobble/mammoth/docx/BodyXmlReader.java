@@ -14,9 +14,11 @@ import static org.zwobble.mammoth.util.MammothLists.list;
 
 public class BodyXmlReader {
     private final Styles styles;
+    private final Numbering numbering;
 
-    public BodyXmlReader(Styles styles) {
+    public BodyXmlReader(Styles styles, Numbering numbering) {
         this.styles = styles;
+        this.numbering = numbering;
     }
 
     public List<DocumentElement> readElement(XmlElement element) {
@@ -46,16 +48,28 @@ public class BodyXmlReader {
     }
 
     private Paragraph readParagraph(XmlElement element) {
-        return new Paragraph(readParagraphStyle(element), readNumbering(element), readElements(element.children()));
+        XmlElementLike properties = element.findChildOrEmpty("w:pPr");
+        return new Paragraph(
+            readParagraphStyle(properties),
+            readNumbering(properties),
+            readElements(element.children()));
     }
 
-    private Optional<Style> readParagraphStyle(XmlElement paragraph) {
-        XmlElementLike properties = paragraph.findChildOrEmpty("w:pPr");
-        return properties.findChildOrEmpty("w:pStyle").getAttributeOrNone("w:val")
-            .map(styleId -> styles.findParagraphStyleById(styleId).orElse(new Style(styleId, Optional.empty())));
+    private Optional<Style> readParagraphStyle(XmlElementLike properties) {
+        return properties.findChildOrEmpty("w:pStyle")
+            .getAttributeOrNone("w:val")
+            .map(styleId -> styles.findParagraphStyleById(styleId)
+                .orElse(new Style(styleId, Optional.empty())));
     }
 
-    private Optional<NumberingLevel> readNumbering(XmlElement element) {
-        return Optional.empty();
+    private Optional<NumberingLevel> readNumbering(XmlElementLike properties) {
+        XmlElementLike numberingProperties = properties.findChildOrEmpty("w:numPr");
+        Optional<String> numId = numberingProperties.findChildOrEmpty("w:numId").getAttributeOrNone("w:val");
+        Optional<String> levelIndex = numberingProperties.findChildOrEmpty("w:ilvl").getAttributeOrNone("w:val");
+        if (numId.isPresent() && levelIndex.isPresent()) {
+            return numbering.findLevel(numId.get(), levelIndex.get());
+        } else {
+            return Optional.empty();
+        }
     }
 }

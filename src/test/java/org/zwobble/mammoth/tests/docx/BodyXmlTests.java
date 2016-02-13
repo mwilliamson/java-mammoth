@@ -5,6 +5,7 @@ import org.hamcrest.Matcher;
 import org.junit.Test;
 import org.zwobble.mammoth.documents.*;
 import org.zwobble.mammoth.docx.BodyXmlReader;
+import org.zwobble.mammoth.docx.Numbering;
 import org.zwobble.mammoth.docx.Styles;
 import org.zwobble.mammoth.tests.DeepReflectionMatcher;
 import org.zwobble.mammoth.xml.XmlElement;
@@ -21,6 +22,7 @@ import static org.hamcrest.Matchers.hasProperty;
 import static org.zwobble.mammoth.tests.DeepReflectionMatcher.deepEquals;
 import static org.zwobble.mammoth.tests.documents.DocumentElementMakers.CHILDREN;
 import static org.zwobble.mammoth.tests.documents.DocumentElementMakers.PARAGRAPH;
+import static org.zwobble.mammoth.tests.docx.BodyXmlReaderMakers.NUMBERING;
 import static org.zwobble.mammoth.tests.docx.BodyXmlReaderMakers.STYLES;
 import static org.zwobble.mammoth.tests.docx.BodyXmlReaderMakers.bodyReader;
 import static org.zwobble.mammoth.util.MammothLists.list;
@@ -93,6 +95,21 @@ public class BodyXmlTests {
             hasNumbering(Optional.empty()));
     }
 
+    @Test
+    public void paragraphHasNumberingPropertiesFromParagraphPropertiesIfPresent() {
+        XmlElement element = paragraphXml(list(
+            element("w:pPr", list(
+                element("w:numPr", map(), list(
+                    element("w:ilvl", map("w:val", "1")),
+                    element("w:numId", map("w:val", "42"))))))));
+
+        Numbering numbering = new Numbering(map("42", map("1", NumberingLevel.ordered("1"))));
+
+        assertThat(
+            read(a(bodyReader, with(NUMBERING, numbering)), element),
+            hasNumbering(NumberingLevel.ordered("1")));
+    }
+
     private static DocumentElement read(Maker<BodyXmlReader> reader, XmlElement element) {
         return reader.make().readElement(element).get(0);
     }
@@ -127,6 +144,10 @@ public class BodyXmlTests {
 
     private Matcher<? super DocumentElement> hasStyle(Optional<Style> expected) {
         return hasProperty("style", deepEquals(expected));
+    }
+
+    private Matcher<? super DocumentElement> hasNumbering(NumberingLevel expected) {
+        return hasNumbering(Optional.of(expected));
     }
 
     private Matcher<? super DocumentElement> hasNumbering(Optional<NumberingLevel> expected) {

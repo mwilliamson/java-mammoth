@@ -53,7 +53,11 @@ public class DeepReflectionMatcher<T> extends TypeSafeDiagnosingMatcher<T> {
         }
 
         if (expected instanceof String) {
-            return matchesString(path, expected, actual, mismatchDescription);
+            return matchesPrimitive(path, expected, actual, mismatchDescription);
+        }
+
+        if (expected instanceof Boolean) {
+            return matchesPrimitive(path, expected, actual, mismatchDescription);
         }
 
         for (Field field : fields(expected.getClass())) {
@@ -139,7 +143,7 @@ public class DeepReflectionMatcher<T> extends TypeSafeDiagnosingMatcher<T> {
         return true;
     }
 
-    private static <T> boolean matchesString(String path, T expected, T actual, Description mismatchDescription) {
+    private static <T> boolean matchesPrimitive(String path, T expected, T actual, Description mismatchDescription) {
         Matcher<Object> matcher = Matchers.equalTo(expected);
         if (!matcher.matches(actual)) {
             appendPath(mismatchDescription, path);
@@ -160,7 +164,7 @@ public class DeepReflectionMatcher<T> extends TypeSafeDiagnosingMatcher<T> {
     }
 
     private static String describeValue(Object value) {
-        if (value instanceof String) {
+        if (value instanceof String || value instanceof Boolean) {
             return value.toString();
         } else if (value instanceof Optional) {
             Optional<?> optional = (Optional)value;

@@ -1,6 +1,10 @@
 package org.zwobble.mammoth.documents;
 
 public class NumberingLevel {
+    public static NumberingLevel ordered(String levelIndex) {
+        return new NumberingLevel(levelIndex, true);
+    }
+
     private final String levelIndex;
     private final boolean isOrdered;
 

@@ -2,10 +2,7 @@ package org.zwobble.mammoth;
 
 import com.google.common.base.Joiner;
 import org.zwobble.mammoth.documents.*;
-import org.zwobble.mammoth.docx.BodyXmlReader;
-import org.zwobble.mammoth.docx.DocumentXmlReader;
-import org.zwobble.mammoth.docx.OfficeXml;
-import org.zwobble.mammoth.docx.Styles;
+import org.zwobble.mammoth.docx.*;
 import org.zwobble.mammoth.xml.XmlElement;
 
 import java.io.File;
@@ -22,7 +19,8 @@ public class Mammoth {
             XmlElement documentXml = OfficeXml.parseXml(zipFile.getInputStream(entry));
 
             Styles styles = Styles.EMPTY;
-            Document document = new DocumentXmlReader(new BodyXmlReader(styles)).readElement(documentXml);
+            Numbering numbering = Numbering.EMPTY;
+            Document document = new DocumentXmlReader(new BodyXmlReader(styles, numbering)).readElement(documentXml);
             return convertToHtml(document);
         } catch (IOException e) {
             throw new UnsupportedOperationException("Should return a result of failure");   

@@ -5,7 +5,11 @@ import org.zwobble.mammoth.documents.NumberingLevel;
 import java.util.Map;
 import java.util.Optional;
 
+import static org.zwobble.mammoth.util.MammothMaps.map;
+
 public class Numbering {
+    public static final Numbering EMPTY = new Numbering(map());
+
     private final Map<String, Map<String, NumberingLevel>> numbering;
 
     public Numbering(Map<String, Map<String, NumberingLevel>> numbering) {
