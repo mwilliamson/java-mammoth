@@ -55,7 +55,9 @@ public class BodyXmlReader {
             case "w:bookmarkStart":
                 return readBookmark(element);
             case "w:footnoteReference":
-                return readNoteReference(element);
+                return readNoteReference(NoteType.FOOTNOTE, element);
+            case "w:endnoteReference":
+                return readNoteReference(NoteType.ENDNOTE, element);
 
             case "w:ins":
             case "w:smartTag":
@@ -214,9 +216,9 @@ public class BodyXmlReader {
         }
     }
 
-    private ReadResult readNoteReference(XmlElement element) {
+    private ReadResult readNoteReference(NoteType noteType, XmlElement element) {
         String noteId = element.getAttribute("w:id");
-        return success(new NoteReference(noteId));
+        return success(new NoteReference(noteType, noteId));
     }
 
     private Optional<String> readVal(XmlElementLike element, String name) {

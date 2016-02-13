@@ -21,6 +21,7 @@ import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasProperty;
+import static org.zwobble.mammoth.documents.NoteReference.endnoteReference;
 import static org.zwobble.mammoth.documents.NoteReference.footnoteReference;
 import static org.zwobble.mammoth.results.Warning.warning;
 import static org.zwobble.mammoth.tests.DeepReflectionMatcher.deepEquals;
@@ -342,6 +343,14 @@ public class BodyXmlTests {
         assertThat(
             readSuccess(a(bodyReader), element),
             deepEquals(footnoteReference("4")));
+    }
+
+    @Test
+    public void endnoteReferenceHasIdRead() {
+        XmlElement element = element("w:endnoteReference", map("w:id", "4"));
+        assertThat(
+            readSuccess(a(bodyReader), element),
+            deepEquals(endnoteReference("4")));
     }
 
     @Test

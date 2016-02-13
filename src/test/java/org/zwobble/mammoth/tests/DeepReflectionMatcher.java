@@ -52,11 +52,7 @@ public class DeepReflectionMatcher<T> extends TypeSafeDiagnosingMatcher<T> {
             return matchesOptional(path, (Optional)expected, (Optional)actual, mismatchDescription);
         }
 
-        if (expected instanceof String) {
-            return matchesPrimitive(path, expected, actual, mismatchDescription);
-        }
-
-        if (expected instanceof Boolean) {
+        if (expected instanceof String || expected instanceof Boolean || expected instanceof Enum) {
             return matchesPrimitive(path, expected, actual, mismatchDescription);
         }
 
