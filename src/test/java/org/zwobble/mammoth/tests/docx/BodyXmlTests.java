@@ -432,6 +432,25 @@ public class BodyXmlTests {
         }
     }
 
+    @Test
+    public void warningIfImageTypeIsUnsupportedByWebBrowsers() {
+        XmlElement element = inlineImageXml(embeddedBlipXml("rId5"), "");
+        Relationships relationships = new Relationships(map(
+            "rId5", new Relationship("media/hat.emf")));
+        DocxFile file = new InMemoryDocxFile(map("word/media/hat.emf", "Not an image at all!"));
+        ContentTypes contentTypes = new ContentTypes(map("emf", "image/x-emf"), map());
+
+        Result<?> result = read(
+            a(bodyReader,
+                with(RELATIONSHIPS, relationships),
+                with(DOCX_FILE, file),
+                with(CONTENT_TYPES, contentTypes)),
+            element);
+        assertThat(
+            result,
+            hasProperty("warnings", deepEquals(list(warning("Image of type image/x-emf is unlikely to display in web browsers")))));
+    }
+
     private XmlElement inlineImageXml(XmlElement blip, String description) {
         return element("w:drawing", list(
             element("wp:inline", imageXml(blip, description))));

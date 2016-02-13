@@ -1,5 +1,6 @@
 package org.zwobble.mammoth.docx;
 
+import com.google.common.collect.ImmutableSet;
 import org.zwobble.mammoth.documents.*;
 import org.zwobble.mammoth.results.Result;
 import org.zwobble.mammoth.results.Warning;
@@ -11,6 +12,7 @@ import org.zwobble.mammoth.xml.XmlElementList;
 import org.zwobble.mammoth.xml.XmlNode;
 
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Function;
 
 import static com.google.common.collect.Iterables.filter;
@@ -22,6 +24,10 @@ import static org.zwobble.mammoth.util.MammothLists.list;
 import static org.zwobble.mammoth.util.MammothStrings.trimLeft;
 
 public class BodyXmlReader {
+    private static final Set<String> IMAGE_TYPES_SUPPORTED_BY_BROWSERS = ImmutableSet.of(
+        "image/png", "image/gif", "image/jpeg", "image/svg+xml", "image/tiff");
+
+
     private final Styles styles;
     private final Numbering numbering;
     private final Relationships relationships;
@@ -278,7 +284,13 @@ public class BodyXmlReader {
     private ReadResult readImage(String imagePath, Optional<String> altText, InputStreamSupplier open) {
         Optional<String> contentType = contentTypes.findContentType(imagePath);
         Image image = new Image(altText, contentType, open);
-        return success(image);
+
+        String contentTypeString = contentType.orElse("(unknown)");
+        if (IMAGE_TYPES_SUPPORTED_BY_BROWSERS.contains(contentTypeString)) {
+            return success(image);
+        } else {
+            return ReadResult.withWarning(image, warning("Image of type " + contentTypeString + " is unlikely to display in web browsers"));
+        }
     }
 
     private String relationshipIdToDocxPath(String relationshipId) {

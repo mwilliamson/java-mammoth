@@ -49,6 +49,10 @@ public class ReadResult {
         return new ReadResult(list(), list(), list(warning));
     }
 
+    public static ReadResult withWarning(DocumentElement element, Warning warning) {
+        return new ReadResult(list(element), list(), list(warning));
+    }
+
     private final List<DocumentElement> elements;
     private final List<DocumentElement> extra;
     private final List<Warning> warnings;
