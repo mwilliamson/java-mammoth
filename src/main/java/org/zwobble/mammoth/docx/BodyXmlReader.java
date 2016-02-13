@@ -40,7 +40,7 @@ public class BodyXmlReader {
             case "w:tab":
                 return success(Tab.TAB);
             case "w:br":
-                return success(LineBreak.LINE_BREAK);
+                return readBreak(element);
 
             case "w:tbl":
                 return readElements(element.children()).map(Table::new);
@@ -51,7 +51,6 @@ public class BodyXmlReader {
 
             case "w:hyperlink":
                 return readHyperlink(element);
-
             case "w:bookmarkStart":
                 return readBookmark(element);
 
@@ -160,6 +159,15 @@ public class BodyXmlReader {
             readVal(numberingProperties, "w:numId"),
             readVal(numberingProperties, "w:ilvl"),
             numbering::findLevel);
+    }
+
+    private ReadResult readBreak(XmlElement element) {
+        String breakType = element.getAttributeOrNone("w:type").orElse("");
+        if (breakType.equals("")) {
+            return success(LineBreak.LINE_BREAK);
+        } else {
+            return new ReadResult(list(), list(warning("Unsupported break type: " + breakType)));
+        }
     }
 
     private ReadResult readHyperlink(XmlElement element) {

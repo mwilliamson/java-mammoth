@@ -270,6 +270,15 @@ public class BodyXmlTests {
     }
 
     @Test
+    public void warningOnBreaksThatArentLineBreaks() {
+        XmlElement element = element("w:br", map("w:type", "page"));
+
+        assertThat(
+            readAll(a(bodyReader), element),
+            isResult(equalTo(list()), list(warning("Unsupported break type: page"))));
+    }
+
+    @Test
     public void canReadTableElements() {
         XmlElement element = element("w:tbl", list(
             element("w:tr", list(
