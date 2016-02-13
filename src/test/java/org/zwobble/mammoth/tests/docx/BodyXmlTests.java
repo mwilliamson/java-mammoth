@@ -60,16 +60,6 @@ public class BodyXmlTests {
     }
 
     @Test
-    public void paragraphHasStyleIdReadFromParagraphPropertiesIfPresent() {
-        XmlElement element = paragraphXml(list(
-            element("w:pPr", list(
-                element("w:pStyle", map("w:val", "Heading1"))))));
-        assertThat(
-            read(a(bodyReader), element),
-            hasStyle(Optional.of(new Style("Heading1", Optional.empty()))));
-    }
-
-    @Test
     public void whenParagraphHasStyleIdInStylesThenStyleNameIsReadFromStyles() {
         XmlElement element = paragraphXml(list(
             element("w:pPr", list(
@@ -82,6 +72,17 @@ public class BodyXmlTests {
         assertThat(
             read(a(bodyReader, with(STYLES, styles)), element),
             hasStyle(Optional.of(style)));
+    }
+
+    @Test
+    public void paragraphHasStyleIdReadFromParagraphPropertiesIfPresent() {
+        // TODO: emit warning due to missing style
+        XmlElement element = paragraphXml(list(
+            element("w:pPr", list(
+                element("w:pStyle", map("w:val", "Heading1"))))));
+        assertThat(
+            read(a(bodyReader), element),
+            hasStyle(Optional.of(new Style("Heading1", Optional.empty()))));
     }
 
     private static DocumentElement read(Maker<BodyXmlReader> reader, XmlElement element) {
