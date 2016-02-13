@@ -4,11 +4,11 @@ import com.natpryce.makeiteasy.Maker;
 import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
 import org.junit.Test;
-import org.zwobble.mammoth.results.Result;
 import org.zwobble.mammoth.documents.*;
 import org.zwobble.mammoth.docx.BodyXmlReader;
 import org.zwobble.mammoth.docx.Numbering;
 import org.zwobble.mammoth.docx.Styles;
+import org.zwobble.mammoth.results.Result;
 import org.zwobble.mammoth.results.Warning;
 import org.zwobble.mammoth.tests.DeepReflectionMatcher;
 import org.zwobble.mammoth.xml.XmlElement;
@@ -21,11 +21,11 @@ import java.util.Optional;
 import static com.natpryce.makeiteasy.MakeItEasy.*;
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.zwobble.mammoth.results.Warning.warning;
 import static org.zwobble.mammoth.tests.DeepReflectionMatcher.deepEquals;
-import static org.zwobble.mammoth.tests.documents.DocumentElementMakers.CHILDREN;
-import static org.zwobble.mammoth.tests.documents.DocumentElementMakers.PARAGRAPH;
+import static org.zwobble.mammoth.tests.documents.DocumentElementMakers.*;
 import static org.zwobble.mammoth.tests.docx.BodyXmlReaderMakers.*;
 import static org.zwobble.mammoth.util.MammothLists.list;
 import static org.zwobble.mammoth.util.MammothMaps.map;
@@ -171,12 +171,21 @@ public class BodyXmlTests {
         XmlElement element = runXml(list(
             element("w:rPr", list(
                 element("w:rStyle", map("w:val", "Heading1Char"))))));
-        
+
         assertThat(
             read(a(bodyReader), element),
             isResult(
                 hasStyle(Optional.of(new Style("Heading1Char", Optional.empty()))),
                 list(warning("Run style with ID Heading1Char was referenced but not defined in the document"))));
+    }
+
+    @Test
+    public void runIsNotBoldIfBoldElementIsNotPresent() {
+        XmlElement element = runXmlWithProperties();
+
+        assertThat(
+            readSuccess(a(bodyReader), element),
+            hasProperty("bold", equalTo(false)));
     }
 
     private static DocumentElement readSuccess(Maker<BodyXmlReader> reader, XmlElement element) {
@@ -200,6 +209,10 @@ public class BodyXmlTests {
 
     private XmlElement runXml(List<XmlNode> children) {
         return element("w:r", children);
+    }
+
+    private XmlElement runXmlWithProperties(XmlNode... children) {
+        return element("w:r", list(element("w:rPr", asList(children))));
     }
 
     private XmlElement textXml(String value) {
@@ -237,7 +250,7 @@ public class BodyXmlTests {
     }
 
     private Run run(DocumentElement... children) {
-        return new Run(Optional.empty(), asList(children));
+        return make(a(RUN, with(CHILDREN, asList(children))));
     }
 
     private Text text(String value) {

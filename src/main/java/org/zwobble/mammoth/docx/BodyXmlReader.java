@@ -49,7 +49,7 @@ public class BodyXmlReader {
         return ReadResult.map(
             readRunStyle(properties),
             readElements(element.children()),
-            (style, children) -> new Run(style, children));
+            (style, children) -> new Run(false, style, children));
     }
 
     private Result<Optional<Style>> readRunStyle(XmlElementLike properties) {

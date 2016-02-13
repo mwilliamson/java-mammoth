@@ -1,23 +1,19 @@
 package org.zwobble.mammoth.tests.docx;
 
 import org.junit.Test;
-import org.zwobble.mammoth.results.Result;
 import org.zwobble.mammoth.documents.Document;
-import org.zwobble.mammoth.documents.Run;
 import org.zwobble.mammoth.documents.Text;
 import org.zwobble.mammoth.docx.BodyXmlReader;
 import org.zwobble.mammoth.docx.DocumentXmlReader;
+import org.zwobble.mammoth.results.Result;
 import org.zwobble.mammoth.xml.XmlElement;
 import org.zwobble.mammoth.xml.XmlNodes;
-
-import java.util.Optional;
 
 import static com.natpryce.makeiteasy.MakeItEasy.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.zwobble.mammoth.results.Result.success;
 import static org.zwobble.mammoth.tests.DeepReflectionMatcher.deepEquals;
-import static org.zwobble.mammoth.tests.documents.DocumentElementMakers.CHILDREN;
-import static org.zwobble.mammoth.tests.documents.DocumentElementMakers.PARAGRAPH;
+import static org.zwobble.mammoth.tests.documents.DocumentElementMakers.*;
 import static org.zwobble.mammoth.util.MammothLists.list;
 import static org.zwobble.mammoth.xml.XmlNodes.element;
 
@@ -39,7 +35,7 @@ public class DocumentXmlTests {
             document,
             deepEquals(success(new Document(list(
                 make(a(PARAGRAPH, with(CHILDREN, list(
-                    new Run(Optional.empty(), list(
-                        new Text("Hello!"))))))))))));
+                    make(a(RUN, with(CHILDREN, list(
+                        new Text("Hello!"))))))))))))));
     }
 }
