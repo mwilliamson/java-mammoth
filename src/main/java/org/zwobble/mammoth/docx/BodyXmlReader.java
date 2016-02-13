@@ -47,6 +47,12 @@ public class BodyXmlReader {
             case "w:tc":
                 return readElements(element.children()).map(TableCell::new);
 
+            case "w:hyperlink":
+                return readHyperlink(element);
+
+            case "w:bookmarkStart":
+                return readBookmark(element);
+
             case "w:ins":
             case "w:smartTag":
             case "w:drawing":
@@ -55,9 +61,6 @@ public class BodyXmlReader {
             case "w:textbox":
             case "w:txbxContent":
                 return readElements(element.children());
-
-            case "w:hyperlink":
-                return readHyperlink(element);
 
             case "w:pPr":
                 return EMPTY_SUCCESS;
@@ -169,6 +172,15 @@ public class BodyXmlReader {
                 anchor.get(), children));
         } else {
             return childrenResult;
+        }
+    }
+
+    private ReadResult readBookmark(XmlElement element) {
+        String name = element.getAttribute("w:name");
+        if (name.equals("_GoBack")) {
+            return ReadResult.EMPTY_SUCCESS;
+        } else {
+            return success(new Bookmark(name));
         }
     }
 

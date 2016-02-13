@@ -89,6 +89,11 @@ public class Mammoth {
             public String visit(Hyperlink hyperlink) {
                 throw new UnsupportedOperationException();
             }
+
+            @Override
+            public String visit(Bookmark bookmark) {
+                throw new UnsupportedOperationException();
+            }
         });
     }
 }

@@ -12,4 +12,5 @@ public interface DocumentElementVisitor<T> {
     T visit(TableCell tableCell);
 
     T visit(Hyperlink hyperlink);
+    T visit(Bookmark bookmark);
 }

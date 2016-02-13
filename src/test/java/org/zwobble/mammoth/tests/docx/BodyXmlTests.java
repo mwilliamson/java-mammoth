@@ -320,6 +320,22 @@ public class BodyXmlTests {
             deepEquals(make(a(RUN))));
     }
 
+    @Test
+    public void goBackBookmarkIsIgnored() {
+        XmlElement element = element("w:bookmarkStart", map("w:name", "_GoBack"));
+        assertThat(
+            readAll(a(bodyReader), element),
+            isResult(equalTo(list()), list()));
+    }
+
+    @Test
+    public void bookmarkStartIsReadIfNameIsNotGoBack() {
+        XmlElement element = element("w:bookmarkStart", map("w:name", "start"));
+        assertThat(
+            readSuccess(a(bodyReader), element),
+            deepEquals(new Bookmark("start")));
+    }
+
     private static DocumentElement readSuccess(Maker<BodyXmlReader> reader, XmlElement element) {
         Result<DocumentElement> result = read(reader, element);
         assertThat(result.getWarnings(), deepEquals(list()));
@@ -327,8 +343,13 @@ public class BodyXmlTests {
     }
 
     private static Result<DocumentElement> read(Maker<BodyXmlReader> reader, XmlElement element) {
-        return reader.make().readElement(element).toResult()
+        // TODO: check exactly 1 element
+        return readAll(reader, element)
             .map(elements -> elements.get(0));
+    }
+
+    private static Result<List<DocumentElement>> readAll(Maker<BodyXmlReader> reader, XmlElement element) {
+        return reader.make().readElement(element).toResult();
     }
 
     private XmlElement paragraphXml() {
