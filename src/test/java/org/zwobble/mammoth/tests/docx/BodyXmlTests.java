@@ -85,6 +85,14 @@ public class BodyXmlTests {
             hasStyle(Optional.of(new Style("Heading1", Optional.empty()))));
     }
 
+    @Test
+    public void paragraphHasNoNumberingIfItHasNoNumberingProperties() {
+        XmlElement element = paragraphXml();
+        assertThat(
+            read(a(bodyReader), element),
+            hasNumbering(Optional.empty()));
+    }
+
     private static DocumentElement read(Maker<BodyXmlReader> reader, XmlElement element) {
         return reader.make().readElement(element).get(0);
     }
@@ -119,6 +127,10 @@ public class BodyXmlTests {
 
     private Matcher<? super DocumentElement> hasStyle(Optional<Style> expected) {
         return hasProperty("style", deepEquals(expected));
+    }
+
+    private Matcher<? super DocumentElement> hasNumbering(Optional<NumberingLevel> expected) {
+        return hasProperty("numbering", deepEquals(expected));
     }
 
     private Run run(DocumentElement... children) {

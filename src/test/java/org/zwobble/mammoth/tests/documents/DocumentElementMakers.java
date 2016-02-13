@@ -18,5 +18,6 @@ public class DocumentElementMakers {
     public static final Instantiator<Paragraph> PARAGRAPH =
         propertyLookup -> new Paragraph(
             Optional.empty(),
+            Optional.empty(),
             propertyLookup.valueOf(CHILDREN, list()));
 }

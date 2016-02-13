@@ -46,12 +46,16 @@ public class BodyXmlReader {
     }
 
     private Paragraph readParagraph(XmlElement element) {
-        return new Paragraph(readParagraphStyle(element), readElements(element.children()));
+        return new Paragraph(readParagraphStyle(element), readNumbering(element), readElements(element.children()));
     }
 
     private Optional<Style> readParagraphStyle(XmlElement paragraph) {
         XmlElementLike properties = paragraph.findChildOrEmpty("w:pPr");
         return properties.findChildOrEmpty("w:pStyle").getAttributeOrNone("w:val")
             .map(styleId -> styles.findParagraphStyleById(styleId).orElse(new Style(styleId, Optional.empty())));
+    }
+
+    private Optional<NumberingLevel> readNumbering(XmlElement element) {
+        return Optional.empty();
     }
 }
