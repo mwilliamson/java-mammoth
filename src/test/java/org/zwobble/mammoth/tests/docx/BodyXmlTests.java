@@ -151,6 +151,21 @@ public class BodyXmlTests {
             hasStyle(Optional.empty()));
     }
 
+    @Test
+    public void whenRunHasStyleIdInStylesThenStyleNameIsReadFromStyles() {
+        XmlElement element = runXml(list(
+            element("w:rPr", list(
+                element("w:rStyle", map("w:val", "Heading1Char"))))));
+
+        Style style = new Style("Heading1Char", Optional.of("Heading 1 Char"));
+        Styles styles = new Styles(
+            map(),
+            map("Heading1Char", style));
+        assertThat(
+            readSuccess(a(bodyReader, with(STYLES, styles)), element),
+            hasStyle(Optional.of(style)));
+    }
+
     private static DocumentElement readSuccess(Maker<BodyXmlReader> reader, XmlElement element) {
         Result<DocumentElement> result = read(reader, element);
         assertThat(result.getWarnings(), deepEquals(list()));

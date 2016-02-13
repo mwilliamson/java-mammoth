@@ -8,6 +8,7 @@ import org.zwobble.mammoth.xml.XmlElementLike;
 import org.zwobble.mammoth.xml.XmlNode;
 
 import java.util.Optional;
+import java.util.function.Function;
 
 import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.transform;
@@ -44,8 +45,15 @@ public class BodyXmlReader {
     }
 
     private ReadResult readRun(XmlElement element) {
-        return readElements(element.children())
-            .map(children -> new Run(Optional.empty(), children));
+        XmlElementLike properties = element.findChildOrEmpty("w:rPr");
+        return ReadResult.map(
+            readRunStyle(properties),
+            readElements(element.children()),
+            (style, children) -> new Run(style, children));
+    }
+
+    private Result<Optional<Style>> readRunStyle(XmlElementLike properties) {
+        return readStyle(properties, "w:rStyle", "Run", styles::findCharacterStyleById);
     }
 
     public ReadResult readElements(Iterable<XmlNode> nodes) {
@@ -61,24 +69,38 @@ public class BodyXmlReader {
         return ReadResult.map(
             readParagraphStyle(properties),
             readElements(element.children()),
-            (paragraphStyle, children) -> new Paragraph(paragraphStyle, numbering, children));
+            (style, children) -> new Paragraph(style, numbering, children));
     }
 
     private Result<Optional<Style>> readParagraphStyle(XmlElementLike properties) {
-        return readVal(properties, "w:pStyle")
-            .map(this::findParagraphStyleById)
+        return readStyle(properties, "w:pStyle", "Paragraph", styles::findParagraphStyleById);
+    }
+
+    private Result<Optional<Style>> readStyle(
+        XmlElementLike properties,
+        String styleTagName,
+        String styleType,
+        Function<String, Optional<Style>> findStyleById)
+    {
+        return readVal(properties, styleTagName)
+            .map(styleId -> findStyleById(styleType, styleId, findStyleById))
             .orElse(Result.empty());
     }
 
-    private Result<Optional<Style>> findParagraphStyleById(String styleId) {
-        Optional<Style> style = styles.findParagraphStyleById(styleId);
+    private Result<Optional<Style>> findStyleById(
+        String styleType,
+        String styleId,
+        Function<String, Optional<Style>> findStyleById)
+    {
+        Optional<Style> style = findStyleById.apply(styleId);
         if (style.isPresent()) {
             return Result.success(style);
         } else {
             return new Result<>(
                 Optional.of(new Style(styleId, Optional.empty())),
-                list(warning("Paragraph style with ID " + styleId + " was referenced but not defined in the document")));
+                list(warning(styleType + " style with ID " + styleId + " was referenced but not defined in the document")));
         }
+
     }
 
     private Optional<NumberingLevel> readNumbering(XmlElementLike properties) {
