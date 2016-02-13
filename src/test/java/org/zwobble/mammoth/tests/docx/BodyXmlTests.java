@@ -251,6 +251,8 @@ public class BodyXmlTests {
             hasProperty("strikethrough", equalTo(true)));
     }
 
+    // TODO: vertical alignment
+
     private static DocumentElement readSuccess(Maker<BodyXmlReader> reader, XmlElement element) {
         Result<DocumentElement> result = read(reader, element);
         assertThat(result.getWarnings(), deepEquals(list()));
