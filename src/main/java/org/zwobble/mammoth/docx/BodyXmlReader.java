@@ -61,7 +61,7 @@ public class BodyXmlReader {
     }
 
     private boolean isItalic(XmlElementLike properties) {
-        return false;
+        return properties.hasChild("w:i");
     }
 
     private Result<Optional<Style>> readRunStyle(XmlElementLike properties) {
