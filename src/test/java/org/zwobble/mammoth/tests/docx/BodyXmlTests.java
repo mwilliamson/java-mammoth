@@ -267,6 +267,26 @@ public class BodyXmlTests {
     }
 
     @Test
+    public void runIsSuperscriptIfVerticalAlignmentPropertyIsSetToSuperscript() {
+        XmlElement element = runXmlWithProperties(
+            element("w:vertAlign", map("w:val", "superscript")));
+
+        assertThat(
+            readSuccess(a(bodyReader), element),
+            hasProperty("verticalAlignment", equalTo(VerticalAlignment.SUPERSCRIPT)));
+    }
+
+    @Test
+    public void runIsSubscriptIfVerticalAlignmentPropertyIsSetToSubscript() {
+        XmlElement element = runXmlWithProperties(
+            element("w:vertAlign", map("w:val", "subscript")));
+
+        assertThat(
+            readSuccess(a(bodyReader), element),
+            hasProperty("verticalAlignment", equalTo(VerticalAlignment.SUBSCRIPT)));
+    }
+
+    @Test
     public void canReadTabElement() {
         XmlElement element = element("w:tab");
 

@@ -157,7 +157,16 @@ public class BodyXmlReader {
     }
 
     private VerticalAlignment readVerticalAlignment(XmlElementLike properties) {
-        return VerticalAlignment.BASELINE;
+        String verticalAlignment = readVal(properties, "w:vertAlign").orElse("");
+        switch (verticalAlignment) {
+            case "superscript":
+                return VerticalAlignment.SUPERSCRIPT;
+            case "subscript":
+                return VerticalAlignment.SUBSCRIPT;
+            default:
+                // TODO: warn if set?
+                return VerticalAlignment.BASELINE;
+        }
     }
 
     private Result<Optional<Style>> readRunStyle(XmlElementLike properties) {
