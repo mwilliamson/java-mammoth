@@ -188,6 +188,15 @@ public class BodyXmlTests {
             hasProperty("bold", equalTo(false)));
     }
 
+    @Test
+    public void runIsBoldIfBoldElementIsPresent() {
+        XmlElement element = runXmlWithProperties(element("w:b"));
+
+        assertThat(
+            readSuccess(a(bodyReader), element),
+            hasProperty("bold", equalTo(true)));
+    }
+
     private static DocumentElement readSuccess(Maker<BodyXmlReader> reader, XmlElement element) {
         Result<DocumentElement> result = read(reader, element);
         assertThat(result.getWarnings(), deepEquals(list()));

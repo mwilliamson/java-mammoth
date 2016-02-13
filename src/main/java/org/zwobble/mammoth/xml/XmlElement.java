@@ -72,6 +72,11 @@ public class XmlElement implements XmlNode, XmlElementLike {
     }
 
     @Override
+    public boolean hasChild(String name) {
+        return findChildrenIterable(name).iterator().hasNext();
+    }
+
+    @Override
     public XmlElementLike findChildOrEmpty(String name) {
         return getFirst(findChildrenIterable(name), NullXmlElement.INSTANCE);
     }

@@ -49,7 +49,14 @@ public class BodyXmlReader {
         return ReadResult.map(
             readRunStyle(properties),
             readElements(element.children()),
-            (style, children) -> new Run(false, style, children));
+            (style, children) -> new Run(
+                isBold(properties),
+                style,
+                children));
+    }
+
+    private boolean isBold(XmlElementLike properties) {
+        return properties.hasChild("w:b");
     }
 
     private Result<Optional<Style>> readRunStyle(XmlElementLike properties) {
