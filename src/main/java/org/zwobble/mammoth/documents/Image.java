@@ -1,14 +1,12 @@
 package org.zwobble.mammoth.documents;
 
+import org.zwobble.mammoth.util.InputStreamSupplier;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Optional;
 
 public class Image implements DocumentElement {
-    @FunctionalInterface
-    public interface InputStreamSupplier {
-        InputStream open() throws IOException;
-    }
 
     private final Optional<String> altText;
     private final Optional<String> contentType;

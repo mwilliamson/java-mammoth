@@ -17,6 +17,7 @@ import org.zwobble.mammoth.xml.XmlNodes;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static com.natpryce.makeiteasy.MakeItEasy.*;
@@ -401,6 +402,47 @@ public class BodyXmlTests {
         assertThat(
             CharStreams.toString(new InputStreamReader(image.open())),
             equalTo("Not an image at all!"));
+    }
+
+    @Test
+    public void canReadInlinePictures() throws IOException {
+        XmlElement element = inlineImageXml(embeddedBlipXml("rId5"), "It's a hat");
+        Relationships relationships = new Relationships(map(
+            "rId5", new Relationship("media/hat.png")));
+        String imageBytes = "Not an image at all!";
+        DocxFile file = new InMemoryDocxFile(map("word/media/hat.png", imageBytes));
+
+        Image image = (Image) readSuccess(
+            a(bodyReader, with(RELATIONSHIPS, relationships), with(DOCX_FILE, file)),
+            element);
+        assertThat(image, allOf(
+            hasProperty("altText", deepEquals(Optional.of("It's a hat"))),
+            hasProperty("contentType", deepEquals(Optional.of("image/png")))));
+        assertThat(
+            CharStreams.toString(new InputStreamReader(image.open())),
+            equalTo("Not an image at all!"));
+    }
+
+    private XmlElement inlineImageXml(XmlElement blip, String description) {
+        return element("w:drawing", list(
+            element("wp:inline", imageXml(blip, description))));
+    }
+
+    private List<XmlNode> imageXml(XmlElement blip, String description) {
+        return list(
+            element("wp:docPr", map("descr", description)),
+            element("a:graphic", list(
+                element("a:graphicData", list(
+                    element("pic:pic", list(
+                        element("pic:blipFill", list(blip)))))))));
+    }
+
+    private XmlElement embeddedBlipXml(String relationshipId) {
+        return blipXml(map("r:embed", relationshipId));
+    }
+
+    private XmlElement blipXml(Map<String, String> attributes) {
+        return element("a:blip", attributes);
     }
 
     @Test

@@ -3,9 +3,11 @@ package org.zwobble.mammoth.docx;
 import org.zwobble.mammoth.documents.*;
 import org.zwobble.mammoth.results.Result;
 import org.zwobble.mammoth.results.Warning;
+import org.zwobble.mammoth.util.InputStreamSupplier;
 import org.zwobble.mammoth.util.MammothOptionals;
 import org.zwobble.mammoth.xml.XmlElement;
 import org.zwobble.mammoth.xml.XmlElementLike;
+import org.zwobble.mammoth.xml.XmlElementList;
 import org.zwobble.mammoth.xml.XmlNode;
 
 import java.util.Optional;
@@ -75,6 +77,9 @@ public class BodyXmlReader {
 
             case "v:imagedata":
                 return readImagedata(element);
+
+            case "wp:inline":
+                return readInline(element);
 
             case "w:ins":
             case "w:smartTag":
@@ -245,11 +250,39 @@ public class BodyXmlReader {
     private ReadResult readImagedata(XmlElement element) {
         Optional<String> title = element.getAttributeOrNone("o:title");
         String relationshipId = element.getAttribute("r:id");
-        Relationship relationship = relationships.findRelationshipById(relationshipId);
-        String imagePath = "word/" + trimLeft(relationship.getTarget(), '/');
+        String imagePath = relationshipIdToDocxPath(relationshipId);
+        return readImage(imagePath, title, () -> file.getInputStream(imagePath));
+    }
+
+    private ReadResult readInline(XmlElement element) {
+        Optional<String> altText = element.findChildOrEmpty("wp:docPr").getAttributeOrNone("descr");
+        XmlElementList blips = element.findChildren("a:graphic")
+            .findChildren("a:graphicData")
+            .findChildren("pic:pic")
+            .findChildren("pic:blipFill")
+            .findChildren("a:blip");
+        return readBlips(blips, altText);
+    }
+
+    private ReadResult readBlips(XmlElementList blips, Optional<String> altText) {
+        return ReadResult.concat(transform(blips, blip -> readBlip(blip, altText)));
+    }
+
+    private ReadResult readBlip(XmlElement blip, Optional<String> altText) {
+        String relationshipId = blip.getAttribute("r:embed");
+        String imagePath = relationshipIdToDocxPath(relationshipId);
+        return readImage(imagePath, altText, () -> file.getInputStream(imagePath));
+    }
+
+    private ReadResult readImage(String imagePath, Optional<String> altText, InputStreamSupplier open) {
         Optional<String> contentType = contentTypes.findContentType(imagePath);
-        Image image = new Image(title, contentType, () -> file.getInputStream(imagePath));
+        Image image = new Image(altText, contentType, open);
         return success(image);
+    }
+
+    private String relationshipIdToDocxPath(String relationshipId) {
+        Relationship relationship = relationships.findRelationshipById(relationshipId);
+        return "word/" + trimLeft(relationship.getTarget(), '/');
     }
 
     private Optional<String> readVal(XmlElementLike element, String name) {
