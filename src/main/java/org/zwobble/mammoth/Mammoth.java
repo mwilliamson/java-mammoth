@@ -71,6 +71,11 @@ public class Mammoth {
             }
 
             @Override
+            public String visit(LineBreak lineBreak) {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
             public String visit(Table table) {
                 throw new UnsupportedOperationException();
             }

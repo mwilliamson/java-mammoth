@@ -6,6 +6,7 @@ public interface DocumentElementVisitor<T> {
     T visit(Text text);
 
     T visit(Tab tab);
+    T visit(LineBreak lineBreak);
 
     T visit(Table table);
     T visit(TableRow tableRow);
@@ -13,4 +14,5 @@ public interface DocumentElementVisitor<T> {
 
     T visit(Hyperlink hyperlink);
     T visit(Bookmark bookmark);
+
 }

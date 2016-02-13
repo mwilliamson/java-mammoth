@@ -39,6 +39,8 @@ public class BodyXmlReader {
 
             case "w:tab":
                 return success(Tab.TAB);
+            case "w:br":
+                return success(LineBreak.LINE_BREAK);
 
             case "w:tbl":
                 return readElements(element.children()).map(Table::new);

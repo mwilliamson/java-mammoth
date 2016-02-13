@@ -261,6 +261,15 @@ public class BodyXmlTests {
     }
 
     @Test
+    public void brIsReadAsLineBreak() {
+        XmlElement element = element("w:br");
+
+        assertThat(
+            readSuccess(a(bodyReader), element),
+            equalTo(LineBreak.LINE_BREAK));
+    }
+
+    @Test
     public void canReadTableElements() {
         XmlElement element = element("w:tbl", list(
             element("w:tr", list(
