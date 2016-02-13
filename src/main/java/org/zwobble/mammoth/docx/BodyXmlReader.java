@@ -53,6 +53,7 @@ public class BodyXmlReader {
                 isBold(properties),
                 isItalic(properties),
                 isUnderline(properties),
+                isStrikethrough(properties),
                 style,
                 children));
     }
@@ -67,6 +68,10 @@ public class BodyXmlReader {
 
     private boolean isUnderline(XmlElementLike properties) {
         return properties.hasChild("w:u");
+    }
+
+    private boolean isStrikethrough(XmlElementLike properties) {
+        return properties.hasChild("w:strike");
     }
 
     private Result<Optional<Style>> readRunStyle(XmlElementLike properties) {

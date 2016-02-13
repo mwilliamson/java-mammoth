@@ -233,6 +233,24 @@ public class BodyXmlTests {
             hasProperty("underline", equalTo(true)));
     }
 
+    @Test
+    public void runIsNotStruckthroughIfStrikethroughElementIsNotPresent() {
+        XmlElement element = runXmlWithProperties();
+
+        assertThat(
+            readSuccess(a(bodyReader), element),
+            hasProperty("strikethrough", equalTo(false)));
+    }
+
+    @Test
+    public void runIsStruckthroughIfStrikethroughElementIsPresent() {
+        XmlElement element = runXmlWithProperties(element("w:strike"));
+
+        assertThat(
+            readSuccess(a(bodyReader), element),
+            hasProperty("strikethrough", equalTo(true)));
+    }
+
     private static DocumentElement readSuccess(Maker<BodyXmlReader> reader, XmlElement element) {
         Result<DocumentElement> result = read(reader, element);
         assertThat(result.getWarnings(), deepEquals(list()));

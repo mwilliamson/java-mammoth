@@ -27,6 +27,7 @@ public class DocumentElementMakers {
             false,
             false,
             false,
+            false,
             Optional.empty(),
             propertyLookup.valueOf(CHILDREN, list()));
 }
