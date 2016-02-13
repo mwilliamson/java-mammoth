@@ -56,20 +56,23 @@ public class BodyXmlReader {
     }
 
     private Optional<Style> readParagraphStyle(XmlElementLike properties) {
-        return properties.findChildOrEmpty("w:pStyle")
-            .getAttributeOrNone("w:val")
+        return readVal(properties, "w:pStyle")
             .map(styleId -> styles.findParagraphStyleById(styleId)
                 .orElse(new Style(styleId, Optional.empty())));
     }
 
     private Optional<NumberingLevel> readNumbering(XmlElementLike properties) {
         XmlElementLike numberingProperties = properties.findChildOrEmpty("w:numPr");
-        Optional<String> numId = numberingProperties.findChildOrEmpty("w:numId").getAttributeOrNone("w:val");
-        Optional<String> levelIndex = numberingProperties.findChildOrEmpty("w:ilvl").getAttributeOrNone("w:val");
+        Optional<String> numId = readVal(numberingProperties, "w:numId");
+        Optional<String> levelIndex = readVal(numberingProperties, "w:ilvl");
         if (numId.isPresent() && levelIndex.isPresent()) {
             return numbering.findLevel(numId.get(), levelIndex.get());
         } else {
             return Optional.empty();
         }
+    }
+
+    private Optional<String> readVal(XmlElementLike element, String name) {
+        return element.findChildOrEmpty(name).getAttributeOrNone("w:val");
     }
 }
