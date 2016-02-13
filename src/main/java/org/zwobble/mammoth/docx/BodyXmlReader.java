@@ -35,6 +35,9 @@ public class BodyXmlReader {
             case "w:p":
                 return readParagraph(element);
 
+            case "w:tab":
+                return success(Tab.TAB);
+
             case "w:pPr":
                 return EMPTY_SUCCESS;
 

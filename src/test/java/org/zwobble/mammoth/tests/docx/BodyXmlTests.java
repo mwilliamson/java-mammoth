@@ -253,6 +253,15 @@ public class BodyXmlTests {
 
     // TODO: vertical alignment
 
+    @Test
+    public void canReadTabElement() {
+        XmlElement element = element("w:tab");
+
+        assertThat(
+            readSuccess(a(bodyReader), element),
+            equalTo(Tab.TAB));
+    }
+
     private static DocumentElement readSuccess(Maker<BodyXmlReader> reader, XmlElement element) {
         Result<DocumentElement> result = read(reader, element);
         assertThat(result.getWarnings(), deepEquals(list()));

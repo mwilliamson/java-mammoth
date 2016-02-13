@@ -60,6 +60,11 @@ public class Mammoth {
             public String visit(Text text) {
                 return text.getValue();
             }
+
+            @Override
+            public String visit(Tab tab) {
+                throw new UnsupportedOperationException();
+            }
         });
     }
 }
