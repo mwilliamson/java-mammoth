@@ -410,6 +410,14 @@ public class BodyXmlTests {
             isResult(equalTo(list()), list(warning("An unrecognised element was ignored: w:huh"))));
     }
 
+    @Test
+    public void textNodesAreIgnoredWhenReadingChildren() {
+        XmlElement element = runXml(list(XmlNodes.text("[text]")));
+        assertThat(
+            readSuccess(a(bodyReader), element),
+            deepEquals(make(a(RUN))));
+    }
+
     private static DocumentElement readSuccess(Maker<BodyXmlReader> reader, XmlElement element) {
         Result<DocumentElement> result = read(reader, element);
         assertThat(result.getWarnings(), deepEquals(list()));
