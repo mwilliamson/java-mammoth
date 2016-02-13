@@ -10,4 +10,6 @@ public interface DocumentElementVisitor<T> {
     T visit(Table table);
     T visit(TableRow tableRow);
     T visit(TableCell tableCell);
+
+    T visit(Hyperlink hyperlink);
 }

@@ -5,9 +5,7 @@ import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.zwobble.mammoth.documents.*;
-import org.zwobble.mammoth.docx.BodyXmlReader;
-import org.zwobble.mammoth.docx.Numbering;
-import org.zwobble.mammoth.docx.Styles;
+import org.zwobble.mammoth.docx.*;
 import org.zwobble.mammoth.results.Result;
 import org.zwobble.mammoth.results.Warning;
 import org.zwobble.mammoth.tests.DeepReflectionMatcher;
@@ -294,6 +292,16 @@ public class BodyXmlTests {
         assertThat(
             readSuccess(a(bodyReader), element),
             deepEquals(make(a(PARAGRAPH))));
+    }
+
+    @Test
+    public void hyperlinkIsReadIfItHasARelationshipId() {
+        Relationships relationships = new Relationships(
+            map("r42", new Relationship("http://example.com")));
+        XmlElement element = element("w:hyperlink", map("r:id", "r42"), list(runXml(list())));
+        assertThat(
+            readSuccess(a(bodyReader, with(RELATIONSHIPS, relationships)), element),
+            deepEquals(Hyperlink.href("http://example.com", list(make(a(RUN))))));
     }
 
     private static DocumentElement readSuccess(Maker<BodyXmlReader> reader, XmlElement element) {

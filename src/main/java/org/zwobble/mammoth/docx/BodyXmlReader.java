@@ -20,10 +20,12 @@ import static org.zwobble.mammoth.util.MammothLists.list;
 public class BodyXmlReader {
     private final Styles styles;
     private final Numbering numbering;
+    private final Relationships relationships;
 
-    public BodyXmlReader(Styles styles, Numbering numbering) {
+    public BodyXmlReader(Styles styles, Numbering numbering, Relationships relationships) {
         this.styles = styles;
         this.numbering = numbering;
+        this.relationships = relationships;
     }
 
     public ReadResult readElement(XmlElement element) {
@@ -53,6 +55,9 @@ public class BodyXmlReader {
             case "w:textbox":
             case "w:txbxContent":
                 return readElements(element.children());
+
+            case "w:hyperlink":
+                return readHyperlink(element);
 
             case "w:pPr":
                 return EMPTY_SUCCESS;
@@ -150,6 +155,13 @@ public class BodyXmlReader {
             readVal(numberingProperties, "w:numId"),
             readVal(numberingProperties, "w:ilvl"),
             numbering::findLevel);
+    }
+
+    private ReadResult readHyperlink(XmlElement element) {
+        String relationshipId = element.getAttribute("r:id");
+        return readElements(element.children())
+            .map(children -> Hyperlink.href(
+                relationships.findRelationshipById(relationshipId).getTarget(), children));
     }
 
     private Optional<String> readVal(XmlElementLike element, String name) {

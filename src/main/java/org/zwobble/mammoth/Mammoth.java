@@ -21,7 +21,11 @@ public class Mammoth {
 
             Styles styles = Styles.EMPTY;
             Numbering numbering = Numbering.EMPTY;
-            DocumentXmlReader reader = new DocumentXmlReader(new BodyXmlReader(styles, numbering));
+            Relationships relationships = Relationships.EMPTY;
+            DocumentXmlReader reader = new DocumentXmlReader(new BodyXmlReader(
+                styles,
+                numbering,
+                relationships));
             return reader.readElement(documentXml)
                 .map(Mammoth::convertToHtml);
         } catch (IOException e) {
@@ -78,6 +82,11 @@ public class Mammoth {
 
             @Override
             public String visit(TableCell tableCell) {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public String visit(Hyperlink hyperlink) {
                 throw new UnsupportedOperationException();
             }
         });
