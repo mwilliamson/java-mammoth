@@ -8,24 +8,25 @@ import org.zwobble.mammoth.xml.XmlElement;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import static com.google.common.collect.Iterables.transform;
 
 public class Mammoth {
     public static Result<String> convertToHtml(File file) {
-        try (ZipFile zipFile = new ZipFile(file)) {
-            ZipEntry entry = zipFile.getEntry("word/document.xml");
-            XmlElement documentXml = OfficeXml.parseXml(zipFile.getInputStream(entry));
+        try (DocxFile zipFile = new ZippedDocxFile(new ZipFile(file))) {
+            XmlElement documentXml = OfficeXml.parseXml(zipFile.getInputStream("word/document.xml"));
 
             Styles styles = Styles.EMPTY;
             Numbering numbering = Numbering.EMPTY;
             Relationships relationships = Relationships.EMPTY;
+            ContentTypes contentTypes = ContentTypes.DEFAULT;
             DocumentXmlReader reader = new DocumentXmlReader(new BodyXmlReader(
                 styles,
                 numbering,
-                relationships));
+                relationships,
+                contentTypes,
+                zipFile));
             return reader.readElement(documentXml)
                 .map(Mammoth::convertToHtml);
         } catch (IOException e) {
@@ -102,6 +103,11 @@ public class Mammoth {
 
             @Override
             public String visit(NoteReference noteReference) {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public String visit(Image image) {
                 throw new UnsupportedOperationException();
             }
         });

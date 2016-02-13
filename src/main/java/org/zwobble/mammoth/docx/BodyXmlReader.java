@@ -17,16 +17,27 @@ import static org.zwobble.mammoth.docx.ReadResult.EMPTY_SUCCESS;
 import static org.zwobble.mammoth.docx.ReadResult.success;
 import static org.zwobble.mammoth.results.Warning.warning;
 import static org.zwobble.mammoth.util.MammothLists.list;
+import static org.zwobble.mammoth.util.MammothStrings.trimLeft;
 
 public class BodyXmlReader {
     private final Styles styles;
     private final Numbering numbering;
     private final Relationships relationships;
+    private final ContentTypes contentTypes;
+    private final DocxFile file;
 
-    public BodyXmlReader(Styles styles, Numbering numbering, Relationships relationships) {
+    public BodyXmlReader(
+        Styles styles,
+        Numbering numbering,
+        Relationships relationships,
+        ContentTypes contentTypes,
+        DocxFile file)
+    {
         this.styles = styles;
         this.numbering = numbering;
         this.relationships = relationships;
+        this.contentTypes = contentTypes;
+        this.file = file;
     }
 
     public ReadResult readElement(XmlElement element) {
@@ -61,6 +72,9 @@ public class BodyXmlReader {
 
             case "w:pict":
                 return readPict(element);
+
+            case "v:imagedata":
+                return readImagedata(element);
 
             case "w:ins":
             case "w:smartTag":
@@ -226,6 +240,16 @@ public class BodyXmlReader {
 
     private ReadResult readPict(XmlElement element) {
         return readElements(element.children()).toExtra();
+    }
+
+    private ReadResult readImagedata(XmlElement element) {
+        Optional<String> title = element.getAttributeOrNone("o:title");
+        String relationshipId = element.getAttribute("r:id");
+        Relationship relationship = relationships.findRelationshipById(relationshipId);
+        String imagePath = "word/" + trimLeft(relationship.getTarget(), '/');
+        Optional<String> contentType = contentTypes.findContentType(imagePath);
+        Image image = new Image(title, contentType, () -> file.getInputStream(imagePath));
+        return success(image);
     }
 
     private Optional<String> readVal(XmlElementLike element, String name) {

@@ -1,5 +1,6 @@
 package org.zwobble.mammoth.tests.docx;
 
+import com.google.common.io.CharStreams;
 import com.natpryce.makeiteasy.Maker;
 import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
@@ -13,12 +14,15 @@ import org.zwobble.mammoth.xml.XmlElement;
 import org.zwobble.mammoth.xml.XmlNode;
 import org.zwobble.mammoth.xml.XmlNodes;
 
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.List;
 import java.util.Optional;
 
 import static com.natpryce.makeiteasy.MakeItEasy.*;
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.zwobble.mammoth.documents.NoteReference.endnoteReference;
@@ -378,6 +382,25 @@ public class BodyXmlTests {
         assertThat(
             readAll(a(bodyReader), paragraph),
             isResult(deepEquals(expected), list()));
+    }
+
+    @Test
+    public void canReadImagedataElementsWithIdAttribute() throws IOException {
+        XmlElement element = element("v:imagedata", map("r:id", "rId5", "o:title", "It's a hat"));
+        Relationships relationships = new Relationships(map(
+            "rId5", new Relationship("media/hat.png")));
+        String imageBytes = "Not an image at all!";
+        DocxFile file = new InMemoryDocxFile(map("word/media/hat.png", imageBytes));
+
+        Image image = (Image) readSuccess(
+            a(bodyReader, with(RELATIONSHIPS, relationships), with(DOCX_FILE, file)),
+            element);
+        assertThat(image, allOf(
+            hasProperty("altText", deepEquals(Optional.of("It's a hat"))),
+            hasProperty("contentType", deepEquals(Optional.of("image/png")))));
+        assertThat(
+            CharStreams.toString(new InputStreamReader(image.open())),
+            equalTo("Not an image at all!"));
     }
 
     @Test

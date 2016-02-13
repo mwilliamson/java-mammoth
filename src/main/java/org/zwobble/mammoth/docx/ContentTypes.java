@@ -6,7 +6,11 @@ import com.google.common.io.Files;
 import java.util.Map;
 import java.util.Optional;
 
+import static org.zwobble.mammoth.util.MammothMaps.map;
+
 public class ContentTypes {
+    public static final ContentTypes DEFAULT = new ContentTypes(map(), map());
+
     private static final Map<String, String> imageExtensions = ImmutableMap.<String, String>builder()
         .put("png", "png")
         .put("gif", "gif")
