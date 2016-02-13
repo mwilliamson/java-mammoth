@@ -99,6 +99,11 @@ public class Mammoth {
             public String visit(Bookmark bookmark) {
                 throw new UnsupportedOperationException();
             }
+
+            @Override
+            public String visit(NoteReference noteReference) {
+                throw new UnsupportedOperationException();
+            }
         });
     }
 }

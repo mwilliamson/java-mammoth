@@ -54,6 +54,8 @@ public class BodyXmlReader {
                 return readHyperlink(element);
             case "w:bookmarkStart":
                 return readBookmark(element);
+            case "w:footnoteReference":
+                return readNoteReference(element);
 
             case "w:ins":
             case "w:smartTag":
@@ -210,6 +212,11 @@ public class BodyXmlReader {
         } else {
             return success(new Bookmark(name));
         }
+    }
+
+    private ReadResult readNoteReference(XmlElement element) {
+        String noteId = element.getAttribute("w:id");
+        return success(new NoteReference(noteId));
     }
 
     private Optional<String> readVal(XmlElementLike element, String name) {

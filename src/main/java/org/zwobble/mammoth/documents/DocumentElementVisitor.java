@@ -14,5 +14,5 @@ public interface DocumentElementVisitor<T> {
 
     T visit(Hyperlink hyperlink);
     T visit(Bookmark bookmark);
-
+    T visit(NoteReference noteReference);
 }
