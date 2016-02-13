@@ -79,7 +79,7 @@ public class BodyXmlTests {
     }
 
     @Test
-    public void paragraphHasStyleIdReadFromParagraphPropertiesIfPresent() {
+    public void warningIsEmittedWhenParagraphStyleCannotBeFound() {
         XmlElement element = paragraphXml(list(
             element("w:pPr", list(
                 element("w:pStyle", map("w:val", "Heading1"))))));
@@ -164,6 +164,19 @@ public class BodyXmlTests {
         assertThat(
             readSuccess(a(bodyReader, with(STYLES, styles)), element),
             hasStyle(Optional.of(style)));
+    }
+
+    @Test
+    public void warningIsEmittedWhenRunStyleCannotBeFound() {
+        XmlElement element = runXml(list(
+            element("w:rPr", list(
+                element("w:rStyle", map("w:val", "Heading1Char"))))));
+        
+        assertThat(
+            read(a(bodyReader), element),
+            isResult(
+                hasStyle(Optional.of(new Style("Heading1Char", Optional.empty()))),
+                list(warning("Run style with ID Heading1Char was referenced but not defined in the document"))));
     }
 
     private static DocumentElement readSuccess(Maker<BodyXmlReader> reader, XmlElement element) {
