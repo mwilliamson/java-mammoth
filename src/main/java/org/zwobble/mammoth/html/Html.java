@@ -32,7 +32,15 @@ public class Html {
     }
 
     public static HtmlNode element(String tagName, Map<String, String> attributes, List<HtmlNode> children) {
-        return new HtmlElement(tagName, attributes, children);
+        return new HtmlElement(tagName, attributes, children, false);
+    }
+
+    public static HtmlNode collapsibleElement(String tagName, List<HtmlNode> children) {
+        return collapsibleElement(tagName, map(), children);
+    }
+
+    public static HtmlNode collapsibleElement(String tagName, Map<String, String> attributes, List<HtmlNode> children) {
+        return new HtmlElement(tagName, attributes, children, true);
     }
 
     public static HtmlNode selfClosingElement(String tagName) {
