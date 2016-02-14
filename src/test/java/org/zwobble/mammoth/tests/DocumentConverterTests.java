@@ -17,6 +17,8 @@ import static org.zwobble.mammoth.tests.documents.DocumentElementMakers.*;
 import static org.zwobble.mammoth.util.MammothLists.list;
 
 public class DocumentConverterTests {
+    // TODO: styles (paragraph, run, underline, strikethrough)
+
     @Test
     public void plainParagraphIsConvertedToPlainParagraph() {
         assertThat(
@@ -48,6 +50,13 @@ public class DocumentConverterTests {
         assertThat(
             convertToHtml(make(a(RUN, with(ITALIC, true), with(CHILDREN, list(new Text("Hello")))))),
             deepEquals(list(Html.element("em", list(Html.text("Hello"))))));
+    }
+
+    @Test
+    public void underliningIsIgnoredByDefault() {
+        assertThat(
+            convertToHtml(make(a(RUN, with(UNDERLINE, true), with(CHILDREN, list(new Text("Hello")))))),
+            deepEquals(list(Html.text("Hello"))));
     }
 
 
