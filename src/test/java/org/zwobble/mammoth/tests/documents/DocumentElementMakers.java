@@ -7,6 +7,9 @@ import org.zwobble.mammoth.documents.*;
 import java.util.List;
 import java.util.Optional;
 
+import static com.natpryce.makeiteasy.MakeItEasy.a;
+import static com.natpryce.makeiteasy.MakeItEasy.make;
+import static com.natpryce.makeiteasy.MakeItEasy.with;
 import static com.natpryce.makeiteasy.Property.newProperty;
 import static org.zwobble.mammoth.util.MammothLists.list;
 
@@ -28,4 +31,8 @@ public class DocumentElementMakers {
             VerticalAlignment.BASELINE,
             Optional.empty(),
             propertyLookup.valueOf(CHILDREN, list()));
+
+    public static Run runWithText(String text) {
+        return make(a(RUN, with(CHILDREN, list(new Text(text)))));
+    }
 }

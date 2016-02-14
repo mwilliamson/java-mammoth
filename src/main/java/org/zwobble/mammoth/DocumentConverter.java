@@ -20,7 +20,7 @@ public class DocumentConverter {
             DocumentConverter::convertToHtml);
     }
 
-    private static List<HtmlNode> convertToHtml(DocumentElement element) {
+    public static List<HtmlNode> convertToHtml(DocumentElement element) {
         return element.accept(new DocumentElementVisitor<List<HtmlNode>>() {
             @Override
             public List<HtmlNode> visit(Paragraph paragraph) {
