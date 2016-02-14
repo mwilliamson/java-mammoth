@@ -22,4 +22,8 @@ public class Html {
     public static HtmlNode element(String tagName, List<HtmlNode> children) {
         return new HtmlElementNode(tagName, children);
     }
+
+    public static HtmlNode selfClosingElement(String tagName) {
+        return new HtmlSelfClosingElement(tagName);
+    }
 }

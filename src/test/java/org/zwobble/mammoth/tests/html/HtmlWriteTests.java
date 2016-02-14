@@ -23,6 +23,13 @@ public class HtmlWriteTests {
     }
 
     @Test
+    public void canWriteSelfClosingElement() {
+        assertEquals(
+            "<br />",
+            write(Html.selfClosingElement("br")));
+    }
+
+    @Test
     public void canWriteElementWithNoChildren() {
         assertEquals(
             "<p></p>",
