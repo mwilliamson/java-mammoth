@@ -58,6 +58,8 @@ public class DocumentConverter {
         String referenceId = generateNoteRefHtmlId(note.getNoteType(), note.getId());
         ImmutableList.Builder<HtmlNode> children = ImmutableList.builder();
         children.addAll(convertToHtml(note.getBody()));
+        // TODO: we probably want this to collapse more eagerly than other collapsible elements
+        // -- for instance, any paragraph will probably do, regardless of attributes. (Possible other elements will do too.)
         children.add(Html.collapsibleElement("p", list(
             Html.text(" "),
             Html.element("a", map("href", "#" + referenceId), list(Html.text("↑"))))));
