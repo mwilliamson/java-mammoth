@@ -37,15 +37,7 @@ public class HtmlWriter {
         });
     }
 
-    public static String escapeText(String text) {
-        return text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;");
-    }
-
-    private static String escapeAttributeValue(String value) {
-        return escapeText(value).replace("\"", "&quot;");
-    }
-
-    public static void generateAttributes(Map<String, String> attributes, StringBuilder builder) {
+    private static void generateAttributes(Map<String, String> attributes, StringBuilder builder) {
         for (Map.Entry<String, String> attribute : orderedBy(attributes.entrySet(), Map.Entry::getKey)) {
             builder
                 .append(" ")
@@ -54,5 +46,13 @@ public class HtmlWriter {
                 .append(HtmlWriter.escapeAttributeValue(attribute.getValue()))
                 .append("\"");
         }
+    }
+
+    private static String escapeText(String text) {
+        return text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;");
+    }
+
+    private static String escapeAttributeValue(String value) {
+        return escapeText(value).replace("\"", "&quot;");
     }
 }
