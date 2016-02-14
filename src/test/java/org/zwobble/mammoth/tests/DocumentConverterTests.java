@@ -138,7 +138,7 @@ public class DocumentConverterTests {
     public void bookmarksAreConvertedToAnchorsWithIds() {
         assertThat(
             convertToHtml(new Bookmark("start")),
-            deepEquals(list(Html.element("a", map("id", "doc-42-start")))));
+            deepEquals(list(Html.element("a", map("id", "doc-42-start"), list(Html.FORCE_WRITE)))));
     }
 
     @Test

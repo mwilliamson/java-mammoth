@@ -7,6 +7,8 @@ import static org.zwobble.mammoth.util.MammothLists.list;
 import static org.zwobble.mammoth.util.MammothMaps.map;
 
 public class Html {
+    public static final HtmlNode FORCE_WRITE = HtmlForceWrite.FORCE_WRITE;
+
     public static String write(List<HtmlNode> nodes) {
         StringBuilder builder = new StringBuilder();
         nodes.forEach(node -> HtmlWriter.write(node, builder));

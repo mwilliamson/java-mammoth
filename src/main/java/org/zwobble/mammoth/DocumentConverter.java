@@ -159,7 +159,7 @@ public class DocumentConverter {
 
             @Override
             public List<HtmlNode> visit(Bookmark bookmark) {
-                return list(Html.element("a", map("id", generateId(bookmark.getName()))));
+                return list(Html.element("a", map("id", generateId(bookmark.getName())), list(Html.FORCE_WRITE)));
             }
 
             @Override

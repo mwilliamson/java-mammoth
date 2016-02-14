@@ -7,5 +7,6 @@ public interface HtmlNode {
         void visit(HtmlElement element);
         void visit(HtmlSelfClosingElement element);
         void visit(HtmlTextNode node);
+        void visit(HtmlForceWrite forceWrite);
     }
 }

@@ -34,6 +34,10 @@ public class HtmlWriter {
             public void visit(HtmlTextNode node) {
                 builder.append(HtmlWriter.escapeText(node.getValue()));
             }
+
+            @Override
+            public void visit(HtmlForceWrite forceWrite) {
+            }
         });
     }
 
