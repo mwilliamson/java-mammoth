@@ -22,6 +22,22 @@ public class HtmlWriteTests {
             write(Html.text("><&")));
     }
 
+    @Test
+    public void canWriteElementWithNoChildren() {
+        assertEquals(
+            "<p></p>",
+            write(Html.element("p")));
+    }
+
+    @Test
+    public void canWriteElementWithChildren() {
+        assertEquals(
+            "<div><p></p><ul></ul></div>",
+            write(Html.element("div", list(
+                Html.element("p"),
+                Html.element("ul")))));
+    }
+
     private String write(HtmlNode node) {
         return Html.write(list(node));
     }

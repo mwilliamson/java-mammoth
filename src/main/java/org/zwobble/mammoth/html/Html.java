@@ -2,6 +2,8 @@ package org.zwobble.mammoth.html;
 
 import java.util.List;
 
+import static org.zwobble.mammoth.util.MammothLists.list;
+
 public class Html {
     public static String write(List<HtmlNode> nodes) {
         StringBuilder builder = new StringBuilder();
@@ -11,6 +13,10 @@ public class Html {
 
     public static HtmlNode text(String value) {
         return new HtmlTextNode(value);
+    }
+
+    public static HtmlNode element(String tagName) {
+        return element(tagName, list());
     }
 
     public static HtmlNode element(String tagName, List<HtmlNode> children) {
