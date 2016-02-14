@@ -96,6 +96,26 @@ public class DocumentConverterTests {
     }
 
     @Test
+    public void tableIsConvertedToHtmlTable() {
+        assertThat(
+            convertToHtml(new Table(list(
+                new TableRow(list(
+                    new TableCell(list(paragraphWithText("Top left"))),
+                    new TableCell(list(paragraphWithText("Top right"))))),
+                new TableRow(list(
+                    new TableCell(list(paragraphWithText("Bottom left"))),
+                    new TableCell(list(paragraphWithText("Bottom right")))))))),
+            
+            deepEquals(list(Html.element("table", list(
+                Html.element("tr", list(
+                    Html.element("td", list(Html.element("p", list(Html.text("Top left"))))),
+                    Html.element("td", list(Html.element("p", list(Html.text("Top right"))))))),
+                Html.element("tr", list(
+                    Html.element("td", list(Html.element("p", list(Html.text("Bottom left"))))),
+                    Html.element("td", list(Html.element("p", list(Html.text("Bottom right"))))))))))));
+    }
+
+    @Test
     public void hyperlinkWithHrefIsConvertedToAnchorTag() {
         assertThat(
             convertToHtml(Hyperlink.href("http://example.com", list(new Text("Hello")))),

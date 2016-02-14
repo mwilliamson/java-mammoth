@@ -82,17 +82,17 @@ public class DocumentConverter {
 
             @Override
             public List<HtmlNode> visit(Table table) {
-                throw new UnsupportedOperationException();
+                return list(Html.element("table", convertChildrenToHtml(table)));
             }
 
             @Override
             public List<HtmlNode> visit(TableRow tableRow) {
-                throw new UnsupportedOperationException();
+                return list(Html.element("tr", convertChildrenToHtml(tableRow)));
             }
 
             @Override
             public List<HtmlNode> visit(TableCell tableCell) {
-                throw new UnsupportedOperationException();
+                return list(Html.element("td", convertChildrenToHtml(tableCell)));
             }
 
             @Override

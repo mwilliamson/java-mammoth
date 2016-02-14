@@ -37,6 +37,10 @@ public class DocumentElementMakers {
             Optional.empty(),
             propertyLookup.valueOf(CHILDREN, list()));
 
+    public static Paragraph paragraphWithText(String text) {
+        return make(a(PARAGRAPH, with(CHILDREN, list(runWithText(text)))));
+    }
+
     public static Run runWithText(String text) {
         return make(a(RUN, with(CHILDREN, list(new Text(text)))));
     }
