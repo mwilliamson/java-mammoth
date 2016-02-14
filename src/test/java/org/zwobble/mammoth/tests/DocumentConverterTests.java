@@ -35,7 +35,7 @@ public class DocumentConverterTests {
     @Test
     public void multipleParagraphsInDocumentAreConvertedToMultipleParagraphs() {
         assertThat(
-            documentConverter().convertToHtml(new Document(list(
+            convertToHtml(new Document(list(
                 make(a(PARAGRAPH, with(CHILDREN, list(runWithText("Hello"))))),
                 make(a(PARAGRAPH, with(CHILDREN, list(runWithText("there")))))), Notes.EMPTY)),
 
@@ -142,6 +142,27 @@ public class DocumentConverterTests {
     }
 
     @Test
+    public void noteReferencesAreConvertedToLinksToReferenceBodyAfterMainBody() {
+        Document document = new Document(
+            list(make(a(PARAGRAPH, with(CHILDREN, list(
+                runWithText("Knock knock"),
+                make(a(RUN, with(CHILDREN, list(new NoteReference(NoteType.FOOTNOTE, "4")))))))))),
+            new Notes(list(new Note(NoteType.FOOTNOTE, "4", list(paragraphWithText("Who's there?"))))));
+
+        assertThat(
+            convertToHtml(document),
+            deepEquals(list(
+                Html.element("p", list(
+                    Html.text("Knock knock"),
+                    Html.element("sup", list(
+                        Html.element("a", map("href", "#doc-42-footnote-4", "id", "doc-42-footnote-ref-4"), list(Html.text("[1]"))))))),
+                Html.element("ol", list(
+                    Html.element("li", map("id", "doc-42-footnote-4"), list(
+                        Html.element("p", list(
+                            Html.text("Who's there?"))))))))));
+    }
+
+    @Test
     public void imagesAreConvertedToImageTagsWithDataUriByDefault() {
         Image image = new Image(
             Optional.empty(),
@@ -163,11 +184,11 @@ public class DocumentConverterTests {
             contains(hasProperty("attributes", hasEntry("alt", "It's a hat"))));
     }
 
-    private List<HtmlNode> convertToHtml(DocumentElement element) {
-        return documentConverter().convertToHtml(element);
+    private List<HtmlNode> convertToHtml(Document document) {
+        return DocumentConverter.convertToHtml("doc-42", document);
     }
 
-    private DocumentConverter documentConverter() {
-        return new DocumentConverter("doc-42");
+    private List<HtmlNode> convertToHtml(DocumentElement element) {
+        return DocumentConverter.convertToHtml("doc-42", element);
     }
 }

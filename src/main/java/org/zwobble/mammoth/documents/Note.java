@@ -20,4 +20,8 @@ public class Note {
     public String getId() {
         return id;
     }
+
+    public List<DocumentElement> getBody() {
+        return body;
+    }
 }

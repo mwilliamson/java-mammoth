@@ -1,6 +1,8 @@
 package org.zwobble.mammoth;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Iterables;
 import com.google.common.io.ByteStreams;
 import org.zwobble.mammoth.documents.*;
 import org.zwobble.mammoth.html.Html;
@@ -16,23 +18,68 @@ import static org.zwobble.mammoth.util.MammothLists.list;
 import static org.zwobble.mammoth.util.MammothMaps.map;
 
 public class DocumentConverter {
+    public static List<HtmlNode> convertToHtml(String idPrefix, Document document) {
+        DocumentConverter documentConverter = new DocumentConverter(idPrefix);
+        List<HtmlNode> mainBody = documentConverter.convertChildrenToHtml(document);
+        // TODO: can you have note references inside a note?
+        List<Note> notes = findNotes(document);
+        if (notes.isEmpty()) {
+            return mainBody;
+        } else {
+            HtmlNode noteNode = Html.element("ol",
+                ImmutableList.copyOf(Iterables.transform(notes, documentConverter::convertToHtml)));
+
+            return ImmutableList.copyOf(Iterables.concat(mainBody, list(noteNode)));
+        }
+    }
+
+    private static List<Note> findNotes(Document document) {
+        Iterable<NoteReference> noteReferences = Iterables.filter(descendants(document), NoteReference.class);
+        return ImmutableList.copyOf(Iterables.transform(
+            noteReferences,
+            // TODO: handle missing notes
+            reference -> document.getNotes().findNote(reference.getNoteType(), reference.getNoteId()).get()));
+    }
+
+    private static Iterable<DocumentElement> descendants(HasChildren element) {
+        return Iterables.concat(Iterables.transform(element.getChildren(), DocumentConverter::descendantsAndSelf));
+    }
+
+    private static Iterable<DocumentElement> descendantsAndSelf(DocumentElement element) {
+        if (element instanceof HasChildren) {
+            HasChildren hasChildren = (HasChildren) element;
+            return Iterables.concat(descendants(hasChildren), list(element));
+        } else {
+            return list(element);
+        }
+    }
+
+    public static List<HtmlNode> convertToHtml(String idPrefix, DocumentElement element) {
+        return new DocumentConverter(idPrefix).convertToHtml(element);
+    }
+
     private final String idPrefix;
 
-    public DocumentConverter(String idPrefix) {
+    private DocumentConverter(String idPrefix) {
         this.idPrefix = idPrefix;
     }
 
-    public List<HtmlNode> convertToHtml(Document document) {
-        return convertChildrenToHtml(document);
+    private HtmlNode convertToHtml(Note note) {
+        String id = generateNoteHtmlId(note.getNoteType(), note.getId());
+        return Html.element("li", map("id", id), convertToHtml(note.getBody()));
     }
 
-    private List<HtmlNode> convertChildrenToHtml(HasChildren element) {
+    private List<HtmlNode> convertToHtml(List<DocumentElement> elements) {
         return eagerFlatMap(
-            element.getChildren(),
+            elements,
             this::convertToHtml);
     }
 
-    public List<HtmlNode> convertToHtml(DocumentElement element) {
+    private List<HtmlNode> convertChildrenToHtml(HasChildren element) {
+        return convertToHtml(element.getChildren());
+    }
+
+    private List<HtmlNode> convertToHtml(DocumentElement element) {
         return element.accept(new DocumentElementVisitor<List<HtmlNode>>() {
             @Override
             public List<HtmlNode> visit(Paragraph paragraph) {
@@ -120,13 +167,14 @@ public class DocumentConverter {
                 return list(Html.element("a", map("id", generateId(bookmark.getName()))));
             }
 
-            private String generateId(String bookmarkName) {
-                return idPrefix + "-" + bookmarkName;
-            }
-
             @Override
             public List<HtmlNode> visit(NoteReference noteReference) {
-                throw new UnsupportedOperationException();
+                String noteAnchor = generateNoteHtmlId(noteReference.getNoteType(), noteReference.getNoteId());
+                String noteReferenceAnchor = generateNoteRefHtmlId(noteReference.getNoteType(), noteReference.getNoteId());
+                return list(Html.element("sup", list(
+                    Html.element("a", map("href", "#" + noteAnchor, "id", noteReferenceAnchor), list(
+                        // TODO: increment note indices
+                        Html.text("[1]"))))));
             }
 
             @Override
@@ -153,5 +201,28 @@ public class DocumentConverter {
                     .orElse(list());
             }
         });
+    }
+
+    private String generateNoteHtmlId(NoteType noteType, String noteId) {
+        return generateId(noteTypeToIdFragment(noteType) + "-" + noteId);
+    }
+
+    private String generateNoteRefHtmlId(NoteType noteType, String noteId) {
+        return generateId(noteTypeToIdFragment(noteType) + "-ref-" + noteId);
+    }
+
+    private String noteTypeToIdFragment(NoteType noteType) {
+        switch (noteType) {
+            case FOOTNOTE:
+                return "footnote";
+            case ENDNOTE:
+                return "endnote";
+            default:
+                throw new UnsupportedOperationException();
+        }
+    }
+
+    private String generateId(String bookmarkName) {
+        return idPrefix + "-" + bookmarkName;
     }
 }

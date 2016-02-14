@@ -17,6 +17,14 @@ public class NoteReference implements DocumentElement {
         this.noteId = noteId;
     }
 
+    public NoteType getNoteType() {
+        return noteType;
+    }
+
+    public String getNoteId() {
+        return noteId;
+    }
+
     @Override
     public <T> T accept(DocumentElementVisitor<T> visitor) {
         return visitor.visit(this);
