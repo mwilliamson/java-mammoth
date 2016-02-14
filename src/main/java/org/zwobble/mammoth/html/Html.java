@@ -1,5 +1,7 @@
 package org.zwobble.mammoth.html;
 
+import org.zwobble.mammoth.util.MammothLists;
+
 import java.util.List;
 import java.util.Map;
 
@@ -49,5 +51,46 @@ public class Html {
 
     public static HtmlNode selfClosingElement(String tagName, Map<String, String> attributes) {
         return new HtmlSelfClosingElement(tagName, attributes);
+    }
+
+    public static List<HtmlNode> stripEmpty(List<HtmlNode> nodes) {
+        return MammothLists.eagerFlatMap(nodes, node -> stripEmpty(node));
+    }
+
+    private static List<HtmlNode> stripEmpty(HtmlNode node) {
+        return node.accept(new HtmlNode.Mapper<List<HtmlNode>>() {
+            @Override
+            public List<HtmlNode> visit(HtmlElement element) {
+                List<HtmlNode> children = stripEmpty(element.getChildren());
+                if (children.isEmpty()) {
+                    return list();
+                } else {
+                    return list(new HtmlElement(
+                        element.getTagName(),
+                        element.getAttributes(),
+                        children,
+                        element.isCollapsible()));
+                }
+            }
+
+            @Override
+            public List<HtmlNode> visit(HtmlSelfClosingElement element) {
+                return list(element);
+            }
+
+            @Override
+            public List<HtmlNode> visit(HtmlTextNode node) {
+                if (node.getValue().isEmpty()) {
+                    return list();
+                } else {
+                    return list(node);
+                }
+            }
+
+            @Override
+            public List<HtmlNode> visit(HtmlForceWrite forceWrite) {
+                return list(forceWrite);
+            }
+        });
     }
 }

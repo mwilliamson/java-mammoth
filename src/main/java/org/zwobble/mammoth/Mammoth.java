@@ -34,6 +34,7 @@ public class Mammoth {
             String idPrefix = "document";
             return reader.readElement(documentXml)
                 .map(nodes -> DocumentConverter.convertToHtml(idPrefix, nodes))
+                .map(Html::stripEmpty)
                 .map(Html::write);
         } catch (IOException e) {
             throw new UnsupportedOperationException("Should return a result of failure");   

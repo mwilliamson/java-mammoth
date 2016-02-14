@@ -28,6 +28,10 @@ public class MammothLists {
         return ImmutableList.copyOf(Iterables.concat(first, second));
     }
 
+    public static <T, R> List<R> eagerMap(Iterable<T> iterable, Function<T, R> function) {
+        return ImmutableList.copyOf(Iterables.transform(iterable, function));
+    }
+
     public static <T, R> List<R> eagerFlatMap(Iterable<T> iterable, Function<T, Iterable<R>> function) {
         return ImmutableList.copyOf(Iterables.concat(Iterables.transform(iterable, function)));
     }

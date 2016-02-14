@@ -81,11 +81,7 @@ public class DocumentConverter {
             @Override
             public List<HtmlNode> visit(Paragraph paragraph) {
                 List<HtmlNode> content = convertChildrenToHtml(paragraph);
-                if (content.isEmpty()) {
-                    return list();
-                } else {
-                    return list(Html.element("p", content));
-                }
+                return list(Html.element("p", content));
             }
 
             @Override

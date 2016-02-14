@@ -28,8 +28,17 @@ public class HtmlElement implements HtmlNode {
         return children;
     }
 
+    public boolean isCollapsible() {
+        return collapsible;
+    }
+
     @Override
     public void visit(Visitor visitor) {
         visitor.visit(this);
+    }
+
+    @Override
+    public <T> T accept(Mapper<T> visitor) {
+        return visitor.visit(this);
     }
 }

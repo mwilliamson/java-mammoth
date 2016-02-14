@@ -23,4 +23,9 @@ public class HtmlSelfClosingElement implements HtmlNode {
     public void visit(Visitor visitor) {
         visitor.visit(this);
     }
+
+    @Override
+    public <T> T accept(Mapper<T> visitor) {
+        return visitor.visit(this);
+    }
 }
