@@ -89,6 +89,13 @@ public class DocumentConverterTests {
     }
 
     @Test
+    public void lineBreakIsConvertedToBreakElement() {
+        assertThat(
+            convertToHtml(LineBreak.LINE_BREAK),
+            deepEquals(list(Html.selfClosingElement("br"))));
+    }
+
+    @Test
     public void hyperlinkWithHrefIsConvertedToAnchorTag() {
         assertThat(
             convertToHtml(Hyperlink.href("http://example.com", list(new Text("Hello")))),

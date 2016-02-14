@@ -77,7 +77,7 @@ public class DocumentConverter {
 
             @Override
             public List<HtmlNode> visit(LineBreak lineBreak) {
-                throw new UnsupportedOperationException();
+                return list(Html.selfClosingElement("br"));
             }
 
             @Override
