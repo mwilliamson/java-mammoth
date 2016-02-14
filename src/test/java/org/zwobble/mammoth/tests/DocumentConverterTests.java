@@ -82,6 +82,13 @@ public class DocumentConverterTests {
     }
 
     @Test
+    public void tabIsConvertedToTabInHtmlText() {
+        assertThat(
+            convertToHtml(Tab.TAB),
+            deepEquals(list(Html.text("\t"))));
+    }
+
+    @Test
     public void hyperlinkWithHrefIsConvertedToAnchorTag() {
         assertThat(
             convertToHtml(Hyperlink.href("http://example.com", list(new Text("Hello")))),

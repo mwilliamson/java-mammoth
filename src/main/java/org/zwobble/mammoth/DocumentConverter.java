@@ -72,7 +72,7 @@ public class DocumentConverter {
 
             @Override
             public List<HtmlNode> visit(Tab tab) {
-                throw new UnsupportedOperationException();
+                return list(Html.text("\t"));
             }
 
             @Override
