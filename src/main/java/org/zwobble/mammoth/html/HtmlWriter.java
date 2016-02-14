@@ -1,10 +1,8 @@
 package org.zwobble.mammoth.html;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Ordering;
-
-import java.util.List;
 import java.util.Map;
+
+import static org.zwobble.mammoth.util.MammothLists.orderedBy;
 
 public class HtmlWriter {
     public static String escapeText(String text) {
@@ -16,10 +14,7 @@ public class HtmlWriter {
     }
 
     public static void generateAttributes(Map<String, String> attributes, StringBuilder builder) {
-        List<Map.Entry<String, String>> sortedAttributes = orderBy(Map.Entry<String, String>::getKey)
-            .sortedCopy(attributes.entrySet());
-
-        for (Map.Entry<String, String> attribute : sortedAttributes) {
+        for (Map.Entry<String, String> attribute : orderedBy(attributes.entrySet(), Map.Entry::getKey)) {
             builder
                 .append(" ")
                 .append(attribute.getKey())
@@ -27,9 +22,5 @@ public class HtmlWriter {
                 .append(HtmlWriter.escapeAttributeValue(attribute.getValue()))
                 .append("\"");
         }
-    }
-
-    private static <T, R extends Comparable<R>> Ordering<T> orderBy(Function<T, R> getKey) {
-        return Ordering.from((first, second) -> getKey.apply(first).compareTo(getKey.apply(second)));
     }
 }
