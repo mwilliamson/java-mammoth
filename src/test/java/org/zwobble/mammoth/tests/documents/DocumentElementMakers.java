@@ -18,6 +18,7 @@ public class DocumentElementMakers {
     public static final Property<HasChildren, Boolean> ITALIC = newProperty();
     public static final Property<HasChildren, Boolean> UNDERLINE = newProperty();
     public static final Property<HasChildren, Boolean> STRIKETHROUGH = newProperty();
+    public static final Property<HasChildren, VerticalAlignment> VERTICAL_ALIGNMENT = newProperty();
     public static final Property<HasChildren, List<DocumentElement>> CHILDREN = newProperty();
 
     public static final Instantiator<Paragraph> PARAGRAPH =
@@ -32,7 +33,7 @@ public class DocumentElementMakers {
             propertyLookup.valueOf(ITALIC, false),
             propertyLookup.valueOf(UNDERLINE, false),
             propertyLookup.valueOf(STRIKETHROUGH, false),
-            VerticalAlignment.BASELINE,
+            propertyLookup.valueOf(VERTICAL_ALIGNMENT, VerticalAlignment.BASELINE),
             Optional.empty(),
             propertyLookup.valueOf(CHILDREN, list()));
 
