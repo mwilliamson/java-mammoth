@@ -145,7 +145,7 @@ public class DocumentConverter {
             @Override
             public List<HtmlNode> visit(Hyperlink hyperlink) {
                 Map<String, String> attributes = map("href", generateHref(hyperlink));
-                return list(Html.element("a", attributes, convertChildrenToHtml(hyperlink)));
+                return list(Html.collapsibleElement("a", attributes, convertChildrenToHtml(hyperlink)));
             }
 
             private String generateHref(Hyperlink hyperlink) {

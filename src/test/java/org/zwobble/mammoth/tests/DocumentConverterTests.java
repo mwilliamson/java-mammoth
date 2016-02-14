@@ -124,14 +124,14 @@ public class DocumentConverterTests {
     public void hyperlinkWithHrefIsConvertedToAnchorTag() {
         assertThat(
             convertToHtml(Hyperlink.href("http://example.com", list(new Text("Hello")))),
-            deepEquals(list(Html.element("a", map("href", "http://example.com"), list(Html.text("Hello"))))));
+            deepEquals(list(Html.collapsibleElement("a", map("href", "http://example.com"), list(Html.text("Hello"))))));
     }
 
     @Test
     public void hyperlinkWithInternalAnchorReferenceIsConvertedToAnchorTag() {
         assertThat(
             convertToHtml(Hyperlink.anchor("start", list(new Text("Hello")))),
-            deepEquals(list(Html.element("a", map("href", "#doc-42-start"), list(Html.text("Hello"))))));
+            deepEquals(list(Html.collapsibleElement("a", map("href", "#doc-42-start"), list(Html.text("Hello"))))));
     }
 
     @Test
