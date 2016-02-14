@@ -105,7 +105,7 @@ public class DocumentConverter {
                 if (hyperlink.getHref().isPresent()) {
                     return hyperlink.getHref().get();
                 } else if (hyperlink.getAnchor().isPresent()) {
-                    return "#" + idPrefix + "-" + hyperlink.getAnchor().get();
+                    return "#" + generateId(hyperlink.getAnchor().get());
                 } else {
                     return "";
                 }
@@ -113,7 +113,11 @@ public class DocumentConverter {
 
             @Override
             public List<HtmlNode> visit(Bookmark bookmark) {
-                throw new UnsupportedOperationException();
+                return list(Html.element("a", map("id", generateId(bookmark.getName()))));
+            }
+
+            private String generateId(String bookmarkName) {
+                return idPrefix + "-" + bookmarkName;
             }
 
             @Override

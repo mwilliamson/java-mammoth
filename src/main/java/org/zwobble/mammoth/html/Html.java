@@ -21,6 +21,10 @@ public class Html {
         return element(tagName, list());
     }
 
+    public static HtmlNode element(String tagName, Map<String, String> attributes) {
+        return element(tagName, attributes, list());
+    }
+
     public static HtmlNode element(String tagName, List<HtmlNode> children) {
         return element(tagName, map(), children);
     }

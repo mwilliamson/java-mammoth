@@ -2,10 +2,7 @@ package org.zwobble.mammoth.tests;
 
 import org.junit.Test;
 import org.zwobble.mammoth.DocumentConverter;
-import org.zwobble.mammoth.documents.Document;
-import org.zwobble.mammoth.documents.DocumentElement;
-import org.zwobble.mammoth.documents.Hyperlink;
-import org.zwobble.mammoth.documents.Text;
+import org.zwobble.mammoth.documents.*;
 import org.zwobble.mammoth.html.Html;
 import org.zwobble.mammoth.html.HtmlNode;
 
@@ -96,6 +93,13 @@ public class DocumentConverterTests {
         assertThat(
             convertToHtml(Hyperlink.anchor("start", list(new Text("Hello")))),
             deepEquals(list(Html.element("a", map("href", "#doc-42-start"), list(Html.text("Hello"))))));
+    }
+
+    @Test
+    public void bookmarksAreConvertedToAnchorsWithIds() {
+        assertThat(
+            convertToHtml(new Bookmark("start")),
+            deepEquals(list(Html.element("a", map("id", "doc-42-start")))));
     }
 
 

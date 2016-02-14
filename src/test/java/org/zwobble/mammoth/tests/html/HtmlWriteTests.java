@@ -50,7 +50,7 @@ public class HtmlWriteTests {
     public void canWriteElementWithAttributes() {
         assertEquals(
             "<a class=\"external\" href=\"http://example.com\"></a>",
-            write(Html.element("a", map("class", "external", "href", "http://example.com"), list())));
+            write(Html.element("a", map("class", "external", "href", "http://example.com"))));
     }
 
     private String write(HtmlNode node) {

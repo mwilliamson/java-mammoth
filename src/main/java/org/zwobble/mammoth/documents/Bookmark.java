@@ -7,6 +7,10 @@ public class Bookmark implements DocumentElement {
         this.name = name;
     }
 
+    public String getName() {
+        return name;
+    }
+
     @Override
     public <T> T accept(DocumentElementVisitor<T> visitor) {
         return visitor.visit(this);
