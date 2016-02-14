@@ -20,6 +20,14 @@ public class MammothLists {
         return ImmutableList.of(value1, value2);
     }
 
+    public static <T> List<T> cons(T head, Iterable<T> tail) {
+        return concat(list(head), tail);
+    }
+
+    private static <T> List<T> concat(Iterable<T> first, Iterable<T> second) {
+        return ImmutableList.copyOf(Iterables.concat(first, second));
+    }
+
     public static <T, R> List<R> eagerFlatMap(Iterable<T> iterable, Function<T, Iterable<R>> function) {
         return ImmutableList.copyOf(Iterables.concat(Iterables.transform(iterable, function)));
     }

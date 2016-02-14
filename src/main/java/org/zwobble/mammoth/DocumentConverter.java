@@ -7,6 +7,7 @@ import com.google.common.io.ByteStreams;
 import org.zwobble.mammoth.documents.*;
 import org.zwobble.mammoth.html.Html;
 import org.zwobble.mammoth.html.HtmlNode;
+import org.zwobble.mammoth.util.MammothLists;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -138,7 +139,8 @@ public class DocumentConverter {
 
             @Override
             public List<HtmlNode> visit(TableCell tableCell) {
-                return list(Html.element("td", convertChildrenToHtml(tableCell)));
+                return list(Html.element("td",
+                    MammothLists.cons(Html.FORCE_WRITE, convertChildrenToHtml(tableCell))));
             }
 
             @Override

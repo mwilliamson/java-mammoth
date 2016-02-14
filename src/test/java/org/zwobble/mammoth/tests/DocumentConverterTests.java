@@ -113,11 +113,11 @@ public class DocumentConverterTests {
 
             deepEquals(list(Html.element("table", list(
                 Html.element("tr", list(
-                    Html.element("td", list(Html.element("p", list(Html.text("Top left"))))),
-                    Html.element("td", list(Html.element("p", list(Html.text("Top right"))))))),
+                    Html.element("td", list(Html.FORCE_WRITE, Html.element("p", list(Html.text("Top left"))))),
+                    Html.element("td", list(Html.FORCE_WRITE, Html.element("p", list(Html.text("Top right"))))))),
                 Html.element("tr", list(
-                    Html.element("td", list(Html.element("p", list(Html.text("Bottom left"))))),
-                    Html.element("td", list(Html.element("p", list(Html.text("Bottom right"))))))))))));
+                    Html.element("td", list(Html.FORCE_WRITE, Html.element("p", list(Html.text("Bottom left"))))),
+                    Html.element("td", list(Html.FORCE_WRITE, Html.element("p", list(Html.text("Bottom right"))))))))))));
     }
 
     @Test
