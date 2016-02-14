@@ -1,17 +1,20 @@
 package org.zwobble.mammoth;
 
-import com.google.common.base.Joiner;
 import org.zwobble.mammoth.documents.*;
 import org.zwobble.mammoth.docx.*;
+import org.zwobble.mammoth.html.Html;
+import org.zwobble.mammoth.html.HtmlNode;
 import org.zwobble.mammoth.results.Result;
 import org.zwobble.mammoth.xml.XmlElement;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 import java.util.zip.ZipFile;
 
-import static com.google.common.collect.Iterables.transform;
+import static org.zwobble.mammoth.util.MammothLists.eagerFlatMap;
+import static org.zwobble.mammoth.util.MammothLists.list;
 
 public class Mammoth {
     public static Result<String> convertToHtml(File file) {
@@ -36,86 +39,91 @@ public class Mammoth {
                 zipFile,
                 fileReader));
             return reader.readElement(documentXml)
-                .map(Mammoth::convertToHtml);
+                .map(Mammoth::convertToHtml)
+                .map(Html::write);
         } catch (IOException e) {
             throw new UnsupportedOperationException("Should return a result of failure");   
         }
     }
 
-    private static String convertToHtml(Document document) {
+    private static List<HtmlNode> convertToHtml(Document document) {
         return convertChildrenToHtml(document);
     }
 
-    private static String convertChildrenToHtml(HasChildren element) {
-        return Joiner.on("").join(transform(
+    private static List<HtmlNode> convertChildrenToHtml(HasChildren element) {
+        return eagerFlatMap(
             element.getChildren(),
-            Mammoth::convertToHtml));
+            Mammoth::convertToHtml);
     }
 
-    private static String convertToHtml(DocumentElement element) {
-        return element.accept(new DocumentElementVisitor<String>() {
+    private static List<HtmlNode> convertToHtml(DocumentElement element) {
+        return element.accept(new DocumentElementVisitor<List<HtmlNode>>() {
             @Override
-            public String visit(Paragraph paragraph) {
-                String content = convertChildrenToHtml(paragraph);
+            public List<HtmlNode> visit(Paragraph paragraph) {
+                List<HtmlNode> content = convertChildrenToHtml(paragraph);
                 if (content.isEmpty()) {
-                    return "";
+                    return list();
                 } else {
-                    return "<p>" + content + "</p>";
+                    return list(Html.element("p", content));
                 }
             }
 
             @Override
-            public String visit(Run run) {
+            public List<HtmlNode> visit(Run run) {
                 return convertChildrenToHtml(run);
             }
 
             @Override
-            public String visit(Text text) {
-                return text.getValue();
+            public List<HtmlNode> visit(Text text) {
+                if (text.getValue().isEmpty()) {
+                    return list();
+                } else {
+                    return list(Html.text(text.getValue()));
+                }
             }
 
             @Override
-            public String visit(Tab tab) {
+            public List<HtmlNode> visit(Tab tab) {
                 throw new UnsupportedOperationException();
             }
 
             @Override
-            public String visit(LineBreak lineBreak) {
+            public List<HtmlNode> visit(LineBreak lineBreak) {
                 throw new UnsupportedOperationException();
             }
 
             @Override
-            public String visit(Table table) {
+            public List<HtmlNode> visit(Table table) {
                 throw new UnsupportedOperationException();
             }
 
             @Override
-            public String visit(TableRow tableRow) {
+            public List<HtmlNode> visit(TableRow tableRow) {
                 throw new UnsupportedOperationException();
             }
 
             @Override
-            public String visit(TableCell tableCell) {
+            public List<HtmlNode> visit(TableCell tableCell) {
                 throw new UnsupportedOperationException();
             }
 
             @Override
-            public String visit(Hyperlink hyperlink) {
+            public List<HtmlNode> visit(Hyperlink hyperlink) {
                 throw new UnsupportedOperationException();
             }
 
             @Override
-            public String visit(Bookmark bookmark) {
+            public List<HtmlNode> visit(Bookmark bookmark) {
                 throw new UnsupportedOperationException();
             }
 
             @Override
-            public String visit(NoteReference noteReference) {
+            public List<HtmlNode> visit(NoteReference noteReference) {
                 throw new UnsupportedOperationException();
             }
 
             @Override
-            public String visit(Image image) {
+            public List<HtmlNode> visit(Image image) {
                 throw new UnsupportedOperationException();
             }
         });
