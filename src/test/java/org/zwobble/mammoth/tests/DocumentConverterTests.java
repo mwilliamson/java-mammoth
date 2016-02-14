@@ -166,6 +166,21 @@ public class DocumentConverterTests {
     }
 
     @Test
+    public void noteReferencesAreConvertedWithSequentialNumbers() {
+        Run run = make(a(RUN, with(CHILDREN, list(
+            new NoteReference(NoteType.FOOTNOTE, "4"),
+            new NoteReference(NoteType.FOOTNOTE, "7")))));
+
+        assertThat(
+            convertToHtml(run),
+            deepEquals(list(
+                Html.element("sup", list(
+                    Html.element("a", map("href", "#doc-42-footnote-4", "id", "doc-42-footnote-ref-4"), list(Html.text("[1]"))))),
+                Html.element("sup", list(
+                    Html.element("a", map("href", "#doc-42-footnote-7", "id", "doc-42-footnote-ref-7"), list(Html.text("[2]"))))))));
+    }
+
+    @Test
     public void imagesAreConvertedToImageTagsWithDataUriByDefault() {
         Image image = new Image(
             Optional.empty(),

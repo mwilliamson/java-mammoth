@@ -9,6 +9,7 @@ import org.zwobble.mammoth.html.Html;
 import org.zwobble.mammoth.html.HtmlNode;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.Map;
@@ -22,7 +23,7 @@ public class DocumentConverter {
         DocumentConverter documentConverter = new DocumentConverter(idPrefix);
         List<HtmlNode> mainBody = documentConverter.convertChildrenToHtml(document);
         // TODO: can you have note references inside a note?
-        List<Note> notes = findNotes(document);
+        List<Note> notes = findNotes(document, documentConverter.noteReferences);
         if (notes.isEmpty()) {
             return mainBody;
         } else {
@@ -33,25 +34,11 @@ public class DocumentConverter {
         }
     }
 
-    private static List<Note> findNotes(Document document) {
-        Iterable<NoteReference> noteReferences = Iterables.filter(descendants(document), NoteReference.class);
+    private static List<Note> findNotes(Document document, Iterable<NoteReference> noteReferences) {
         return ImmutableList.copyOf(Iterables.transform(
             noteReferences,
             // TODO: handle missing notes
             reference -> document.getNotes().findNote(reference.getNoteType(), reference.getNoteId()).get()));
-    }
-
-    private static Iterable<DocumentElement> descendants(HasChildren element) {
-        return Iterables.concat(Iterables.transform(element.getChildren(), DocumentConverter::descendantsAndSelf));
-    }
-
-    private static Iterable<DocumentElement> descendantsAndSelf(DocumentElement element) {
-        if (element instanceof HasChildren) {
-            HasChildren hasChildren = (HasChildren) element;
-            return Iterables.concat(descendants(hasChildren), list(element));
-        } else {
-            return list(element);
-        }
     }
 
     public static List<HtmlNode> convertToHtml(String idPrefix, DocumentElement element) {
@@ -59,6 +46,7 @@ public class DocumentConverter {
     }
 
     private final String idPrefix;
+    private final List<NoteReference> noteReferences = new ArrayList<>();
 
     private DocumentConverter(String idPrefix) {
         this.idPrefix = idPrefix;
@@ -176,12 +164,12 @@ public class DocumentConverter {
 
             @Override
             public List<HtmlNode> visit(NoteReference noteReference) {
+                noteReferences.add(noteReference);
                 String noteAnchor = generateNoteHtmlId(noteReference.getNoteType(), noteReference.getNoteId());
                 String noteReferenceAnchor = generateNoteRefHtmlId(noteReference.getNoteType(), noteReference.getNoteId());
                 return list(Html.element("sup", list(
                     Html.element("a", map("href", "#" + noteAnchor, "id", noteReferenceAnchor), list(
-                        // TODO: increment note indices
-                        Html.text("[1]"))))));
+                        Html.text("[" + noteReferences.size() + "]"))))));
             }
 
             @Override
