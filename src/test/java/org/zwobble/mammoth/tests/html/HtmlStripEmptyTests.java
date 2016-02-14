@@ -54,4 +54,18 @@ public class HtmlStripEmptyTests {
             deepEquals(list(Html.element("ul", list(
                 Html.element("li", list(Html.text("H"))))))));
     }
+
+    @Test
+    public void selfClosingElementsAreNeverEmpty() {
+        assertThat(
+            Html.stripEmpty(list(Html.selfClosingElement("br"))),
+            deepEquals(list(Html.selfClosingElement("br"))));
+    }
+
+    @Test
+    public void forceWritesAreNeverEmpty() {
+        assertThat(
+            Html.stripEmpty(list(Html.FORCE_WRITE)),
+            deepEquals(list(Html.FORCE_WRITE)));
+    }
 }
