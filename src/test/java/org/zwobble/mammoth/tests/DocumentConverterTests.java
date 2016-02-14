@@ -33,7 +33,7 @@ public class DocumentConverterTests {
     @Test
     public void multipleParagraphsInDocumentAreConvertedToMultipleParagraphs() {
         assertThat(
-            DocumentConverter.convertToHtml(new Document(list(
+            documentConverter().convertToHtml(new Document(list(
                 make(a(PARAGRAPH, with(CHILDREN, list(runWithText("Hello"))))),
                 make(a(PARAGRAPH, with(CHILDREN, list(runWithText("there")))))))),
 
@@ -91,8 +91,19 @@ public class DocumentConverterTests {
             deepEquals(list(Html.element("a", map("href", "http://example.com"), list(Html.text("Hello"))))));
     }
 
+    @Test
+    public void hyperlinkWithInternalAnchorReferenceIsConvertedToAnchorTag() {
+        assertThat(
+            convertToHtml(Hyperlink.anchor("start", list(new Text("Hello")))),
+            deepEquals(list(Html.element("a", map("href", "#doc-42-start"), list(Html.text("Hello"))))));
+    }
+
 
     private List<HtmlNode> convertToHtml(DocumentElement element) {
-        return DocumentConverter.convertToHtml(element);
+        return documentConverter().convertToHtml(element);
+    }
+
+    private DocumentConverter documentConverter() {
+        return new DocumentConverter("doc-42");
     }
 }

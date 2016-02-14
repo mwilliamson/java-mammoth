@@ -12,17 +12,23 @@ import static org.zwobble.mammoth.util.MammothLists.list;
 import static org.zwobble.mammoth.util.MammothMaps.map;
 
 public class DocumentConverter {
-    public static List<HtmlNode> convertToHtml(Document document) {
+    private final String idPrefix;
+
+    public DocumentConverter(String idPrefix) {
+        this.idPrefix = idPrefix;
+    }
+
+    public List<HtmlNode> convertToHtml(Document document) {
         return convertChildrenToHtml(document);
     }
 
-    private static List<HtmlNode> convertChildrenToHtml(HasChildren element) {
+    private List<HtmlNode> convertChildrenToHtml(HasChildren element) {
         return eagerFlatMap(
             element.getChildren(),
-            DocumentConverter::convertToHtml);
+            this::convertToHtml);
     }
 
-    public static List<HtmlNode> convertToHtml(DocumentElement element) {
+    public List<HtmlNode> convertToHtml(DocumentElement element) {
         return element.accept(new DocumentElementVisitor<List<HtmlNode>>() {
             @Override
             public List<HtmlNode> visit(Paragraph paragraph) {
@@ -91,8 +97,18 @@ public class DocumentConverter {
 
             @Override
             public List<HtmlNode> visit(Hyperlink hyperlink) {
-                Map<String, String> attributes = map("href", hyperlink.getHref().get());
+                Map<String, String> attributes = map("href", generateHref(hyperlink));
                 return list(Html.element("a", attributes, convertChildrenToHtml(hyperlink)));
+            }
+
+            private String generateHref(Hyperlink hyperlink) {
+                if (hyperlink.getHref().isPresent()) {
+                    return hyperlink.getHref().get();
+                } else if (hyperlink.getAnchor().isPresent()) {
+                    return "#" + idPrefix + "-" + hyperlink.getAnchor().get();
+                } else {
+                    return "";
+                }
             }
 
             @Override

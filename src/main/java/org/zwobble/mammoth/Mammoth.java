@@ -32,8 +32,10 @@ public class Mammoth {
                 contentTypes,
                 zipFile,
                 fileReader));
+            // TODO: prefix
+            String idPrefix = "document";
             return reader.readElement(documentXml)
-                .map(DocumentConverter::convertToHtml)
+                .map(nodes -> new DocumentConverter(idPrefix).convertToHtml(nodes))
                 .map(Html::write);
         } catch (IOException e) {
             throw new UnsupportedOperationException("Should return a result of failure");   
