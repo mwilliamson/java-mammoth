@@ -66,7 +66,14 @@ public class DocumentConverter {
 
     private HtmlNode convertToHtml(Note note) {
         String id = generateNoteHtmlId(note.getNoteType(), note.getId());
-        return Html.element("li", map("id", id), convertToHtml(note.getBody()));
+        String referenceId = generateNoteRefHtmlId(note.getNoteType(), note.getId());
+        ImmutableList.Builder<HtmlNode> children = ImmutableList.builder();
+        children.addAll(convertToHtml(note.getBody()));
+        // TODO: should be collapsible
+        children.add(Html.element("p", list(
+            Html.text(" "),
+            Html.element("a", map("href", "#" + referenceId), list(Html.text("↑"))))));
+        return Html.element("li", map("id", id), children.build());
     }
 
     private List<HtmlNode> convertToHtml(List<DocumentElement> elements) {

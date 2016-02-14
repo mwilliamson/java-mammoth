@@ -159,7 +159,10 @@ public class DocumentConverterTests {
                 Html.element("ol", list(
                     Html.element("li", map("id", "doc-42-footnote-4"), list(
                         Html.element("p", list(
-                            Html.text("Who's there?"))))))))));
+                            Html.text("Who's there?"))),
+                        Html.element("p", list(
+                            Html.text(" "),
+                            Html.element("a", map("href", "#doc-42-footnote-ref-4"), list(Html.text("↑"))))))))))));
     }
 
     @Test
