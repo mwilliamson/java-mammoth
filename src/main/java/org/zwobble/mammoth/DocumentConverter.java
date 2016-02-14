@@ -5,9 +5,11 @@ import org.zwobble.mammoth.html.Html;
 import org.zwobble.mammoth.html.HtmlNode;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.zwobble.mammoth.util.MammothLists.eagerFlatMap;
 import static org.zwobble.mammoth.util.MammothLists.list;
+import static org.zwobble.mammoth.util.MammothMaps.map;
 
 public class DocumentConverter {
     public static List<HtmlNode> convertToHtml(Document document) {
@@ -89,7 +91,8 @@ public class DocumentConverter {
 
             @Override
             public List<HtmlNode> visit(Hyperlink hyperlink) {
-                throw new UnsupportedOperationException();
+                Map<String, String> attributes = map("href", hyperlink.getHref().get());
+                return list(Html.element("a", attributes, convertChildrenToHtml(hyperlink)));
             }
 
             @Override

@@ -4,6 +4,7 @@ import org.junit.Test;
 import org.zwobble.mammoth.DocumentConverter;
 import org.zwobble.mammoth.documents.Document;
 import org.zwobble.mammoth.documents.DocumentElement;
+import org.zwobble.mammoth.documents.Hyperlink;
 import org.zwobble.mammoth.documents.Text;
 import org.zwobble.mammoth.html.Html;
 import org.zwobble.mammoth.html.HtmlNode;
@@ -17,6 +18,7 @@ import static org.zwobble.mammoth.documents.VerticalAlignment.SUPERSCRIPT;
 import static org.zwobble.mammoth.tests.DeepReflectionMatcher.deepEquals;
 import static org.zwobble.mammoth.tests.documents.DocumentElementMakers.*;
 import static org.zwobble.mammoth.util.MammothLists.list;
+import static org.zwobble.mammoth.util.MammothMaps.map;
 
 public class DocumentConverterTests {
     // TODO: styles (paragraph, run, underline, strikethrough)
@@ -80,6 +82,13 @@ public class DocumentConverterTests {
         assertThat(
             convertToHtml(make(a(RUN, with(VERTICAL_ALIGNMENT, SUBSCRIPT), with(CHILDREN, list(new Text("Hello")))))),
             deepEquals(list(Html.element("sub", list(Html.text("Hello"))))));
+    }
+
+    @Test
+    public void hyperlinkWithHrefIsConvertedToAnchorTag() {
+        assertThat(
+            convertToHtml(Hyperlink.href("http://example.com", list(new Text("Hello")))),
+            deepEquals(list(Html.element("a", map("href", "http://example.com"), list(Html.text("Hello"))))));
     }
 
 
