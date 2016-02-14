@@ -1,5 +1,6 @@
 package org.zwobble.mammoth.docx;
 
+import org.zwobble.mammoth.documents.NoteType;
 import org.zwobble.mammoth.results.Result;
 import org.zwobble.mammoth.documents.Note;
 import org.zwobble.mammoth.xml.XmlElement;
@@ -10,16 +11,22 @@ import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.transform;
 
 public class NotesXmlReader {
-    private final BodyXmlReader bodyReader;
-    private final String noteType;
+    public static NotesXmlReader footnote(BodyXmlReader bodyReader) {
+        return new NotesXmlReader(bodyReader, "footnote", NoteType.FOOTNOTE);
+    }
 
-    public NotesXmlReader(BodyXmlReader bodyReader, String noteType) {
+    private final BodyXmlReader bodyReader;
+    private final String tagName;
+    private final NoteType noteType;
+
+    private NotesXmlReader(BodyXmlReader bodyReader, String tagName, NoteType noteType) {
         this.bodyReader = bodyReader;
+        this.tagName = tagName;
         this.noteType = noteType;
     }
 
     public Result<List<Note>> readElement(XmlElement element) {
-        Iterable<XmlElement> elements = filter(element.findChildren("w:" + noteType), this::isNoteElement);
+        Iterable<XmlElement> elements = filter(element.findChildren("w:" + tagName), this::isNoteElement);
         return Result.concat(transform(elements, this::readNoteElement));
     }
 
@@ -37,6 +44,7 @@ public class NotesXmlReader {
         return bodyReader.readElements(element.children())
             .toResult()
             .map(children -> new Note(
+                noteType,
                 element.getAttribute("w:id"),
                 children));
     }

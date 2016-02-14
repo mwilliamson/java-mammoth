@@ -37,7 +37,7 @@ public class DocumentConverterTests {
         assertThat(
             documentConverter().convertToHtml(new Document(list(
                 make(a(PARAGRAPH, with(CHILDREN, list(runWithText("Hello"))))),
-                make(a(PARAGRAPH, with(CHILDREN, list(runWithText("there")))))))),
+                make(a(PARAGRAPH, with(CHILDREN, list(runWithText("there")))))), Notes.EMPTY)),
 
             deepEquals(list(
                 Html.element("p", list(Html.text("Hello"))),

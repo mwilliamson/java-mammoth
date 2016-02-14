@@ -1,6 +1,7 @@
 package org.zwobble.mammoth.tests.docx;
 
 import org.junit.Test;
+import org.zwobble.mammoth.documents.NoteType;
 import org.zwobble.mammoth.results.Result;
 import org.zwobble.mammoth.documents.Note;
 import org.zwobble.mammoth.docx.BodyXmlReader;
@@ -28,12 +29,12 @@ public class NotesXmlReaderTests {
             element("w:footnote", map("w:id", "1"), list(
                 element("w:p")))));
 
-        NotesXmlReader reader = new NotesXmlReader(bodyReader, "footnote");
+        NotesXmlReader reader = NotesXmlReader.footnote(bodyReader);
         Result<List<Note>> notes = reader.readElement(element);
 
         assertThat(
             notes,
-            deepEquals(success(list(new Note("1", list(make(a(PARAGRAPH))))))));
+            deepEquals(success(list(new Note(NoteType.FOOTNOTE, "1", list(make(a(PARAGRAPH))))))));
     }
 
     @Test
@@ -51,7 +52,7 @@ public class NotesXmlReaderTests {
             element("w:footnote", map("w:id", "1", "w:type", noteType), list(
                 element("w:p")))));
 
-        NotesXmlReader reader = new NotesXmlReader(bodyReader, "footnote");
+        NotesXmlReader reader = NotesXmlReader.footnote(bodyReader);
         Result<List<Note>> notes = reader.readElement(element);
 
         assertThat(notes, deepEquals(success(list())));
