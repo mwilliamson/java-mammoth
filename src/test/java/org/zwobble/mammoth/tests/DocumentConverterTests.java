@@ -12,6 +12,7 @@ import java.util.List;
 
 import static com.natpryce.makeiteasy.MakeItEasy.*;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.zwobble.mammoth.documents.VerticalAlignment.SUBSCRIPT;
 import static org.zwobble.mammoth.documents.VerticalAlignment.SUPERSCRIPT;
 import static org.zwobble.mammoth.tests.DeepReflectionMatcher.deepEquals;
 import static org.zwobble.mammoth.tests.documents.DocumentElementMakers.*;
@@ -72,6 +73,13 @@ public class DocumentConverterTests {
         assertThat(
             convertToHtml(make(a(RUN, with(VERTICAL_ALIGNMENT, SUPERSCRIPT), with(CHILDREN, list(new Text("Hello")))))),
             deepEquals(list(Html.element("sup", list(Html.text("Hello"))))));
+    }
+
+    @Test
+    public void subscriptRunsAreWrappedInSubscriptTags() {
+        assertThat(
+            convertToHtml(make(a(RUN, with(VERTICAL_ALIGNMENT, SUBSCRIPT), with(CHILDREN, list(new Text("Hello")))))),
+            deepEquals(list(Html.element("sub", list(Html.text("Hello"))))));
     }
 
 

@@ -38,6 +38,9 @@ public class DocumentConverter {
                 if (run.isStrikethrough()) {
                     nodes = list(Html.element("s", nodes));
                 }
+                if (run.getVerticalAlignment() == VerticalAlignment.SUBSCRIPT) {
+                    nodes = list(Html.element("sub", nodes));
+                }
                 if (run.getVerticalAlignment() == VerticalAlignment.SUPERSCRIPT) {
                     nodes = list(Html.element("sup", nodes));
                 }
