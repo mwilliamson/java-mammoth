@@ -1,9 +1,12 @@
 package org.zwobble.mammoth;
 
+import com.google.common.io.ByteStreams;
 import org.zwobble.mammoth.documents.*;
 import org.zwobble.mammoth.html.Html;
 import org.zwobble.mammoth.html.HtmlNode;
 
+import java.io.IOException;
+import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 
@@ -127,7 +130,19 @@ public class DocumentConverter {
 
             @Override
             public List<HtmlNode> visit(Image image) {
-                throw new UnsupportedOperationException();
+                // TODO: handle empty content type
+                return image.getContentType()
+                    .map(contentType -> {
+                        try {
+                            String base64 = Base64.getEncoder().encodeToString(ByteStreams.toByteArray(image.open()));
+                            String src = "data:" + contentType + ";base64," + base64;
+                            return list(Html.selfClosingElement("img", map("src", src)));
+                        } catch (IOException exception) {
+                            // TODO: return a result with a warning
+                            throw new RuntimeException(exception);
+                        }
+                    })
+                    .orElse(list());
             }
         });
     }

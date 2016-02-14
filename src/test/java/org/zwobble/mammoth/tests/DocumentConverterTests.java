@@ -6,7 +6,9 @@ import org.zwobble.mammoth.documents.*;
 import org.zwobble.mammoth.html.Html;
 import org.zwobble.mammoth.html.HtmlNode;
 
+import java.io.ByteArrayInputStream;
 import java.util.List;
+import java.util.Optional;
 
 import static com.natpryce.makeiteasy.MakeItEasy.*;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -105,7 +107,7 @@ public class DocumentConverterTests {
                 new TableRow(list(
                     new TableCell(list(paragraphWithText("Bottom left"))),
                     new TableCell(list(paragraphWithText("Bottom right")))))))),
-            
+
             deepEquals(list(Html.element("table", list(
                 Html.element("tr", list(
                     Html.element("td", list(Html.element("p", list(Html.text("Top left"))))),
@@ -136,6 +138,16 @@ public class DocumentConverterTests {
             deepEquals(list(Html.element("a", map("id", "doc-42-start")))));
     }
 
+    @Test
+    public void imagesAreConvertedToImageTagsWithDataUriByDefault() {
+        Image image = new Image(
+            Optional.empty(),
+            Optional.of("image/png"),
+            () -> new ByteArrayInputStream(new byte[]{97, 98, 99}));
+        assertThat(
+            convertToHtml(image),
+            deepEquals(list(Html.selfClosingElement("img", map("src", "data:image/png;base64,YWJj")))));
+    }
 
     private List<HtmlNode> convertToHtml(DocumentElement element) {
         return documentConverter().convertToHtml(element);
