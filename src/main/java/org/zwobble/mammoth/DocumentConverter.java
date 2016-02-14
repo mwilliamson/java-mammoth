@@ -34,7 +34,11 @@ public class DocumentConverter {
 
             @Override
             public List<HtmlNode> visit(Run run) {
-                return convertChildrenToHtml(run);
+                List<HtmlNode> nodes = convertChildrenToHtml(run);
+                if (run.isBold()) {
+                    nodes = list(Html.element("strong", nodes));
+                }
+                return nodes;
             }
 
             @Override

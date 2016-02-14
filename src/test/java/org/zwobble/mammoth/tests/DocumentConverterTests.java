@@ -4,6 +4,7 @@ import org.junit.Test;
 import org.zwobble.mammoth.DocumentConverter;
 import org.zwobble.mammoth.documents.Document;
 import org.zwobble.mammoth.documents.DocumentElement;
+import org.zwobble.mammoth.documents.Text;
 import org.zwobble.mammoth.html.Html;
 import org.zwobble.mammoth.html.HtmlNode;
 
@@ -33,6 +34,14 @@ public class DocumentConverterTests {
             deepEquals(list(
                 Html.element("p", list(Html.text("Hello"))),
                 Html.element("p", list(Html.text("there"))))));
+    }
+
+    @Test
+    public void boldRunsAreWrappedInStrongTags() {
+        assertThat(
+            convertToHtml(make(a(RUN, with(BOLD, true), with(CHILDREN, list(new Text("Hello")))))),
+
+            deepEquals(list(Html.element("strong", list(Html.text("Hello"))))));
     }
 
 

@@ -14,6 +14,10 @@ import static com.natpryce.makeiteasy.Property.newProperty;
 import static org.zwobble.mammoth.util.MammothLists.list;
 
 public class DocumentElementMakers {
+    public static final Property<HasChildren, Boolean> BOLD = newProperty();
+    public static final Property<HasChildren, Boolean> ITALIC = newProperty();
+    public static final Property<HasChildren, Boolean> UNDERLINE = newProperty();
+    public static final Property<HasChildren, Boolean> STRIKETHROUGH = newProperty();
     public static final Property<HasChildren, List<DocumentElement>> CHILDREN = newProperty();
 
     public static final Instantiator<Paragraph> PARAGRAPH =
@@ -24,10 +28,10 @@ public class DocumentElementMakers {
 
     public static final Instantiator<Run> RUN =
         propertyLookup -> new Run(
-            false,
-            false,
-            false,
-            false,
+            propertyLookup.valueOf(BOLD, false),
+            propertyLookup.valueOf(ITALIC, false),
+            propertyLookup.valueOf(UNDERLINE, false),
+            propertyLookup.valueOf(STRIKETHROUGH, false),
             VerticalAlignment.BASELINE,
             Optional.empty(),
             propertyLookup.valueOf(CHILDREN, list()));
