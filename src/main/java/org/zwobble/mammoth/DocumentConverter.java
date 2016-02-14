@@ -1,5 +1,6 @@
 package org.zwobble.mammoth;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.io.ByteStreams;
 import org.zwobble.mammoth.documents.*;
 import org.zwobble.mammoth.html.Html;
@@ -134,9 +135,15 @@ public class DocumentConverter {
                 return image.getContentType()
                     .map(contentType -> {
                         try {
+                            ImmutableMap.Builder<String, String> attributes = ImmutableMap.builder();
+
                             String base64 = Base64.getEncoder().encodeToString(ByteStreams.toByteArray(image.open()));
                             String src = "data:" + contentType + ";base64," + base64;
-                            return list(Html.selfClosingElement("img", map("src", src)));
+                            attributes.put("src", src);
+
+                            image.getAltText().ifPresent(altText -> attributes.put("alt", altText));
+
+                            return list(Html.selfClosingElement("img", attributes.build()));
                         } catch (IOException exception) {
                             // TODO: return a result with a warning
                             throw new RuntimeException(exception);

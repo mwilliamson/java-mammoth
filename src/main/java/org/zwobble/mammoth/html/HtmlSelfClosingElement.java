@@ -11,6 +11,10 @@ public class HtmlSelfClosingElement implements HtmlNode {
         this.attributes = attributes;
     }
 
+    public Map<String, String> getAttributes() {
+        return attributes;
+    }
+
     @Override
     public void write(StringBuilder builder) {
         builder.append("<").append(tagName);

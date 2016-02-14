@@ -12,6 +12,9 @@ import java.util.Optional;
 
 import static com.natpryce.makeiteasy.MakeItEasy.*;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.hasEntry;
+import static org.hamcrest.Matchers.hasProperty;
 import static org.zwobble.mammoth.documents.VerticalAlignment.SUBSCRIPT;
 import static org.zwobble.mammoth.documents.VerticalAlignment.SUPERSCRIPT;
 import static org.zwobble.mammoth.tests.DeepReflectionMatcher.deepEquals;
@@ -147,6 +150,17 @@ public class DocumentConverterTests {
         assertThat(
             convertToHtml(image),
             deepEquals(list(Html.selfClosingElement("img", map("src", "data:image/png;base64,YWJj")))));
+    }
+
+    @Test
+    public void imagesHaveAltTagsIfAvailable() {
+        Image image = new Image(
+            Optional.of("It's a hat"),
+            Optional.of("image/png"),
+            () -> new ByteArrayInputStream(new byte[]{97, 98, 99}));
+        assertThat(
+            convertToHtml(image),
+            contains(hasProperty("attributes", hasEntry("alt", "It's a hat"))));
     }
 
     private List<HtmlNode> convertToHtml(DocumentElement element) {
