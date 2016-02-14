@@ -9,6 +9,6 @@ public class HtmlTextNode implements HtmlNode {
 
     @Override
     public void write(StringBuilder builder) {
-        builder.append(value);
+        builder.append(value.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;"));
     }
 }
