@@ -131,6 +131,7 @@ public class DocumentConverter {
 
             @Override
             public List<HtmlNode> visit(Image image) {
+                // TODO: custom image handlers
                 // TODO: handle empty content type
                 return image.getContentType()
                     .map(contentType -> {
