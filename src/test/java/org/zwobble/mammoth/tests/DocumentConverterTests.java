@@ -59,6 +59,13 @@ public class DocumentConverterTests {
             deepEquals(list(Html.text("Hello"))));
     }
 
+    @Test
+    public void struckthroughRunsAreWrappedInStrikethroughTagsByDefault() {
+        assertThat(
+            convertToHtml(make(a(RUN, with(STRIKETHROUGH, true), with(CHILDREN, list(new Text("Hello")))))),
+            deepEquals(list(Html.element("s", list(Html.text("Hello"))))));
+    }
+
 
     private List<HtmlNode> convertToHtml(DocumentElement element) {
         return DocumentConverter.convertToHtml(element);
