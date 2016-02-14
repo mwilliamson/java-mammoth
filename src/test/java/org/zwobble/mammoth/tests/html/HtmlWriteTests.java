@@ -6,6 +6,7 @@ import org.zwobble.mammoth.html.HtmlNode;
 
 import static org.junit.Assert.assertEquals;
 import static org.zwobble.mammoth.util.MammothLists.list;
+import static org.zwobble.mammoth.util.MammothMaps.map;
 
 public class HtmlWriteTests {
     @Test
@@ -43,6 +44,13 @@ public class HtmlWriteTests {
             write(Html.element("div", list(
                 Html.element("p"),
                 Html.element("ul")))));
+    }
+
+    @Test
+    public void canWriteElementWithAttributes() {
+        assertEquals(
+            "<a class=\"external\" href=\"http://example.com\"></a>",
+            write(Html.element("a", map("class", "external", "href", "http://example.com"), list())));
     }
 
     private String write(HtmlNode node) {
