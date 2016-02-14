@@ -6,12 +6,12 @@ import com.google.common.collect.Ordering;
 import java.util.List;
 import java.util.Map;
 
-public class HtmlElementNode implements HtmlNode {
+public class HtmlElement implements HtmlNode {
     private final String tagName;
     private final Map<String, String> attributes;
     private final List<HtmlNode> children;
 
-    public HtmlElementNode(String tagName, Map<String, String> attributes, List<HtmlNode> children) {
+    public HtmlElement(String tagName, Map<String, String> attributes, List<HtmlNode> children) {
         this.tagName = tagName;
         this.attributes = attributes;
         this.children = children;

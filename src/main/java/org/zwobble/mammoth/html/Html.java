@@ -26,7 +26,7 @@ public class Html {
     }
 
     public static HtmlNode element(String tagName, Map<String, String> attributes, List<HtmlNode> children) {
-        return new HtmlElementNode(tagName, attributes, children);
+        return new HtmlElement(tagName, attributes, children);
     }
 
     public static HtmlNode selfClosingElement(String tagName) {
