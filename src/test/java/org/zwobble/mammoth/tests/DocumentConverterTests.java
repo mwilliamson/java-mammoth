@@ -40,8 +40,14 @@ public class DocumentConverterTests {
     public void boldRunsAreWrappedInStrongTags() {
         assertThat(
             convertToHtml(make(a(RUN, with(BOLD, true), with(CHILDREN, list(new Text("Hello")))))),
-
             deepEquals(list(Html.element("strong", list(Html.text("Hello"))))));
+    }
+
+    @Test
+    public void italicRunsAreWrappedInEmphasisTags() {
+        assertThat(
+            convertToHtml(make(a(RUN, with(ITALIC, true), with(CHILDREN, list(new Text("Hello")))))),
+            deepEquals(list(Html.element("em", list(Html.text("Hello"))))));
     }
 
 

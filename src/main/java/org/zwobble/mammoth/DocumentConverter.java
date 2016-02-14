@@ -38,6 +38,9 @@ public class DocumentConverter {
                 if (run.isBold()) {
                     nodes = list(Html.element("strong", nodes));
                 }
+                if (run.isItalic()) {
+                    nodes = list(Html.element("em", nodes));
+                }
                 return nodes;
             }
 
