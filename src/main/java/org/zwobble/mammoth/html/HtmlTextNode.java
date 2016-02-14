@@ -7,8 +7,12 @@ public class HtmlTextNode implements HtmlNode {
         this.value = value;
     }
 
+    public String getValue() {
+        return value;
+    }
+
     @Override
-    public void write(StringBuilder builder) {
-        builder.append(HtmlWriter.escapeText(value));
+    public void visit(Visitor visitor) {
+        visitor.visit(this);
     }
 }

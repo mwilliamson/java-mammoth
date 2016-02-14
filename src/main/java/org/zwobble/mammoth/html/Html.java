@@ -9,7 +9,7 @@ import static org.zwobble.mammoth.util.MammothMaps.map;
 public class Html {
     public static String write(List<HtmlNode> nodes) {
         StringBuilder builder = new StringBuilder();
-        nodes.forEach(node -> node.write(builder));
+        nodes.forEach(node -> HtmlWriter.write(node, builder));
         return builder.toString();
     }
 

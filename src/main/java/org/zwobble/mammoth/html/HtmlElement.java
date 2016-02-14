@@ -14,19 +14,20 @@ public class HtmlElement implements HtmlNode {
         this.children = children;
     }
 
+    public String getTagName() {
+        return tagName;
+    }
+
+    public Map<String, String> getAttributes() {
+        return attributes;
+    }
+
+    public List<HtmlNode> getChildren() {
+        return children;
+    }
+
     @Override
-    public void write(StringBuilder builder) {
-        builder.append("<").append(tagName);
-
-        HtmlWriter.generateAttributes(attributes, builder);
-
-        builder.append(">");
-
-        children.forEach(node -> node.write(builder));
-
-        builder
-            .append("</")
-            .append(tagName)
-            .append(">");
+    public void visit(Visitor visitor) {
+        visitor.visit(this);
     }
 }

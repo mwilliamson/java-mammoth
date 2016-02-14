@@ -5,6 +5,38 @@ import java.util.Map;
 import static org.zwobble.mammoth.util.MammothLists.orderedBy;
 
 public class HtmlWriter {
+    public static void write(HtmlNode node, StringBuilder builder) {
+        node.visit(new HtmlNode.Visitor() {
+            @Override
+            public void visit(HtmlElement element) {
+                builder.append("<").append(element.getTagName());
+
+                HtmlWriter.generateAttributes(element.getAttributes(), builder);
+
+                builder.append(">");
+
+                element.getChildren().forEach(node -> write(node, builder));
+
+                builder
+                    .append("</")
+                    .append(element.getTagName())
+                    .append(">");
+            }
+
+            @Override
+            public void visit(HtmlSelfClosingElement element) {
+                builder.append("<").append(element.getTagName());
+                HtmlWriter.generateAttributes(element.getAttributes(), builder);
+                builder.append(" />");
+            }
+
+            @Override
+            public void visit(HtmlTextNode node) {
+                builder.append(HtmlWriter.escapeText(node.getValue()));
+            }
+        });
+    }
+
     public static String escapeText(String text) {
         return text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;");
     }
