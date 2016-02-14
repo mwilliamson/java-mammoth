@@ -29,7 +29,7 @@ public class HtmlElement implements HtmlNode {
                 .append(" ")
                 .append(attribute.getKey())
                 .append("=\"")
-                .append(attribute.getValue())
+                .append(HtmlWriter.escapeAttributeValue(attribute.getValue()))
                 .append("\"");
         }
 

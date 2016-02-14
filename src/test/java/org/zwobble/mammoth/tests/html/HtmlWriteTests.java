@@ -24,6 +24,13 @@ public class HtmlWriteTests {
     }
 
     @Test
+    public void doubleQuotesInTextNodesArentHtmlEscaped() {
+        assertEquals(
+            "&gt;&lt;&amp;\"",
+            write(Html.text("><&\"")));
+    }
+
+    @Test
     public void canWriteSelfClosingElement() {
         assertEquals(
             "<br />",
@@ -51,6 +58,13 @@ public class HtmlWriteTests {
         assertEquals(
             "<a class=\"external\" href=\"http://example.com\"></a>",
             write(Html.element("a", map("class", "external", "href", "http://example.com"))));
+    }
+
+    @Test
+    public void attributeValuesAreEscaped() {
+        assertEquals(
+            "<a href=\"&gt;&lt;&amp;&quot;\"></a>",
+            write(Html.element("a", map("href", "><&\""))));
     }
 
     private String write(HtmlNode node) {
