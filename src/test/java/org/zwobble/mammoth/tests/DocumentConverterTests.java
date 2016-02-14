@@ -48,14 +48,14 @@ public class DocumentConverterTests {
     public void boldRunsAreWrappedInStrongTags() {
         assertThat(
             convertToHtml(make(a(RUN, with(BOLD, true), with(CHILDREN, list(new Text("Hello")))))),
-            deepEquals(list(Html.element("strong", list(Html.text("Hello"))))));
+            deepEquals(list(Html.collapsibleElement("strong", list(Html.text("Hello"))))));
     }
 
     @Test
     public void italicRunsAreWrappedInEmphasisTags() {
         assertThat(
             convertToHtml(make(a(RUN, with(ITALIC, true), with(CHILDREN, list(new Text("Hello")))))),
-            deepEquals(list(Html.element("em", list(Html.text("Hello"))))));
+            deepEquals(list(Html.collapsibleElement("em", list(Html.text("Hello"))))));
     }
 
     @Test
@@ -69,21 +69,21 @@ public class DocumentConverterTests {
     public void struckthroughRunsAreWrappedInStrikethroughTagsByDefault() {
         assertThat(
             convertToHtml(make(a(RUN, with(STRIKETHROUGH, true), with(CHILDREN, list(new Text("Hello")))))),
-            deepEquals(list(Html.element("s", list(Html.text("Hello"))))));
+            deepEquals(list(Html.collapsibleElement("s", list(Html.text("Hello"))))));
     }
 
     @Test
     public void superscriptRunsAreWrappedInSuperscriptTags() {
         assertThat(
             convertToHtml(make(a(RUN, with(VERTICAL_ALIGNMENT, SUPERSCRIPT), with(CHILDREN, list(new Text("Hello")))))),
-            deepEquals(list(Html.element("sup", list(Html.text("Hello"))))));
+            deepEquals(list(Html.collapsibleElement("sup", list(Html.text("Hello"))))));
     }
 
     @Test
     public void subscriptRunsAreWrappedInSubscriptTags() {
         assertThat(
             convertToHtml(make(a(RUN, with(VERTICAL_ALIGNMENT, SUBSCRIPT), with(CHILDREN, list(new Text("Hello")))))),
-            deepEquals(list(Html.element("sub", list(Html.text("Hello"))))));
+            deepEquals(list(Html.collapsibleElement("sub", list(Html.text("Hello"))))));
     }
 
     @Test

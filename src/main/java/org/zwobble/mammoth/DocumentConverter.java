@@ -90,19 +90,19 @@ public class DocumentConverter {
             public List<HtmlNode> visit(Run run) {
                 List<HtmlNode> nodes = convertChildrenToHtml(run);
                 if (run.isStrikethrough()) {
-                    nodes = list(Html.element("s", nodes));
+                    nodes = list(Html.collapsibleElement("s", nodes));
                 }
                 if (run.getVerticalAlignment() == VerticalAlignment.SUBSCRIPT) {
-                    nodes = list(Html.element("sub", nodes));
+                    nodes = list(Html.collapsibleElement("sub", nodes));
                 }
                 if (run.getVerticalAlignment() == VerticalAlignment.SUPERSCRIPT) {
-                    nodes = list(Html.element("sup", nodes));
+                    nodes = list(Html.collapsibleElement("sup", nodes));
                 }
                 if (run.isItalic()) {
-                    nodes = list(Html.element("em", nodes));
+                    nodes = list(Html.collapsibleElement("em", nodes));
                 }
                 if (run.isBold()) {
-                    nodes = list(Html.element("strong", nodes));
+                    nodes = list(Html.collapsibleElement("strong", nodes));
                 }
                 return nodes;
             }
