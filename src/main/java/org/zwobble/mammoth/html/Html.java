@@ -34,6 +34,10 @@ public class Html {
     }
 
     public static HtmlNode selfClosingElement(String tagName) {
-        return new HtmlSelfClosingElement(tagName);
+        return selfClosingElement(tagName, map());
+    }
+
+    public static HtmlNode selfClosingElement(String tagName, Map<String, String> attributes) {
+        return new HtmlSelfClosingElement(tagName, attributes);
     }
 }

@@ -38,6 +38,13 @@ public class HtmlWriteTests {
     }
 
     @Test
+    public void canWriteSelfClosingElementWithAttributes() {
+        assertEquals(
+            "<img class=\"external\" src=\"http://example.com\" />",
+            write(Html.selfClosingElement("img", map("class", "external", "src", "http://example.com"))));
+    }
+
+    @Test
     public void canWriteElementWithNoChildren() {
         assertEquals(
             "<p></p>",
