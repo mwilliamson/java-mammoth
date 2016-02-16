@@ -93,4 +93,8 @@ public class Html {
             }
         });
     }
+
+    public static List<HtmlNode> collapse(List<HtmlNode> nodes) {
+        return nodes;
+    }
 }

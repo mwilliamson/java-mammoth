@@ -35,6 +35,7 @@ public class Mammoth {
             return reader.readElement(documentXml)
                 .map(nodes -> DocumentConverter.convertToHtml(idPrefix, nodes))
                 .map(Html::stripEmpty)
+                .map(Html::collapse)
                 .map(Html::write);
         } catch (IOException e) {
             throw new UnsupportedOperationException("Should return a result of failure");   
