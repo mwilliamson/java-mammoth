@@ -17,9 +17,9 @@ public class InMemoryDocxFile implements DocxFile {
     }
 
     @Override
-    public InputStream getInputStream(String name) throws IOException {
-        String value = Optional.ofNullable(entries.get(name)).get();
-        return new ByteArrayInputStream(value.getBytes(StandardCharsets.UTF_8));
+    public Optional<InputStream> tryGetInputStream(String name) throws IOException {
+        return Optional.ofNullable(entries.get(name))
+            .map(value -> new ByteArrayInputStream(value.getBytes(StandardCharsets.UTF_8)));
     }
 
     @Override

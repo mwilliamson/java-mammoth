@@ -6,6 +6,7 @@ import org.zwobble.mammoth.docx.*;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Optional;
 
 import static com.natpryce.makeiteasy.Property.newProperty;
 
@@ -25,7 +26,7 @@ public class BodyXmlReaderMakers {
             propertyLookup.valueOf(CONTENT_TYPES, ContentTypes.DEFAULT),
             propertyLookup.valueOf(DOCX_FILE, new DocxFile() {
                 @Override
-                public InputStream getInputStream(String name) throws IOException {
+                public Optional<InputStream> tryGetInputStream(String name) throws IOException {
                     throw new UnsupportedOperationException();
                 }
 

@@ -6,7 +6,6 @@ import org.zwobble.mammoth.results.Result;
 
 import java.io.File;
 
-import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.zwobble.mammoth.results.Result.success;
 import static org.zwobble.mammoth.tests.DeepReflectionMatcher.deepEquals;
@@ -15,8 +14,8 @@ public class MammothTests {
     @Test
     public void emptyParagraphsAreIgnoredByDefault() {
         assertThat(
-            convertToHtml("empty.docx").getValue(),
-            is(""));
+            convertToHtml("empty.docx"),
+            deepEquals(success("")));
     }
     
     @Test
