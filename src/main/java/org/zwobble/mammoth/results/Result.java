@@ -63,7 +63,7 @@ public class Result<T> {
     public <R> Result<R> flatMap(Function<T, Result<R>> function) {
         Result<R> intermediateResult = function.apply(value);
         return new Result<>(
-            intermediateResult.getValue(),
+            intermediateResult.value,
             MammothLists.concat(warnings, intermediateResult.warnings));
     }
 }
