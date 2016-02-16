@@ -26,6 +26,13 @@ public class MammothTests {
             deepEquals(success("<p>Walking on imported air</p>")));
     }
 
+    @Test
+    public void canReadFilesWithUtf8Bom() {
+        assertThat(
+            convertToHtml("utf8-bom.docx"),
+            deepEquals(success("<p>This XML has a byte order mark.</p>")));
+    }
+
     private Result<String> convertToHtml(String name) {
         File file = TestData.file(name);
         return Mammoth.convertToHtml(file);
