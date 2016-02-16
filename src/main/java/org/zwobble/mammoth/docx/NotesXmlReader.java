@@ -15,6 +15,10 @@ public class NotesXmlReader {
         return new NotesXmlReader(bodyReader, "footnote", NoteType.FOOTNOTE);
     }
 
+    public static NotesXmlReader endnote(BodyXmlReader bodyReader) {
+        return new NotesXmlReader(bodyReader, "endnote", NoteType.ENDNOTE);
+    }
+
     private final BodyXmlReader bodyReader;
     private final String tagName;
     private final NoteType noteType;

@@ -32,8 +32,46 @@ public class MammothTests {
             deepEquals(success("<p>This XML has a byte order mark.</p>")));
     }
 
+    @Test
+    public void footnotesAreAppendedToText() {
+        assertThat(
+            convertToHtml("footnotes.docx", "doc-42"),
+            deepEquals(success(
+                "<p>Ouch" +
+                "<sup><a href=\"#doc-42-footnote-1\" id=\"doc-42-footnote-ref-1\">[1]</a></sup>." +
+                "<sup><a href=\"#doc-42-footnote-2\" id=\"doc-42-footnote-ref-2\">[2]</a></sup></p>" +
+                "<ol><li id=\"doc-42-footnote-1\"><p> A tachyon walks into a bar. <a href=\"#doc-42-footnote-ref-1\">↑</a></p></li>" +
+                "<li id=\"doc-42-footnote-2\"><p> Fin. <a href=\"#doc-42-footnote-ref-2\">↑</a></p></li></ol>")));
+    }
+
+    @Test
+    public void endNotesAreAppendedToText() {
+        assertThat(
+            convertToHtml("endnotes.docx", "doc-42"),
+            deepEquals(success(
+                "<p>Ouch" +
+                "<sup><a href=\"#doc-42-endnote-2\" id=\"doc-42-endnote-ref-2\">[1]</a></sup>." +
+                "<sup><a href=\"#doc-42-endnote-3\" id=\"doc-42-endnote-ref-3\">[2]</a></sup></p>" +
+                "<ol><li id=\"doc-42-endnote-2\"><p> A tachyon walks into a bar. <a href=\"#doc-42-endnote-ref-2\">↑</a></p></li>" +
+                "<li id=\"doc-42-endnote-3\"><p> Fin. <a href=\"#doc-42-endnote-ref-3\">↑</a></p></li></ol>")));
+    }
+
+    @Test
+    public void relationshipsAreReadForEachFileContainingBodyXml() {
+        assertThat(
+            convertToHtml("footnote-hyperlink.docx", "doc-42"),
+            deepEquals(success(
+                "<p><sup><a href=\"#doc-42-footnote-1\" id=\"doc-42-footnote-ref-1\">[1]</a></sup></p>" +
+                "<ol><li id=\"doc-42-footnote-1\"><p> <a href=\"http://www.example.com\">Example</a> <a href=\"#doc-42-footnote-ref-1\">↑</a></p></li></ol>")));
+    }
+
     private Result<String> convertToHtml(String name) {
         File file = TestData.file(name);
         return Mammoth.convertToHtml(file);
+    }
+
+    private Result<String> convertToHtml(String name, String idPrefix) {
+        File file = TestData.file(name);
+        return Mammoth.convertToHtml(file, idPrefix);
     }
 }

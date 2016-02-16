@@ -2,9 +2,11 @@ package org.zwobble.mammoth.results;
 
 import com.google.common.collect.ImmutableList;
 import org.zwobble.mammoth.documents.Style;
+import org.zwobble.mammoth.util.MammothLists;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import static org.zwobble.mammoth.util.MammothLists.list;
@@ -18,6 +20,16 @@ public class Result<T> {
             warnings.addAll(result.warnings);
         }
         return new Result<>(elements.build(), warnings.build());
+    }
+
+    public static <T1, T2, R> Result<R> map(
+        Result<T1> first,
+        Result<T2> second,
+        BiFunction<T1, T2, R> function)
+    {
+        return new Result<>(
+            function.apply(first.value, second.value),
+            MammothLists.concat(first.warnings, second.warnings));
     }
 
     public static Result<Optional<Style>> empty() {
@@ -46,5 +58,12 @@ public class Result<T> {
 
     public <R> Result<R> map(Function<T, R> function) {
         return new Result<>(function.apply(value), warnings);
+    }
+
+    public <R> Result<R> flatMap(Function<T, Result<R>> function) {
+        Result<R> intermediateResult = function.apply(value);
+        return new Result<>(
+            intermediateResult.getValue(),
+            MammothLists.concat(warnings, intermediateResult.warnings));
     }
 }

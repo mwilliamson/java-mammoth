@@ -24,7 +24,7 @@ public class MammothLists {
         return concat(list(head), tail);
     }
 
-    private static <T> List<T> concat(Iterable<T> first, Iterable<T> second) {
+    public static <T> List<T> concat(Iterable<T> first, Iterable<T> second) {
         return ImmutableList.copyOf(Iterables.concat(first, second));
     }
 
