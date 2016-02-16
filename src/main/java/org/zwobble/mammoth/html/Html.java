@@ -1,10 +1,14 @@
 package org.zwobble.mammoth.html;
 
 import org.zwobble.mammoth.util.MammothLists;
+import org.zwobble.mammoth.util.MammothOptionals;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static org.zwobble.mammoth.util.Casts.tryCast;
+import static org.zwobble.mammoth.util.MammothIterables.tryGetLast;
 import static org.zwobble.mammoth.util.MammothLists.list;
 import static org.zwobble.mammoth.util.MammothMaps.map;
 
@@ -35,6 +39,10 @@ public class Html {
 
     public static HtmlNode element(String tagName, Map<String, String> attributes, List<HtmlNode> children) {
         return new HtmlElement(tagName, attributes, children, false);
+    }
+
+    public static HtmlNode collapsibleElement(String tagName) {
+        return collapsibleElement(tagName, list());
     }
 
     public static HtmlNode collapsibleElement(String tagName, List<HtmlNode> children) {
@@ -95,6 +103,69 @@ public class Html {
     }
 
     public static List<HtmlNode> collapse(List<HtmlNode> nodes) {
-        return nodes;
+        List<HtmlNode> collapsed = new ArrayList<>();
+
+        for (HtmlNode node : nodes) {
+            collapsingAdd(collapsed, node);
+        }
+
+        return collapsed;
+    }
+
+    private static void collapsingAdd(List<HtmlNode> collapsed, HtmlNode node) {
+        HtmlNode collapsedNode = collapse(node);
+        if (!tryCollapse(collapsed, collapsedNode)) {
+            collapsed.add(collapsedNode);
+        }
+    }
+
+    private static HtmlNode collapse(HtmlNode node) {
+        return node.accept(new HtmlNode.Mapper<HtmlNode>() {
+            @Override
+            public HtmlNode visit(HtmlElement element) {
+                return new HtmlElement(
+                    element.getTagName(),
+                    element.getAttributes(),
+                    collapse(element.getChildren()),
+                    element.isCollapsible());
+            }
+
+            @Override
+            public HtmlNode visit(HtmlSelfClosingElement element) {
+                return element;
+            }
+
+            @Override
+            public HtmlNode visit(HtmlTextNode node) {
+                return node;
+            }
+
+            @Override
+            public HtmlNode visit(HtmlForceWrite forceWrite) {
+                return forceWrite;
+            }
+        });
+    }
+
+    private static boolean tryCollapse(List<HtmlNode> collapsed, HtmlNode node) {
+        return MammothOptionals.map(
+            tryGetLast(collapsed).flatMap(last -> tryCast(HtmlElement.class, last)),
+            tryCast(HtmlElement.class, node),
+            (last, next) -> {
+                if (next.isCollapsible() && isMatch(last, next)) {
+                    for (HtmlNode child : next.getChildren()) {
+                        collapsingAdd(last.getChildren(), child);
+                    }
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        ).orElse(false);
+    }
+
+    private static boolean isMatch(HtmlElement first, HtmlElement second) {
+        return first.getTagName().equals(second.getTagName()) &&
+            first.getAttributes().equals(second.getAttributes());
     }
 }

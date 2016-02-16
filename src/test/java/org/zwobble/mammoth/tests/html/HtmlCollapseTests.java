@@ -6,6 +6,7 @@ import org.zwobble.mammoth.html.Html;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.zwobble.mammoth.tests.DeepReflectionMatcher.deepEquals;
 import static org.zwobble.mammoth.util.MammothLists.list;
+import static org.zwobble.mammoth.util.MammothMaps.map;
 
 public class HtmlCollapseTests {
     @Test
@@ -13,5 +14,68 @@ public class HtmlCollapseTests {
         assertThat(
             Html.collapse(list(Html.text("Bluebells"))),
             deepEquals(list(Html.text("Bluebells"))));
+    }
+
+    @Test
+    public void consecutiveFreshElementsAreNotCollapsed() {
+        assertThat(
+            Html.collapse(list(Html.element("p"), Html.element("p"))),
+            deepEquals(list(Html.element("p"), Html.element("p"))));
+    }
+
+    @Test
+    public void consecutiveCollapsibleElementsAreCollapsedIfTheyHaveTheSameTagAndAttributes() {
+        assertThat(
+            Html.collapse(list(
+                Html.collapsibleElement("p", list(Html.text("One"))),
+                Html.collapsibleElement("p", list(Html.text("Two"))))),
+
+            deepEquals(list(Html.collapsibleElement("p", list(Html.text("One"), Html.text("Two"))))));
+    }
+
+    @Test
+    public void elementsWithDifferentTagNamesAreNotCollapsed() {
+        assertThat(
+            Html.collapse(list(
+                Html.collapsibleElement("p", list(Html.text("One"))),
+                Html.collapsibleElement("div", list(Html.text("Two"))))),
+
+            deepEquals(list(
+                Html.collapsibleElement("p", list(Html.text("One"))),
+                Html.collapsibleElement("div", list(Html.text("Two"))))));
+    }
+
+    @Test
+    public void elementsWithDifferentAttributesAreNotCollapsed() {
+        // TODO: should there be some spacing when block-level elements are collapsed?
+        assertThat(
+            Html.collapse(list(
+                Html.collapsibleElement("p", map("id", "a"), list(Html.text("One"))),
+                Html.collapsibleElement("p", list(Html.text("Two"))))),
+
+            deepEquals(list(
+                Html.collapsibleElement("p", map("id", "a"), list(Html.text("One"))),
+                Html.collapsibleElement("p", list(Html.text("Two"))))));
+    }
+
+    @Test
+    public void childrenOfCollapsedElementCanCollapseWithChildrenOfPreviousElement() {
+        assertThat(
+            Html.collapse(list(
+                Html.collapsibleElement("blockquote", list(
+                    Html.collapsibleElement("p", list(Html.text("One"))))),
+                Html.collapsibleElement("blockquote", list(
+                    Html.collapsibleElement("p", list(Html.text("Two"))))))),
+
+            deepEquals(list(
+                Html.collapsibleElement("blockquote", list(
+                    Html.collapsibleElement("p", list(Html.text("One"), Html.text("Two"))))))));
+    }
+
+    @Test
+    public void collapsibleElementCanCollapseIntoPreviousFreshElement() {
+        assertThat(
+            Html.collapse(list(Html.element("p"), Html.collapsibleElement("p"))),
+            deepEquals(list(Html.element("p"))));
     }
 }

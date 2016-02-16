@@ -15,4 +15,16 @@ public class MammothOptionals {
             return Optional.empty();
         }
     }
+
+    public static <T1, T2, R> Optional<R> map(
+        Optional<T1> first,
+        Optional<T2> second,
+        BiFunction<T1, T2, R> function)
+    {
+        if (first.isPresent() && second.isPresent()) {
+            return Optional.of(function.apply(first.get(), second.get()));
+        } else {
+            return Optional.empty();
+        }
+    }
 }
