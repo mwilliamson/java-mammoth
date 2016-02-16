@@ -17,16 +17,22 @@ import static org.zwobble.mammoth.util.MammothLists.list;
 public class Mammoth {
     public static class Options {
         // TODO: what default prefix?
-        public static final Options DEFAULT = new Options("document");
+        public static final Options DEFAULT = new Options("document", false);
 
         private final String idPrefix;
+        private final boolean preserveEmptyParagraphs;
 
-        public Options(String idPrefix) {
+        public Options(String idPrefix, boolean preserveEmptyParagraphs) {
             this.idPrefix = idPrefix;
+            this.preserveEmptyParagraphs = preserveEmptyParagraphs;
         }
 
         public Options idPrefix(String prefix) {
-            return new Options(prefix);
+            return new Options(prefix, preserveEmptyParagraphs);
+        }
+
+        public Options preserveEmptyParagraphs() {
+            return new Options(idPrefix, true);
         }
     }
 
@@ -56,7 +62,7 @@ public class Mammoth {
                     DocumentXmlReader reader = new DocumentXmlReader(bodyReaders.forName("document"), notes);
                     return reader.readElement(parseOfficeXml(zipFile, "word/document.xml"));
                 })
-                .map(nodes -> DocumentConverter.convertToHtml(options.idPrefix, nodes))
+                .map(nodes -> DocumentConverter.convertToHtml(options.idPrefix, options.preserveEmptyParagraphs, nodes))
                 .map(Html::stripEmpty)
                 .map(Html::collapse)
                 .map(Html::write);

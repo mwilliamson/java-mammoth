@@ -12,13 +12,6 @@ import static org.zwobble.mammoth.tests.DeepReflectionMatcher.deepEquals;
 
 public class MammothTests {
     @Test
-    public void emptyParagraphsAreIgnoredByDefault() {
-        assertThat(
-            convertToHtml("empty.docx"),
-            deepEquals(success("")));
-    }
-    
-    @Test
     public void docxContainingOneParagraphIsConvertedToSingleParagraphElement() {
         assertThat(
             convertToHtml("single-paragraph.docx"),
@@ -30,6 +23,20 @@ public class MammothTests {
         assertThat(
             convertToHtml("utf8-bom.docx"),
             deepEquals(success("<p>This XML has a byte order mark.</p>")));
+    }
+
+    @Test
+    public void emptyParagraphsAreIgnoredByDefault() {
+        assertThat(
+            convertToHtml("empty.docx"),
+            deepEquals(success("")));
+    }
+
+    @Test
+    public void emptyParagraphsArePreservedIfIgnoreEmptyParagraphsIsFalse() {
+        assertThat(
+            convertToHtml("empty.docx", Mammoth.Options.DEFAULT.preserveEmptyParagraphs()),
+            deepEquals(success("<p></p>")));
     }
 
     @Test

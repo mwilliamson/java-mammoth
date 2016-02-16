@@ -15,13 +15,12 @@ import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 
-import static org.zwobble.mammoth.util.MammothLists.eagerFlatMap;
-import static org.zwobble.mammoth.util.MammothLists.list;
+import static org.zwobble.mammoth.util.MammothLists.*;
 import static org.zwobble.mammoth.util.MammothMaps.map;
 
 public class DocumentConverter {
-    public static List<HtmlNode> convertToHtml(String idPrefix, Document document) {
-        DocumentConverter documentConverter = new DocumentConverter(idPrefix);
+    public static List<HtmlNode> convertToHtml(String idPrefix, boolean preserveEmptyParagraphs, Document document) {
+        DocumentConverter documentConverter = new DocumentConverter(idPrefix, preserveEmptyParagraphs);
         List<HtmlNode> mainBody = documentConverter.convertChildrenToHtml(document);
         // TODO: can you have note references inside a note?
         List<Note> notes = findNotes(document, documentConverter.noteReferences);
@@ -42,15 +41,17 @@ public class DocumentConverter {
             reference -> document.getNotes().findNote(reference.getNoteType(), reference.getNoteId()).get()));
     }
 
-    public static List<HtmlNode> convertToHtml(String idPrefix, DocumentElement element) {
-        return new DocumentConverter(idPrefix).convertToHtml(element);
+    public static List<HtmlNode> convertToHtml(String idPrefix, boolean preserveEmptyParagraphs, DocumentElement element) {
+        return new DocumentConverter(idPrefix, preserveEmptyParagraphs).convertToHtml(element);
     }
 
     private final String idPrefix;
+    private final boolean preserveEmptyParagraphs;
     private final List<NoteReference> noteReferences = new ArrayList<>();
 
-    private DocumentConverter(String idPrefix) {
+    private DocumentConverter(String idPrefix, boolean preserveEmptyParagraphs) {
         this.idPrefix = idPrefix;
+        this.preserveEmptyParagraphs = preserveEmptyParagraphs;
     }
 
     private HtmlNode convertToHtml(Note note) {
@@ -81,7 +82,8 @@ public class DocumentConverter {
             @Override
             public List<HtmlNode> visit(Paragraph paragraph) {
                 List<HtmlNode> content = convertChildrenToHtml(paragraph);
-                return list(Html.element("p", content));
+                List<HtmlNode> children = preserveEmptyParagraphs ? cons(Html.FORCE_WRITE, content) : content;
+                return list(Html.element("p", children));
             }
 
             @Override

@@ -33,6 +33,13 @@ public class DocumentConverterTests {
     }
 
     @Test
+    public void forceWriteIsInsertedIntoParagraphIfEmptyParagraphsShouldBePreserved() {
+        assertThat(
+            DocumentConverter.convertToHtml("", true, make(a(PARAGRAPH))),
+            deepEquals(list(Html.element("p", list(Html.FORCE_WRITE)))));
+    }
+
+    @Test
     public void multipleParagraphsInDocumentAreConvertedToMultipleParagraphs() {
         assertThat(
             convertToHtml(new Document(list(
@@ -203,10 +210,10 @@ public class DocumentConverterTests {
     }
 
     private List<HtmlNode> convertToHtml(Document document) {
-        return DocumentConverter.convertToHtml("doc-42", document);
+        return DocumentConverter.convertToHtml("doc-42", false, document);
     }
 
     private List<HtmlNode> convertToHtml(DocumentElement element) {
-        return DocumentConverter.convertToHtml("doc-42", element);
+        return DocumentConverter.convertToHtml("doc-42", false, element);
     }
 }
