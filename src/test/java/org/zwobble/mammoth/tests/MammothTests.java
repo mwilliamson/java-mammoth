@@ -35,7 +35,7 @@ public class MammothTests {
     @Test
     public void footnotesAreAppendedToText() {
         assertThat(
-            convertToHtml("footnotes.docx", "doc-42"),
+            convertToHtml("footnotes.docx", Mammoth.Options.DEFAULT.idPrefix("doc-42")),
             deepEquals(success(
                 "<p>Ouch" +
                 "<sup><a href=\"#doc-42-footnote-1\" id=\"doc-42-footnote-ref-1\">[1]</a></sup>." +
@@ -47,7 +47,7 @@ public class MammothTests {
     @Test
     public void endNotesAreAppendedToText() {
         assertThat(
-            convertToHtml("endnotes.docx", "doc-42"),
+            convertToHtml("endnotes.docx", Mammoth.Options.DEFAULT.idPrefix("doc-42")),
             deepEquals(success(
                 "<p>Ouch" +
                 "<sup><a href=\"#doc-42-endnote-2\" id=\"doc-42-endnote-ref-2\">[1]</a></sup>." +
@@ -59,7 +59,7 @@ public class MammothTests {
     @Test
     public void relationshipsAreReadForEachFileContainingBodyXml() {
         assertThat(
-            convertToHtml("footnote-hyperlink.docx", "doc-42"),
+            convertToHtml("footnote-hyperlink.docx", Mammoth.Options.DEFAULT.idPrefix("doc-42")),
             deepEquals(success(
                 "<p><sup><a href=\"#doc-42-footnote-1\" id=\"doc-42-footnote-ref-1\">[1]</a></sup></p>" +
                 "<ol><li id=\"doc-42-footnote-1\"><p> <a href=\"http://www.example.com\">Example</a> <a href=\"#doc-42-footnote-ref-1\">↑</a></p></li></ol>")));
@@ -70,8 +70,8 @@ public class MammothTests {
         return Mammoth.convertToHtml(file);
     }
 
-    private Result<String> convertToHtml(String name, String idPrefix) {
+    private Result<String> convertToHtml(String name, Mammoth.Options options) {
         File file = TestData.file(name);
-        return Mammoth.convertToHtml(file, idPrefix);
+        return Mammoth.convertToHtml(file, options);
     }
 }

@@ -15,19 +15,31 @@ import java.util.zip.ZipFile;
 import static org.zwobble.mammoth.util.MammothLists.list;
 
 public class Mammoth {
+    public static class Options {
+        // TODO: what default prefix?
+        public static final Options DEFAULT = new Options("document");
+
+        private final String idPrefix;
+
+        public Options(String idPrefix) {
+            this.idPrefix = idPrefix;
+        }
+
+        public Options idPrefix(String prefix) {
+            return new Options(prefix);
+        }
+    }
+
     @FunctionalInterface
     private interface BodyReaders {
         BodyXmlReader forName(String name);
     }
 
-    // TODO: provide Options builder
     public static Result<String> convertToHtml(File file) {
-        // TODO: prefix
-        String idPrefix = "document";
-        return convertToHtml(file, idPrefix);
+        return convertToHtml(file, Options.DEFAULT);
     }
 
-    public static Result<String> convertToHtml(File file, String idPrefix) {
+    public static Result<String> convertToHtml(File file, Options options) {
         try (DocxFile zipFile = new ZippedDocxFile(new ZipFile(file))) {
             Styles styles = readStyles(zipFile);
             Numbering numbering = Numbering.EMPTY;
@@ -44,7 +56,7 @@ public class Mammoth {
                     DocumentXmlReader reader = new DocumentXmlReader(bodyReaders.forName("document"), notes);
                     return reader.readElement(parseOfficeXml(zipFile, "word/document.xml"));
                 })
-                .map(nodes -> DocumentConverter.convertToHtml(idPrefix, nodes))
+                .map(nodes -> DocumentConverter.convertToHtml(options.idPrefix, nodes))
                 .map(Html::stripEmpty)
                 .map(Html::collapse)
                 .map(Html::write);
