@@ -219,6 +219,6 @@ public class DocumentConverter {
     }
 
     private String generateId(String bookmarkName) {
-        return idPrefix + "-" + bookmarkName;
+        return idPrefix + bookmarkName;
     }
 }

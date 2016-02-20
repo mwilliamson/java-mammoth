@@ -210,10 +210,10 @@ public class DocumentConverterTests {
     }
 
     private List<HtmlNode> convertToHtml(Document document) {
-        return DocumentConverter.convertToHtml("doc-42", false, document);
+        return DocumentConverter.convertToHtml("doc-42-", false, document);
     }
 
     private List<HtmlNode> convertToHtml(DocumentElement element) {
-        return DocumentConverter.convertToHtml("doc-42", false, element);
+        return DocumentConverter.convertToHtml("doc-42-", false, element);
     }
 }
