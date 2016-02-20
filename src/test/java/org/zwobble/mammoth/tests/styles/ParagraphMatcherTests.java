@@ -60,4 +60,14 @@ public class ParagraphMatcherTests {
             with(STYLE, Optional.of(new Style("Heading 1", Optional.of("Heading 1"))))));
         assertFalse(matcher.matches(paragraphWithIncorrectStyleName));
     }
+
+    @Test
+    public void styleNamesAreCaseInsensitive() {
+        ParagraphMatcher matcher = ParagraphMatcher.styleName("tips paragraph");
+        assertFalse(matcher.matches(make(a(PARAGRAPH))));
+
+        Paragraph paragraphWithCorrectStyleName = make(a(PARAGRAPH,
+            with(STYLE, Optional.of(new Style("TipsParagraph", Optional.of("Tips Paragraph"))))));
+        assertTrue(matcher.matches(paragraphWithCorrectStyleName));
+    }
 }

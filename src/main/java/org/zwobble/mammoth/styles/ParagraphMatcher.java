@@ -4,6 +4,7 @@ import org.zwobble.mammoth.documents.Paragraph;
 import org.zwobble.mammoth.documents.Style;
 
 import java.util.Optional;
+import java.util.function.BiPredicate;
 
 public class ParagraphMatcher {
     public static final ParagraphMatcher ANY = new ParagraphMatcher(Optional.empty(), Optional.empty());
@@ -29,16 +30,16 @@ public class ParagraphMatcher {
     }
 
     private boolean matchesStyleId(Paragraph paragraph) {
-        return matches(styleId, paragraph.getStyle().map(Style::getStyleId));
+        return matches(styleId, paragraph.getStyle().map(Style::getStyleId), Object::equals);
     }
 
     private boolean matchesStyleName(Paragraph paragraph) {
-        return matches(styleName, paragraph.getStyle().flatMap(Style::getName));
+        return matches(styleName, paragraph.getStyle().flatMap(Style::getName), String::equalsIgnoreCase);
     }
 
-    private boolean matches(Optional<String> required, Optional<String> actual) {
+    private boolean matches(Optional<String> required, Optional<String> actual, BiPredicate<String, String> areEqual) {
         return required
-            .map(requiredValue -> actual.map(requiredValue::equals).orElse(false))
+            .map(requiredValue -> actual.map(actualValue -> areEqual.test(requiredValue, actualValue)).orElse(false))
             .orElse(true);
     }
 }
