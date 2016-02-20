@@ -5,8 +5,6 @@ import org.zwobble.mammoth.documents.Paragraph;
 import java.util.Map;
 import java.util.Optional;
 
-import static org.zwobble.mammoth.util.MammothLists.list;
-
 public class StyleMap {
     public static StyleMapBuilder builder() {
         return new StyleMapBuilder();
@@ -35,6 +33,6 @@ public class StyleMap {
     public HtmlPath getParagraphStyleMapping(Paragraph paragraph) {
         return paragraph.getStyle()
             .flatMap(style -> Optional.ofNullable(paragraphStyles.get(style.getStyleId())))
-            .orElse(new HtmlPath(list(HtmlPath.element("p"))));
+            .orElse(HtmlPath.element("p"));
     }
 }

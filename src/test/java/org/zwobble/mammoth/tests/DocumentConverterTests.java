@@ -56,7 +56,7 @@ public class DocumentConverterTests {
         assertThat(
             convertToHtml(
                 make(a(PARAGRAPH, with(STYLE, Optional.of(new Style("TipsParagraph", Optional.empty()))))),
-                StyleMap.builder().mapParagraph("TipsParagraph", new HtmlPath(list(HtmlPath.element("p", map("class", "tip"))))).build()),
+                StyleMap.builder().mapParagraph("TipsParagraph", HtmlPath.element("p", map("class", "tip"))).build()),
 
             deepEquals(list(Html.element("p", map("class", "tip")))));
     }
