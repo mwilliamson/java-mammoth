@@ -20,6 +20,7 @@ import static org.hamcrest.Matchers.*;
 import static org.zwobble.mammoth.documents.VerticalAlignment.SUBSCRIPT;
 import static org.zwobble.mammoth.documents.VerticalAlignment.SUPERSCRIPT;
 import static org.zwobble.mammoth.results.Result.success;
+import static org.zwobble.mammoth.results.Warning.warning;
 import static org.zwobble.mammoth.tests.DeepReflectionMatcher.deepEquals;
 import static org.zwobble.mammoth.tests.documents.DocumentElementMakers.*;
 import static org.zwobble.mammoth.util.MammothLists.list;
@@ -66,6 +67,17 @@ public class DocumentConverterTests {
                     .build()),
 
             deepEquals(list(Html.element("p", map("class", "tip")))));
+    }
+
+    @Test
+    public void warningIfParagraphHasUnrecognisedStyle() {
+        assertThat(
+            convertToHtmlResult(
+                make(a(PARAGRAPH, with(STYLE, Optional.of(new Style("TipsParagraph", Optional.of("Tips Paragraph"))))))),
+
+            deepEquals(new Result<>(
+                list(Html.element("p")),
+                list(warning("Unrecognised paragraph style: Tips Paragraph (Style ID: TipsParagraph)")))));
     }
 
     @Test
@@ -256,8 +268,16 @@ public class DocumentConverterTests {
     }
 
     private List<HtmlNode> convertToHtml(DocumentElement element, StyleMap styleMap) {
-        Result<List<HtmlNode>> result = DocumentConverter.convertToHtml("doc-42-", false, styleMap, element);
+        Result<List<HtmlNode>> result = convertToHtmlResult(element, styleMap);
         assertThat(result.getWarnings(), hasSize(0));
         return result.getValue();
+    }
+
+    private Result<List<HtmlNode>> convertToHtmlResult(DocumentElement element) {
+        return convertToHtmlResult(element, StyleMap.EMPTY);
+    }
+
+    private Result<List<HtmlNode>> convertToHtmlResult(DocumentElement element, StyleMap styleMap) {
+        return DocumentConverter.convertToHtml("doc-42-", false, styleMap, element);
     }
 }

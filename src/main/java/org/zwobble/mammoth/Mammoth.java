@@ -10,6 +10,8 @@ import org.zwobble.mammoth.docx.DocxFile;
 import org.zwobble.mammoth.docx.ZippedDocxFile;
 import org.zwobble.mammoth.html.Html;
 import org.zwobble.mammoth.results.Result;
+import org.zwobble.mammoth.styles.HtmlPath;
+import org.zwobble.mammoth.styles.ParagraphMatcher;
 import org.zwobble.mammoth.styles.StyleMap;
 import org.zwobble.mammoth.util.Casts;
 
@@ -42,6 +44,14 @@ public class Mammoth {
         }
     }
 
+    private static final StyleMap DEFAULT_STYLE_MAP = StyleMap.builder()
+        .mapParagraph(ParagraphMatcher.styleName("footnote text"), HtmlPath.element("p"))
+        .mapParagraph(ParagraphMatcher.styleName("endnote text"), HtmlPath.element("p"))
+        .mapParagraph(ParagraphMatcher.styleName("Footnote"), HtmlPath.element("p"))
+        .mapParagraph(ParagraphMatcher.styleName("Endnote"), HtmlPath.element("p"))
+        .mapParagraph(ParagraphMatcher.styleName("Normal"), HtmlPath.element("p"))
+        .build();
+
     public static Result<String> convertToHtml(File file) {
         return convertToHtml(file, Options.DEFAULT);
     }
@@ -49,7 +59,7 @@ public class Mammoth {
     public static Result<String> convertToHtml(File file, Options options) {
         return withDocxFile(file, zipFile ->
             readDocument(zipFile)
-                .flatMap(nodes -> DocumentConverter.convertToHtml(options.idPrefix, options.preserveEmptyParagraphs, StyleMap.EMPTY, nodes))
+                .flatMap(nodes -> DocumentConverter.convertToHtml(options.idPrefix, options.preserveEmptyParagraphs, DEFAULT_STYLE_MAP, nodes))
                 .map(Html::stripEmpty)
                 .map(Html::collapse)
                 .map(Html::write));

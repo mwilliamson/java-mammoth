@@ -18,4 +18,9 @@ public class Style {
     public Optional<String> getName() {
         return name;
     }
+
+    public String describe() {
+        String styleIdDescription = "Style ID: " + styleId;
+        return this.name.map(name -> name + " (" + styleIdDescription + ")").orElse(styleIdDescription);
+    }
 }

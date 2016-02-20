@@ -4,6 +4,7 @@ import com.google.common.collect.Iterables;
 import org.zwobble.mammoth.documents.Paragraph;
 
 import java.util.List;
+import java.util.Optional;
 
 public class StyleMap {
     public static StyleMapBuilder builder() {
@@ -30,9 +31,9 @@ public class StyleMap {
         return strikethrough;
     }
 
-    public HtmlPath getParagraphStyleMapping(Paragraph paragraph) {
-        return Iterables.tryFind(paragraphStyles, styleMapping -> styleMapping.matches(paragraph))
-            .transform(StyleMapping::getHtmlPath)
-            .or(HtmlPath.element("p"));
+    public Optional<HtmlPath> getParagraphHtmlPath(Paragraph paragraph) {
+        com.google.common.base.Optional<StyleMapping> mapping = Iterables.tryFind(paragraphStyles, styleMapping -> styleMapping.matches(paragraph));
+        return Optional.ofNullable(mapping.orNull())
+            .map(StyleMapping::getHtmlPath);
     }
 }

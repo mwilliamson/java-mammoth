@@ -9,6 +9,7 @@ import org.zwobble.mammoth.html.Html;
 import org.zwobble.mammoth.html.HtmlNode;
 import org.zwobble.mammoth.results.Result;
 import org.zwobble.mammoth.results.Warning;
+import org.zwobble.mammoth.styles.HtmlPath;
 import org.zwobble.mammoth.styles.StyleMap;
 import org.zwobble.mammoth.util.MammothLists;
 
@@ -18,6 +19,7 @@ import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 
+import static org.zwobble.mammoth.results.Warning.warning;
 import static org.zwobble.mammoth.util.MammothLists.*;
 import static org.zwobble.mammoth.util.MammothMaps.map;
 
@@ -98,7 +100,14 @@ public class DocumentConverter {
             public List<HtmlNode> visit(Paragraph paragraph) {
                 List<HtmlNode> content = convertChildrenToHtml(paragraph);
                 List<HtmlNode> children = preserveEmptyParagraphs ? cons(Html.FORCE_WRITE, content) : content;
-                return styleMap.getParagraphStyleMapping(paragraph).wrap(children);
+                HtmlPath mapping = styleMap.getParagraphHtmlPath(paragraph)
+                    .orElseGet(() -> {
+                        if (paragraph.getStyle().isPresent()) {
+                            warnings.add(warning("Unrecognised paragraph style: " + paragraph.getStyle().get().describe()));
+                        }
+                        return HtmlPath.element("p");
+                    });
+                return mapping.wrap(children);
             }
 
             @Override
