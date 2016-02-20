@@ -5,6 +5,10 @@ public class NumberingLevel {
         return new NumberingLevel(levelIndex, true);
     }
 
+    public static NumberingLevel unordered(String levelIndex) {
+        return new NumberingLevel(levelIndex, false);
+    }
+
     private final String levelIndex;
     private final boolean isOrdered;
 

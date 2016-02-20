@@ -33,6 +33,7 @@ import static org.zwobble.mammoth.results.Warning.warning;
 import static org.zwobble.mammoth.tests.DeepReflectionMatcher.deepEquals;
 import static org.zwobble.mammoth.tests.documents.DocumentElementMakers.*;
 import static org.zwobble.mammoth.tests.docx.BodyXmlReaderMakers.*;
+import static org.zwobble.mammoth.tests.docx.BodyXmlReaderMakers.NUMBERING;
 import static org.zwobble.mammoth.util.MammothLists.list;
 import static org.zwobble.mammoth.util.MammothMaps.map;
 import static org.zwobble.mammoth.xml.XmlNodes.element;
