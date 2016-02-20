@@ -7,6 +7,8 @@ import com.google.common.io.ByteStreams;
 import org.zwobble.mammoth.documents.*;
 import org.zwobble.mammoth.html.Html;
 import org.zwobble.mammoth.html.HtmlNode;
+import org.zwobble.mammoth.results.Result;
+import org.zwobble.mammoth.results.Warning;
 import org.zwobble.mammoth.styles.StyleMap;
 import org.zwobble.mammoth.util.MammothLists;
 
@@ -20,9 +22,11 @@ import static org.zwobble.mammoth.util.MammothLists.*;
 import static org.zwobble.mammoth.util.MammothMaps.map;
 
 public class DocumentConverter {
-    public static List<HtmlNode> convertToHtml(String idPrefix, boolean preserveEmptyParagraphs, StyleMap styleMap, Document document) {
+    public static Result<List<HtmlNode>> convertToHtml(String idPrefix, boolean preserveEmptyParagraphs, StyleMap styleMap, Document document) {
         DocumentConverter documentConverter = new DocumentConverter(idPrefix, preserveEmptyParagraphs, styleMap);
-        return documentConverter.convertToHtml(document);
+        return new Result<>(
+            documentConverter.convertToHtml(document),
+            documentConverter.warnings.build());
     }
 
     private static List<Note> findNotes(Document document, Iterable<NoteReference> noteReferences) {
@@ -32,14 +36,18 @@ public class DocumentConverter {
             reference -> document.getNotes().findNote(reference.getNoteType(), reference.getNoteId()).get()));
     }
 
-    public static List<HtmlNode> convertToHtml(String idPrefix, boolean preserveEmptyParagraphs, StyleMap styleMap, DocumentElement element) {
-        return new DocumentConverter(idPrefix, preserveEmptyParagraphs, styleMap).convertToHtml(element);
+    public static Result<List<HtmlNode>> convertToHtml(String idPrefix, boolean preserveEmptyParagraphs, StyleMap styleMap, DocumentElement element) {
+        DocumentConverter documentConverter = new DocumentConverter(idPrefix, preserveEmptyParagraphs, styleMap);
+        return new Result<>(
+            documentConverter.convertToHtml(element),
+            documentConverter.warnings.build());
     }
 
     private final String idPrefix;
     private final boolean preserveEmptyParagraphs;
     private final StyleMap styleMap;
     private final List<NoteReference> noteReferences = new ArrayList<>();
+    private final ImmutableList.Builder<Warning> warnings = ImmutableList.builder();
 
     private DocumentConverter(String idPrefix, boolean preserveEmptyParagraphs, StyleMap styleMap) {
         this.idPrefix = idPrefix;

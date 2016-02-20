@@ -5,6 +5,7 @@ import org.zwobble.mammoth.DocumentConverter;
 import org.zwobble.mammoth.documents.*;
 import org.zwobble.mammoth.html.Html;
 import org.zwobble.mammoth.html.HtmlNode;
+import org.zwobble.mammoth.results.Result;
 import org.zwobble.mammoth.styles.HtmlPath;
 import org.zwobble.mammoth.styles.ParagraphMatcher;
 import org.zwobble.mammoth.styles.StyleMap;
@@ -18,6 +19,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.zwobble.mammoth.documents.VerticalAlignment.SUBSCRIPT;
 import static org.zwobble.mammoth.documents.VerticalAlignment.SUPERSCRIPT;
+import static org.zwobble.mammoth.results.Result.success;
 import static org.zwobble.mammoth.tests.DeepReflectionMatcher.deepEquals;
 import static org.zwobble.mammoth.tests.documents.DocumentElementMakers.*;
 import static org.zwobble.mammoth.util.MammothLists.list;
@@ -37,7 +39,7 @@ public class DocumentConverterTests {
     public void forceWriteIsInsertedIntoParagraphIfEmptyParagraphsShouldBePreserved() {
         assertThat(
             DocumentConverter.convertToHtml("", true, StyleMap.EMPTY, make(a(PARAGRAPH))),
-            deepEquals(list(Html.element("p", list(Html.FORCE_WRITE)))));
+            deepEquals(success(list(Html.element("p", list(Html.FORCE_WRITE))))));
     }
 
     @Test
@@ -244,7 +246,9 @@ public class DocumentConverterTests {
     }
 
     private List<HtmlNode> convertToHtml(Document document) {
-        return DocumentConverter.convertToHtml("doc-42-", false, StyleMap.EMPTY, document);
+        Result<List<HtmlNode>> result = DocumentConverter.convertToHtml("doc-42-", false, StyleMap.EMPTY, document);
+        assertThat(result.getWarnings(), hasSize(0));
+        return result.getValue();
     }
 
     private List<HtmlNode> convertToHtml(DocumentElement element) {
@@ -252,6 +256,8 @@ public class DocumentConverterTests {
     }
 
     private List<HtmlNode> convertToHtml(DocumentElement element, StyleMap styleMap) {
-        return DocumentConverter.convertToHtml("doc-42-", false, styleMap, element);
+        Result<List<HtmlNode>> result = DocumentConverter.convertToHtml("doc-42-", false, styleMap, element);
+        assertThat(result.getWarnings(), hasSize(0));
+        return result.getValue();
     }
 }

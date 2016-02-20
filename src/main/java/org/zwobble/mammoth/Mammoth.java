@@ -49,7 +49,7 @@ public class Mammoth {
     public static Result<String> convertToHtml(File file, Options options) {
         return withDocxFile(file, zipFile ->
             readDocument(zipFile)
-                .map(nodes -> DocumentConverter.convertToHtml(options.idPrefix, options.preserveEmptyParagraphs, StyleMap.EMPTY, nodes))
+                .flatMap(nodes -> DocumentConverter.convertToHtml(options.idPrefix, options.preserveEmptyParagraphs, StyleMap.EMPTY, nodes))
                 .map(Html::stripEmpty)
                 .map(Html::collapse)
                 .map(Html::write));
