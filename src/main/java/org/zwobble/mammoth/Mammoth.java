@@ -1,14 +1,17 @@
 package org.zwobble.mammoth;
 
-import org.zwobble.mammoth.documents.Notes;
+import com.google.common.collect.Iterables;
+import org.zwobble.mammoth.documents.*;
 import org.zwobble.mammoth.docx.*;
 import org.zwobble.mammoth.html.Html;
 import org.zwobble.mammoth.results.Result;
+import org.zwobble.mammoth.util.Casts;
 import org.zwobble.mammoth.util.MammothLists;
 import org.zwobble.mammoth.xml.XmlElement;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 import java.util.zip.ZipFile;
 
@@ -45,6 +48,39 @@ public class Mammoth {
     }
 
     public static Result<String> convertToHtml(File file, Options options) {
+        return readDocument(file, options)
+            .map(nodes -> DocumentConverter.convertToHtml(options.idPrefix, options.preserveEmptyParagraphs, nodes))
+            .map(Html::stripEmpty)
+            .map(Html::collapse)
+            .map(Html::write);
+    }
+
+    public static Result<String> extractRawText(File file) {
+        return readDocument(file, Options.DEFAULT)
+            .map(document -> extractRawTextOfChildren(document));
+    }
+
+    private static String extractRawTextOfChildren(HasChildren parent) {
+        return extractRawText(parent.getChildren());
+    }
+
+    private static String extractRawText(List<DocumentElement> nodes) {
+        return String.join("", Iterables.transform(nodes, node -> extractRawText(node)));
+    }
+
+    private static String extractRawText(DocumentElement node) {
+        return Casts.tryCast(Text.class, node)
+            .map(Text::getValue)
+            .orElseGet(() -> {
+                List<DocumentElement> children = Casts.tryCast(HasChildren.class, node)
+                    .map(HasChildren::getChildren)
+                    .orElse(list());
+                String suffix = node instanceof Paragraph ? "\n\n" : "";
+                return extractRawText(children) + suffix;
+            });
+    }
+
+    private static Result<Document> readDocument(File file, Options options) {
         try (DocxFile zipFile = new ZippedDocxFile(new ZipFile(file))) {
             Styles styles = readStyles(zipFile);
             Numbering numbering = Numbering.EMPTY;
@@ -60,13 +96,9 @@ public class Mammoth {
                 .flatMap(notes -> {
                     DocumentXmlReader reader = new DocumentXmlReader(bodyReaders.forName("document"), notes);
                     return reader.readElement(parseOfficeXml(zipFile, "word/document.xml"));
-                })
-                .map(nodes -> DocumentConverter.convertToHtml(options.idPrefix, options.preserveEmptyParagraphs, nodes))
-                .map(Html::stripEmpty)
-                .map(Html::collapse)
-                .map(Html::write);
+                });
         } catch (IOException e) {
-            throw new UnsupportedOperationException("Should return a result of failure");   
+            throw new UnsupportedOperationException("Should return a result of failure");
         }
     }
 

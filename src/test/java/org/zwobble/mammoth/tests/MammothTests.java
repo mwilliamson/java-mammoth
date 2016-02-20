@@ -72,6 +72,13 @@ public class MammothTests {
                 "<ol><li id=\"doc-42-footnote-1\"><p> <a href=\"http://www.example.com\">Example</a> <a href=\"#doc-42-footnote-ref-1\">↑</a></p></li></ol>")));
     }
 
+    @Test
+    public void canExtractRawText() {
+        assertThat(
+            Mammoth.extractRawText(TestData.file("simple-list.docx")),
+            deepEquals(success("Apple\n\nBanana\n\n")));
+    }
+
     private Result<String> convertToHtml(String name) {
         File file = TestData.file(name);
         return Mammoth.convertToHtml(file);
