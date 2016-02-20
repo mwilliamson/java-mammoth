@@ -52,6 +52,16 @@ public class DocumentConverterTests {
     }
 
     @Test
+    public void styleMappingsUsingStyleIdsCanBeUsedToMapParagraphs() {
+        assertThat(
+            convertToHtml(
+                make(a(PARAGRAPH, with(STYLE, Optional.of(new Style("TipsParagraph", Optional.empty()))))),
+                StyleMap.builder().mapParagraph("TipsParagraph", new HtmlPath(list(HtmlPath.element("p", map("class", "tip"))))).build()),
+
+            deepEquals(list(Html.element("p", map("class", "tip")))));
+    }
+
+    @Test
     public void boldRunsAreWrappedInStrongTags() {
         assertThat(
             convertToHtml(make(a(RUN, with(BOLD, true), with(CHILDREN, list(new Text("Hello")))))),

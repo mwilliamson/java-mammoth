@@ -4,14 +4,21 @@ import com.google.common.collect.Lists;
 import org.zwobble.mammoth.html.HtmlNode;
 
 import java.util.List;
+import java.util.Map;
+
+import static org.zwobble.mammoth.util.MammothMaps.map;
 
 public class HtmlPath {
     public static HtmlPathElement element(String tagName) {
-        return new HtmlPathElement(tagName, false);
+        return element(tagName, map());
+    }
+
+    public static HtmlPathElement element(String tagName, Map<String, String> attributes) {
+        return new HtmlPathElement(tagName, attributes, false);
     }
 
     public static HtmlPathElement collapsibleElement(String tagName) {
-        return new HtmlPathElement(tagName, true);
+        return new HtmlPathElement(tagName, map(), true);
     }
 
     private final List<HtmlPathElement> elements;

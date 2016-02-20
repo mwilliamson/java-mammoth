@@ -14,6 +14,7 @@ import static com.natpryce.makeiteasy.Property.newProperty;
 import static org.zwobble.mammoth.util.MammothLists.list;
 
 public class DocumentElementMakers {
+    public static final Property<HasChildren, Optional<Style>> STYLE = newProperty();
     public static final Property<HasChildren, Boolean> BOLD = newProperty();
     public static final Property<HasChildren, Boolean> ITALIC = newProperty();
     public static final Property<HasChildren, Boolean> UNDERLINE = newProperty();
@@ -23,7 +24,7 @@ public class DocumentElementMakers {
 
     public static final Instantiator<Paragraph> PARAGRAPH =
         propertyLookup -> new Paragraph(
-            Optional.empty(),
+            propertyLookup.valueOf(STYLE, Optional.empty()),
             Optional.empty(),
             propertyLookup.valueOf(CHILDREN, list()));
 

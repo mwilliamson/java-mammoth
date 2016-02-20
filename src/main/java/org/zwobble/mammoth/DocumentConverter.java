@@ -86,7 +86,7 @@ public class DocumentConverter {
             public List<HtmlNode> visit(Paragraph paragraph) {
                 List<HtmlNode> content = convertChildrenToHtml(paragraph);
                 List<HtmlNode> children = preserveEmptyParagraphs ? cons(Html.FORCE_WRITE, content) : content;
-                return list(Html.element("p", children));
+                return styleMap.getParagraphStyleMapping(paragraph).wrap(children);
             }
 
             @Override
