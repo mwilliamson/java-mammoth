@@ -1,11 +1,11 @@
 package org.zwobble.mammoth.styles;
 
-import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableList;
 
 public class StyleMapBuilder {
     private HtmlPath underline;
     private HtmlPath strikethrough;
-    private final ImmutableMap.Builder<String, HtmlPath> paragraphStyles = ImmutableMap.builder();
+    private final ImmutableList.Builder<StyleMapping> paragraphStyles = ImmutableList.builder();
 
     public StyleMapBuilder() {
         this.underline = HtmlPath.EMPTY;
@@ -22,8 +22,8 @@ public class StyleMapBuilder {
         return this;
     }
 
-    public StyleMapBuilder mapParagraph(String styleId, HtmlPath path) {
-        paragraphStyles.put(styleId, path);
+    public StyleMapBuilder mapParagraph(ParagraphMatcher paragraphMatcher, HtmlPath path) {
+        paragraphStyles.add(new StyleMapping(paragraphMatcher, path));
         return this;
     }
 
