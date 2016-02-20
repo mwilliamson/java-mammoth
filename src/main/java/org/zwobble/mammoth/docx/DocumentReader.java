@@ -20,7 +20,7 @@ public class DocumentReader {
     public static Result<Document> readDocument(DocxFile zipFile) {
         Styles styles = readStyles(zipFile);
         Numbering numbering = Numbering.EMPTY;
-        ContentTypes contentTypes = ContentTypes.DEFAULT;
+        ContentTypes contentTypes = readContentTypes(zipFile);
         FileReader fileReader = uri -> {
             throw new UnsupportedOperationException();
         };
@@ -50,6 +50,12 @@ public class DocumentReader {
         return tryParseOfficeXml(file, "word/styles.xml")
             .map(StylesXml::readStylesXmlElement)
             .orElse(Styles.EMPTY);
+    }
+
+    private static ContentTypes readContentTypes(DocxFile file) {
+        return tryParseOfficeXml(file, "[Content_Types].xml")
+            .map(ContentTypesXml::readContentTypesXmlElement)
+            .orElse(ContentTypes.DEFAULT);
     }
 
     private static Relationships readRelationships(DocxFile zipFile, String name) {
