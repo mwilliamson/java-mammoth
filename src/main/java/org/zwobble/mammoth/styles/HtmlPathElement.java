@@ -7,8 +7,17 @@ import java.util.List;
 import java.util.Map;
 
 import static org.zwobble.mammoth.util.MammothLists.list;
+import static org.zwobble.mammoth.util.MammothMaps.map;
 
 public class HtmlPathElement {
+    public static HtmlPathElement fresh(String tagName) {
+        return new HtmlPathElement(tagName, map(), false);
+    }
+
+    public static HtmlPathElement collapsible(String tagName) {
+        return new HtmlPathElement(tagName, map(), true);
+    }
+
     private final String tagName;
     private final Map<String, String> attributes;
     private final boolean isCollapsible;

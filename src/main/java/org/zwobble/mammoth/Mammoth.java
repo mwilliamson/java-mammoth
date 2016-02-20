@@ -11,6 +11,7 @@ import org.zwobble.mammoth.docx.ZippedDocxFile;
 import org.zwobble.mammoth.html.Html;
 import org.zwobble.mammoth.results.Result;
 import org.zwobble.mammoth.styles.HtmlPath;
+import org.zwobble.mammoth.styles.HtmlPathElement;
 import org.zwobble.mammoth.styles.ParagraphMatcher;
 import org.zwobble.mammoth.styles.StyleMap;
 import org.zwobble.mammoth.util.Casts;
@@ -49,6 +50,13 @@ public class Mammoth {
         .mapParagraph(ParagraphMatcher.styleName("endnote text"), HtmlPath.element("p"))
         .mapParagraph(ParagraphMatcher.styleName("Footnote"), HtmlPath.element("p"))
         .mapParagraph(ParagraphMatcher.styleName("Endnote"), HtmlPath.element("p"))
+
+        .mapParagraph(
+            ParagraphMatcher.unorderedList("0"),
+            new HtmlPath(list(
+                HtmlPathElement.collapsible("ul"),
+                HtmlPathElement.fresh("li"))))
+
         .mapParagraph(ParagraphMatcher.styleName("Normal"), HtmlPath.element("p"))
         .build();
 

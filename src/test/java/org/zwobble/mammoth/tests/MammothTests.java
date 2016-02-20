@@ -40,6 +40,13 @@ public class MammothTests {
     }
 
     @Test
+    public void simpleListIsConvertedToListElements() {
+        assertThat(
+            convertToHtml("simple-list.docx"),
+            deepEquals(success("<ul><li>Apple</li><li>Banana</li></ul>")));
+    }
+
+    @Test
     public void inlineImagesAreIncludedInOutput() {
         assertThat(
             convertToHtml("tiny-picture.docx"),
