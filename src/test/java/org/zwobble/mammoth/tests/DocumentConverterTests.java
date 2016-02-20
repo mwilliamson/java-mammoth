@@ -5,6 +5,9 @@ import org.zwobble.mammoth.DocumentConverter;
 import org.zwobble.mammoth.documents.*;
 import org.zwobble.mammoth.html.Html;
 import org.zwobble.mammoth.html.HtmlNode;
+import org.zwobble.mammoth.styles.HtmlPath;
+import org.zwobble.mammoth.styles.HtmlPathElement;
+import org.zwobble.mammoth.styles.StyleMap;
 
 import java.io.ByteArrayInputStream;
 import java.util.List;
@@ -35,7 +38,7 @@ public class DocumentConverterTests {
     @Test
     public void forceWriteIsInsertedIntoParagraphIfEmptyParagraphsShouldBePreserved() {
         assertThat(
-            DocumentConverter.convertToHtml("", true, make(a(PARAGRAPH))),
+            DocumentConverter.convertToHtml("", true, StyleMap.EMPTY, make(a(PARAGRAPH))),
             deepEquals(list(Html.element("p", list(Html.FORCE_WRITE)))));
     }
 
@@ -70,6 +73,15 @@ public class DocumentConverterTests {
         assertThat(
             convertToHtml(make(a(RUN, with(UNDERLINE, true), with(CHILDREN, list(new Text("Hello")))))),
             deepEquals(list(Html.text("Hello"))));
+    }
+
+    @Test
+    public void underliningCanBeMappedUsingStyleMapping() {
+        assertThat(
+            convertToHtml(
+                make(a(RUN, with(UNDERLINE, true), with(CHILDREN, list(new Text("Hello"))))),
+                new StyleMap(new HtmlPath(list(new HtmlPathElement("em"))))),
+            deepEquals(list(Html.element("em", list(Html.text("Hello"))))));
     }
 
     @Test
@@ -210,10 +222,14 @@ public class DocumentConverterTests {
     }
 
     private List<HtmlNode> convertToHtml(Document document) {
-        return DocumentConverter.convertToHtml("doc-42-", false, document);
+        return DocumentConverter.convertToHtml("doc-42-", false, StyleMap.EMPTY, document);
     }
 
     private List<HtmlNode> convertToHtml(DocumentElement element) {
-        return DocumentConverter.convertToHtml("doc-42-", false, element);
+        return convertToHtml(element, StyleMap.EMPTY);
+    }
+
+    private List<HtmlNode> convertToHtml(DocumentElement element, StyleMap styleMap) {
+        return DocumentConverter.convertToHtml("doc-42-", false, styleMap, element);
     }
 }

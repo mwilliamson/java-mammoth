@@ -10,6 +10,7 @@ import org.zwobble.mammoth.docx.DocxFile;
 import org.zwobble.mammoth.docx.ZippedDocxFile;
 import org.zwobble.mammoth.html.Html;
 import org.zwobble.mammoth.results.Result;
+import org.zwobble.mammoth.styles.StyleMap;
 import org.zwobble.mammoth.util.Casts;
 
 import java.io.File;
@@ -48,7 +49,7 @@ public class Mammoth {
     public static Result<String> convertToHtml(File file, Options options) {
         return withDocxFile(file, zipFile ->
             readDocument(zipFile)
-                .map(nodes -> DocumentConverter.convertToHtml(options.idPrefix, options.preserveEmptyParagraphs, nodes))
+                .map(nodes -> DocumentConverter.convertToHtml(options.idPrefix, options.preserveEmptyParagraphs, StyleMap.EMPTY, nodes))
                 .map(Html::stripEmpty)
                 .map(Html::collapse)
                 .map(Html::write));

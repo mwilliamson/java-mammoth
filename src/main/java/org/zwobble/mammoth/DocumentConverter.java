@@ -3,10 +3,14 @@ package org.zwobble.mammoth;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import com.google.common.io.ByteStreams;
 import org.zwobble.mammoth.documents.*;
 import org.zwobble.mammoth.html.Html;
 import org.zwobble.mammoth.html.HtmlNode;
+import org.zwobble.mammoth.styles.HtmlPath;
+import org.zwobble.mammoth.styles.HtmlPathElement;
+import org.zwobble.mammoth.styles.StyleMap;
 import org.zwobble.mammoth.util.MammothLists;
 
 import java.io.IOException;
@@ -19,8 +23,8 @@ import static org.zwobble.mammoth.util.MammothLists.*;
 import static org.zwobble.mammoth.util.MammothMaps.map;
 
 public class DocumentConverter {
-    public static List<HtmlNode> convertToHtml(String idPrefix, boolean preserveEmptyParagraphs, Document document) {
-        DocumentConverter documentConverter = new DocumentConverter(idPrefix, preserveEmptyParagraphs);
+    public static List<HtmlNode> convertToHtml(String idPrefix, boolean preserveEmptyParagraphs, StyleMap styleMap, Document document) {
+        DocumentConverter documentConverter = new DocumentConverter(idPrefix, preserveEmptyParagraphs, styleMap);
         List<HtmlNode> mainBody = documentConverter.convertChildrenToHtml(document);
         // TODO: can you have note references inside a note?
         List<Note> notes = findNotes(document, documentConverter.noteReferences);
@@ -41,17 +45,19 @@ public class DocumentConverter {
             reference -> document.getNotes().findNote(reference.getNoteType(), reference.getNoteId()).get()));
     }
 
-    public static List<HtmlNode> convertToHtml(String idPrefix, boolean preserveEmptyParagraphs, DocumentElement element) {
-        return new DocumentConverter(idPrefix, preserveEmptyParagraphs).convertToHtml(element);
+    public static List<HtmlNode> convertToHtml(String idPrefix, boolean preserveEmptyParagraphs, StyleMap styleMap, DocumentElement element) {
+        return new DocumentConverter(idPrefix, preserveEmptyParagraphs, styleMap).convertToHtml(element);
     }
 
     private final String idPrefix;
     private final boolean preserveEmptyParagraphs;
+    private final StyleMap styleMap;
     private final List<NoteReference> noteReferences = new ArrayList<>();
 
-    private DocumentConverter(String idPrefix, boolean preserveEmptyParagraphs) {
+    private DocumentConverter(String idPrefix, boolean preserveEmptyParagraphs, StyleMap styleMap) {
         this.idPrefix = idPrefix;
         this.preserveEmptyParagraphs = preserveEmptyParagraphs;
+        this.styleMap = styleMap;
     }
 
     private HtmlNode convertToHtml(Note note) {
@@ -92,6 +98,9 @@ public class DocumentConverter {
                 if (run.isStrikethrough()) {
                     nodes = list(Html.collapsibleElement("s", nodes));
                 }
+                if (run.isUnderline()) {
+                    nodes = wrapInPath(styleMap.getUnderline(), nodes);
+                }
                 if (run.getVerticalAlignment() == VerticalAlignment.SUBSCRIPT) {
                     nodes = list(Html.collapsibleElement("sub", nodes));
                 }
@@ -103,6 +112,13 @@ public class DocumentConverter {
                 }
                 if (run.isBold()) {
                     nodes = list(Html.collapsibleElement("strong", nodes));
+                }
+                return nodes;
+            }
+
+            private List<HtmlNode> wrapInPath(HtmlPath path, List<HtmlNode> nodes) {
+                for (HtmlPathElement element : Lists.reverse(path.getElements())) {
+                    nodes = list(Html.element(element.getTagName(), nodes));
                 }
                 return nodes;
             }
