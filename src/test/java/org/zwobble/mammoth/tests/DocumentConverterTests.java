@@ -23,7 +23,7 @@ import static org.zwobble.mammoth.util.MammothLists.list;
 import static org.zwobble.mammoth.util.MammothMaps.map;
 
 public class DocumentConverterTests {
-    // TODO: styles (paragraph, run, underline, strikethrough)
+    // TODO: styles (paragraph, run)
 
     @Test
     public void plainParagraphIsConvertedToPlainParagraph() {
