@@ -6,6 +6,8 @@ import org.zwobble.mammoth.documents.Style;
 import java.util.Optional;
 
 public class ParagraphMatcher {
+    public static final ParagraphMatcher ANY = new ParagraphMatcher(Optional.empty(), Optional.empty());
+
     public static ParagraphMatcher styleId(String styleId) {
         return new ParagraphMatcher(Optional.of(styleId), Optional.empty());
     }
