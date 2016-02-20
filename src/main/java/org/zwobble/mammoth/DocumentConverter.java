@@ -22,17 +22,7 @@ import static org.zwobble.mammoth.util.MammothMaps.map;
 public class DocumentConverter {
     public static List<HtmlNode> convertToHtml(String idPrefix, boolean preserveEmptyParagraphs, StyleMap styleMap, Document document) {
         DocumentConverter documentConverter = new DocumentConverter(idPrefix, preserveEmptyParagraphs, styleMap);
-        List<HtmlNode> mainBody = documentConverter.convertChildrenToHtml(document);
-        // TODO: can you have note references inside a note?
-        List<Note> notes = findNotes(document, documentConverter.noteReferences);
-        if (notes.isEmpty()) {
-            return mainBody;
-        } else {
-            HtmlNode noteNode = Html.element("ol",
-                ImmutableList.copyOf(Iterables.transform(notes, documentConverter::convertToHtml)));
-
-            return ImmutableList.copyOf(Iterables.concat(mainBody, list(noteNode)));
-        }
+        return documentConverter.convertToHtml(document);
     }
 
     private static List<Note> findNotes(Document document, Iterable<NoteReference> noteReferences) {
@@ -55,6 +45,20 @@ public class DocumentConverter {
         this.idPrefix = idPrefix;
         this.preserveEmptyParagraphs = preserveEmptyParagraphs;
         this.styleMap = styleMap;
+    }
+
+    private List<HtmlNode> convertToHtml(Document document) {
+        List<HtmlNode> mainBody = convertChildrenToHtml(document);
+        // TODO: can you have note references inside a note?
+        List<Note> notes = findNotes(document, noteReferences);
+        if (notes.isEmpty()) {
+            return mainBody;
+        } else {
+            HtmlNode noteNode = Html.element("ol",
+                ImmutableList.copyOf(Iterables.transform(notes, this::convertToHtml)));
+
+            return ImmutableList.copyOf(Iterables.concat(mainBody, list(noteNode)));
+        }
     }
 
     private HtmlNode convertToHtml(Note note) {
