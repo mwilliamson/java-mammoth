@@ -53,27 +53,13 @@ public class DocumentConverterTests {
     }
 
     @Test
-    public void styleMappingsUsingStyleIdsCanBeUsedToMapParagraphs() {
+    public void paragraphStyleMappingsCanBeUsedToMapParagraphs() {
         assertThat(
             convertToHtml(
                 make(a(PARAGRAPH, with(STYLE, Optional.of(new Style("TipsParagraph", Optional.empty()))))),
                 StyleMap.builder()
                     .mapParagraph(
                         ParagraphMatcher.styleId("TipsParagraph"),
-                        HtmlPath.element("p", map("class", "tip")))
-                    .build()),
-
-            deepEquals(list(Html.element("p", map("class", "tip")))));
-    }
-
-    @Test
-    public void styleMappingsUsingStyleNamesCanBeUsedToMapParagraphs() {
-        assertThat(
-            convertToHtml(
-                make(a(PARAGRAPH, with(STYLE, Optional.of(new Style("TipsParagraph", Optional.of("Tips Paragraph")))))),
-                StyleMap.builder()
-                    .mapParagraph(
-                        ParagraphMatcher.styleName("Tips Paragraph"),
                         HtmlPath.element("p", map("class", "tip")))
                     .build()),
 
