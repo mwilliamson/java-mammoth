@@ -16,8 +16,7 @@ import static org.zwobble.mammoth.util.MammothLists.list;
 
 public class Mammoth {
     public static class Options {
-        // TODO: what default prefix?
-        public static final Options DEFAULT = new Options("document-", false);
+        public static final Options DEFAULT = new Options("", false);
 
         private final String idPrefix;
         private final boolean preserveEmptyParagraphs;
