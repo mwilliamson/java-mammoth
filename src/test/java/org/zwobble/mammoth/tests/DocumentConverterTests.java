@@ -6,7 +6,6 @@ import org.zwobble.mammoth.documents.*;
 import org.zwobble.mammoth.html.Html;
 import org.zwobble.mammoth.html.HtmlNode;
 import org.zwobble.mammoth.styles.HtmlPath;
-import org.zwobble.mammoth.styles.HtmlPathElement;
 import org.zwobble.mammoth.styles.StyleMap;
 
 import java.io.ByteArrayInputStream;
@@ -15,9 +14,7 @@ import java.util.Optional;
 
 import static com.natpryce.makeiteasy.MakeItEasy.*;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.hasEntry;
-import static org.hamcrest.Matchers.hasProperty;
+import static org.hamcrest.Matchers.*;
 import static org.zwobble.mammoth.documents.VerticalAlignment.SUBSCRIPT;
 import static org.zwobble.mammoth.documents.VerticalAlignment.SUPERSCRIPT;
 import static org.zwobble.mammoth.tests.DeepReflectionMatcher.deepEquals;
@@ -80,7 +77,8 @@ public class DocumentConverterTests {
         assertThat(
             convertToHtml(
                 make(a(RUN, with(UNDERLINE, true), with(CHILDREN, list(new Text("Hello"))))),
-                new StyleMap(new HtmlPath(list(new HtmlPathElement("em"))))),
+                StyleMap.builder().underline(HtmlPath.element("em")).build()),
+
             deepEquals(list(Html.element("em", list(Html.text("Hello"))))));
     }
 
@@ -89,6 +87,15 @@ public class DocumentConverterTests {
         assertThat(
             convertToHtml(make(a(RUN, with(STRIKETHROUGH, true), with(CHILDREN, list(new Text("Hello")))))),
             deepEquals(list(Html.collapsibleElement("s", list(Html.text("Hello"))))));
+    }
+
+    @Test
+    public void struckthroughRunsCanBeMappedUsingStyleMapping() {
+        assertThat(
+            convertToHtml(
+                make(a(RUN, with(STRIKETHROUGH, true), with(CHILDREN, list(new Text("Hello"))))),
+                StyleMap.builder().strikethrough(HtmlPath.element("del")).build()),
+            deepEquals(list(Html.element("del", list(Html.text("Hello"))))));
     }
 
     @Test

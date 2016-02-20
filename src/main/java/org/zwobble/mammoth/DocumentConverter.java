@@ -3,13 +3,10 @@ package org.zwobble.mammoth;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 import com.google.common.io.ByteStreams;
 import org.zwobble.mammoth.documents.*;
 import org.zwobble.mammoth.html.Html;
 import org.zwobble.mammoth.html.HtmlNode;
-import org.zwobble.mammoth.styles.HtmlPath;
-import org.zwobble.mammoth.styles.HtmlPathElement;
 import org.zwobble.mammoth.styles.StyleMap;
 import org.zwobble.mammoth.util.MammothLists;
 
@@ -96,10 +93,10 @@ public class DocumentConverter {
             public List<HtmlNode> visit(Run run) {
                 List<HtmlNode> nodes = convertChildrenToHtml(run);
                 if (run.isStrikethrough()) {
-                    nodes = list(Html.collapsibleElement("s", nodes));
+                    nodes = styleMap.getStrikethrough().wrap(nodes);
                 }
                 if (run.isUnderline()) {
-                    nodes = wrapInPath(styleMap.getUnderline(), nodes);
+                    nodes = styleMap.getUnderline().wrap(nodes);
                 }
                 if (run.getVerticalAlignment() == VerticalAlignment.SUBSCRIPT) {
                     nodes = list(Html.collapsibleElement("sub", nodes));
@@ -112,13 +109,6 @@ public class DocumentConverter {
                 }
                 if (run.isBold()) {
                     nodes = list(Html.collapsibleElement("strong", nodes));
-                }
-                return nodes;
-            }
-
-            private List<HtmlNode> wrapInPath(HtmlPath path, List<HtmlNode> nodes) {
-                for (HtmlPathElement element : Lists.reverse(path.getElements())) {
-                    nodes = list(Html.element(element.getTagName(), nodes));
                 }
                 return nodes;
             }
