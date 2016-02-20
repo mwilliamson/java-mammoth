@@ -1,16 +1,21 @@
 package org.zwobble.mammoth;
 
+import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import org.zwobble.mammoth.documents.DocumentElement;
 import org.zwobble.mammoth.documents.HasChildren;
 import org.zwobble.mammoth.documents.Paragraph;
 import org.zwobble.mammoth.documents.Text;
+import org.zwobble.mammoth.docx.DocxFile;
+import org.zwobble.mammoth.docx.ZippedDocxFile;
 import org.zwobble.mammoth.html.Html;
 import org.zwobble.mammoth.results.Result;
 import org.zwobble.mammoth.util.Casts;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
+import java.util.zip.ZipFile;
 
 import static org.zwobble.mammoth.docx.DocumentReader.readDocument;
 import static org.zwobble.mammoth.util.MammothLists.list;
@@ -41,15 +46,25 @@ public class Mammoth {
     }
 
     public static Result<String> convertToHtml(File file, Options options) {
-        return readDocument(file)
-            .map(nodes -> DocumentConverter.convertToHtml(options.idPrefix, options.preserveEmptyParagraphs, nodes))
-            .map(Html::stripEmpty)
-            .map(Html::collapse)
-            .map(Html::write);
+        return withDocxFile(file, zipFile ->
+            readDocument(zipFile)
+                .map(nodes -> DocumentConverter.convertToHtml(options.idPrefix, options.preserveEmptyParagraphs, nodes))
+                .map(Html::stripEmpty)
+                .map(Html::collapse)
+                .map(Html::write));
     }
 
     public static Result<String> extractRawText(File file) {
-        return readDocument(file).map(Mammoth::extractRawTextOfChildren);
+        return withDocxFile(file, zipFile ->
+            readDocument(zipFile).map(Mammoth::extractRawTextOfChildren));
+    }
+
+    private static <T> T withDocxFile(File file, Function<DocxFile, T> function) {
+        try (DocxFile zipFile = new ZippedDocxFile(new ZipFile(file))) {
+            return function.apply(zipFile);
+        } catch (IOException e) {
+            throw new UnsupportedOperationException("Should return a result of failure");
+        }
     }
 
     private static String extractRawTextOfChildren(HasChildren parent) {

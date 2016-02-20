@@ -6,10 +6,8 @@ import org.zwobble.mammoth.results.Result;
 import org.zwobble.mammoth.util.MammothLists;
 import org.zwobble.mammoth.xml.XmlElement;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Optional;
-import java.util.zip.ZipFile;
 
 import static org.zwobble.mammoth.util.MammothLists.list;
 
@@ -19,26 +17,22 @@ public class DocumentReader {
         BodyXmlReader forName(String name);
     }
 
-    public static Result<Document> readDocument(File file) {
-        try (DocxFile zipFile = new ZippedDocxFile(new ZipFile(file))) {
-            Styles styles = readStyles(zipFile);
-            Numbering numbering = Numbering.EMPTY;
-            ContentTypes contentTypes = ContentTypes.DEFAULT;
-            FileReader fileReader = uri -> {
-                throw new UnsupportedOperationException();
-            };
-            BodyReaders bodyReaders = name -> {
-                Relationships relationships = readRelationships(zipFile, name);
-                return new BodyXmlReader(styles, numbering, relationships, contentTypes, zipFile, fileReader);
-            };
-            return readNotes(zipFile, bodyReaders)
-                .flatMap(notes -> {
-                    DocumentXmlReader reader = new DocumentXmlReader(bodyReaders.forName("document"), notes);
-                    return reader.readElement(parseOfficeXml(zipFile, "word/document.xml"));
-                });
-        } catch (IOException e) {
-            throw new UnsupportedOperationException("Should return a result of failure");
-        }
+    public static Result<Document> readDocument(DocxFile zipFile) {
+        Styles styles = readStyles(zipFile);
+        Numbering numbering = Numbering.EMPTY;
+        ContentTypes contentTypes = ContentTypes.DEFAULT;
+        FileReader fileReader = uri -> {
+            throw new UnsupportedOperationException();
+        };
+        BodyReaders bodyReaders = name -> {
+            Relationships relationships = readRelationships(zipFile, name);
+            return new BodyXmlReader(styles, numbering, relationships, contentTypes, zipFile, fileReader);
+        };
+        return readNotes(zipFile, bodyReaders)
+            .flatMap(notes -> {
+                DocumentXmlReader reader = new DocumentXmlReader(bodyReaders.forName("document"), notes);
+                return reader.readElement(parseOfficeXml(zipFile, "word/document.xml"));
+            });
     }
 
     private static Result<Notes> readNotes(DocxFile file, BodyReaders bodyReaders) {

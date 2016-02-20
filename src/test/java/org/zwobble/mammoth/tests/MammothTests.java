@@ -40,6 +40,13 @@ public class MammothTests {
     }
 
     @Test
+    public void inlineImagesAreIncludedInOutput() {
+        assertThat(
+            convertToHtml("tiny-picture.docx"),
+            deepEquals(success("<p><img src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAIAAAACUFjqAAAAAXNSR0IArs4c6QAAAAlwSFlzAAAOvgAADr4B6kKxwAAAABNJREFUKFNj/M+ADzDhlWUYqdIAQSwBE8U+X40AAAAASUVORK5CYII=\" /></p>")));
+    }
+
+    @Test
     public void footnotesAreAppendedToText() {
         assertThat(
             convertToHtml("footnotes.docx", Mammoth.Options.DEFAULT.idPrefix("doc-42-")),
