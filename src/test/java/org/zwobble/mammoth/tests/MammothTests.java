@@ -5,6 +5,9 @@ import org.zwobble.mammoth.Mammoth;
 import org.zwobble.mammoth.results.Result;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import static org.junit.Assert.assertThat;
 import static org.zwobble.mammoth.results.Result.success;
@@ -64,6 +67,21 @@ public class MammothTests {
         assertThat(
             convertToHtml("tiny-picture.docx"),
             deepEquals(success("<p><img src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAIAAAACUFjqAAAAAXNSR0IArs4c6QAAAAlwSFlzAAAOvgAADr4B6kKxwAAAABNJREFUKFNj/M+ADzDhlWUYqdIAQSwBE8U+X40AAAAASUVORK5CYII=\" /></p>")));
+    }
+
+    @Test
+    public void imagesStoredOutsideOfDocumentAreIncludedInOutput() throws IOException {
+        Path tempDirectory = Files.createTempDirectory("mammoth-");
+        try {
+            Path documentPath = tempDirectory.resolve("external-picture.docx");
+            Files.copy(TestData.file("external-picture.docx").toPath(), documentPath);
+            Files.copy(TestData.file("tiny-picture.png").toPath(), tempDirectory.resolve("tiny-picture.png"));
+            assertThat(
+                Mammoth.convertToHtml(documentPath.toFile()),
+                deepEquals(success("<p><img src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAIAAAACUFjqAAAAAXNSR0IArs4c6QAAAAlwSFlzAAAOvgAADr4B6kKxwAAAABNJREFUKFNj/M+ADzDhlWUYqdIAQSwBE8U+X40AAAAASUVORK5CYII=\" /></p>")));
+        } finally {
+            tempDirectory.toFile().delete();
+        }
     }
 
     @Test

@@ -7,6 +7,7 @@ import org.zwobble.mammoth.util.MammothLists;
 import org.zwobble.mammoth.xml.XmlElement;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Optional;
 
 import static org.zwobble.mammoth.util.MammothLists.list;
@@ -17,13 +18,11 @@ public class DocumentReader {
         BodyXmlReader forName(String name);
     }
 
-    public static Result<Document> readDocument(DocxFile zipFile) {
+    public static Result<Document> readDocument(Optional<Path> path, DocxFile zipFile) {
         Styles styles = readStyles(zipFile);
         Numbering numbering = readNumbering(zipFile);
         ContentTypes contentTypes = readContentTypes(zipFile);
-        FileReader fileReader = uri -> {
-            throw new UnsupportedOperationException();
-        };
+        FileReader fileReader = uri -> path.get().toUri().resolve(uri).toURL().openStream();
         BodyReaders bodyReaders = name -> {
             Relationships relationships = readRelationships(zipFile, name);
             return new BodyXmlReader(styles, numbering, relationships, contentTypes, zipFile, fileReader);

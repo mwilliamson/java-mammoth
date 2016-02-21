@@ -19,6 +19,7 @@ import org.zwobble.mammoth.util.Casts;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 import java.util.zip.ZipFile;
 
 import static org.zwobble.mammoth.docx.DocumentReader.readDocument;
@@ -66,7 +67,7 @@ public class Mammoth {
 
     public static Result<String> convertToHtml(File file, Options options) {
         return withDocxFile(file, zipFile ->
-            readDocument(zipFile)
+            readDocument(Optional.of(file.toPath()), zipFile)
                 .flatMap(nodes -> DocumentConverter.convertToHtml(options.idPrefix, options.preserveEmptyParagraphs, DEFAULT_STYLE_MAP, nodes))
                 .map(Html::stripEmpty)
                 .map(Html::collapse)
@@ -75,7 +76,8 @@ public class Mammoth {
 
     public static Result<String> extractRawText(File file) {
         return withDocxFile(file, zipFile ->
-            readDocument(zipFile).map(Mammoth::extractRawTextOfChildren));
+            readDocument(Optional.of(file.toPath()), zipFile)
+                .map(Mammoth::extractRawTextOfChildren));
     }
 
     private static <T> T withDocxFile(File file, Function<DocxFile, T> function) {
