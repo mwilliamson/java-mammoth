@@ -8,6 +8,7 @@ import org.zwobble.mammoth.html.HtmlNode;
 import org.zwobble.mammoth.results.Result;
 import org.zwobble.mammoth.styles.HtmlPath;
 import org.zwobble.mammoth.styles.ParagraphMatcher;
+import org.zwobble.mammoth.styles.RunMatcher;
 import org.zwobble.mammoth.styles.StyleMap;
 
 import java.io.ByteArrayInputStream;
@@ -78,6 +79,33 @@ public class DocumentConverterTests {
             deepEquals(new Result<>(
                 list(Html.element("p")),
                 list(warning("Unrecognised paragraph style: Tips Paragraph (Style ID: TipsParagraph)")))));
+    }
+
+    @Test
+    public void runStyleMappingsCanBeUsedToMapRuns() {
+        assertThat(
+            convertToHtml(
+                make(a(RUN, with(STYLE, Optional.of(new Style("TipsRun", Optional.empty()))))),
+                StyleMap.builder()
+                    .mapRun(
+                        RunMatcher.styleId("TipsRun"),
+                        HtmlPath.element("span", map("class", "tip")))
+                    .build()),
+
+            deepEquals(list(Html.element("span", map("class", "tip")))));
+    }
+
+    @Test
+    public void warningIfRunHasUnrecognisedStyle() {
+        assertThat(
+            convertToHtmlResult(
+                make(a(RUN,
+                    with(STYLE, Optional.of(new Style("TipsRun", Optional.of("Tips Run")))),
+                    with(CHILDREN, list(new Text("Hello")))))),
+
+            deepEquals(new Result<>(
+                list(Html.text("Hello")),
+                list(warning("Unrecognised run style: Tips Run (Style ID: TipsRun)")))));
     }
 
     @Test

@@ -131,7 +131,14 @@ public class DocumentConverter {
                 if (run.isBold()) {
                     nodes = list(Html.collapsibleElement("strong", nodes));
                 }
-                return nodes;
+                HtmlPath mapping = styleMap.getRunHtmlPath(run)
+                    .orElseGet(() -> {
+                        if (run.getStyle().isPresent()) {
+                            warnings.add(warning("Unrecognised run style: " + run.getStyle().get().describe()));
+                        }
+                        return HtmlPath.EMPTY;
+                    });
+                return mapping.wrap(nodes);
             }
 
             @Override

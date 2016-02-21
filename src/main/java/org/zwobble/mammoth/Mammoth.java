@@ -11,10 +11,7 @@ import org.zwobble.mammoth.docx.InMemoryDocxFile;
 import org.zwobble.mammoth.docx.ZippedDocxFile;
 import org.zwobble.mammoth.html.Html;
 import org.zwobble.mammoth.results.Result;
-import org.zwobble.mammoth.styles.HtmlPath;
-import org.zwobble.mammoth.styles.HtmlPathElement;
-import org.zwobble.mammoth.styles.ParagraphMatcher;
-import org.zwobble.mammoth.styles.StyleMap;
+import org.zwobble.mammoth.styles.*;
 import org.zwobble.mammoth.util.Casts;
 
 import java.io.File;
@@ -51,9 +48,14 @@ public class Mammoth {
 
     private static final StyleMap DEFAULT_STYLE_MAP = StyleMap.builder()
         .mapParagraph(ParagraphMatcher.styleName("footnote text"), HtmlPath.element("p"))
+        .mapRun(RunMatcher.styleName("footnote reference"), HtmlPath.EMPTY)
         .mapParagraph(ParagraphMatcher.styleName("endnote text"), HtmlPath.element("p"))
+        .mapRun(RunMatcher.styleName("endnote reference"), HtmlPath.EMPTY)
+
         .mapParagraph(ParagraphMatcher.styleName("Footnote"), HtmlPath.element("p"))
+        .mapRun(RunMatcher.styleName("Footnote anchor"), HtmlPath.EMPTY)
         .mapParagraph(ParagraphMatcher.styleName("Endnote"), HtmlPath.element("p"))
+        .mapRun(RunMatcher.styleName("Endnote anchor"), HtmlPath.EMPTY)
 
         .mapParagraph(
             ParagraphMatcher.unorderedList("0"),
@@ -61,6 +63,7 @@ public class Mammoth {
                 HtmlPathElement.collapsible("ul"),
                 HtmlPathElement.fresh("li"))))
 
+        .mapRun(RunMatcher.styleName("Hyperlink"), HtmlPath.EMPTY)
         .mapParagraph(ParagraphMatcher.styleName("Normal"), HtmlPath.element("p"))
         .build();
 

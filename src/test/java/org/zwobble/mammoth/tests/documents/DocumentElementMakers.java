@@ -14,13 +14,13 @@ import static com.natpryce.makeiteasy.Property.newProperty;
 import static org.zwobble.mammoth.util.MammothLists.list;
 
 public class DocumentElementMakers {
-    public static final Property<HasChildren, Optional<Style>> STYLE = newProperty();
-    public static final Property<HasChildren, Optional<NumberingLevel>> NUMBERING = newProperty();
-    public static final Property<HasChildren, Boolean> BOLD = newProperty();
-    public static final Property<HasChildren, Boolean> ITALIC = newProperty();
-    public static final Property<HasChildren, Boolean> UNDERLINE = newProperty();
-    public static final Property<HasChildren, Boolean> STRIKETHROUGH = newProperty();
-    public static final Property<HasChildren, VerticalAlignment> VERTICAL_ALIGNMENT = newProperty();
+    public static final Property<DocumentElement, Optional<Style>> STYLE = newProperty();
+    public static final Property<Paragraph, Optional<NumberingLevel>> NUMBERING = newProperty();
+    public static final Property<Run, Boolean> BOLD = newProperty();
+    public static final Property<Run, Boolean> ITALIC = newProperty();
+    public static final Property<Run, Boolean> UNDERLINE = newProperty();
+    public static final Property<Run, Boolean> STRIKETHROUGH = newProperty();
+    public static final Property<Run, VerticalAlignment> VERTICAL_ALIGNMENT = newProperty();
     public static final Property<HasChildren, List<DocumentElement>> CHILDREN = newProperty();
 
     public static final Instantiator<Paragraph> PARAGRAPH =
@@ -36,7 +36,7 @@ public class DocumentElementMakers {
             propertyLookup.valueOf(UNDERLINE, false),
             propertyLookup.valueOf(STRIKETHROUGH, false),
             propertyLookup.valueOf(VERTICAL_ALIGNMENT, VerticalAlignment.BASELINE),
-            Optional.empty(),
+            propertyLookup.valueOf(STYLE, Optional.empty()),
             propertyLookup.valueOf(CHILDREN, list()));
 
     public static Paragraph paragraphWithText(String text) {

@@ -2,12 +2,10 @@ package org.zwobble.mammoth.styles;
 
 import org.zwobble.mammoth.documents.NumberingLevel;
 import org.zwobble.mammoth.documents.Paragraph;
-import org.zwobble.mammoth.documents.Style;
 
 import java.util.Optional;
-import java.util.function.BiPredicate;
 
-public class ParagraphMatcher {
+public class ParagraphMatcher implements DocumentElementMatcher<Paragraph> {
     public static final ParagraphMatcher ANY = new ParagraphMatcher(Optional.empty(), Optional.empty(), Optional.empty());
 
     public static ParagraphMatcher styleId(String styleId) {
@@ -36,26 +34,17 @@ public class ParagraphMatcher {
         this.numbering = numbering;
     }
 
+    @Override
     public boolean matches(Paragraph paragraph) {
-        return matchesStyleId(paragraph) && matchesStyleName(paragraph) && matchesNumbering(paragraph);
+        return matchesStyle(paragraph) && matchesNumbering(paragraph);
     }
 
-    private boolean matchesStyleId(Paragraph paragraph) {
-        return matches(styleId, paragraph.getStyle().map(Style::getStyleId), Object::equals);
-    }
-
-    private boolean matchesStyleName(Paragraph paragraph) {
-        return matches(styleName, paragraph.getStyle().flatMap(Style::getName), String::equalsIgnoreCase);
+    private boolean matchesStyle(Paragraph paragraph) {
+        return DocumentElementMatching.matchesStyle(styleId, styleName, paragraph.getStyle());
     }
 
     private boolean matchesNumbering(Paragraph paragraph) {
-        return matches(numbering, paragraph.getNumbering(), (first, second) ->
+        return DocumentElementMatching.matches(numbering, paragraph.getNumbering(), (first, second) ->
             first.isOrdered() == second.isOrdered() && first.getLevelIndex().equalsIgnoreCase(second.getLevelIndex()));
-    }
-
-    private <T> boolean matches(Optional<T> required, Optional<T> actual, BiPredicate<T, T> areEqual) {
-        return required
-            .map(requiredValue -> actual.map(actualValue -> areEqual.test(requiredValue, actualValue)).orElse(false))
-            .orElse(true);
     }
 }
