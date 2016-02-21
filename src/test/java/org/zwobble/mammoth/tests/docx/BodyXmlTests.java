@@ -437,7 +437,7 @@ public class BodyXmlTests {
         Relationships relationships = new Relationships(map(
             "rId5", new Relationship("media/hat.png")));
         String imageBytes = "Not an image at all!";
-        DocxFile file = new InMemoryDocxFile(map("word/media/hat.png", imageBytes));
+        DocxFile file = InMemoryDocxFile.fromStrings(map("word/media/hat.png", imageBytes));
 
         Image image = (Image) readSuccess(
             a(bodyReader, with(RELATIONSHIPS, relationships), with(DOCX_FILE, file)),
@@ -465,7 +465,7 @@ public class BodyXmlTests {
         XmlElement element = inlineImageXml(embeddedBlipXml("rId5"), "");
         Relationships relationships = new Relationships(map(
             "rId5", new Relationship("media/hat.emf")));
-        DocxFile file = new InMemoryDocxFile(map("word/media/hat.emf", "Not an image at all!"));
+        DocxFile file = InMemoryDocxFile.fromStrings(map("word/media/hat.emf", "Not an image at all!"));
         ContentTypes contentTypes = new ContentTypes(map("emf", "image/x-emf"), map());
 
         Result<?> result = read(

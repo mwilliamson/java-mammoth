@@ -7,6 +7,7 @@ import org.zwobble.mammoth.documents.HasChildren;
 import org.zwobble.mammoth.documents.Paragraph;
 import org.zwobble.mammoth.documents.Text;
 import org.zwobble.mammoth.docx.DocxFile;
+import org.zwobble.mammoth.docx.InMemoryDocxFile;
 import org.zwobble.mammoth.docx.ZippedDocxFile;
 import org.zwobble.mammoth.html.Html;
 import org.zwobble.mammoth.results.Result;
@@ -18,6 +19,8 @@ import org.zwobble.mammoth.util.Casts;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
 import java.util.zip.ZipFile;
@@ -61,30 +64,47 @@ public class Mammoth {
         .mapParagraph(ParagraphMatcher.styleName("Normal"), HtmlPath.element("p"))
         .build();
 
-    public static Result<String> convertToHtml(File file) {
+    public static Result<String> convertToHtml(InputStream stream) throws IOException {
+        return convertToHtml(stream, Options.DEFAULT);
+    }
+
+    public static Result<String> convertToHtml(InputStream stream, Options options) throws IOException {
+        return withDocxFile(stream, zipFile ->
+            convertToHtml(Optional.empty(), zipFile, options));
+    }
+
+    public static Result<String> convertToHtml(File file) throws IOException {
         return convertToHtml(file, Options.DEFAULT);
     }
 
-    public static Result<String> convertToHtml(File file, Options options) {
+    public static Result<String> convertToHtml(File file, Options options) throws IOException {
         return withDocxFile(file, zipFile ->
-            readDocument(Optional.of(file.toPath()), zipFile)
-                .flatMap(nodes -> DocumentConverter.convertToHtml(options.idPrefix, options.preserveEmptyParagraphs, DEFAULT_STYLE_MAP, nodes))
-                .map(Html::stripEmpty)
-                .map(Html::collapse)
-                .map(Html::write));
+            convertToHtml(Optional.of(file.toPath()), zipFile, options));
     }
 
-    public static Result<String> extractRawText(File file) {
+    private static Result<String> convertToHtml(Optional<Path> path, DocxFile zipFile, Options options) {
+        return readDocument(path, zipFile)
+            .flatMap(nodes -> DocumentConverter.convertToHtml(options.idPrefix, options.preserveEmptyParagraphs, DEFAULT_STYLE_MAP, nodes))
+            .map(Html::stripEmpty)
+            .map(Html::collapse)
+            .map(Html::write);
+    }
+
+    public static Result<String> extractRawText(File file) throws IOException {
         return withDocxFile(file, zipFile ->
             readDocument(Optional.of(file.toPath()), zipFile)
                 .map(Mammoth::extractRawTextOfChildren));
     }
 
-    private static <T> T withDocxFile(File file, Function<DocxFile, T> function) {
+    private static <T> T withDocxFile(File file, Function<DocxFile, T> function) throws IOException {
         try (DocxFile zipFile = new ZippedDocxFile(new ZipFile(file))) {
             return function.apply(zipFile);
-        } catch (IOException e) {
-            throw new UnsupportedOperationException("Should return a result of failure");
+        }
+    }
+
+    private static <T> T withDocxFile(InputStream stream, Function<DocxFile, T> function) throws IOException {
+        try (DocxFile zipFile = InMemoryDocxFile.fromStream(stream)) {
+            return function.apply(zipFile);
         }
     }
 

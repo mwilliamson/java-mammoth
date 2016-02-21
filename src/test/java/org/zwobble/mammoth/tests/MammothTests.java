@@ -16,42 +16,42 @@ import static org.zwobble.mammoth.tests.DeepReflectionMatcher.deepEquals;
 
 public class MammothTests {
     @Test
-    public void docxContainingOneParagraphIsConvertedToSingleParagraphElement() {
+    public void docxContainingOneParagraphIsConvertedToSingleParagraphElement() throws IOException {
         assertThat(
             convertToHtml("single-paragraph.docx"),
             deepEquals(success("<p>Walking on imported air</p>")));
     }
 
     @Test
-    public void canReadFilesWithUtf8Bom() {
+    public void canReadFilesWithUtf8Bom() throws IOException {
         assertThat(
             convertToHtml("utf8-bom.docx"),
             deepEquals(success("<p>This XML has a byte order mark.</p>")));
     }
 
     @Test
-    public void emptyParagraphsAreIgnoredByDefault() {
+    public void emptyParagraphsAreIgnoredByDefault() throws IOException {
         assertThat(
             convertToHtml("empty.docx"),
             deepEquals(success("")));
     }
 
     @Test
-    public void emptyParagraphsArePreservedIfIgnoreEmptyParagraphsIsFalse() {
+    public void emptyParagraphsArePreservedIfIgnoreEmptyParagraphsIsFalse() throws IOException {
         assertThat(
             convertToHtml("empty.docx", Mammoth.Options.DEFAULT.preserveEmptyParagraphs()),
             deepEquals(success("<p></p>")));
     }
 
     @Test
-    public void simpleListIsConvertedToListElements() {
+    public void simpleListIsConvertedToListElements() throws IOException {
         assertThat(
             convertToHtml("simple-list.docx"),
             deepEquals(success("<ul><li>Apple</li><li>Banana</li></ul>")));
     }
 
     @Test
-    public void wordTablesAreConvertedToHtmlTables() {
+    public void wordTablesAreConvertedToHtmlTables() throws IOException {
         assertThat(
             convertToHtml("tables.docx"),
             deepEquals(success(
@@ -64,7 +64,7 @@ public class MammothTests {
     }
 
     @Test
-    public void inlineImagesAreIncludedInOutput() {
+    public void inlineImagesAreIncludedInOutput() throws IOException {
         assertThat(
             convertToHtml("tiny-picture.docx"),
             deepEquals(success("<p><img src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAIAAAACUFjqAAAAAXNSR0IArs4c6QAAAAlwSFlzAAAOvgAADr4B6kKxwAAAABNJREFUKFNj/M+ADzDhlWUYqdIAQSwBE8U+X40AAAAASUVORK5CYII=\" /></p>")));
@@ -80,6 +80,23 @@ public class MammothTests {
             assertThat(
                 Mammoth.convertToHtml(documentPath.toFile()),
                 deepEquals(success("<p><img src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAIAAAACUFjqAAAAAXNSR0IArs4c6QAAAAlwSFlzAAAOvgAADr4B6kKxwAAAABNJREFUKFNj/M+ADzDhlWUYqdIAQSwBE8U+X40AAAAASUVORK5CYII=\" /></p>")));
+        } finally {
+            tempDirectory.toFile().delete();
+        }
+    }
+
+    @Test
+    public void warnIfDocumentHasImagesStoredOutsideOfDocumentWhenPathOfDocumentIsUnknown() throws IOException {
+        Path tempDirectory = Files.createTempDirectory("mammoth-");
+        try {
+            Path documentPath = tempDirectory.resolve("external-picture.docx");
+            Files.copy(TestData.file("external-picture.docx").toPath(), documentPath);
+            assertThat(
+                Mammoth.convertToHtml(documentPath.toUri().toURL().openStream()),
+                allOf(
+                    hasProperty("value", equalTo("")),
+                    hasProperty("warnings", contains(
+                        hasProperty("message", startsWith("could not open external image 'tiny-picture.png': path of document is unknown, but is required for relative URI"))))));
         } finally {
             tempDirectory.toFile().delete();
         }
@@ -103,14 +120,14 @@ public class MammothTests {
     }
 
     @Test
-    public void contentTypesAreRead() {
+    public void contentTypesAreRead() throws IOException {
         assertThat(
             convertToHtml("tiny-picture-custom-content-type.docx"),
             deepEquals(success("<p><img src=\"data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAIAAAACUFjqAAAAAXNSR0IArs4c6QAAAAlwSFlzAAAOvgAADr4B6kKxwAAAABNJREFUKFNj/M+ADzDhlWUYqdIAQSwBE8U+X40AAAAASUVORK5CYII=\" /></p>")));
     }
 
     @Test
-    public void footnotesAreAppendedToText() {
+    public void footnotesAreAppendedToText() throws IOException {
         assertThat(
             convertToHtml("footnotes.docx", Mammoth.Options.DEFAULT.idPrefix("doc-42-")),
             deepEquals(success(
@@ -122,7 +139,7 @@ public class MammothTests {
     }
 
     @Test
-    public void endNotesAreAppendedToText() {
+    public void endNotesAreAppendedToText() throws IOException {
         assertThat(
             convertToHtml("endnotes.docx", Mammoth.Options.DEFAULT.idPrefix("doc-42-")),
             deepEquals(success(
@@ -134,7 +151,7 @@ public class MammothTests {
     }
 
     @Test
-    public void relationshipsAreReadForEachFileContainingBodyXml() {
+    public void relationshipsAreReadForEachFileContainingBodyXml() throws IOException {
         assertThat(
             convertToHtml("footnote-hyperlink.docx", Mammoth.Options.DEFAULT.idPrefix("doc-42-")),
             deepEquals(success(
@@ -143,25 +160,25 @@ public class MammothTests {
     }
 
     @Test
-    public void textBoxesAreRead() {
+    public void textBoxesAreRead() throws IOException {
         assertThat(
             convertToHtml("text-box.docx"),
             deepEquals(success("<p>Datum plane</p>")));
     }
 
     @Test
-    public void canExtractRawText() {
+    public void canExtractRawText() throws IOException {
         assertThat(
             Mammoth.extractRawText(TestData.file("simple-list.docx")),
             deepEquals(success("Apple\n\nBanana\n\n")));
     }
 
-    private Result<String> convertToHtml(String name) {
+    private Result<String> convertToHtml(String name) throws IOException {
         File file = TestData.file(name);
         return Mammoth.convertToHtml(file);
     }
 
-    private Result<String> convertToHtml(String name, Mammoth.Options options) {
+    private Result<String> convertToHtml(String name, Mammoth.Options options) throws IOException {
         File file = TestData.file(name);
         return Mammoth.convertToHtml(file, options);
     }

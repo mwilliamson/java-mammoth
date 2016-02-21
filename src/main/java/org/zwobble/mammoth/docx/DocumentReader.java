@@ -7,6 +7,9 @@ import org.zwobble.mammoth.util.MammothLists;
 import org.zwobble.mammoth.xml.XmlElement;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.util.Optional;
 
@@ -24,7 +27,14 @@ public class DocumentReader {
         ContentTypes contentTypes = readContentTypes(zipFile);
         FileReader fileReader = uri -> {
             try {
-                return path.get().toUri().resolve(uri).toURL().openStream();
+                Optional<URI> absoluteUri = asAbsoluteUri(uri);
+                if (absoluteUri.isPresent()) {
+                    return open(absoluteUri.get());
+                } else if (path.isPresent()) {
+                    return open(path.get().toUri().resolve(uri));
+                } else {
+                    throw new IOException("path of document is unknown, but is required for relative URI");
+                }
             } catch (IOException exception) {
                 throw new IOException("could not open external image '" + uri + "': " + exception.getMessage());
             }
@@ -38,6 +48,19 @@ public class DocumentReader {
                 DocumentXmlReader reader = new DocumentXmlReader(bodyReaders.forName("document"), notes);
                 return reader.readElement(parseOfficeXml(zipFile, "word/document.xml"));
             });
+    }
+
+    private static InputStream open(URI uri) throws IOException {
+        return uri.toURL().openStream();
+    }
+
+    private static Optional<URI> asAbsoluteUri(String uriString) {
+        try {
+            URI uri = new URI(uriString);
+            return uri.isAbsolute() ? Optional.of(uri) : Optional.empty();
+        } catch (URISyntaxException exception) {
+            return Optional.empty();
+        }
     }
 
     private static Result<Notes> readNotes(DocxFile file, BodyReaders bodyReaders) {
