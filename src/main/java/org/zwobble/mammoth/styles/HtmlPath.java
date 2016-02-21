@@ -17,11 +17,11 @@ public class HtmlPath {
     }
 
     public static HtmlPath element(String tagName, Map<String, String> attributes) {
-        return new HtmlPath(list(new HtmlPathElement(tagName, attributes, false)));
+        return new HtmlPath(list(new HtmlPathElement(list(tagName), attributes, false)));
     }
 
     public static HtmlPath collapsibleElement(String tagName) {
-        return new HtmlPath(list(new HtmlPathElement(tagName, map(), true)));
+        return new HtmlPath(list(new HtmlPathElement(list(tagName), map(), true)));
     }
 
     private final List<HtmlPathElement> elements;

@@ -11,24 +11,24 @@ import static org.zwobble.mammoth.util.MammothMaps.map;
 
 public class HtmlPathElement {
     public static HtmlPathElement fresh(String tagName) {
-        return new HtmlPathElement(tagName, map(), false);
+        return new HtmlPathElement(list(tagName), map(), false);
     }
 
     public static HtmlPathElement collapsible(String tagName) {
-        return new HtmlPathElement(tagName, map(), true);
+        return new HtmlPathElement(list(tagName), map(), true);
     }
 
-    private final String tagName;
+    private final List<String> tagNames;
     private final Map<String, String> attributes;
     private final boolean isCollapsible;
 
-    public HtmlPathElement(String tagName, Map<String, String> attributes, boolean isCollapsible) {
-        this.tagName = tagName;
+    public HtmlPathElement(List<String> tagNames, Map<String, String> attributes, boolean isCollapsible) {
+        this.tagNames = tagNames;
         this.attributes = attributes;
         this.isCollapsible = isCollapsible;
     }
 
     public List<HtmlNode> wrap(List<HtmlNode> nodes) {
-        return list(new HtmlElement(list(tagName), attributes, nodes, isCollapsible));
+        return list(new HtmlElement(tagNames, attributes, nodes, isCollapsible));
     }
 }
