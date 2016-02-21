@@ -13,32 +13,30 @@ import java.util.List;
 import static org.zwobble.mammoth.util.MammothLists.list;
 import static org.zwobble.mammoth.util.MammothMaps.map;
 
-public class StyleMapParser extends BaseParser<Object> {
+public class StyleMapParser extends BaseParser<HtmlPath> {
     public static HtmlPath parseHtmlPath(String value) {
         StyleMapParser parser = Parboiled.createParser(StyleMapParser.class);
-        ReportingParseRunner runner = new ReportingParseRunner(parser.HtmlPath());
-        ParsingResult<?> result = runner.run(value);
+        ReportingParseRunner<HtmlPath> runner = new ReportingParseRunner<>(parser.HtmlPath());
+        ParsingResult<HtmlPath> result = runner.run(value);
         if (result.hasErrors()) {
             // TODO: wrap in result
             throw new RuntimeException("Parse error");
         } else {
-            return (HtmlPath) result.valueStack.peek();
+            return result.valueStack.peek();
         }
     }
 
     Rule HtmlPath() {
         ListVar<HtmlPathElement> elements = new ListVar<>();
-        return Sequence(HtmlPathElements(elements), EOI, push(new HtmlPath(elements.build())));
+        return Sequence(Optional(HtmlPathElements(elements)), EOI, push(new HtmlPath(elements.build())));
     }
 
     Rule HtmlPathElements(ListVar<HtmlPathElement> elements) {
         Var<HtmlPathElement> element = new Var<>();
-        return FirstOf(
-            Sequence(
-                HtmlPathElement(element),
-                elements.append(element),
-                ZeroOrMore(Sequence(Whitespace(), Ch('>'), Whitespace(), HtmlPathElement(element), elements.append(element)))),
-            toRule(push(ImmutableList.builder())));
+        return Sequence(
+            HtmlPathElement(element),
+            elements.append(element),
+            ZeroOrMore(Sequence(Whitespace(), Ch('>'), Whitespace(), HtmlPathElement(element), elements.append(element))));
     }
 
     Rule HtmlPathElement(Var<HtmlPathElement> element) {
