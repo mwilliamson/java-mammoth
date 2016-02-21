@@ -4,20 +4,24 @@ import java.util.List;
 import java.util.Map;
 
 public class HtmlElement implements HtmlNode {
-    private final String tagName;
+    private final List<String> tagNames;
     private final Map<String, String> attributes;
     private final List<HtmlNode> children;
     private final boolean collapsible;
 
-    public HtmlElement(String tagName, Map<String, String> attributes, List<HtmlNode> children, boolean collapsible) {
-        this.tagName = tagName;
+    public HtmlElement(List<String> tagNames, Map<String, String> attributes, List<HtmlNode> children, boolean collapsible) {
+        this.tagNames = tagNames;
         this.attributes = attributes;
         this.children = children;
         this.collapsible = collapsible;
     }
 
+    public List<String> getTagNames() {
+        return tagNames;
+    }
+
     public String getTagName() {
-        return tagName;
+        return tagNames.get(0);
     }
 
     public Map<String, String> getAttributes() {

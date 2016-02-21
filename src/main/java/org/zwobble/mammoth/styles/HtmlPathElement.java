@@ -29,6 +29,6 @@ public class HtmlPathElement {
     }
 
     public List<HtmlNode> wrap(List<HtmlNode> nodes) {
-        return list(new HtmlElement(tagName, attributes, nodes, isCollapsible));
+        return list(new HtmlElement(list(tagName), attributes, nodes, isCollapsible));
     }
 }

@@ -78,4 +78,21 @@ public class HtmlCollapseTests {
             Html.collapse(list(Html.element("p"), Html.collapsibleElement("p"))),
             deepEquals(list(Html.element("p"))));
     }
+
+    @Test
+    public void elementWithChoiceOfTagNamesCanCollapseIntoPreviousElementIfItHasOneOfThoseTagNamesAsItsMainTagName() {
+        assertThat(
+            Html.collapse(list(
+                Html.collapsibleElement("ol"),
+                Html.collapsibleElement(list("ul", "ol")))),
+            deepEquals(list(Html.collapsibleElement("ol"))));
+
+        assertThat(
+            Html.collapse(list(
+                Html.collapsibleElement(list("ul", "ol")),
+                Html.collapsibleElement("ol"))),
+            deepEquals(list(
+                Html.collapsibleElement(list("ul", "ol")),
+                Html.collapsibleElement("ol"))));
+    }
 }

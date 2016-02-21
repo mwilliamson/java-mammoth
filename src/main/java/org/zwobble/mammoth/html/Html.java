@@ -38,11 +38,15 @@ public class Html {
     }
 
     public static HtmlNode element(String tagName, Map<String, String> attributes, List<HtmlNode> children) {
-        return new HtmlElement(tagName, attributes, children, false);
+        return new HtmlElement(list(tagName), attributes, children, false);
     }
 
     public static HtmlNode collapsibleElement(String tagName) {
-        return collapsibleElement(tagName, list());
+        return collapsibleElement(list(tagName));
+    }
+
+    public static HtmlNode collapsibleElement(List<String> tagNames) {
+        return collapsibleElement(tagNames, map(), list());
     }
 
     public static HtmlNode collapsibleElement(String tagName, List<HtmlNode> children) {
@@ -50,7 +54,11 @@ public class Html {
     }
 
     public static HtmlNode collapsibleElement(String tagName, Map<String, String> attributes, List<HtmlNode> children) {
-        return new HtmlElement(tagName, attributes, children, true);
+        return collapsibleElement(list(tagName), attributes, children);
+    }
+
+    public static HtmlNode collapsibleElement(List<String> tagNames, Map<String, String> attributes, List<HtmlNode> children) {
+        return new HtmlElement(tagNames, attributes, children, true);
     }
 
     public static HtmlNode selfClosingElement(String tagName) {
@@ -74,7 +82,7 @@ public class Html {
                     return list();
                 } else {
                     return list(new HtmlElement(
-                        element.getTagName(),
+                        element.getTagNames(),
                         element.getAttributes(),
                         children,
                         element.isCollapsible()));
@@ -124,7 +132,7 @@ public class Html {
             @Override
             public HtmlNode visit(HtmlElement element) {
                 return new HtmlElement(
-                    element.getTagName(),
+                    element.getTagNames(),
                     element.getAttributes(),
                     collapse(element.getChildren()),
                     element.isCollapsible());
@@ -165,7 +173,7 @@ public class Html {
     }
 
     private static boolean isMatch(HtmlElement first, HtmlElement second) {
-        return first.getTagName().equals(second.getTagName()) &&
+        return second.getTagNames().contains(first.getTagName()) &&
             first.getAttributes().equals(second.getAttributes());
     }
 }
