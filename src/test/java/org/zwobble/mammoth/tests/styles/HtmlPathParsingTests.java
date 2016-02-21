@@ -25,7 +25,16 @@ public class HtmlPathParsingTests {
             deepEquals(HtmlPath.collapsibleElement("p")));
     }
 
-    // TODO: choice
+    @Test
+    public void canReadElementWithChoiceOfTagNames() {
+        assertThat(
+            StyleMapParser.parseHtmlPath("ul|ol"),
+            deepEquals(HtmlPath.collapsibleElement(list("ul", "ol"))));
+
+        assertThat(
+            StyleMapParser.parseHtmlPath("ul|ol|p"),
+            deepEquals(HtmlPath.collapsibleElement(list("ul", "ol", "p"))));
+    }
 
     @Test
     public void canReadNestedElements() {

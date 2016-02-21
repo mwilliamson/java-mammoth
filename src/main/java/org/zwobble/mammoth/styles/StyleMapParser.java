@@ -42,21 +42,24 @@ public class StyleMapParser extends BaseParser<Object> {
     }
 
     Rule HtmlPathElement(Var<HtmlPathElement> element) {
-        Var<String> tagName = new Var<>();
+        ListVar<String> tagNames = new ListVar<>();
         ListVar<String> classNames = new ListVar<>();
         Var<Boolean> fresh = new Var<>();
         return Sequence(
-            TagNames(tagName),
+            TagNames(tagNames),
             ClassNames(classNames),
             Fresh(fresh),
             element.set(new HtmlPathElement(
-                list(tagName.get()),
+                tagNames.build(),
                 classNames.isEmpty() ? map() : map("class", String.join(" ", classNames.build())),
                 !fresh.get())));
     }
 
-    Rule TagNames(Var<String> tagName) {
-        return Sequence(Identifier(), tagName.set(match()));
+    Rule TagNames(ListVar<String> tagNames) {
+        return Sequence(
+            Identifier(),
+            tagNames.append(match()),
+            ZeroOrMore(Sequence("|", Identifier(), tagNames.append(match()))));
     }
 
     Rule ClassNames(ListVar<String> classNames) {
@@ -84,10 +87,14 @@ public class StyleMapParser extends BaseParser<Object> {
 
     class ListVar<T> extends Var<ImmutableList.Builder<T>> {
         boolean append(Var<T> element) {
+            return append(element.get());
+        }
+
+        boolean append(T element) {
             if (get() == null) {
                 set(ImmutableList.builder());
             }
-            return set(get().add(element.get()));
+            return set(get().add(element));
         }
 
         public List<T> build() {

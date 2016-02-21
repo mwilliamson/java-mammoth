@@ -20,6 +20,10 @@ public class MammothLists {
         return ImmutableList.of(value1, value2);
     }
 
+    public static <T> List<T> list(T value1, T value2, T value3) {
+        return ImmutableList.of(value1, value2, value3);
+    }
+
     public static <T> List<T> cons(T head, Iterable<T> tail) {
         return concat(list(head), tail);
     }

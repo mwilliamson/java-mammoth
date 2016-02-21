@@ -24,8 +24,16 @@ public class HtmlPath {
         return collapsibleElement(tagName, map());
     }
 
+    public static HtmlPath collapsibleElement(List<String> tagNames) {
+        return collapsibleElement(tagNames, map());
+    }
+
     public static HtmlPath collapsibleElement(String tagName, Map<String, String> attributes) {
-        return new HtmlPath(list(new HtmlPathElement(list(tagName), attributes, true)));
+        return collapsibleElement(list(tagName), attributes);
+    }
+
+    public static HtmlPath collapsibleElement(List<String> tagNames, Map<String, String> attributes) {
+        return new HtmlPath(list(new HtmlPathElement(tagNames, attributes, true)));
     }
 
     private final List<HtmlPathElement> elements;
