@@ -47,6 +47,19 @@ public class MammothTests {
     }
 
     @Test
+    public void wordTablesAreConvertedToHtmlTables() {
+        assertThat(
+            convertToHtml("tables.docx"),
+            deepEquals(success(
+                "<p>Above</p>" +
+                "<table>" +
+                "<tr><td><p>Top left</p></td><td><p>Top right</p></td></tr>" +
+                "<tr><td><p>Bottom left</p></td><td><p>Bottom right</p></td></tr>" +
+                "</table>" +
+                "<p>Below</p>")));
+    }
+
+    @Test
     public void inlineImagesAreIncludedInOutput() {
         assertThat(
             convertToHtml("tiny-picture.docx"),
