@@ -107,6 +107,13 @@ public class MammothTests {
     }
 
     @Test
+    public void textBoxesAreRead() {
+        assertThat(
+            convertToHtml("text-box.docx"),
+            deepEquals(success("<p>Datum plane</p>")));
+    }
+
+    @Test
     public void canExtractRawText() {
         assertThat(
             Mammoth.extractRawText(TestData.file("simple-list.docx")),
