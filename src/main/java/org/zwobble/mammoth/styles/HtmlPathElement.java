@@ -15,7 +15,11 @@ public class HtmlPathElement {
     }
 
     public static HtmlPathElement collapsible(String tagName) {
-        return new HtmlPathElement(list(tagName), map(), true);
+        return collapsible(tagName, map());
+    }
+
+    public static HtmlPathElement collapsible(String tagName, Map<String, String> attributes) {
+        return new HtmlPathElement(list(tagName), attributes, true);
     }
 
     private final List<String> tagNames;
