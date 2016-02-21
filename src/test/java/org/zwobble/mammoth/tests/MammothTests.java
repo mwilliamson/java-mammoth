@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 import static org.zwobble.mammoth.results.Result.success;
 import static org.zwobble.mammoth.tests.DeepReflectionMatcher.deepEquals;
@@ -79,6 +80,23 @@ public class MammothTests {
             assertThat(
                 Mammoth.convertToHtml(documentPath.toFile()),
                 deepEquals(success("<p><img src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAIAAAACUFjqAAAAAXNSR0IArs4c6QAAAAlwSFlzAAAOvgAADr4B6kKxwAAAABNJREFUKFNj/M+ADzDhlWUYqdIAQSwBE8U+X40AAAAASUVORK5CYII=\" /></p>")));
+        } finally {
+            tempDirectory.toFile().delete();
+        }
+    }
+
+    @Test
+    public void warnIfImagesStoredOutsideOfDocumentAreNotFound() throws IOException {
+        Path tempDirectory = Files.createTempDirectory("mammoth-");
+        try {
+            Path documentPath = tempDirectory.resolve("external-picture.docx");
+            Files.copy(TestData.file("external-picture.docx").toPath(), documentPath);
+            assertThat(
+                Mammoth.convertToHtml(documentPath.toFile()),
+                allOf(
+                    hasProperty("value", equalTo("")),
+                    hasProperty("warnings", contains(
+                        hasProperty("message", startsWith("could not open external image 'tiny-picture.png'"))))));
         } finally {
             tempDirectory.toFile().delete();
         }

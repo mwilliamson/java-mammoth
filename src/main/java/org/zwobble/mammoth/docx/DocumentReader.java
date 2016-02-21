@@ -22,7 +22,13 @@ public class DocumentReader {
         Styles styles = readStyles(zipFile);
         Numbering numbering = readNumbering(zipFile);
         ContentTypes contentTypes = readContentTypes(zipFile);
-        FileReader fileReader = uri -> path.get().toUri().resolve(uri).toURL().openStream();
+        FileReader fileReader = uri -> {
+            try {
+                return path.get().toUri().resolve(uri).toURL().openStream();
+            } catch (IOException exception) {
+                throw new IOException("could not open external image '" + uri + "': " + exception.getMessage());
+            }
+        };
         BodyReaders bodyReaders = name -> {
             Relationships relationships = readRelationships(zipFile, name);
             return new BodyXmlReader(styles, numbering, relationships, contentTypes, zipFile, fileReader);

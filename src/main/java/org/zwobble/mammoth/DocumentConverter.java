@@ -217,8 +217,8 @@ public class DocumentConverter {
 
                             return list(Html.selfClosingElement("img", attributes.build()));
                         } catch (IOException exception) {
-                            // TODO: return a result with a warning
-                            throw new RuntimeException(exception);
+                            warnings.add(warning(exception.getMessage()));
+                            return MammothLists.<HtmlNode>list();
                         }
                     })
                     .orElse(list());
