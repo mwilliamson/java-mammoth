@@ -38,12 +38,14 @@
       <groupId>com.github.npryce</groupId>
       <artifactId>make-it-easy</artifactId>
       <version>dad3ac7</version>
+      <scope>test</scope>
     </dependency>
     <!--
     <dependency>
       <groupId>com.natpryce</groupId>
       <artifactId>make-it-easy</artifactId>
       <version>4.0.0</version>
+      <scope>test</scope>
     </dependency>
     -->
     <dependency>
