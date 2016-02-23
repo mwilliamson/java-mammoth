@@ -1,6 +1,7 @@
 package org.zwobble.mammoth;
 
 import com.google.common.base.Function;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import org.zwobble.mammoth.documents.DocumentElement;
 import org.zwobble.mammoth.documents.HasChildren;
@@ -12,6 +13,7 @@ import org.zwobble.mammoth.docx.ZippedDocxFile;
 import org.zwobble.mammoth.html.Html;
 import org.zwobble.mammoth.results.Result;
 import org.zwobble.mammoth.styles.*;
+import org.zwobble.mammoth.styles.parsing.StyleMapParser;
 import org.zwobble.mammoth.util.Casts;
 
 import java.io.File;
@@ -46,26 +48,48 @@ public class Mammoth {
         }
     }
 
-    private static final StyleMap DEFAULT_STYLE_MAP = StyleMap.builder()
-        .mapParagraph(ParagraphMatcher.styleName("footnote text"), HtmlPath.element("p"))
-        .mapRun(RunMatcher.styleName("footnote reference"), HtmlPath.EMPTY)
-        .mapParagraph(ParagraphMatcher.styleName("endnote text"), HtmlPath.element("p"))
-        .mapRun(RunMatcher.styleName("endnote reference"), HtmlPath.EMPTY)
+    private static final StyleMap DEFAULT_STYLE_MAP = StyleMapParser.parse(ImmutableList.of(
+        "p.Heading1 => h1:fresh",
+        "p.Heading2 => h2:fresh",
+        "p.Heading3 => h3:fresh",
+        "p.Heading4 => h4:fresh",
+        "p[style-name='Heading 1'] => h1:fresh",
+        "p[style-name='Heading 2'] => h2:fresh",
+        "p[style-name='Heading 3'] => h3:fresh",
+        "p[style-name='Heading 4'] => h4:fresh",
+        "p[style-name='heading 1'] => h1:fresh",
+        "p[style-name='heading 2'] => h2:fresh",
+        "p[style-name='heading 3'] => h3:fresh",
+        "p[style-name='heading 4'] => h4:fresh",
+        "p[style-name='heading 4'] => h4:fresh",
 
-        .mapParagraph(ParagraphMatcher.styleName("Footnote"), HtmlPath.element("p"))
-        .mapRun(RunMatcher.styleName("Footnote anchor"), HtmlPath.EMPTY)
-        .mapParagraph(ParagraphMatcher.styleName("Endnote"), HtmlPath.element("p"))
-        .mapRun(RunMatcher.styleName("Endnote anchor"), HtmlPath.EMPTY)
+        "r[style-name='Strong'] => strong",
 
-        .mapParagraph(
-            ParagraphMatcher.unorderedList("0"),
-            new HtmlPath(list(
-                HtmlPathElement.collapsible("ul"),
-                HtmlPathElement.fresh("li"))))
+        "p[style-name='footnote text'] => p",
+        "r[style-name='footnote reference'] =>",
+        "p[style-name='endnote text'] => p",
+        "r[style-name='endnote reference'] =>",
 
-        .mapRun(RunMatcher.styleName("Hyperlink"), HtmlPath.EMPTY)
-        .mapParagraph(ParagraphMatcher.styleName("Normal"), HtmlPath.element("p"))
-        .build();
+        // LibreOffice
+        "p[style-name='Footnote'] => p",
+        "r[style-name='Footnote anchor'] =>",
+        "p[style-name='Endnote'] => p",
+        "r[style-name='Endnote anchor'] =>",
+
+        "p:unordered-list(1) => ul > li:fresh",
+        "p:unordered-list(2) => ul|ol > li > ul > li:fresh",
+        "p:unordered-list(3) => ul|ol > li > ul|ol > li > ul > li:fresh",
+        "p:unordered-list(4) => ul|ol > li > ul|ol > li > ul|ol > li > ul > li:fresh",
+        "p:unordered-list(5) => ul|ol > li > ul|ol > li > ul|ol > li > ul|ol > li > ul > li:fresh",
+        "p:ordered-list(1) => ol > li:fresh",
+        "p:ordered-list(2) => ul|ol > li > ol > li:fresh",
+        "p:ordered-list(3) => ul|ol > li > ul|ol > li > ol > li:fresh",
+        "p:ordered-list(4) => ul|ol > li > ul|ol > li > ul|ol > li > ol > li:fresh",
+        "p:ordered-list(5) => ul|ol > li > ul|ol > li > ul|ol > li > ul|ol > li > ol > li:fresh",
+
+        "r[style-name='Hyperlink'] =>",
+
+        "p[style-name='Normal'] => p:fresh"));
 
     public static Result<String> convertToHtml(InputStream stream) throws IOException {
         return convertToHtml(stream, Options.DEFAULT);

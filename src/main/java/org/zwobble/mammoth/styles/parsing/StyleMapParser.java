@@ -10,8 +10,10 @@ import static java.util.Arrays.asList;
 
 public class StyleMapParser {
     public static StyleMap parse(String input) {
-        List<String> lines = asList(input.split("\\r?\\n"));
+        return parse(asList(input.split("\\r?\\n")));
+    }
 
+    public static StyleMap parse(List<String> lines) {
         Var<StyleMapBuilder> styleMap = new Var<>(StyleMap.builder());
         for (String line : lines) {
             handleLine(styleMap, line);
@@ -28,9 +30,5 @@ public class StyleMapParser {
             return;
         }
         Parsing.parse(StyleMappingParser.class, parser -> parser.StyleMapping(styleMap), line);
-    }
-
-    private static boolean isSignificantLine(String line) {
-        return !line.startsWith("#") && !line.trim().isEmpty();
     }
 }
