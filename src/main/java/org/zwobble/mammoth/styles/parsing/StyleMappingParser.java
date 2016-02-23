@@ -53,6 +53,15 @@ public class StyleMappingParser extends BaseParser<StyleMapBuilder> {
                         updateBuilder.set(StyleMapBuilder::underline);
                         return true;
                     }
+                }),
+            Sequence(
+                "s",
+                new Action() {
+                    @Override
+                    public boolean run(Context context) {
+                        updateBuilder.set(StyleMapBuilder::strikethrough);
+                        return true;
+                    }
                 }));
     }
 

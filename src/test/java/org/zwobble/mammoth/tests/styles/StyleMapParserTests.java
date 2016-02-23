@@ -34,4 +34,10 @@ public class StyleMapParserTests {
         StyleMap styleMap = StyleMapParser.parse("u => em");
         assertThat(styleMap, deepEquals(StyleMap.builder().underline(HtmlPath.collapsibleElement("em")).build()));
     }
+
+    @Test
+    public void canMapStrikethrough() {
+        StyleMap styleMap = StyleMapParser.parse("s => del");
+        assertThat(styleMap, deepEquals(StyleMap.builder().strikethrough(HtmlPath.collapsibleElement("del")).build()));
+    }
 }
