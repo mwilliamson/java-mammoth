@@ -44,6 +44,15 @@ public class StyleMappingParser extends BaseParser<StyleMapBuilder> {
                         updateBuilder.set((styleMap, htmlPath) -> styleMap.mapRun(runMatcher.get(), htmlPath));
                         return true;
                     }
+                }),
+            Sequence(
+                "u",
+                new Action() {
+                    @Override
+                    public boolean run(Context context) {
+                        updateBuilder.set(StyleMapBuilder::underline);
+                        return true;
+                    }
                 }));
     }
 
