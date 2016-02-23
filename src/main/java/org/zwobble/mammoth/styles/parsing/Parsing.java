@@ -9,15 +9,13 @@ import org.parboiled.support.ParsingResult;
 import java.util.function.Function;
 
 public class Parsing {
-    public static <T, U extends BaseParser<T>> T parse(Class<U> parserType, Function<U, Rule> rule, String value) {
+    public static <T, U extends BaseParser<T>, V> void parse(Class<U> parserType, Function<U, Rule> rule, String value) {
         U parser = Parboiled.createParser(parserType);
         ReportingParseRunner<T> runner = new ReportingParseRunner<>(rule.apply(parser));
         ParsingResult<T> result = runner.run(value);
         if (result.hasErrors()) {
             // TODO: wrap in result
             throw new RuntimeException("Parse error");
-        } else {
-            return result.valueStack.peek();
         }
     }
 }

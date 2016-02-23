@@ -1,10 +1,11 @@
 package org.zwobble.mammoth.tests.styles;
 
 import org.junit.Test;
+import org.parboiled.support.Var;
 import org.zwobble.mammoth.styles.HtmlPath;
 import org.zwobble.mammoth.styles.HtmlPathElement;
-import org.zwobble.mammoth.styles.parsing.HtmlPathParser;
 import org.zwobble.mammoth.styles.parsing.Parsing;
+import org.zwobble.mammoth.styles.parsing.StyleMappingParser;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.zwobble.mammoth.tests.DeepReflectionMatcher.deepEquals;
@@ -66,6 +67,8 @@ public class HtmlPathParsingTests {
     }
 
     private HtmlPath parseHtmlPath(String input) {
-        return Parsing.parse(HtmlPathParser.class, HtmlPathParser::HtmlPath, input);
+        Var<HtmlPath> path = new Var<>();
+        Parsing.parse(StyleMappingParser.class, parser -> parser.HtmlPath(path), input);
+        return path.get();
     }
 }
