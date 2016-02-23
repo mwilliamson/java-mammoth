@@ -3,7 +3,8 @@ package org.zwobble.mammoth.tests.styles;
 import org.junit.Test;
 import org.zwobble.mammoth.styles.HtmlPath;
 import org.zwobble.mammoth.styles.HtmlPathElement;
-import org.zwobble.mammoth.styles.StyleMapParser;
+import org.zwobble.mammoth.styles.parsing.HtmlPathParser;
+import org.zwobble.mammoth.styles.parsing.Parsing;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.zwobble.mammoth.tests.DeepReflectionMatcher.deepEquals;
@@ -14,53 +15,57 @@ public class HtmlPathParsingTests {
     @Test
     public void canParseEmptyPath() {
         assertThat(
-            StyleMapParser.parseHtmlPath(""),
+            parseHtmlPath(""),
             deepEquals(HtmlPath.EMPTY));
     }
 
     @Test
     public void canReadSingleElement() {
         assertThat(
-            StyleMapParser.parseHtmlPath("p"),
+            parseHtmlPath("p"),
             deepEquals(HtmlPath.collapsibleElement("p")));
     }
 
     @Test
     public void canReadElementWithChoiceOfTagNames() {
         assertThat(
-            StyleMapParser.parseHtmlPath("ul|ol"),
+            parseHtmlPath("ul|ol"),
             deepEquals(HtmlPath.collapsibleElement(list("ul", "ol"))));
 
         assertThat(
-            StyleMapParser.parseHtmlPath("ul|ol|p"),
+            parseHtmlPath("ul|ol|p"),
             deepEquals(HtmlPath.collapsibleElement(list("ul", "ol", "p"))));
     }
 
     @Test
     public void canReadNestedElements() {
         assertThat(
-            StyleMapParser.parseHtmlPath("ul > li"),
+            parseHtmlPath("ul > li"),
             deepEquals(new HtmlPath(list(HtmlPathElement.collapsible("ul"), HtmlPathElement.collapsible("li")))));
     }
 
     @Test
     public void canReadClassOnElement() {
         assertThat(
-            StyleMapParser.parseHtmlPath("p.tip"),
+            parseHtmlPath("p.tip"),
             deepEquals(HtmlPath.collapsibleElement("p", map("class", "tip"))));
     }
 
     @Test
     public void canReadMultipleClassesOnElement() {
         assertThat(
-            StyleMapParser.parseHtmlPath("p.tip.help"),
+            parseHtmlPath("p.tip.help"),
             deepEquals(HtmlPath.collapsibleElement("p", map("class", "tip help"))));
     }
 
     @Test
     public void canReadWhenElementMustBeFresh() {
         assertThat(
-            StyleMapParser.parseHtmlPath("p:fresh"),
+            parseHtmlPath("p:fresh"),
             deepEquals(HtmlPath.element("p")));
+    }
+
+    private HtmlPath parseHtmlPath(String input) {
+        return Parsing.parse(HtmlPathParser.class, HtmlPathParser::HtmlPath, input);
     }
 }
