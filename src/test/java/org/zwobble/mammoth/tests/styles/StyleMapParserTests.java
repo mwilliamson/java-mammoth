@@ -40,4 +40,25 @@ public class StyleMapParserTests {
         StyleMap styleMap = StyleMapParser.parse("s => del");
         assertThat(styleMap, deepEquals(StyleMap.builder().strikethrough(HtmlPath.collapsibleElement("del")).build()));
     }
+
+    @Test
+    public void blankLinesAreIgnored() {
+        StyleMap styleMap = StyleMapParser.parse("\n\n  \n\np =>\n\r\n");
+        assertThat(styleMap, deepEquals(StyleMap.builder().mapParagraph(ParagraphMatcher.ANY, HtmlPath.EMPTY).build()));
+    }
+
+    @Test
+    public void lineStartingWithHashIsIgnored() {
+        StyleMap styleMap = StyleMapParser.parse("#p => p");
+        assertThat(styleMap, deepEquals(StyleMap.EMPTY));
+    }
+
+    @Test
+    public void canParseMultipleMappings() {
+        StyleMap styleMap = StyleMapParser.parse("p =>\nr =>");
+        assertThat(styleMap, deepEquals(StyleMap.builder()
+            .mapParagraph(ParagraphMatcher.ANY, HtmlPath.EMPTY)
+            .mapRun(RunMatcher.ANY, HtmlPath.EMPTY)
+            .build()));
+    }
 }
