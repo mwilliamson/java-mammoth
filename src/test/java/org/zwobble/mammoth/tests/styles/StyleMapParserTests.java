@@ -3,6 +3,7 @@ package org.zwobble.mammoth.tests.styles;
 import org.junit.Test;
 import org.zwobble.mammoth.styles.HtmlPath;
 import org.zwobble.mammoth.styles.ParagraphMatcher;
+import org.zwobble.mammoth.styles.RunMatcher;
 import org.zwobble.mammoth.styles.StyleMap;
 import org.zwobble.mammoth.styles.parsing.StyleMapParser;
 
@@ -19,6 +20,12 @@ public class StyleMapParserTests {
     @Test
     public void canMapParagraphs() {
         StyleMap styleMap = StyleMapParser.parse("p => p");
-        assertThat(styleMap, deepEquals(StyleMap.builder().mapParagraph(ParagraphMatcher.ANY, HtmlPath.EMPTY).build()));
+        assertThat(styleMap, deepEquals(StyleMap.builder().mapParagraph(ParagraphMatcher.ANY, HtmlPath.collapsibleElement("p")).build()));
+    }
+
+    @Test
+    public void canMapRuns() {
+        StyleMap styleMap = StyleMapParser.parse("r => p");
+        assertThat(styleMap, deepEquals(StyleMap.builder().mapRun(RunMatcher.ANY, HtmlPath.collapsibleElement("p")).build()));
     }
 }

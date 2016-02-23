@@ -5,6 +5,8 @@ import org.zwobble.mammoth.documents.Run;
 import java.util.Optional;
 
 public class RunMatcher implements DocumentElementMatcher<Run> {
+    public static final RunMatcher ANY = new RunMatcher(Optional.empty(), Optional.empty());
+
     public static RunMatcher styleId(String styleId) {
         return new RunMatcher(Optional.of(styleId), Optional.empty());
     }

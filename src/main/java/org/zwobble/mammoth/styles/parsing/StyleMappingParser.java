@@ -1,26 +1,50 @@
 package org.zwobble.mammoth.styles.parsing;
 
+import org.parboiled.Action;
 import org.parboiled.BaseParser;
+import org.parboiled.Context;
 import org.parboiled.Rule;
 import org.parboiled.support.Var;
 import org.zwobble.mammoth.documents.NumberingLevel;
-import org.zwobble.mammoth.styles.HtmlPath;
-import org.zwobble.mammoth.styles.HtmlPathElement;
-import org.zwobble.mammoth.styles.ParagraphMatcher;
-import org.zwobble.mammoth.styles.StyleMapBuilder;
+import org.zwobble.mammoth.styles.*;
 
 import java.math.BigInteger;
 import java.util.Optional;
+import java.util.function.BiFunction;
 
 import static org.zwobble.mammoth.util.MammothMaps.map;
 
 public class StyleMappingParser extends BaseParser<StyleMapBuilder> {
     Rule StyleMapping(Var<StyleMapBuilder> styleMap) {
-        Var<ParagraphMatcher> paragraphMatcher = new Var<>();
+        Var<BiFunction<StyleMapBuilder, HtmlPath, StyleMapBuilder>> documentElementMatcher = new Var<>();
         Var<HtmlPath> path = new Var<>();
         return Sequence(
-            ParagraphMatcher(paragraphMatcher), Whitespace(), "=>", Whitespace(), HtmlPath(path), EOI,
-            styleMap.set(styleMap.get().mapParagraph(ParagraphMatcher.ANY, HtmlPath.EMPTY)));
+            DocumentElementMatcher(documentElementMatcher), Whitespace(), "=>", Whitespace(), HtmlPath(path), EOI,
+            styleMap.set(documentElementMatcher.get().apply(styleMap.get(), path.get())));
+    }
+
+    Rule DocumentElementMatcher(Var<BiFunction<StyleMapBuilder, HtmlPath, StyleMapBuilder>> updateBuilder) {
+        Var<ParagraphMatcher> paragraphMatcher = new Var<>();
+        Var<RunMatcher> runMatcher = new Var<>();
+        return FirstOf(
+            Sequence(
+                ParagraphMatcher(paragraphMatcher),
+                new Action() {
+                    @Override
+                    public boolean run(Context context) {
+                        updateBuilder.set((styleMap, htmlPath) -> styleMap.mapParagraph(paragraphMatcher.get(), htmlPath));
+                        return true;
+                    }
+                }),
+            Sequence(
+                RunMatcher(runMatcher),
+                new Action() {
+                    @Override
+                    public boolean run(Context context) {
+                        updateBuilder.set((styleMap, htmlPath) -> styleMap.mapRun(runMatcher.get(), htmlPath));
+                        return true;
+                    }
+                }));
     }
 
     public Rule ParagraphMatcher(Var<ParagraphMatcher> matcher) {
@@ -30,6 +54,14 @@ public class StyleMappingParser extends BaseParser<StyleMapBuilder> {
         return Sequence(
             "p", StyleId(styleId), StyleName(styleName), Numbering(numbering),
             matcher.set(new ParagraphMatcher(styleId.get(), styleName.get(), numbering.get())));
+    }
+
+    public Rule RunMatcher(Var<RunMatcher> matcher) {
+        Var<Optional<String>> styleId = new Var<>();
+        Var<Optional<String>> styleName = new Var<>();
+        return Sequence(
+            "r", StyleId(styleId), StyleName(styleName),
+            matcher.set(new RunMatcher(styleId.get(), styleName.get())));
     }
 
     Rule StyleId(Var<Optional<String>> styleId) {

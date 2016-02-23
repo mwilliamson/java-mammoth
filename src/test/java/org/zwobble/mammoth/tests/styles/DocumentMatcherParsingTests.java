@@ -3,6 +3,7 @@ package org.zwobble.mammoth.tests.styles;
 import org.junit.Test;
 import org.parboiled.support.Var;
 import org.zwobble.mammoth.styles.ParagraphMatcher;
+import org.zwobble.mammoth.styles.RunMatcher;
 import org.zwobble.mammoth.styles.parsing.Parsing;
 import org.zwobble.mammoth.styles.parsing.StyleMappingParser;
 
@@ -11,7 +12,7 @@ import static org.zwobble.mammoth.tests.DeepReflectionMatcher.deepEquals;
 
 public class DocumentMatcherParsingTests {
     @Test
-    public void canReadPlainParagraph() {
+    public void readsPlainParagraph() {
         assertThat(
             parseParagraphMatcher("p"),
             deepEquals(ParagraphMatcher.ANY));
@@ -44,10 +45,36 @@ public class DocumentMatcherParsingTests {
             parseParagraphMatcher("p:unordered-list(2)"),
             deepEquals(ParagraphMatcher.unorderedList("1")));
     }
+    @Test
+    public void readsRunParagraph() {
+        assertThat(
+            parseRunMatcher("r"),
+            deepEquals(RunMatcher.ANY));
+    }
+
+    @Test
+    public void readsRunWithStyleId() {
+        assertThat(
+            parseRunMatcher("r.Heading1Char"),
+            deepEquals(RunMatcher.styleId("Heading1Char")));
+    }
+
+    @Test
+    public void readsRunWithStyleName() {
+        assertThat(
+            parseRunMatcher("r[style-name='Heading 1 Char']"),
+            deepEquals(RunMatcher.styleName("Heading 1 Char")));
+    }
 
     private ParagraphMatcher parseParagraphMatcher(String input) {
         Var<ParagraphMatcher> matcher = new Var<>();
         Parsing.parse(StyleMappingParser.class, parser -> parser.ParagraphMatcher(matcher), input);
+        return matcher.get();
+    }
+
+    private RunMatcher parseRunMatcher(String input) {
+        Var<RunMatcher> matcher = new Var<>();
+        Parsing.parse(StyleMappingParser.class, parser -> parser.RunMatcher(matcher), input);
         return matcher.get();
     }
 }
