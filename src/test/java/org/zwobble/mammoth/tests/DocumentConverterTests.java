@@ -312,7 +312,7 @@ public class DocumentConverterTests {
     private Result<List<HtmlNode>> convertToHtmlResult(DocumentElement element, StyleMap styleMap) {
         DocumentToHtmlOptions options = DocumentToHtmlOptions.DEFAULT
             .idPrefix("doc-42-")
-            .styleMap(styleMap);
+            .addStyleMap(styleMap);
         return DocumentConverter.convertToHtml(element, options);
     }
 }

@@ -168,6 +168,27 @@ public class MammothTests {
     }
 
     @Test
+    public void canUseCustomStyleMap() throws IOException {
+        assertThat(
+            convertToHtml("underline.docx", mammoth -> mammoth.addStyleMap("u => em")),
+            deepEquals(success("<p><strong>The <em>Sunset</em> Tree</strong></p>")));
+    }
+
+    @Test
+    public void mostRecentlyAddedStyleMapTakesPrecedence() throws IOException {
+        assertThat(
+            convertToHtml("underline.docx", mammoth -> mammoth.addStyleMap("u => em").addStyleMap("u => strong")),
+            deepEquals(success("<p><strong>The <strong>Sunset</strong> Tree</strong></p>")));
+    }
+
+    @Test
+    public void rulesFromPreviouslyAddedStyleMapsStillTakeEffectIfNotOverriden() throws IOException {
+        assertThat(
+            convertToHtml("underline.docx", mammoth -> mammoth.addStyleMap("u => em").addStyleMap("s => del")),
+            deepEquals(success("<p><strong>The <em>Sunset</em> Tree</strong></p>")));
+    }
+
+    @Test
     public void canExtractRawText() throws IOException {
         assertThat(
             Mammoth.extractRawText(TestData.file("simple-list.docx")),

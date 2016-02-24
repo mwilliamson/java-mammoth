@@ -31,7 +31,7 @@ public class Mammoth {
     private final DocumentToHtmlOptions options;
 
     public Mammoth() {
-        this(DocumentToHtmlOptions.DEFAULT.styleMap(DefaultStyles.DEFAULT_STYLE_MAP));
+        this(DocumentToHtmlOptions.DEFAULT.addStyleMap(DefaultStyles.DEFAULT_STYLE_MAP));
     }
 
     private Mammoth(DocumentToHtmlOptions options) {
@@ -44,6 +44,10 @@ public class Mammoth {
 
     public Mammoth preserveEmptyParagraphs() {
         return new Mammoth(options.preserveEmptyParagraphs());
+    }
+
+    public Mammoth addStyleMap(String styleMap) {
+        return new Mammoth(options.addStyleMap(styleMap));
     }
 
     public Result<String> convertToHtml(InputStream stream) throws IOException {

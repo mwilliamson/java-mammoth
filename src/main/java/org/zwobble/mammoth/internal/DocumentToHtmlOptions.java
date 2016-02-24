@@ -1,6 +1,7 @@
 package org.zwobble.mammoth.internal;
 
 import org.zwobble.mammoth.internal.styles.StyleMap;
+import org.zwobble.mammoth.internal.styles.parsing.StyleMapParser;
 
 public class DocumentToHtmlOptions {
     public static final DocumentToHtmlOptions DEFAULT = new DocumentToHtmlOptions("", false, StyleMap.EMPTY);
@@ -23,8 +24,12 @@ public class DocumentToHtmlOptions {
         return new DocumentToHtmlOptions(idPrefix, true, styleMap);
     }
 
-    public DocumentToHtmlOptions styleMap(StyleMap styleMap) {
-        return new DocumentToHtmlOptions(idPrefix, preserveEmptyParagraphs, styleMap);
+    public DocumentToHtmlOptions addStyleMap(String styleMap) {
+        return addStyleMap(StyleMapParser.parse(styleMap));
+    }
+
+    public DocumentToHtmlOptions addStyleMap(StyleMap styleMap) {
+        return new DocumentToHtmlOptions(idPrefix, preserveEmptyParagraphs, this.styleMap.update(styleMap));
     }
 
     public String idPrefix() {

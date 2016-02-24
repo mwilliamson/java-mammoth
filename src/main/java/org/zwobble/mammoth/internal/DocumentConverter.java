@@ -114,10 +114,10 @@ public class DocumentConverter {
             public List<HtmlNode> visit(Run run) {
                 List<HtmlNode> nodes = convertChildrenToHtml(run);
                 if (run.isStrikethrough()) {
-                    nodes = styleMap.getStrikethrough().wrap(nodes);
+                    nodes = styleMap.getStrikethrough().orElse(HtmlPath.collapsibleElement("s")).wrap(nodes);
                 }
                 if (run.isUnderline()) {
-                    nodes = styleMap.getUnderline().wrap(nodes);
+                    nodes = styleMap.getUnderline().orElse(HtmlPath.EMPTY).wrap(nodes);
                 }
                 if (run.getVerticalAlignment() == VerticalAlignment.SUBSCRIPT) {
                     nodes = list(Html.collapsibleElement("sub", nodes));

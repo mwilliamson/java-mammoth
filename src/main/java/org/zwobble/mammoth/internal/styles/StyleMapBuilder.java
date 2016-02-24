@@ -4,24 +4,26 @@ import com.google.common.collect.ImmutableList;
 import org.zwobble.mammoth.internal.documents.Paragraph;
 import org.zwobble.mammoth.internal.documents.Run;
 
+import java.util.Optional;
+
 public class StyleMapBuilder {
-    private HtmlPath underline;
-    private HtmlPath strikethrough;
+    private Optional<HtmlPath> underline;
+    private Optional<HtmlPath> strikethrough;
     private final ImmutableList.Builder<StyleMapping<Paragraph>> paragraphStyles = ImmutableList.builder();
     private final ImmutableList.Builder<StyleMapping<Run>> runStyles = ImmutableList.builder();
 
     public StyleMapBuilder() {
-        this.underline = HtmlPath.EMPTY;
-        this.strikethrough = HtmlPath.collapsibleElement("s");
+        this.underline = Optional.empty();
+        this.strikethrough = Optional.empty();
     }
 
     public StyleMapBuilder underline(HtmlPath path) {
-        this.underline = path;
+        this.underline = Optional.of(path);
         return this;
     }
 
     public StyleMapBuilder strikethrough(HtmlPath path) {
-        this.strikethrough = path;
+        this.strikethrough = Optional.of(path);
         return this;
     }
 
