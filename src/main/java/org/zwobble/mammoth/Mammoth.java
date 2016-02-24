@@ -2,7 +2,7 @@ package org.zwobble.mammoth;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
-import org.zwobble.mammoth.internal.DocumentConverter;
+import org.zwobble.mammoth.internal.DocumentToHtml;
 import org.zwobble.mammoth.internal.DocumentToHtmlOptions;
 import org.zwobble.mammoth.internal.documents.DocumentElement;
 import org.zwobble.mammoth.internal.documents.HasChildren;
@@ -62,7 +62,7 @@ public class Mammoth {
 
     private Result<String> convertToHtml(Optional<Path> path, DocxFile zipFile) {
         return readDocument(path, zipFile)
-            .flatMap(nodes -> DocumentConverter.convertToHtml(nodes, options))
+            .flatMap(nodes -> DocumentToHtml.convertToHtml(nodes, options))
             .map(Html::stripEmpty)
             .map(Html::collapse)
             .map(Html::write);

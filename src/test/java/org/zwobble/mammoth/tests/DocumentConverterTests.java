@@ -1,7 +1,7 @@
 package org.zwobble.mammoth.tests;
 
 import org.junit.Test;
-import org.zwobble.mammoth.internal.DocumentConverter;
+import org.zwobble.mammoth.internal.DocumentToHtml;
 import org.zwobble.mammoth.internal.DocumentToHtmlOptions;
 import org.zwobble.mammoth.internal.documents.*;
 import org.zwobble.mammoth.internal.html.Html;
@@ -42,7 +42,7 @@ public class DocumentConverterTests {
     public void forceWriteIsInsertedIntoParagraphIfEmptyParagraphsShouldBePreserved() {
         DocumentToHtmlOptions options = DocumentToHtmlOptions.DEFAULT.preserveEmptyParagraphs();
         assertThat(
-            DocumentConverter.convertToHtml(make(a(PARAGRAPH)), options),
+            DocumentToHtml.convertToHtml(make(a(PARAGRAPH)), options),
             deepEquals(success(list(Html.element("p", list(Html.FORCE_WRITE))))));
     }
 
@@ -290,7 +290,7 @@ public class DocumentConverterTests {
     private List<HtmlNode> convertToHtml(Document document) {
         DocumentToHtmlOptions options = DocumentToHtmlOptions.DEFAULT
             .idPrefix("doc-42-");
-        Result<List<HtmlNode>> result = DocumentConverter.convertToHtml(document, options);
+        Result<List<HtmlNode>> result = DocumentToHtml.convertToHtml(document, options);
         assertThat(result.getWarnings(), hasSize(0));
         return result.getValue();
     }
@@ -313,6 +313,6 @@ public class DocumentConverterTests {
         DocumentToHtmlOptions options = DocumentToHtmlOptions.DEFAULT
             .idPrefix("doc-42-")
             .addStyleMap(styleMap);
-        return DocumentConverter.convertToHtml(element, options);
+        return DocumentToHtml.convertToHtml(element, options);
     }
 }
