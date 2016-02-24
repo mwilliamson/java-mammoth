@@ -1,7 +1,7 @@
 package org.zwobble.mammoth.tests;
 
 import org.junit.Test;
-import org.zwobble.mammoth.Mammoth;
+import org.zwobble.mammoth.DocumentConverter;
 import org.zwobble.mammoth.results.Result;
 
 import java.io.File;
@@ -79,7 +79,7 @@ public class MammothTests {
             Files.copy(TestData.file("external-picture.docx").toPath(), documentPath);
             Files.copy(TestData.file("tiny-picture.png").toPath(), tempDirectory.resolve("tiny-picture.png"));
             assertThat(
-                new Mammoth().convertToHtml(documentPath.toFile()),
+                new DocumentConverter().convertToHtml(documentPath.toFile()),
                 deepEquals(success("<p><img src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAIAAAACUFjqAAAAAXNSR0IArs4c6QAAAAlwSFlzAAAOvgAADr4B6kKxwAAAABNJREFUKFNj/M+ADzDhlWUYqdIAQSwBE8U+X40AAAAASUVORK5CYII=\" /></p>")));
         } finally {
             tempDirectory.toFile().delete();
@@ -93,7 +93,7 @@ public class MammothTests {
             Path documentPath = tempDirectory.resolve("external-picture.docx");
             Files.copy(TestData.file("external-picture.docx").toPath(), documentPath);
             assertThat(
-                new Mammoth().convertToHtml(documentPath.toUri().toURL().openStream()),
+                new DocumentConverter().convertToHtml(documentPath.toUri().toURL().openStream()),
                 allOf(
                     hasProperty("value", equalTo("")),
                     hasProperty("warnings", contains(
@@ -110,7 +110,7 @@ public class MammothTests {
             Path documentPath = tempDirectory.resolve("external-picture.docx");
             Files.copy(TestData.file("external-picture.docx").toPath(), documentPath);
             assertThat(
-                new Mammoth().convertToHtml(documentPath.toFile()),
+                new DocumentConverter().convertToHtml(documentPath.toFile()),
                 allOf(
                     hasProperty("value", equalTo("")),
                     hasProperty("warnings", contains(
@@ -191,17 +191,17 @@ public class MammothTests {
     @Test
     public void canExtractRawText() throws IOException {
         assertThat(
-            Mammoth.extractRawText(TestData.file("simple-list.docx")),
+            DocumentConverter.extractRawText(TestData.file("simple-list.docx")),
             deepEquals(success("Apple\n\nBanana\n\n")));
     }
 
     private Result<String> convertToHtml(String name) throws IOException {
         File file = TestData.file(name);
-        return new Mammoth().convertToHtml(file);
+        return new DocumentConverter().convertToHtml(file);
     }
 
-    private Result<String> convertToHtml(String name, Function<Mammoth, Mammoth> configure) throws IOException {
+    private Result<String> convertToHtml(String name, Function<DocumentConverter, DocumentConverter> configure) throws IOException {
         File file = TestData.file(name);
-        return configure.apply(new Mammoth()).convertToHtml(file);
+        return configure.apply(new DocumentConverter()).convertToHtml(file);
     }
 }

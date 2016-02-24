@@ -27,27 +27,27 @@ import java.util.zip.ZipFile;
 import static org.zwobble.mammoth.internal.docx.DocumentReader.readDocument;
 import static org.zwobble.mammoth.internal.util.MammothLists.list;
 
-public class Mammoth {
+public class DocumentConverter {
     private final DocumentToHtmlOptions options;
 
-    public Mammoth() {
+    public DocumentConverter() {
         this(DocumentToHtmlOptions.DEFAULT.addStyleMap(DefaultStyles.DEFAULT_STYLE_MAP));
     }
 
-    private Mammoth(DocumentToHtmlOptions options) {
+    private DocumentConverter(DocumentToHtmlOptions options) {
         this.options = options;
     }
 
-    public Mammoth idPrefix(String idPrefix) {
-        return new Mammoth(options.idPrefix(idPrefix));
+    public DocumentConverter idPrefix(String idPrefix) {
+        return new DocumentConverter(options.idPrefix(idPrefix));
     }
 
-    public Mammoth preserveEmptyParagraphs() {
-        return new Mammoth(options.preserveEmptyParagraphs());
+    public DocumentConverter preserveEmptyParagraphs() {
+        return new DocumentConverter(options.preserveEmptyParagraphs());
     }
 
-    public Mammoth addStyleMap(String styleMap) {
-        return new Mammoth(options.addStyleMap(styleMap));
+    public DocumentConverter addStyleMap(String styleMap) {
+        return new DocumentConverter(options.addStyleMap(styleMap));
     }
 
     public Result<String> convertToHtml(InputStream stream) throws IOException {
@@ -71,7 +71,7 @@ public class Mammoth {
     public static Result<String> extractRawText(File file) throws IOException {
         return withDocxFile(file, zipFile ->
             readDocument(Optional.of(file.toPath()), zipFile)
-                .map(Mammoth::extractRawTextOfChildren));
+                .map(DocumentConverter::extractRawTextOfChildren));
     }
 
     private static <T> T withDocxFile(File file, Function<DocxFile, T> function) throws IOException {
