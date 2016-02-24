@@ -3,7 +3,6 @@ package org.zwobble.mammoth.internal.docx;
 import com.google.common.collect.ImmutableList;
 import org.zwobble.mammoth.internal.documents.DocumentElement;
 import org.zwobble.mammoth.internal.results.InternalResult;
-import org.zwobble.mammoth.internal.results.Warning;
 
 import java.util.List;
 import java.util.function.BiFunction;
@@ -17,7 +16,7 @@ public class ReadResult {
     public static ReadResult concat(Iterable<ReadResult> results) {
         ImmutableList.Builder<DocumentElement> elements = ImmutableList.builder();
         ImmutableList.Builder<DocumentElement> extra = ImmutableList.builder();
-        ImmutableList.Builder<Warning> warnings = ImmutableList.builder();
+        ImmutableList.Builder<String> warnings = ImmutableList.builder();
         for (ReadResult result : results) {
             elements.addAll(result.elements);
             extra.addAll(result.extra);
@@ -45,19 +44,19 @@ public class ReadResult {
         return new ReadResult(elements, list(), list());
     }
 
-    public static ReadResult emptyWithWarning(Warning warning) {
+    public static ReadResult emptyWithWarning(String warning) {
         return new ReadResult(list(), list(), list(warning));
     }
 
-    public static ReadResult withWarning(DocumentElement element, Warning warning) {
+    public static ReadResult withWarning(DocumentElement element, String warning) {
         return new ReadResult(list(element), list(), list(warning));
     }
 
     private final List<DocumentElement> elements;
     private final List<DocumentElement> extra;
-    private final List<Warning> warnings;
+    private final List<String> warnings;
 
-    public ReadResult(List<DocumentElement> elements, List<DocumentElement> extra, List<Warning> warnings) {
+    public ReadResult(List<DocumentElement> elements, List<DocumentElement> extra, List<String> warnings) {
         this.elements = elements;
         this.extra = extra;
         this.warnings = warnings;

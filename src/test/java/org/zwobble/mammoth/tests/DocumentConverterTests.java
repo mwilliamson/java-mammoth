@@ -22,11 +22,10 @@ import static org.hamcrest.Matchers.*;
 import static org.zwobble.mammoth.internal.documents.VerticalAlignment.SUBSCRIPT;
 import static org.zwobble.mammoth.internal.documents.VerticalAlignment.SUPERSCRIPT;
 import static org.zwobble.mammoth.internal.results.InternalResult.success;
-import static org.zwobble.mammoth.internal.results.Warning.warning;
-import static org.zwobble.mammoth.tests.DeepReflectionMatcher.deepEquals;
-import static org.zwobble.mammoth.tests.documents.DocumentElementMakers.*;
 import static org.zwobble.mammoth.internal.util.MammothLists.list;
 import static org.zwobble.mammoth.internal.util.MammothMaps.map;
+import static org.zwobble.mammoth.tests.DeepReflectionMatcher.deepEquals;
+import static org.zwobble.mammoth.tests.documents.DocumentElementMakers.*;
 
 public class DocumentConverterTests {
     // TODO: styles (paragraph, run)
@@ -80,7 +79,7 @@ public class DocumentConverterTests {
 
             deepEquals(new InternalResult<>(
                 list(Html.element("p")),
-                list(warning("Unrecognised paragraph style: Tips Paragraph (Style ID: TipsParagraph)")))));
+                list("Unrecognised paragraph style: Tips Paragraph (Style ID: TipsParagraph)"))));
     }
 
     @Test
@@ -107,7 +106,7 @@ public class DocumentConverterTests {
 
             deepEquals(new InternalResult<>(
                 list(Html.text("Hello")),
-                list(warning("Unrecognised run style: Tips Run (Style ID: TipsRun)")))));
+                list("Unrecognised run style: Tips Run (Style ID: TipsRun)"))));
     }
 
     @Test

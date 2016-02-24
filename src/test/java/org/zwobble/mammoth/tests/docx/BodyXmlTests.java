@@ -8,7 +8,6 @@ import org.junit.Test;
 import org.zwobble.mammoth.internal.documents.*;
 import org.zwobble.mammoth.internal.docx.*;
 import org.zwobble.mammoth.internal.results.InternalResult;
-import org.zwobble.mammoth.internal.results.Warning;
 import org.zwobble.mammoth.tests.DeepReflectionMatcher;
 import org.zwobble.mammoth.internal.xml.XmlElement;
 import org.zwobble.mammoth.internal.xml.XmlNode;
@@ -29,7 +28,6 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.zwobble.mammoth.internal.documents.NoteReference.endnoteReference;
 import static org.zwobble.mammoth.internal.documents.NoteReference.footnoteReference;
-import static org.zwobble.mammoth.internal.results.Warning.warning;
 import static org.zwobble.mammoth.tests.DeepReflectionMatcher.deepEquals;
 import static org.zwobble.mammoth.tests.documents.DocumentElementMakers.*;
 import static org.zwobble.mammoth.tests.docx.BodyXmlReaderMakers.*;
@@ -94,7 +92,7 @@ public class BodyXmlTests {
             read(a(bodyReader), element),
             isResult(
                 hasStyle(Optional.of(new Style("Heading1", Optional.empty()))),
-                list(warning("Paragraph style with ID Heading1 was referenced but not defined in the document"))));
+                list("Paragraph style with ID Heading1 was referenced but not defined in the document")));
     }
 
     @Test
@@ -183,7 +181,7 @@ public class BodyXmlTests {
             read(a(bodyReader), element),
             isResult(
                 hasStyle(Optional.of(new Style("Heading1Char", Optional.empty()))),
-                list(warning("Run style with ID Heading1Char was referenced but not defined in the document"))));
+                list("Run style with ID Heading1Char was referenced but not defined in the document")));
     }
 
     @Test
@@ -311,7 +309,7 @@ public class BodyXmlTests {
 
         assertThat(
             readAll(a(bodyReader), element),
-            isResult(equalTo(list()), list(warning("Unsupported break type: page"))));
+            isResult(equalTo(list()), list("Unsupported break type: page")));
     }
 
     @Test
@@ -477,7 +475,7 @@ public class BodyXmlTests {
 
         assertThat(
             result,
-            hasProperty("warnings", deepEquals(list(warning("Image of type image/x-emf is unlikely to display in web browsers")))));
+            hasProperty("warnings", deepEquals(list("Image of type image/x-emf is unlikely to display in web browsers"))));
     }
 
     @Test
@@ -583,7 +581,7 @@ public class BodyXmlTests {
         XmlElement element = element("w:huh");
         assertThat(
             readAll(a(bodyReader), element),
-            isResult(equalTo(list()), list(warning("An unrecognised element was ignored: w:huh"))));
+            isResult(equalTo(list()), list("An unrecognised element was ignored: w:huh")));
     }
 
     @Test
@@ -654,7 +652,7 @@ public class BodyXmlTests {
         return hasProperty("numbering", deepEquals(expected));
     }
 
-    private <T> Matcher<InternalResult<? extends T>> isResult(Matcher<T> valueMatcher, List<Warning> warnings) {
+    private <T> Matcher<InternalResult<? extends T>> isResult(Matcher<T> valueMatcher, List<String> warnings) {
         return Matchers.allOf(
             hasProperty("value", valueMatcher),
             hasProperty("warnings", deepEquals(warnings)));

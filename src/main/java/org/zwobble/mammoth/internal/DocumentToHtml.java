@@ -8,7 +8,6 @@ import org.zwobble.mammoth.internal.documents.*;
 import org.zwobble.mammoth.internal.html.Html;
 import org.zwobble.mammoth.internal.html.HtmlNode;
 import org.zwobble.mammoth.internal.results.InternalResult;
-import org.zwobble.mammoth.internal.results.Warning;
 import org.zwobble.mammoth.internal.styles.HtmlPath;
 import org.zwobble.mammoth.internal.styles.StyleMap;
 import org.zwobble.mammoth.internal.util.MammothLists;
@@ -19,7 +18,6 @@ import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 
-import static org.zwobble.mammoth.internal.results.Warning.warning;
 import static org.zwobble.mammoth.internal.util.MammothLists.*;
 import static org.zwobble.mammoth.internal.util.MammothMaps.map;
 
@@ -49,7 +47,7 @@ public class DocumentToHtml {
     private final boolean preserveEmptyParagraphs;
     private final StyleMap styleMap;
     private final List<NoteReference> noteReferences = new ArrayList<>();
-    private final ImmutableList.Builder<Warning> warnings = ImmutableList.builder();
+    private final ImmutableList.Builder<String> warnings = ImmutableList.builder();
 
     private DocumentToHtml(DocumentToHtmlOptions options) {
         this.idPrefix = options.idPrefix();
@@ -103,7 +101,7 @@ public class DocumentToHtml {
                 HtmlPath mapping = styleMap.getParagraphHtmlPath(paragraph)
                     .orElseGet(() -> {
                         if (paragraph.getStyle().isPresent()) {
-                            warnings.add(warning("Unrecognised paragraph style: " + paragraph.getStyle().get().describe()));
+                            warnings.add("Unrecognised paragraph style: " + paragraph.getStyle().get().describe());
                         }
                         return HtmlPath.element("p");
                     });
@@ -134,7 +132,7 @@ public class DocumentToHtml {
                 HtmlPath mapping = styleMap.getRunHtmlPath(run)
                     .orElseGet(() -> {
                         if (run.getStyle().isPresent()) {
-                            warnings.add(warning("Unrecognised run style: " + run.getStyle().get().describe()));
+                            warnings.add("Unrecognised run style: " + run.getStyle().get().describe());
                         }
                         return HtmlPath.EMPTY;
                     });
@@ -224,7 +222,7 @@ public class DocumentToHtml {
 
                             return list(Html.selfClosingElement("img", attributes.build()));
                         } catch (IOException exception) {
-                            warnings.add(warning(exception.getMessage()));
+                            warnings.add(exception.getMessage());
                             return MammothLists.<HtmlNode>list();
                         }
                     })

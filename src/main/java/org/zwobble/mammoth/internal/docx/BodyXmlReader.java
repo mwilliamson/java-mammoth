@@ -3,7 +3,6 @@ package org.zwobble.mammoth.internal.docx;
 import com.google.common.collect.ImmutableSet;
 import org.zwobble.mammoth.internal.documents.*;
 import org.zwobble.mammoth.internal.results.InternalResult;
-import org.zwobble.mammoth.internal.results.Warning;
 import org.zwobble.mammoth.internal.util.InputStreamSupplier;
 import org.zwobble.mammoth.internal.util.MammothOptionals;
 import org.zwobble.mammoth.internal.xml.XmlElement;
@@ -19,7 +18,6 @@ import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.transform;
 import static org.zwobble.mammoth.internal.docx.ReadResult.EMPTY_SUCCESS;
 import static org.zwobble.mammoth.internal.docx.ReadResult.success;
-import static org.zwobble.mammoth.internal.results.Warning.warning;
 import static org.zwobble.mammoth.internal.util.MammothLists.list;
 import static org.zwobble.mammoth.internal.util.MammothStrings.trimLeft;
 
@@ -120,7 +118,7 @@ public class BodyXmlReader {
                 return EMPTY_SUCCESS;
 
             default:
-                Warning warning = warning("An unrecognised element was ignored: " + element.getName());
+                String warning = "An unrecognised element was ignored: " + element.getName();
                 return ReadResult.emptyWithWarning(warning);
         }
     }
@@ -215,7 +213,7 @@ public class BodyXmlReader {
         } else {
             return new InternalResult<>(
                 Optional.of(new Style(styleId, Optional.empty())),
-                list(warning(styleType + " style with ID " + styleId + " was referenced but not defined in the document")));
+                list(styleType + " style with ID " + styleId + " was referenced but not defined in the document"));
         }
 
     }
@@ -233,7 +231,7 @@ public class BodyXmlReader {
         if (breakType.equals("")) {
             return success(LineBreak.LINE_BREAK);
         } else {
-            return ReadResult.emptyWithWarning(warning("Unsupported break type: " + breakType));
+            return ReadResult.emptyWithWarning("Unsupported break type: " + breakType);
         }
     }
 
@@ -314,7 +312,7 @@ public class BodyXmlReader {
         if (IMAGE_TYPES_SUPPORTED_BY_BROWSERS.contains(contentTypeString)) {
             return success(image);
         } else {
-            return ReadResult.withWarning(image, warning("Image of type " + contentTypeString + " is unlikely to display in web browsers"));
+            return ReadResult.withWarning(image, "Image of type " + contentTypeString + " is unlikely to display in web browsers");
         }
     }
 

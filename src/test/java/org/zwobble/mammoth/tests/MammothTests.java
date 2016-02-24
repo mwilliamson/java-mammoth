@@ -97,7 +97,7 @@ public class MammothTests {
                 allOf(
                     hasProperty("value", equalTo("")),
                     hasProperty("warnings", contains(
-                        hasProperty("message", startsWith("could not open external image 'tiny-picture.png': path of document is unknown, but is required for relative URI"))))));
+                        startsWith("could not open external image 'tiny-picture.png': path of document is unknown, but is required for relative URI")))));
         } finally {
             tempDirectory.toFile().delete();
         }
@@ -114,7 +114,7 @@ public class MammothTests {
                 allOf(
                     hasProperty("value", equalTo("")),
                     hasProperty("warnings", contains(
-                        hasProperty("message", startsWith("could not open external image 'tiny-picture.png'"))))));
+                        startsWith("could not open external image 'tiny-picture.png'")))));
         } finally {
             tempDirectory.toFile().delete();
         }

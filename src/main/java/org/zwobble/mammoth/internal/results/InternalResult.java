@@ -14,7 +14,7 @@ import static org.zwobble.mammoth.internal.util.MammothLists.list;
 public class InternalResult<T> implements org.zwobble.mammoth.Result<T> {
     public static <T> InternalResult<List<T>> concat(Iterable<InternalResult<T>> results) {
         ImmutableList.Builder<T> elements = ImmutableList.builder();
-        ImmutableList.Builder<Warning> warnings = ImmutableList.builder();
+        ImmutableList.Builder<String> warnings = ImmutableList.builder();
         for (InternalResult<T> result : results) {
             elements.add(result.value);
             warnings.addAll(result.warnings);
@@ -41,9 +41,9 @@ public class InternalResult<T> implements org.zwobble.mammoth.Result<T> {
     }
 
     private final T value;
-    private final List<Warning> warnings;
+    private final List<String> warnings;
 
-    public InternalResult(T value, List<Warning> warnings) {
+    public InternalResult(T value, List<String> warnings) {
         this.value = value;
         this.warnings = warnings;
     }
@@ -52,7 +52,7 @@ public class InternalResult<T> implements org.zwobble.mammoth.Result<T> {
         return value;
     }
 
-    public List<Warning> getWarnings() {
+    public List<String> getWarnings() {
         return warnings;
     }
 
