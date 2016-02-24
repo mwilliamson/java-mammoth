@@ -1,15 +1,15 @@
 package org.zwobble.mammoth.tests;
 
 import org.junit.Test;
-import org.zwobble.mammoth.DocumentConverter;
-import org.zwobble.mammoth.documents.*;
-import org.zwobble.mammoth.html.Html;
-import org.zwobble.mammoth.html.HtmlNode;
+import org.zwobble.mammoth.internal.DocumentConverter;
+import org.zwobble.mammoth.internal.documents.*;
+import org.zwobble.mammoth.internal.html.Html;
+import org.zwobble.mammoth.internal.html.HtmlNode;
 import org.zwobble.mammoth.results.Result;
-import org.zwobble.mammoth.styles.HtmlPath;
-import org.zwobble.mammoth.styles.ParagraphMatcher;
-import org.zwobble.mammoth.styles.RunMatcher;
-import org.zwobble.mammoth.styles.StyleMap;
+import org.zwobble.mammoth.internal.styles.HtmlPath;
+import org.zwobble.mammoth.internal.styles.ParagraphMatcher;
+import org.zwobble.mammoth.internal.styles.RunMatcher;
+import org.zwobble.mammoth.internal.styles.StyleMap;
 
 import java.io.ByteArrayInputStream;
 import java.util.List;
@@ -18,14 +18,14 @@ import java.util.Optional;
 import static com.natpryce.makeiteasy.MakeItEasy.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.zwobble.mammoth.documents.VerticalAlignment.SUBSCRIPT;
-import static org.zwobble.mammoth.documents.VerticalAlignment.SUPERSCRIPT;
+import static org.zwobble.mammoth.internal.documents.VerticalAlignment.SUBSCRIPT;
+import static org.zwobble.mammoth.internal.documents.VerticalAlignment.SUPERSCRIPT;
 import static org.zwobble.mammoth.results.Result.success;
 import static org.zwobble.mammoth.results.Warning.warning;
 import static org.zwobble.mammoth.tests.DeepReflectionMatcher.deepEquals;
 import static org.zwobble.mammoth.tests.documents.DocumentElementMakers.*;
-import static org.zwobble.mammoth.util.MammothLists.list;
-import static org.zwobble.mammoth.util.MammothMaps.map;
+import static org.zwobble.mammoth.internal.util.MammothLists.list;
+import static org.zwobble.mammoth.internal.util.MammothMaps.map;
 
 public class DocumentConverterTests {
     // TODO: styles (paragraph, run)

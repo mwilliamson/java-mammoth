@@ -2,7 +2,7 @@ package org.zwobble.mammoth.tests.documents;
 
 import com.natpryce.makeiteasy.Instantiator;
 import com.natpryce.makeiteasy.Property;
-import org.zwobble.mammoth.documents.*;
+import org.zwobble.mammoth.internal.documents.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -11,7 +11,7 @@ import static com.natpryce.makeiteasy.MakeItEasy.a;
 import static com.natpryce.makeiteasy.MakeItEasy.make;
 import static com.natpryce.makeiteasy.MakeItEasy.with;
 import static com.natpryce.makeiteasy.Property.newProperty;
-import static org.zwobble.mammoth.util.MammothLists.list;
+import static org.zwobble.mammoth.internal.util.MammothLists.list;
 
 public class DocumentElementMakers {
     public static final Property<DocumentElement, Optional<Style>> STYLE = newProperty();

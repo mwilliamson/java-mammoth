@@ -1,16 +1,16 @@
 package org.zwobble.mammoth.tests.docx;
 
 import org.junit.Test;
-import org.zwobble.mammoth.docx.ContentTypes;
-import org.zwobble.mammoth.xml.XmlElement;
+import org.zwobble.mammoth.internal.docx.ContentTypes;
+import org.zwobble.mammoth.internal.xml.XmlElement;
 
 import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
-import static org.zwobble.mammoth.docx.ContentTypesXml.readContentTypesXmlElement;
-import static org.zwobble.mammoth.util.MammothLists.list;
-import static org.zwobble.mammoth.util.MammothMaps.map;
-import static org.zwobble.mammoth.xml.XmlNodes.element;
+import static org.zwobble.mammoth.internal.docx.ContentTypesXml.readContentTypesXmlElement;
+import static org.zwobble.mammoth.internal.util.MammothLists.list;
+import static org.zwobble.mammoth.internal.util.MammothMaps.map;
+import static org.zwobble.mammoth.internal.xml.XmlNodes.element;
 
 public class ContentTypesXmlTests {
     @Test

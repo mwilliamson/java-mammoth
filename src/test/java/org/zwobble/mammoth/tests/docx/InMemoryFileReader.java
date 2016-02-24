@@ -1,6 +1,6 @@
 package org.zwobble.mammoth.tests.docx;
 
-import org.zwobble.mammoth.docx.FileReader;
+import org.zwobble.mammoth.internal.docx.FileReader;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;

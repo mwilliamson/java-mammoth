@@ -5,14 +5,14 @@ import com.natpryce.makeiteasy.Maker;
 import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
 import org.junit.Test;
-import org.zwobble.mammoth.documents.*;
-import org.zwobble.mammoth.docx.*;
+import org.zwobble.mammoth.internal.documents.*;
+import org.zwobble.mammoth.internal.docx.*;
 import org.zwobble.mammoth.results.Result;
 import org.zwobble.mammoth.results.Warning;
 import org.zwobble.mammoth.tests.DeepReflectionMatcher;
-import org.zwobble.mammoth.xml.XmlElement;
-import org.zwobble.mammoth.xml.XmlNode;
-import org.zwobble.mammoth.xml.XmlNodes;
+import org.zwobble.mammoth.internal.xml.XmlElement;
+import org.zwobble.mammoth.internal.xml.XmlNode;
+import org.zwobble.mammoth.internal.xml.XmlNodes;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -27,16 +27,16 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasProperty;
-import static org.zwobble.mammoth.documents.NoteReference.endnoteReference;
-import static org.zwobble.mammoth.documents.NoteReference.footnoteReference;
+import static org.zwobble.mammoth.internal.documents.NoteReference.endnoteReference;
+import static org.zwobble.mammoth.internal.documents.NoteReference.footnoteReference;
 import static org.zwobble.mammoth.results.Warning.warning;
 import static org.zwobble.mammoth.tests.DeepReflectionMatcher.deepEquals;
 import static org.zwobble.mammoth.tests.documents.DocumentElementMakers.*;
 import static org.zwobble.mammoth.tests.docx.BodyXmlReaderMakers.*;
 import static org.zwobble.mammoth.tests.docx.BodyXmlReaderMakers.NUMBERING;
-import static org.zwobble.mammoth.util.MammothLists.list;
-import static org.zwobble.mammoth.util.MammothMaps.map;
-import static org.zwobble.mammoth.xml.XmlNodes.element;
+import static org.zwobble.mammoth.internal.util.MammothLists.list;
+import static org.zwobble.mammoth.internal.util.MammothMaps.map;
+import static org.zwobble.mammoth.internal.xml.XmlNodes.element;
 
 public class BodyXmlTests {
 

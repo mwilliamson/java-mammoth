@@ -1,10 +1,10 @@
 package org.zwobble.mammoth.tests.styles;
 
 import org.junit.Test;
-import org.zwobble.mammoth.documents.NumberingLevel;
-import org.zwobble.mammoth.documents.Paragraph;
-import org.zwobble.mammoth.documents.Style;
-import org.zwobble.mammoth.styles.ParagraphMatcher;
+import org.zwobble.mammoth.internal.documents.NumberingLevel;
+import org.zwobble.mammoth.internal.documents.Paragraph;
+import org.zwobble.mammoth.internal.documents.Style;
+import org.zwobble.mammoth.internal.styles.ParagraphMatcher;
 
 import java.util.Optional;
 

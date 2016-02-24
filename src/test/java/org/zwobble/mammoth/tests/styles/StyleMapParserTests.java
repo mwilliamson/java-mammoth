@@ -1,11 +1,11 @@
 package org.zwobble.mammoth.tests.styles;
 
 import org.junit.Test;
-import org.zwobble.mammoth.styles.HtmlPath;
-import org.zwobble.mammoth.styles.ParagraphMatcher;
-import org.zwobble.mammoth.styles.RunMatcher;
-import org.zwobble.mammoth.styles.StyleMap;
-import org.zwobble.mammoth.styles.parsing.StyleMapParser;
+import org.zwobble.mammoth.internal.styles.HtmlPath;
+import org.zwobble.mammoth.internal.styles.ParagraphMatcher;
+import org.zwobble.mammoth.internal.styles.RunMatcher;
+import org.zwobble.mammoth.internal.styles.StyleMap;
+import org.zwobble.mammoth.internal.styles.parsing.StyleMapParser;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.zwobble.mammoth.tests.DeepReflectionMatcher.deepEquals;

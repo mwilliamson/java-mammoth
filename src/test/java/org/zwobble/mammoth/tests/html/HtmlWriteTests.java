@@ -1,12 +1,12 @@
 package org.zwobble.mammoth.tests.html;
 
 import org.junit.Test;
-import org.zwobble.mammoth.html.Html;
-import org.zwobble.mammoth.html.HtmlNode;
+import org.zwobble.mammoth.internal.html.Html;
+import org.zwobble.mammoth.internal.html.HtmlNode;
 
 import static org.junit.Assert.assertEquals;
-import static org.zwobble.mammoth.util.MammothLists.list;
-import static org.zwobble.mammoth.util.MammothMaps.map;
+import static org.zwobble.mammoth.internal.util.MammothLists.list;
+import static org.zwobble.mammoth.internal.util.MammothMaps.map;
 
 public class HtmlWriteTests {
     @Test

@@ -2,15 +2,15 @@ package org.zwobble.mammoth.tests.docx;
 
 import com.google.common.base.Charsets;
 import org.junit.Test;
-import org.zwobble.mammoth.docx.OfficeXml;
-import org.zwobble.mammoth.xml.XmlElement;
+import org.zwobble.mammoth.internal.docx.OfficeXml;
+import org.zwobble.mammoth.internal.xml.XmlElement;
 
 import java.io.ByteArrayInputStream;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.zwobble.mammoth.tests.DeepReflectionMatcher.deepEquals;
-import static org.zwobble.mammoth.util.MammothLists.list;
-import static org.zwobble.mammoth.xml.XmlNodes.element;
+import static org.zwobble.mammoth.internal.util.MammothLists.list;
+import static org.zwobble.mammoth.internal.xml.XmlNodes.element;
 
 public class OfficeXmlTests {
     @Test

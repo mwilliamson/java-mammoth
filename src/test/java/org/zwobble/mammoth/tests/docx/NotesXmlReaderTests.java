@@ -1,12 +1,12 @@
 package org.zwobble.mammoth.tests.docx;
 
 import org.junit.Test;
-import org.zwobble.mammoth.documents.NoteType;
+import org.zwobble.mammoth.internal.documents.NoteType;
 import org.zwobble.mammoth.results.Result;
-import org.zwobble.mammoth.documents.Note;
-import org.zwobble.mammoth.docx.BodyXmlReader;
-import org.zwobble.mammoth.docx.NotesXmlReader;
-import org.zwobble.mammoth.xml.XmlElement;
+import org.zwobble.mammoth.internal.documents.Note;
+import org.zwobble.mammoth.internal.docx.BodyXmlReader;
+import org.zwobble.mammoth.internal.docx.NotesXmlReader;
+import org.zwobble.mammoth.internal.xml.XmlElement;
 
 import java.util.List;
 
@@ -16,9 +16,9 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.zwobble.mammoth.results.Result.success;
 import static org.zwobble.mammoth.tests.DeepReflectionMatcher.deepEquals;
 import static org.zwobble.mammoth.tests.documents.DocumentElementMakers.PARAGRAPH;
-import static org.zwobble.mammoth.util.MammothLists.list;
-import static org.zwobble.mammoth.util.MammothMaps.map;
-import static org.zwobble.mammoth.xml.XmlNodes.element;
+import static org.zwobble.mammoth.internal.util.MammothLists.list;
+import static org.zwobble.mammoth.internal.util.MammothMaps.map;
+import static org.zwobble.mammoth.internal.xml.XmlNodes.element;
 
 public class NotesXmlReaderTests {
     private static final BodyXmlReader bodyReader = make(a(BodyXmlReaderMakers.bodyReader));

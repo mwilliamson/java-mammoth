@@ -3,18 +3,19 @@ package org.zwobble.mammoth;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
-import org.zwobble.mammoth.documents.DocumentElement;
-import org.zwobble.mammoth.documents.HasChildren;
-import org.zwobble.mammoth.documents.Paragraph;
-import org.zwobble.mammoth.documents.Text;
-import org.zwobble.mammoth.docx.DocxFile;
-import org.zwobble.mammoth.docx.InMemoryDocxFile;
-import org.zwobble.mammoth.docx.ZippedDocxFile;
-import org.zwobble.mammoth.html.Html;
+import org.zwobble.mammoth.internal.DocumentConverter;
+import org.zwobble.mammoth.internal.documents.DocumentElement;
+import org.zwobble.mammoth.internal.documents.HasChildren;
+import org.zwobble.mammoth.internal.documents.Paragraph;
+import org.zwobble.mammoth.internal.documents.Text;
+import org.zwobble.mammoth.internal.docx.DocxFile;
+import org.zwobble.mammoth.internal.docx.InMemoryDocxFile;
+import org.zwobble.mammoth.internal.docx.ZippedDocxFile;
+import org.zwobble.mammoth.internal.html.Html;
 import org.zwobble.mammoth.results.Result;
-import org.zwobble.mammoth.styles.*;
-import org.zwobble.mammoth.styles.parsing.StyleMapParser;
-import org.zwobble.mammoth.util.Casts;
+import org.zwobble.mammoth.internal.styles.*;
+import org.zwobble.mammoth.internal.styles.parsing.StyleMapParser;
+import org.zwobble.mammoth.internal.util.Casts;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,8 +25,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.zip.ZipFile;
 
-import static org.zwobble.mammoth.docx.DocumentReader.readDocument;
-import static org.zwobble.mammoth.util.MammothLists.list;
+import static org.zwobble.mammoth.internal.docx.DocumentReader.readDocument;
+import static org.zwobble.mammoth.internal.util.MammothLists.list;
 
 public class Mammoth {
     public static class Options {

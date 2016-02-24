@@ -2,7 +2,7 @@ package org.zwobble.mammoth.tests.docx;
 
 import com.natpryce.makeiteasy.Instantiator;
 import com.natpryce.makeiteasy.Property;
-import org.zwobble.mammoth.docx.*;
+import org.zwobble.mammoth.internal.docx.*;
 
 import java.io.IOException;
 import java.io.InputStream;

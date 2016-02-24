@@ -1,15 +1,15 @@
 package org.zwobble.mammoth.results;
 
 import com.google.common.collect.ImmutableList;
-import org.zwobble.mammoth.documents.Style;
-import org.zwobble.mammoth.util.MammothLists;
+import org.zwobble.mammoth.internal.documents.Style;
+import org.zwobble.mammoth.internal.util.MammothLists;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-import static org.zwobble.mammoth.util.MammothLists.list;
+import static org.zwobble.mammoth.internal.util.MammothLists.list;
 
 public class Result<T> {
     public static <T> Result<List<T>> concat(Iterable<Result<T>> results) {

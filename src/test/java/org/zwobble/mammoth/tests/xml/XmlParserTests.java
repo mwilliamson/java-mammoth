@@ -5,10 +5,10 @@ import org.hamcrest.Matcher;
 import org.hamcrest.collection.IsEmptyIterable;
 import org.hamcrest.collection.IsIterableContainingInOrder;
 import org.junit.Test;
-import org.zwobble.mammoth.xml.XmlElement;
-import org.zwobble.mammoth.xml.XmlNode;
-import org.zwobble.mammoth.xml.XmlTextNode;
-import org.zwobble.mammoth.xml.parsing.XmlParser;
+import org.zwobble.mammoth.internal.xml.XmlElement;
+import org.zwobble.mammoth.internal.xml.XmlNode;
+import org.zwobble.mammoth.internal.xml.XmlTextNode;
+import org.zwobble.mammoth.internal.xml.parsing.XmlParser;
 
 import java.io.ByteArrayInputStream;
 import java.util.List;
@@ -16,8 +16,8 @@ import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.zwobble.mammoth.util.MammothLists.list;
-import static org.zwobble.mammoth.util.MammothMaps.map;
+import static org.zwobble.mammoth.internal.util.MammothLists.list;
+import static org.zwobble.mammoth.internal.util.MammothMaps.map;
 
 public class XmlParserTests {
     private final XmlParser parser = new XmlParser(ImmutableBiMap.of());

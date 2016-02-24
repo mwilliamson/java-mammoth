@@ -2,10 +2,10 @@ package org.zwobble.mammoth.tests.styles;
 
 import org.junit.Test;
 import org.parboiled.support.Var;
-import org.zwobble.mammoth.styles.ParagraphMatcher;
-import org.zwobble.mammoth.styles.RunMatcher;
-import org.zwobble.mammoth.styles.parsing.Parsing;
-import org.zwobble.mammoth.styles.parsing.StyleMappingParser;
+import org.zwobble.mammoth.internal.styles.ParagraphMatcher;
+import org.zwobble.mammoth.internal.styles.RunMatcher;
+import org.zwobble.mammoth.internal.styles.parsing.Parsing;
+import org.zwobble.mammoth.internal.styles.parsing.StyleMappingParser;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.zwobble.mammoth.tests.DeepReflectionMatcher.deepEquals;

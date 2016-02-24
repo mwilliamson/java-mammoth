@@ -1,14 +1,14 @@
 package org.zwobble.mammoth.tests.docx;
 
 import org.junit.Test;
-import org.zwobble.mammoth.documents.Document;
-import org.zwobble.mammoth.documents.Note;
-import org.zwobble.mammoth.documents.NoteType;
-import org.zwobble.mammoth.documents.Notes;
-import org.zwobble.mammoth.docx.DocumentXmlReader;
+import org.zwobble.mammoth.internal.documents.Document;
+import org.zwobble.mammoth.internal.documents.Note;
+import org.zwobble.mammoth.internal.documents.NoteType;
+import org.zwobble.mammoth.internal.documents.Notes;
+import org.zwobble.mammoth.internal.docx.DocumentXmlReader;
 import org.zwobble.mammoth.results.Result;
-import org.zwobble.mammoth.xml.XmlElement;
-import org.zwobble.mammoth.xml.XmlNodes;
+import org.zwobble.mammoth.internal.xml.XmlElement;
+import org.zwobble.mammoth.internal.xml.XmlNodes;
 
 import static com.natpryce.makeiteasy.MakeItEasy.a;
 import static com.natpryce.makeiteasy.MakeItEasy.make;
@@ -17,8 +17,8 @@ import static org.zwobble.mammoth.results.Result.success;
 import static org.zwobble.mammoth.tests.DeepReflectionMatcher.deepEquals;
 import static org.zwobble.mammoth.tests.documents.DocumentElementMakers.paragraphWithText;
 import static org.zwobble.mammoth.tests.docx.BodyXmlReaderMakers.bodyReader;
-import static org.zwobble.mammoth.util.MammothLists.list;
-import static org.zwobble.mammoth.xml.XmlNodes.element;
+import static org.zwobble.mammoth.internal.util.MammothLists.list;
+import static org.zwobble.mammoth.internal.xml.XmlNodes.element;
 
 public class DocumentXmlTests {
 

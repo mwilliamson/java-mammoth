@@ -1,7 +1,7 @@
 package org.zwobble.mammoth.tests.documents;
 
 import org.junit.Test;
-import org.zwobble.mammoth.documents.Style;
+import org.zwobble.mammoth.internal.documents.Style;
 
 import java.util.Optional;
 
