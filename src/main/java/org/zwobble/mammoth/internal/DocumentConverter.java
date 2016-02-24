@@ -24,8 +24,8 @@ import static org.zwobble.mammoth.internal.util.MammothLists.*;
 import static org.zwobble.mammoth.internal.util.MammothMaps.map;
 
 public class DocumentConverter {
-    public static Result<List<HtmlNode>> convertToHtml(String idPrefix, boolean preserveEmptyParagraphs, StyleMap styleMap, Document document) {
-        DocumentConverter documentConverter = new DocumentConverter(idPrefix, preserveEmptyParagraphs, styleMap);
+    public static Result<List<HtmlNode>> convertToHtml(Document document, DocumentToHtmlOptions options) {
+        DocumentConverter documentConverter = new DocumentConverter(options);
         return new Result<>(
             documentConverter.convertToHtml(document),
             documentConverter.warnings.build());
@@ -38,8 +38,8 @@ public class DocumentConverter {
             reference -> document.getNotes().findNote(reference.getNoteType(), reference.getNoteId()).get()));
     }
 
-    public static Result<List<HtmlNode>> convertToHtml(String idPrefix, boolean preserveEmptyParagraphs, StyleMap styleMap, DocumentElement element) {
-        DocumentConverter documentConverter = new DocumentConverter(idPrefix, preserveEmptyParagraphs, styleMap);
+    public static Result<List<HtmlNode>> convertToHtml(DocumentElement element, DocumentToHtmlOptions options) {
+        DocumentConverter documentConverter = new DocumentConverter(options);
         return new Result<>(
             documentConverter.convertToHtml(element),
             documentConverter.warnings.build());
@@ -51,10 +51,10 @@ public class DocumentConverter {
     private final List<NoteReference> noteReferences = new ArrayList<>();
     private final ImmutableList.Builder<Warning> warnings = ImmutableList.builder();
 
-    private DocumentConverter(String idPrefix, boolean preserveEmptyParagraphs, StyleMap styleMap) {
-        this.idPrefix = idPrefix;
-        this.preserveEmptyParagraphs = preserveEmptyParagraphs;
-        this.styleMap = styleMap;
+    private DocumentConverter(DocumentToHtmlOptions options) {
+        this.idPrefix = options.idPrefix();
+        this.preserveEmptyParagraphs = options.shouldPreserveEmptyParagraphs();
+        this.styleMap = options.styleMap();
     }
 
     private List<HtmlNode> convertToHtml(Document document) {

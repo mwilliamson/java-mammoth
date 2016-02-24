@@ -1,9 +1,9 @@
 package org.zwobble.mammoth;
 
 import com.google.common.base.Function;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import org.zwobble.mammoth.internal.DocumentConverter;
+import org.zwobble.mammoth.internal.DocumentToHtmlOptions;
 import org.zwobble.mammoth.internal.documents.DocumentElement;
 import org.zwobble.mammoth.internal.documents.HasChildren;
 import org.zwobble.mammoth.internal.documents.Paragraph;
@@ -12,10 +12,9 @@ import org.zwobble.mammoth.internal.docx.DocxFile;
 import org.zwobble.mammoth.internal.docx.InMemoryDocxFile;
 import org.zwobble.mammoth.internal.docx.ZippedDocxFile;
 import org.zwobble.mammoth.internal.html.Html;
-import org.zwobble.mammoth.results.Result;
-import org.zwobble.mammoth.internal.styles.*;
-import org.zwobble.mammoth.internal.styles.parsing.StyleMapParser;
+import org.zwobble.mammoth.internal.styles.DefaultStyles;
 import org.zwobble.mammoth.internal.util.Casts;
+import org.zwobble.mammoth.results.Result;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,90 +28,37 @@ import static org.zwobble.mammoth.internal.docx.DocumentReader.readDocument;
 import static org.zwobble.mammoth.internal.util.MammothLists.list;
 
 public class Mammoth {
-    public static class Options {
-        public static final Options DEFAULT = new Options("", false);
+    private final DocumentToHtmlOptions options;
 
-        private final String idPrefix;
-        private final boolean preserveEmptyParagraphs;
-
-        public Options(String idPrefix, boolean preserveEmptyParagraphs) {
-            this.idPrefix = idPrefix;
-            this.preserveEmptyParagraphs = preserveEmptyParagraphs;
-        }
-
-        public Options idPrefix(String prefix) {
-            return new Options(prefix, preserveEmptyParagraphs);
-        }
-
-        public Options preserveEmptyParagraphs() {
-            return new Options(idPrefix, true);
-        }
+    public Mammoth() {
+        this(DocumentToHtmlOptions.DEFAULT.styleMap(DefaultStyles.DEFAULT_STYLE_MAP));
     }
 
-    private static final StyleMap DEFAULT_STYLE_MAP = StyleMapParser.parse(ImmutableList.of(
-        "p.Heading1 => h1:fresh",
-        "p.Heading2 => h2:fresh",
-        "p.Heading3 => h3:fresh",
-        "p.Heading4 => h4:fresh",
-        "p[style-name='Heading 1'] => h1:fresh",
-        "p[style-name='Heading 2'] => h2:fresh",
-        "p[style-name='Heading 3'] => h3:fresh",
-        "p[style-name='Heading 4'] => h4:fresh",
-        "p[style-name='heading 1'] => h1:fresh",
-        "p[style-name='heading 2'] => h2:fresh",
-        "p[style-name='heading 3'] => h3:fresh",
-        "p[style-name='heading 4'] => h4:fresh",
-        "p[style-name='heading 4'] => h4:fresh",
-
-        "r[style-name='Strong'] => strong",
-
-        "p[style-name='footnote text'] => p",
-        "r[style-name='footnote reference'] =>",
-        "p[style-name='endnote text'] => p",
-        "r[style-name='endnote reference'] =>",
-
-        // LibreOffice
-        "p[style-name='Footnote'] => p",
-        "r[style-name='Footnote anchor'] =>",
-        "p[style-name='Endnote'] => p",
-        "r[style-name='Endnote anchor'] =>",
-
-        "p:unordered-list(1) => ul > li:fresh",
-        "p:unordered-list(2) => ul|ol > li > ul > li:fresh",
-        "p:unordered-list(3) => ul|ol > li > ul|ol > li > ul > li:fresh",
-        "p:unordered-list(4) => ul|ol > li > ul|ol > li > ul|ol > li > ul > li:fresh",
-        "p:unordered-list(5) => ul|ol > li > ul|ol > li > ul|ol > li > ul|ol > li > ul > li:fresh",
-        "p:ordered-list(1) => ol > li:fresh",
-        "p:ordered-list(2) => ul|ol > li > ol > li:fresh",
-        "p:ordered-list(3) => ul|ol > li > ul|ol > li > ol > li:fresh",
-        "p:ordered-list(4) => ul|ol > li > ul|ol > li > ul|ol > li > ol > li:fresh",
-        "p:ordered-list(5) => ul|ol > li > ul|ol > li > ul|ol > li > ul|ol > li > ol > li:fresh",
-
-        "r[style-name='Hyperlink'] =>",
-
-        "p[style-name='Normal'] => p:fresh"));
-
-    public static Result<String> convertToHtml(InputStream stream) throws IOException {
-        return convertToHtml(stream, Options.DEFAULT);
+    private Mammoth(DocumentToHtmlOptions options) {
+        this.options = options;
     }
 
-    public static Result<String> convertToHtml(InputStream stream, Options options) throws IOException {
+    public Mammoth idPrefix(String idPrefix) {
+        return new Mammoth(options.idPrefix(idPrefix));
+    }
+
+    public Mammoth preserveEmptyParagraphs() {
+        return new Mammoth(options.preserveEmptyParagraphs());
+    }
+
+    public Result<String> convertToHtml(InputStream stream) throws IOException {
         return withDocxFile(stream, zipFile ->
-            convertToHtml(Optional.empty(), zipFile, options));
+            convertToHtml(Optional.empty(), zipFile));
     }
 
-    public static Result<String> convertToHtml(File file) throws IOException {
-        return convertToHtml(file, Options.DEFAULT);
-    }
-
-    public static Result<String> convertToHtml(File file, Options options) throws IOException {
+    public Result<String> convertToHtml(File file) throws IOException {
         return withDocxFile(file, zipFile ->
-            convertToHtml(Optional.of(file.toPath()), zipFile, options));
+            convertToHtml(Optional.of(file.toPath()), zipFile));
     }
 
-    private static Result<String> convertToHtml(Optional<Path> path, DocxFile zipFile, Options options) {
+    private Result<String> convertToHtml(Optional<Path> path, DocxFile zipFile) {
         return readDocument(path, zipFile)
-            .flatMap(nodes -> DocumentConverter.convertToHtml(options.idPrefix, options.preserveEmptyParagraphs, DEFAULT_STYLE_MAP, nodes))
+            .flatMap(nodes -> DocumentConverter.convertToHtml(nodes, options))
             .map(Html::stripEmpty)
             .map(Html::collapse)
             .map(Html::write);

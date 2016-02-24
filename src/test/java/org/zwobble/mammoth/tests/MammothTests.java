@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.function.Function;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
@@ -39,7 +40,7 @@ public class MammothTests {
     @Test
     public void emptyParagraphsArePreservedIfIgnoreEmptyParagraphsIsFalse() throws IOException {
         assertThat(
-            convertToHtml("empty.docx", Mammoth.Options.DEFAULT.preserveEmptyParagraphs()),
+            convertToHtml("empty.docx", mammoth -> mammoth.preserveEmptyParagraphs()),
             deepEquals(success("<p></p>")));
     }
 
@@ -78,7 +79,7 @@ public class MammothTests {
             Files.copy(TestData.file("external-picture.docx").toPath(), documentPath);
             Files.copy(TestData.file("tiny-picture.png").toPath(), tempDirectory.resolve("tiny-picture.png"));
             assertThat(
-                Mammoth.convertToHtml(documentPath.toFile()),
+                new Mammoth().convertToHtml(documentPath.toFile()),
                 deepEquals(success("<p><img src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAIAAAACUFjqAAAAAXNSR0IArs4c6QAAAAlwSFlzAAAOvgAADr4B6kKxwAAAABNJREFUKFNj/M+ADzDhlWUYqdIAQSwBE8U+X40AAAAASUVORK5CYII=\" /></p>")));
         } finally {
             tempDirectory.toFile().delete();
@@ -92,7 +93,7 @@ public class MammothTests {
             Path documentPath = tempDirectory.resolve("external-picture.docx");
             Files.copy(TestData.file("external-picture.docx").toPath(), documentPath);
             assertThat(
-                Mammoth.convertToHtml(documentPath.toUri().toURL().openStream()),
+                new Mammoth().convertToHtml(documentPath.toUri().toURL().openStream()),
                 allOf(
                     hasProperty("value", equalTo("")),
                     hasProperty("warnings", contains(
@@ -109,7 +110,7 @@ public class MammothTests {
             Path documentPath = tempDirectory.resolve("external-picture.docx");
             Files.copy(TestData.file("external-picture.docx").toPath(), documentPath);
             assertThat(
-                Mammoth.convertToHtml(documentPath.toFile()),
+                new Mammoth().convertToHtml(documentPath.toFile()),
                 allOf(
                     hasProperty("value", equalTo("")),
                     hasProperty("warnings", contains(
@@ -129,7 +130,7 @@ public class MammothTests {
     @Test
     public void footnotesAreAppendedToText() throws IOException {
         assertThat(
-            convertToHtml("footnotes.docx", Mammoth.Options.DEFAULT.idPrefix("doc-42-")),
+            convertToHtml("footnotes.docx", mammoth -> mammoth.idPrefix("doc-42-")),
             deepEquals(success(
                 "<p>Ouch" +
                 "<sup><a href=\"#doc-42-footnote-1\" id=\"doc-42-footnote-ref-1\">[1]</a></sup>." +
@@ -141,7 +142,7 @@ public class MammothTests {
     @Test
     public void endNotesAreAppendedToText() throws IOException {
         assertThat(
-            convertToHtml("endnotes.docx", Mammoth.Options.DEFAULT.idPrefix("doc-42-")),
+            convertToHtml("endnotes.docx", mammoth -> mammoth.idPrefix("doc-42-")),
             deepEquals(success(
                 "<p>Ouch" +
                 "<sup><a href=\"#doc-42-endnote-2\" id=\"doc-42-endnote-ref-2\">[1]</a></sup>." +
@@ -153,7 +154,7 @@ public class MammothTests {
     @Test
     public void relationshipsAreReadForEachFileContainingBodyXml() throws IOException {
         assertThat(
-            convertToHtml("footnote-hyperlink.docx", Mammoth.Options.DEFAULT.idPrefix("doc-42-")),
+            convertToHtml("footnote-hyperlink.docx", mammoth -> mammoth.idPrefix("doc-42-")),
             deepEquals(success(
                 "<p><sup><a href=\"#doc-42-footnote-1\" id=\"doc-42-footnote-ref-1\">[1]</a></sup></p>" +
                 "<ol><li id=\"doc-42-footnote-1\"><p> <a href=\"http://www.example.com\">Example</a> <a href=\"#doc-42-footnote-ref-1\">↑</a></p></li></ol>")));
@@ -175,11 +176,11 @@ public class MammothTests {
 
     private Result<String> convertToHtml(String name) throws IOException {
         File file = TestData.file(name);
-        return Mammoth.convertToHtml(file);
+        return new Mammoth().convertToHtml(file);
     }
 
-    private Result<String> convertToHtml(String name, Mammoth.Options options) throws IOException {
+    private Result<String> convertToHtml(String name, Function<Mammoth, Mammoth> configure) throws IOException {
         File file = TestData.file(name);
-        return Mammoth.convertToHtml(file, options);
+        return configure.apply(new Mammoth()).convertToHtml(file);
     }
 }
