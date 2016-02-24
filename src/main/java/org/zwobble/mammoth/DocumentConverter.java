@@ -68,7 +68,7 @@ public class DocumentConverter {
             .map(Html::write);
     }
 
-    public static Result<String> extractRawText(File file) throws IOException {
+    public Result<String> extractRawText(File file) throws IOException {
         return withDocxFile(file, zipFile ->
             readDocument(Optional.of(file.toPath()), zipFile)
                 .map(DocumentConverter::extractRawTextOfChildren));
