@@ -2,8 +2,8 @@ package org.zwobble.mammoth.internal.docx;
 
 import com.google.common.collect.ImmutableList;
 import org.zwobble.mammoth.internal.documents.DocumentElement;
-import org.zwobble.mammoth.results.Result;
-import org.zwobble.mammoth.results.Warning;
+import org.zwobble.mammoth.internal.results.InternalResult;
+import org.zwobble.mammoth.internal.results.Warning;
 
 import java.util.List;
 import java.util.function.BiFunction;
@@ -27,7 +27,7 @@ public class ReadResult {
     }
 
     public static <T> ReadResult map(
-        Result<T> first,
+        InternalResult<T> first,
         ReadResult second,
         BiFunction<T, List<DocumentElement>, DocumentElement> function)
     {
@@ -78,8 +78,8 @@ public class ReadResult {
         return new ReadResult(concat(elements, extra), list(), warnings);
     }
 
-    public Result<List<DocumentElement>> toResult() {
-        return new Result<>(elements, warnings);
+    public InternalResult<List<DocumentElement>> toResult() {
+        return new InternalResult<>(elements, warnings);
     }
 
     private static <T> List<T> concat(List<T> first, List<T> second) {

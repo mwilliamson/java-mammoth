@@ -14,7 +14,7 @@ import org.zwobble.mammoth.internal.docx.ZippedDocxFile;
 import org.zwobble.mammoth.internal.html.Html;
 import org.zwobble.mammoth.internal.styles.DefaultStyles;
 import org.zwobble.mammoth.internal.util.Casts;
-import org.zwobble.mammoth.results.Result;
+import org.zwobble.mammoth.internal.results.InternalResult;
 
 import java.io.File;
 import java.io.IOException;
@@ -60,7 +60,7 @@ public class DocumentConverter {
             convertToHtml(Optional.of(file.toPath()), zipFile));
     }
 
-    private Result<String> convertToHtml(Optional<Path> path, DocxFile zipFile) {
+    private InternalResult<String> convertToHtml(Optional<Path> path, DocxFile zipFile) {
         return readDocument(path, zipFile)
             .flatMap(nodes -> DocumentToHtml.convertToHtml(nodes, options))
             .map(Html::stripEmpty)

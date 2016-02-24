@@ -6,7 +6,7 @@ import org.zwobble.mammoth.internal.DocumentToHtmlOptions;
 import org.zwobble.mammoth.internal.documents.*;
 import org.zwobble.mammoth.internal.html.Html;
 import org.zwobble.mammoth.internal.html.HtmlNode;
-import org.zwobble.mammoth.results.Result;
+import org.zwobble.mammoth.internal.results.InternalResult;
 import org.zwobble.mammoth.internal.styles.HtmlPath;
 import org.zwobble.mammoth.internal.styles.ParagraphMatcher;
 import org.zwobble.mammoth.internal.styles.RunMatcher;
@@ -21,8 +21,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.zwobble.mammoth.internal.documents.VerticalAlignment.SUBSCRIPT;
 import static org.zwobble.mammoth.internal.documents.VerticalAlignment.SUPERSCRIPT;
-import static org.zwobble.mammoth.results.Result.success;
-import static org.zwobble.mammoth.results.Warning.warning;
+import static org.zwobble.mammoth.internal.results.InternalResult.success;
+import static org.zwobble.mammoth.internal.results.Warning.warning;
 import static org.zwobble.mammoth.tests.DeepReflectionMatcher.deepEquals;
 import static org.zwobble.mammoth.tests.documents.DocumentElementMakers.*;
 import static org.zwobble.mammoth.internal.util.MammothLists.list;
@@ -78,7 +78,7 @@ public class DocumentConverterTests {
             convertToHtmlResult(
                 make(a(PARAGRAPH, with(STYLE, Optional.of(new Style("TipsParagraph", Optional.of("Tips Paragraph"))))))),
 
-            deepEquals(new Result<>(
+            deepEquals(new InternalResult<>(
                 list(Html.element("p")),
                 list(warning("Unrecognised paragraph style: Tips Paragraph (Style ID: TipsParagraph)")))));
     }
@@ -105,7 +105,7 @@ public class DocumentConverterTests {
                     with(STYLE, Optional.of(new Style("TipsRun", Optional.of("Tips Run")))),
                     with(CHILDREN, list(new Text("Hello")))))),
 
-            deepEquals(new Result<>(
+            deepEquals(new InternalResult<>(
                 list(Html.text("Hello")),
                 list(warning("Unrecognised run style: Tips Run (Style ID: TipsRun)")))));
     }
@@ -290,7 +290,7 @@ public class DocumentConverterTests {
     private List<HtmlNode> convertToHtml(Document document) {
         DocumentToHtmlOptions options = DocumentToHtmlOptions.DEFAULT
             .idPrefix("doc-42-");
-        Result<List<HtmlNode>> result = DocumentToHtml.convertToHtml(document, options);
+        InternalResult<List<HtmlNode>> result = DocumentToHtml.convertToHtml(document, options);
         assertThat(result.getWarnings(), hasSize(0));
         return result.getValue();
     }
@@ -300,16 +300,16 @@ public class DocumentConverterTests {
     }
 
     private List<HtmlNode> convertToHtml(DocumentElement element, StyleMap styleMap) {
-        Result<List<HtmlNode>> result = convertToHtmlResult(element, styleMap);
+        InternalResult<List<HtmlNode>> result = convertToHtmlResult(element, styleMap);
         assertThat(result.getWarnings(), hasSize(0));
         return result.getValue();
     }
 
-    private Result<List<HtmlNode>> convertToHtmlResult(DocumentElement element) {
+    private InternalResult<List<HtmlNode>> convertToHtmlResult(DocumentElement element) {
         return convertToHtmlResult(element, StyleMap.EMPTY);
     }
 
-    private Result<List<HtmlNode>> convertToHtmlResult(DocumentElement element, StyleMap styleMap) {
+    private InternalResult<List<HtmlNode>> convertToHtmlResult(DocumentElement element, StyleMap styleMap) {
         DocumentToHtmlOptions options = DocumentToHtmlOptions.DEFAULT
             .idPrefix("doc-42-")
             .addStyleMap(styleMap);

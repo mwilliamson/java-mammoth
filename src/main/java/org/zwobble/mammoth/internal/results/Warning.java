@@ -1,4 +1,4 @@
-package org.zwobble.mammoth.results;
+package org.zwobble.mammoth.internal.results;
 
 public class Warning {
     public static Warning warning(String message) {

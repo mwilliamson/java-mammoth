@@ -2,8 +2,8 @@ package org.zwobble.mammoth.internal.docx;
 
 import com.google.common.collect.ImmutableSet;
 import org.zwobble.mammoth.internal.documents.*;
-import org.zwobble.mammoth.results.Result;
-import org.zwobble.mammoth.results.Warning;
+import org.zwobble.mammoth.internal.results.InternalResult;
+import org.zwobble.mammoth.internal.results.Warning;
 import org.zwobble.mammoth.internal.util.InputStreamSupplier;
 import org.zwobble.mammoth.internal.util.MammothOptionals;
 import org.zwobble.mammoth.internal.xml.XmlElement;
@@ -19,7 +19,7 @@ import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.transform;
 import static org.zwobble.mammoth.internal.docx.ReadResult.EMPTY_SUCCESS;
 import static org.zwobble.mammoth.internal.docx.ReadResult.success;
-import static org.zwobble.mammoth.results.Warning.warning;
+import static org.zwobble.mammoth.internal.results.Warning.warning;
 import static org.zwobble.mammoth.internal.util.MammothLists.list;
 import static org.zwobble.mammoth.internal.util.MammothStrings.trimLeft;
 
@@ -169,7 +169,7 @@ public class BodyXmlReader {
         }
     }
 
-    private Result<Optional<Style>> readRunStyle(XmlElementLike properties) {
+    private InternalResult<Optional<Style>> readRunStyle(XmlElementLike properties) {
         return readStyle(properties, "w:rStyle", "Run", styles::findCharacterStyleById);
     }
 
@@ -189,11 +189,11 @@ public class BodyXmlReader {
             (style, children) -> new Paragraph(style, numbering, children)).appendExtra();
     }
 
-    private Result<Optional<Style>> readParagraphStyle(XmlElementLike properties) {
+    private InternalResult<Optional<Style>> readParagraphStyle(XmlElementLike properties) {
         return readStyle(properties, "w:pStyle", "Paragraph", styles::findParagraphStyleById);
     }
 
-    private Result<Optional<Style>> readStyle(
+    private InternalResult<Optional<Style>> readStyle(
         XmlElementLike properties,
         String styleTagName,
         String styleType,
@@ -201,19 +201,19 @@ public class BodyXmlReader {
     {
         return readVal(properties, styleTagName)
             .map(styleId -> findStyleById(styleType, styleId, findStyleById))
-            .orElse(Result.empty());
+            .orElse(InternalResult.empty());
     }
 
-    private Result<Optional<Style>> findStyleById(
+    private InternalResult<Optional<Style>> findStyleById(
         String styleType,
         String styleId,
         Function<String, Optional<Style>> findStyleById)
     {
         Optional<Style> style = findStyleById.apply(styleId);
         if (style.isPresent()) {
-            return Result.success(style);
+            return InternalResult.success(style);
         } else {
-            return new Result<>(
+            return new InternalResult<>(
                 Optional.of(new Style(styleId, Optional.empty())),
                 list(warning(styleType + " style with ID " + styleId + " was referenced but not defined in the document")));
         }

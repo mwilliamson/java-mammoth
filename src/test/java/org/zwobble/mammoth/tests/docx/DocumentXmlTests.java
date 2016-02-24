@@ -6,14 +6,14 @@ import org.zwobble.mammoth.internal.documents.Note;
 import org.zwobble.mammoth.internal.documents.NoteType;
 import org.zwobble.mammoth.internal.documents.Notes;
 import org.zwobble.mammoth.internal.docx.DocumentXmlReader;
-import org.zwobble.mammoth.results.Result;
+import org.zwobble.mammoth.internal.results.InternalResult;
 import org.zwobble.mammoth.internal.xml.XmlElement;
 import org.zwobble.mammoth.internal.xml.XmlNodes;
 
 import static com.natpryce.makeiteasy.MakeItEasy.a;
 import static com.natpryce.makeiteasy.MakeItEasy.make;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.zwobble.mammoth.results.Result.success;
+import static org.zwobble.mammoth.internal.results.InternalResult.success;
 import static org.zwobble.mammoth.tests.DeepReflectionMatcher.deepEquals;
 import static org.zwobble.mammoth.tests.documents.DocumentElementMakers.paragraphWithText;
 import static org.zwobble.mammoth.tests.docx.BodyXmlReaderMakers.bodyReader;
@@ -32,7 +32,7 @@ public class DocumentXmlTests {
                             XmlNodes.text("Hello!")))))))))));
 
         DocumentXmlReader reader = new DocumentXmlReader(make(a(bodyReader)), Notes.EMPTY);
-        Result<Document> document = reader.readElement(documentElement);
+        InternalResult<Document> document = reader.readElement(documentElement);
 
         assertThat(
             document,
@@ -48,7 +48,7 @@ public class DocumentXmlTests {
         DocumentXmlReader reader = new DocumentXmlReader(make(a(bodyReader)), notes);
 
         XmlElement documentElement = element("w:document", list(element("w:body")));
-        Result<Document> document = reader.readElement(documentElement);
+        InternalResult<Document> document = reader.readElement(documentElement);
 
         assertThat(
             document.getValue().getNotes().findNote(NoteType.FOOTNOTE, "4").get(),

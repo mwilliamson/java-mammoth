@@ -1,4 +1,4 @@
-package org.zwobble.mammoth.results;
+package org.zwobble.mammoth.internal.results;
 
 import com.google.common.collect.ImmutableList;
 import org.zwobble.mammoth.internal.documents.Style;
@@ -11,39 +11,39 @@ import java.util.function.Function;
 
 import static org.zwobble.mammoth.internal.util.MammothLists.list;
 
-public class Result<T> {
-    public static <T> Result<List<T>> concat(Iterable<Result<T>> results) {
+public class InternalResult<T> implements org.zwobble.mammoth.Result<T> {
+    public static <T> InternalResult<List<T>> concat(Iterable<InternalResult<T>> results) {
         ImmutableList.Builder<T> elements = ImmutableList.builder();
         ImmutableList.Builder<Warning> warnings = ImmutableList.builder();
-        for (Result<T> result : results) {
+        for (InternalResult<T> result : results) {
             elements.add(result.value);
             warnings.addAll(result.warnings);
         }
-        return new Result<>(elements.build(), warnings.build());
+        return new InternalResult<>(elements.build(), warnings.build());
     }
 
-    public static <T1, T2, R> Result<R> map(
-        Result<T1> first,
-        Result<T2> second,
+    public static <T1, T2, R> InternalResult<R> map(
+        InternalResult<T1> first,
+        InternalResult<T2> second,
         BiFunction<T1, T2, R> function)
     {
-        return new Result<>(
+        return new InternalResult<>(
             function.apply(first.value, second.value),
             MammothLists.concat(first.warnings, second.warnings));
     }
 
-    public static Result<Optional<Style>> empty() {
-        return new Result<>(Optional.empty(), list());
+    public static InternalResult<Optional<Style>> empty() {
+        return new InternalResult<>(Optional.empty(), list());
     }
 
-    public static <T> Result<T> success(T value) {
-        return new Result<>(value, list());
+    public static <T> InternalResult<T> success(T value) {
+        return new InternalResult<>(value, list());
     }
 
     private final T value;
     private final List<Warning> warnings;
 
-    public Result(T value, List<Warning> warnings) {
+    public InternalResult(T value, List<Warning> warnings) {
         this.value = value;
         this.warnings = warnings;
     }
@@ -56,13 +56,13 @@ public class Result<T> {
         return warnings;
     }
 
-    public <R> Result<R> map(Function<T, R> function) {
-        return new Result<>(function.apply(value), warnings);
+    public <R> InternalResult<R> map(Function<T, R> function) {
+        return new InternalResult<>(function.apply(value), warnings);
     }
 
-    public <R> Result<R> flatMap(Function<T, Result<R>> function) {
-        Result<R> intermediateResult = function.apply(value);
-        return new Result<>(
+    public <R> InternalResult<R> flatMap(Function<T, InternalResult<R>> function) {
+        InternalResult<R> intermediateResult = function.apply(value);
+        return new InternalResult<>(
             intermediateResult.value,
             MammothLists.concat(warnings, intermediateResult.warnings));
     }

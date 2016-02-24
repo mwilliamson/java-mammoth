@@ -1,7 +1,7 @@
 package org.zwobble.mammoth.internal.docx;
 
 import org.zwobble.mammoth.internal.documents.NoteType;
-import org.zwobble.mammoth.results.Result;
+import org.zwobble.mammoth.internal.results.InternalResult;
 import org.zwobble.mammoth.internal.documents.Note;
 import org.zwobble.mammoth.internal.xml.XmlElement;
 
@@ -29,9 +29,9 @@ public class NotesXmlReader {
         this.noteType = noteType;
     }
 
-    public Result<List<Note>> readElement(XmlElement element) {
+    public InternalResult<List<Note>> readElement(XmlElement element) {
         Iterable<XmlElement> elements = filter(element.findChildren("w:" + tagName), this::isNoteElement);
-        return Result.concat(transform(elements, this::readNoteElement));
+        return InternalResult.concat(transform(elements, this::readNoteElement));
     }
 
     private boolean isNoteElement(XmlElement element) {
@@ -44,7 +44,7 @@ public class NotesXmlReader {
         return type.equals("continuationSeparator") || type.equals("separator");
     }
 
-    private Result<Note> readNoteElement(XmlElement element) {
+    private InternalResult<Note> readNoteElement(XmlElement element) {
         return bodyReader.readElements(element.children())
             .toResult()
             .map(children -> new Note(

@@ -2,7 +2,7 @@ package org.zwobble.mammoth.tests;
 
 import org.junit.Test;
 import org.zwobble.mammoth.DocumentConverter;
-import org.zwobble.mammoth.results.Result;
+import org.zwobble.mammoth.Result;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,7 +12,7 @@ import java.util.function.Function;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
-import static org.zwobble.mammoth.results.Result.success;
+import static org.zwobble.mammoth.internal.results.InternalResult.success;
 import static org.zwobble.mammoth.tests.DeepReflectionMatcher.deepEquals;
 
 public class MammothTests {

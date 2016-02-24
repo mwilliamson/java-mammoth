@@ -2,7 +2,7 @@ package org.zwobble.mammoth.internal.docx;
 
 import org.zwobble.mammoth.internal.documents.Document;
 import org.zwobble.mammoth.internal.documents.Notes;
-import org.zwobble.mammoth.results.Result;
+import org.zwobble.mammoth.internal.results.InternalResult;
 import org.zwobble.mammoth.internal.util.MammothLists;
 import org.zwobble.mammoth.internal.xml.XmlElement;
 
@@ -21,7 +21,7 @@ public class DocumentReader {
         BodyXmlReader forName(String name);
     }
 
-    public static Result<Document> readDocument(Optional<Path> path, DocxFile zipFile) {
+    public static InternalResult<Document> readDocument(Optional<Path> path, DocxFile zipFile) {
         Styles styles = readStyles(zipFile);
         Numbering numbering = readNumbering(zipFile);
         ContentTypes contentTypes = readContentTypes(zipFile);
@@ -63,14 +63,14 @@ public class DocumentReader {
         }
     }
 
-    private static Result<Notes> readNotes(DocxFile file, BodyReaders bodyReaders) {
-        return Result.map(
+    private static InternalResult<Notes> readNotes(DocxFile file, BodyReaders bodyReaders) {
+        return InternalResult.map(
             tryParseOfficeXml(file, "word/footnotes.xml")
                 .map(NotesXmlReader.footnote(bodyReaders.forName("footnotes"))::readElement)
-                .orElse(Result.success(list())),
+                .orElse(InternalResult.success(list())),
             tryParseOfficeXml(file, "word/endnotes.xml")
                 .map(NotesXmlReader.endnote(bodyReaders.forName("endnotes"))::readElement)
-                .orElse(Result.success(list())),
+                .orElse(InternalResult.success(list())),
             MammothLists::concat).map(Notes::new);
     }
 

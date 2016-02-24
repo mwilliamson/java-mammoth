@@ -2,7 +2,7 @@ package org.zwobble.mammoth.tests.docx;
 
 import org.junit.Test;
 import org.zwobble.mammoth.internal.documents.NoteType;
-import org.zwobble.mammoth.results.Result;
+import org.zwobble.mammoth.internal.results.InternalResult;
 import org.zwobble.mammoth.internal.documents.Note;
 import org.zwobble.mammoth.internal.docx.BodyXmlReader;
 import org.zwobble.mammoth.internal.docx.NotesXmlReader;
@@ -13,7 +13,7 @@ import java.util.List;
 import static com.natpryce.makeiteasy.MakeItEasy.a;
 import static com.natpryce.makeiteasy.MakeItEasy.make;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.zwobble.mammoth.results.Result.success;
+import static org.zwobble.mammoth.internal.results.InternalResult.success;
 import static org.zwobble.mammoth.tests.DeepReflectionMatcher.deepEquals;
 import static org.zwobble.mammoth.tests.documents.DocumentElementMakers.PARAGRAPH;
 import static org.zwobble.mammoth.internal.util.MammothLists.list;
@@ -30,7 +30,7 @@ public class NotesXmlReaderTests {
                 element("w:p")))));
 
         NotesXmlReader reader = NotesXmlReader.footnote(bodyReader);
-        Result<List<Note>> notes = reader.readElement(element);
+        InternalResult<List<Note>> notes = reader.readElement(element);
 
         assertThat(
             notes,
@@ -53,7 +53,7 @@ public class NotesXmlReaderTests {
                 element("w:p")))));
 
         NotesXmlReader reader = NotesXmlReader.footnote(bodyReader);
-        Result<List<Note>> notes = reader.readElement(element);
+        InternalResult<List<Note>> notes = reader.readElement(element);
 
         assertThat(notes, deepEquals(success(list())));
     }

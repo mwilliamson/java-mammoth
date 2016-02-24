@@ -7,8 +7,8 @@ import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.zwobble.mammoth.internal.documents.*;
 import org.zwobble.mammoth.internal.docx.*;
-import org.zwobble.mammoth.results.Result;
-import org.zwobble.mammoth.results.Warning;
+import org.zwobble.mammoth.internal.results.InternalResult;
+import org.zwobble.mammoth.internal.results.Warning;
 import org.zwobble.mammoth.tests.DeepReflectionMatcher;
 import org.zwobble.mammoth.internal.xml.XmlElement;
 import org.zwobble.mammoth.internal.xml.XmlNode;
@@ -29,7 +29,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.zwobble.mammoth.internal.documents.NoteReference.endnoteReference;
 import static org.zwobble.mammoth.internal.documents.NoteReference.footnoteReference;
-import static org.zwobble.mammoth.results.Warning.warning;
+import static org.zwobble.mammoth.internal.results.Warning.warning;
 import static org.zwobble.mammoth.tests.DeepReflectionMatcher.deepEquals;
 import static org.zwobble.mammoth.tests.documents.DocumentElementMakers.*;
 import static org.zwobble.mammoth.tests.docx.BodyXmlReaderMakers.*;
@@ -468,7 +468,7 @@ public class BodyXmlTests {
         DocxFile file = InMemoryDocxFile.fromStrings(map("word/media/hat.emf", "Not an image at all!"));
         ContentTypes contentTypes = new ContentTypes(map("emf", "image/x-emf"), map());
 
-        Result<?> result = read(
+        InternalResult<?> result = read(
             a(bodyReader,
                 with(RELATIONSHIPS, relationships),
                 with(DOCX_FILE, file),
@@ -595,18 +595,18 @@ public class BodyXmlTests {
     }
 
     private static DocumentElement readSuccess(Maker<BodyXmlReader> reader, XmlElement element) {
-        Result<DocumentElement> result = read(reader, element);
+        InternalResult<DocumentElement> result = read(reader, element);
         assertThat(result.getWarnings(), deepEquals(list()));
         return result.getValue();
     }
 
-    private static Result<DocumentElement> read(Maker<BodyXmlReader> reader, XmlElement element) {
-        Result<List<DocumentElement>> result = readAll(reader, element);
+    private static InternalResult<DocumentElement> read(Maker<BodyXmlReader> reader, XmlElement element) {
+        InternalResult<List<DocumentElement>> result = readAll(reader, element);
         assertThat(result.getValue(), Matchers.hasSize(1));
         return result.map(elements -> elements.get(0));
     }
 
-    private static Result<List<DocumentElement>> readAll(Maker<BodyXmlReader> reader, XmlElement element) {
+    private static InternalResult<List<DocumentElement>> readAll(Maker<BodyXmlReader> reader, XmlElement element) {
         return reader.make().readElement(element).toResult();
     }
 
@@ -654,7 +654,7 @@ public class BodyXmlTests {
         return hasProperty("numbering", deepEquals(expected));
     }
 
-    private <T> Matcher<Result<? extends T>> isResult(Matcher<T> valueMatcher, List<Warning> warnings) {
+    private <T> Matcher<InternalResult<? extends T>> isResult(Matcher<T> valueMatcher, List<Warning> warnings) {
         return Matchers.allOf(
             hasProperty("value", valueMatcher),
             hasProperty("warnings", deepEquals(warnings)));

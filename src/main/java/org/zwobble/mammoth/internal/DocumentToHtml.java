@@ -7,8 +7,8 @@ import com.google.common.io.ByteStreams;
 import org.zwobble.mammoth.internal.documents.*;
 import org.zwobble.mammoth.internal.html.Html;
 import org.zwobble.mammoth.internal.html.HtmlNode;
-import org.zwobble.mammoth.results.Result;
-import org.zwobble.mammoth.results.Warning;
+import org.zwobble.mammoth.internal.results.InternalResult;
+import org.zwobble.mammoth.internal.results.Warning;
 import org.zwobble.mammoth.internal.styles.HtmlPath;
 import org.zwobble.mammoth.internal.styles.StyleMap;
 import org.zwobble.mammoth.internal.util.MammothLists;
@@ -19,14 +19,14 @@ import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 
-import static org.zwobble.mammoth.results.Warning.warning;
+import static org.zwobble.mammoth.internal.results.Warning.warning;
 import static org.zwobble.mammoth.internal.util.MammothLists.*;
 import static org.zwobble.mammoth.internal.util.MammothMaps.map;
 
 public class DocumentToHtml {
-    public static Result<List<HtmlNode>> convertToHtml(Document document, DocumentToHtmlOptions options) {
+    public static InternalResult<List<HtmlNode>> convertToHtml(Document document, DocumentToHtmlOptions options) {
         DocumentToHtml documentConverter = new DocumentToHtml(options);
-        return new Result<>(
+        return new InternalResult<>(
             documentConverter.convertToHtml(document),
             documentConverter.warnings.build());
     }
@@ -38,9 +38,9 @@ public class DocumentToHtml {
             reference -> document.getNotes().findNote(reference.getNoteType(), reference.getNoteId()).get()));
     }
 
-    public static Result<List<HtmlNode>> convertToHtml(DocumentElement element, DocumentToHtmlOptions options) {
+    public static InternalResult<List<HtmlNode>> convertToHtml(DocumentElement element, DocumentToHtmlOptions options) {
         DocumentToHtml documentConverter = new DocumentToHtml(options);
-        return new Result<>(
+        return new InternalResult<>(
             documentConverter.convertToHtml(element),
             documentConverter.warnings.build());
     }
