@@ -10,10 +10,10 @@ import static java.util.Arrays.asList;
 
 public class StyleMapParser {
     public static StyleMap parse(String input) {
-        return parse(asList(input.split("\\r?\\n")));
+        return parseStyleMappings(asList(input.split("\\r?\\n")));
     }
 
-    public static StyleMap parse(List<String> lines) {
+    public static StyleMap parseStyleMappings(List<String> lines) {
         Var<StyleMapBuilder> styleMap = new Var<>(StyleMap.builder());
         for (String line : lines) {
             handleLine(styleMap, line);

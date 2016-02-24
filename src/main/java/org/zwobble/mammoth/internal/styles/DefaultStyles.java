@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableList;
 import org.zwobble.mammoth.internal.styles.parsing.StyleMapParser;
 
 public class DefaultStyles {
-    public static final StyleMap DEFAULT_STYLE_MAP = StyleMapParser.parse(ImmutableList.of(
+    public static final StyleMap DEFAULT_STYLE_MAP = StyleMapParser.parseStyleMappings(ImmutableList.of(
         "p.Heading1 => h1:fresh",
         "p.Heading2 => h2:fresh",
         "p.Heading3 => h3:fresh",
