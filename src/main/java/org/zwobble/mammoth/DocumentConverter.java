@@ -12,9 +12,8 @@ import org.zwobble.mammoth.internal.docx.DocxFile;
 import org.zwobble.mammoth.internal.docx.InMemoryDocxFile;
 import org.zwobble.mammoth.internal.docx.ZippedDocxFile;
 import org.zwobble.mammoth.internal.html.Html;
-import org.zwobble.mammoth.internal.styles.DefaultStyles;
-import org.zwobble.mammoth.internal.util.Casts;
 import org.zwobble.mammoth.internal.results.InternalResult;
+import org.zwobble.mammoth.internal.util.Casts;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,7 +30,7 @@ public class DocumentConverter {
     private final DocumentToHtmlOptions options;
 
     public DocumentConverter() {
-        this(DocumentToHtmlOptions.DEFAULT.addStyleMap(DefaultStyles.DEFAULT_STYLE_MAP));
+        this(DocumentToHtmlOptions.DEFAULT);
     }
 
     private DocumentConverter(DocumentToHtmlOptions options) {
@@ -48,6 +47,10 @@ public class DocumentConverter {
 
     public DocumentConverter addStyleMap(String styleMap) {
         return new DocumentConverter(options.addStyleMap(styleMap));
+    }
+
+    public DocumentConverter disableDefaultStyleMap() {
+        return new DocumentConverter(options.disableDefaultStyleMap());
     }
 
     public Result<String> convertToHtml(InputStream stream) throws IOException {

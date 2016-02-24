@@ -23,12 +23,12 @@ import java.util.function.Function;
 import static com.natpryce.makeiteasy.MakeItEasy.*;
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasProperty;
+import static org.hamcrest.Matchers.*;
 import static org.zwobble.mammoth.internal.documents.NoteReference.endnoteReference;
 import static org.zwobble.mammoth.internal.documents.NoteReference.footnoteReference;
 import static org.zwobble.mammoth.tests.DeepReflectionMatcher.deepEquals;
+import static org.zwobble.mammoth.tests.ResultMatchers.hasWarnings;
+import static org.zwobble.mammoth.tests.ResultMatchers.isResult;
 import static org.zwobble.mammoth.tests.documents.DocumentElementMakers.*;
 import static org.zwobble.mammoth.tests.docx.BodyXmlReaderMakers.*;
 import static org.zwobble.mammoth.tests.docx.BodyXmlReaderMakers.NUMBERING;
@@ -475,7 +475,7 @@ public class BodyXmlTests {
 
         assertThat(
             result,
-            hasProperty("warnings", deepEquals(list("Image of type image/x-emf is unlikely to display in web browsers"))));
+            hasWarnings(list("Image of type image/x-emf is unlikely to display in web browsers")));
     }
 
     @Test
@@ -594,7 +594,7 @@ public class BodyXmlTests {
 
     private static DocumentElement readSuccess(Maker<BodyXmlReader> reader, XmlElement element) {
         InternalResult<DocumentElement> result = read(reader, element);
-        assertThat(result.getWarnings(), deepEquals(list()));
+        assertThat(result.getWarnings(), emptyIterable());
         return result.getValue();
     }
 
@@ -650,12 +650,6 @@ public class BodyXmlTests {
 
     private Matcher<? super DocumentElement> hasNumbering(Optional<NumberingLevel> expected) {
         return hasProperty("numbering", deepEquals(expected));
-    }
-
-    private <T> Matcher<InternalResult<? extends T>> isResult(Matcher<T> valueMatcher, List<String> warnings) {
-        return Matchers.allOf(
-            hasProperty("value", valueMatcher),
-            hasProperty("warnings", deepEquals(warnings)));
     }
 
     private Run run(DocumentElement... children) {

@@ -4,17 +4,16 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
-import org.hamcrest.Description;
-import org.hamcrest.Matcher;
-import org.hamcrest.Matchers;
-import org.hamcrest.TypeSafeDiagnosingMatcher;
+import org.hamcrest.*;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
+import static com.google.common.collect.Iterables.any;
 import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.transform;
 import static java.util.Arrays.asList;
@@ -35,9 +34,18 @@ public class DeepReflectionMatcher<T> extends TypeSafeDiagnosingMatcher<T> {
         return matchesSafely("", expected, item, mismatchDescription);
     }
 
+    private static boolean deepEquals(Object expected, Object actual) {
+        Description description = new Description.NullDescription();
+        return matchesSafely("", expected, actual, description);
+    }
+
     private static <T> boolean matchesSafely(String path, T expected, T actual, Description mismatchDescription) {
         if (expected instanceof List && actual instanceof List) {
             return matchesList(path, (List)expected, (List)actual, mismatchDescription);
+        }
+
+        if (expected instanceof Set && actual instanceof Set) {
+            return matchesSet(path, (Set)expected, (Set)actual, mismatchDescription);
         }
 
         if (expected instanceof Map && actual instanceof Map) {
@@ -84,6 +92,32 @@ public class DeepReflectionMatcher<T> extends TypeSafeDiagnosingMatcher<T> {
             if (!matchesSafely(path + "[" + index + "]", expected.get(index), actual.get(index), mismatchDescription)) {
                 return false;
             }
+        }
+
+        return true;
+    }
+
+    private static <T> boolean matchesSet(String path, Set<?> expected, Set<?> actual, Description mismatchDescription) {
+        List<?> missing = ImmutableList.copyOf(filter(
+            expected,
+            expectedElement -> !any(actual, actualElement -> deepEquals(expectedElement, actualElement))));
+
+        if (!missing.isEmpty()) {
+            appendPath(mismatchDescription, path);
+            mismatchDescription.appendText("missing elements:" +
+                indentedList(transform(missing, DeepReflectionMatcher::describeValue)));
+            return false;
+        }
+
+        List<?> extra = ImmutableList.copyOf(filter(
+            actual,
+            actualElement -> !any(expected, expectedElement -> deepEquals(expectedElement, actualElement))));
+
+        if (!extra.isEmpty()) {
+            appendPath(mismatchDescription, path);
+            mismatchDescription.appendText("extra elements:" +
+                indentedList(transform(extra, DeepReflectionMatcher::describeValue)));
+            return false;
         }
 
         return true;
@@ -172,6 +206,9 @@ public class DeepReflectionMatcher<T> extends TypeSafeDiagnosingMatcher<T> {
         } else if (value instanceof List) {
             List<?> list = (List)value;
             return "[" + indentedList(transform(list, DeepReflectionMatcher::describeValue)) + "]";
+        } else if (value instanceof Set) {
+            Set<?> list = (Set)value;
+            return "{" + indentedList(transform(list, DeepReflectionMatcher::describeValue)) + "}";
         } else if (value instanceof Map) {
             Map<?, ?> map = (Map)value;
             String entries = indentedList(

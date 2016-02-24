@@ -13,7 +13,9 @@ import java.util.function.Function;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 import static org.zwobble.mammoth.internal.results.InternalResult.success;
+import static org.zwobble.mammoth.internal.util.MammothLists.list;
 import static org.zwobble.mammoth.tests.DeepReflectionMatcher.deepEquals;
+import static org.zwobble.mammoth.tests.ResultMatchers.isResult;
 
 public class MammothTests {
     @Test
@@ -186,6 +188,15 @@ public class MammothTests {
         assertThat(
             convertToHtml("underline.docx", mammoth -> mammoth.addStyleMap("u => em").addStyleMap("s => del")),
             deepEquals(success("<p><strong>The <em>Sunset</em> Tree</strong></p>")));
+    }
+
+    @Test
+    public void canDisableDefaultStyleMap() throws IOException {
+        assertThat(
+            convertToHtml("simple-list.docx", mammoth -> mammoth.disableDefaultStyleMap()),
+            isResult(
+                equalTo("<p>Apple</p><p>Banana</p>"),
+                list("Unrecognised paragraph style: List Paragraph (Style ID: ListParagraph)")));
     }
 
     @Test

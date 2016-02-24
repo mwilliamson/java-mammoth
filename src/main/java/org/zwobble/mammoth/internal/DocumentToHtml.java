@@ -2,6 +2,7 @@ package org.zwobble.mammoth.internal;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.io.ByteStreams;
 import org.zwobble.mammoth.internal.documents.*;
@@ -47,7 +48,7 @@ public class DocumentToHtml {
     private final boolean preserveEmptyParagraphs;
     private final StyleMap styleMap;
     private final List<NoteReference> noteReferences = new ArrayList<>();
-    private final ImmutableList.Builder<String> warnings = ImmutableList.builder();
+    private final ImmutableSet.Builder<String> warnings = ImmutableSet.builder();
 
     private DocumentToHtml(DocumentToHtmlOptions options) {
         this.idPrefix = options.idPrefix();

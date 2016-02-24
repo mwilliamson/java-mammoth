@@ -24,6 +24,7 @@ import static org.zwobble.mammoth.internal.documents.VerticalAlignment.SUPERSCRI
 import static org.zwobble.mammoth.internal.results.InternalResult.success;
 import static org.zwobble.mammoth.internal.util.MammothLists.list;
 import static org.zwobble.mammoth.internal.util.MammothMaps.map;
+import static org.zwobble.mammoth.internal.util.MammothSets.set;
 import static org.zwobble.mammoth.tests.DeepReflectionMatcher.deepEquals;
 import static org.zwobble.mammoth.tests.documents.DocumentElementMakers.*;
 
@@ -79,7 +80,7 @@ public class DocumentConverterTests {
 
             deepEquals(new InternalResult<>(
                 list(Html.element("p")),
-                list("Unrecognised paragraph style: Tips Paragraph (Style ID: TipsParagraph)"))));
+                set("Unrecognised paragraph style: Tips Paragraph (Style ID: TipsParagraph)"))));
     }
 
     @Test
@@ -106,7 +107,7 @@ public class DocumentConverterTests {
 
             deepEquals(new InternalResult<>(
                 list(Html.text("Hello")),
-                list("Unrecognised run style: Tips Run (Style ID: TipsRun)"))));
+                set("Unrecognised run style: Tips Run (Style ID: TipsRun)"))));
     }
 
     @Test

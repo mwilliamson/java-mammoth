@@ -1,14 +1,18 @@
 package org.zwobble.mammoth.internal.docx;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 import org.zwobble.mammoth.internal.documents.DocumentElement;
 import org.zwobble.mammoth.internal.results.InternalResult;
 
 import java.util.List;
+import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import static org.zwobble.mammoth.internal.util.MammothLists.list;
+import static org.zwobble.mammoth.internal.util.MammothSets.set;
 
 public class ReadResult {
     public static final ReadResult EMPTY_SUCCESS = success(list());
@@ -16,7 +20,7 @@ public class ReadResult {
     public static ReadResult concat(Iterable<ReadResult> results) {
         ImmutableList.Builder<DocumentElement> elements = ImmutableList.builder();
         ImmutableList.Builder<DocumentElement> extra = ImmutableList.builder();
-        ImmutableList.Builder<String> warnings = ImmutableList.builder();
+        ImmutableSet.Builder<String> warnings = ImmutableSet.builder();
         for (ReadResult result : results) {
             elements.addAll(result.elements);
             extra.addAll(result.extra);
@@ -33,7 +37,7 @@ public class ReadResult {
         return new ReadResult(
             list(function.apply(first.getValue(), second.elements)),
             second.extra,
-            concat(first.getWarnings(), second.warnings));
+            Sets.union(first.getWarnings(), second.warnings).immutableCopy());
     }
 
     public static ReadResult success(DocumentElement element) {
@@ -41,22 +45,22 @@ public class ReadResult {
     }
 
     public static ReadResult success(List<DocumentElement> elements) {
-        return new ReadResult(elements, list(), list());
+        return new ReadResult(elements, list(), set());
     }
 
     public static ReadResult emptyWithWarning(String warning) {
-        return new ReadResult(list(), list(), list(warning));
+        return new ReadResult(list(), list(), set(warning));
     }
 
     public static ReadResult withWarning(DocumentElement element, String warning) {
-        return new ReadResult(list(element), list(), list(warning));
+        return new ReadResult(list(element), list(), set(warning));
     }
 
     private final List<DocumentElement> elements;
     private final List<DocumentElement> extra;
-    private final List<String> warnings;
+    private final Set<String> warnings;
 
-    public ReadResult(List<DocumentElement> elements, List<DocumentElement> extra, List<String> warnings) {
+    public ReadResult(List<DocumentElement> elements, List<DocumentElement> extra, Set<String> warnings) {
         this.elements = elements;
         this.extra = extra;
         this.warnings = warnings;

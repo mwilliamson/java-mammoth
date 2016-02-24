@@ -1,8 +1,8 @@
 package org.zwobble.mammoth;
 
-import java.util.List;
+import java.util.Set;
 
 public interface Result<T> {
     T getValue();
-    List<String> getWarnings();
+    Set<String> getWarnings();
 }
