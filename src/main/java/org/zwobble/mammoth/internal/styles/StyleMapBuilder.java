@@ -52,6 +52,6 @@ public class StyleMapBuilder {
     }
 
     public StyleMap build() {
-        return new StyleMap(bold, underline, strikethrough, paragraphStyles.build(), runStyles.build());
+        return new StyleMap(bold, italic, underline, strikethrough, paragraphStyles.build(), runStyles.build());
     }
 }

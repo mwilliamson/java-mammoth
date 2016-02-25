@@ -132,6 +132,15 @@ public class DocumentToHtmlTests {
     }
 
     @Test
+    public void italicRunsCanBeMappedUsingStyleMapping() {
+        assertThat(
+            convertToHtml(
+                make(a(RUN, with(ITALIC, true), with(CHILDREN, list(new Text("Hello"))))),
+                StyleMap.builder().italic(HtmlPath.element("strong")).build()),
+            deepEquals(list(Html.element("strong", list(Html.text("Hello"))))));
+    }
+
+    @Test
     public void underliningIsIgnoredByDefault() {
         assertThat(
             convertToHtml(make(a(RUN, with(UNDERLINE, true), with(CHILDREN, list(new Text("Hello")))))),

@@ -125,7 +125,7 @@ public class DocumentToHtml {
                     nodes = list(Html.collapsibleElement("sup", nodes));
                 }
                 if (run.isItalic()) {
-                    nodes = list(Html.collapsibleElement("em", nodes));
+                    nodes = styleMap.getItalic().orElse(HtmlPath.collapsibleElement("em")).wrap(nodes);
                 }
                 if (run.isBold()) {
                     nodes = styleMap.getBold().orElse(HtmlPath.collapsibleElement("strong")).wrap(nodes);
