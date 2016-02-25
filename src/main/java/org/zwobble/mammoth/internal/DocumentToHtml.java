@@ -128,7 +128,7 @@ public class DocumentToHtml {
                     nodes = list(Html.collapsibleElement("em", nodes));
                 }
                 if (run.isBold()) {
-                    nodes = list(Html.collapsibleElement("strong", nodes));
+                    nodes = styleMap.getBold().orElse(HtmlPath.collapsibleElement("strong")).wrap(nodes);
                 }
                 HtmlPath mapping = styleMap.getRunHtmlPath(run)
                     .orElseGet(() -> {

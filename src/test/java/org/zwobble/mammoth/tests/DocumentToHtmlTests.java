@@ -109,10 +109,19 @@ public class DocumentToHtmlTests {
     }
 
     @Test
-    public void boldRunsAreWrappedInStrongTags() {
+    public void boldRunsAreWrappedInStrongTagsByDefault() {
         assertThat(
             convertToHtml(make(a(RUN, with(BOLD, true), with(CHILDREN, list(new Text("Hello")))))),
             deepEquals(list(Html.collapsibleElement("strong", list(Html.text("Hello"))))));
+    }
+
+    @Test
+    public void boldRunsCanBeMappedUsingStyleMapping() {
+        assertThat(
+            convertToHtml(
+                make(a(RUN, with(BOLD, true), with(CHILDREN, list(new Text("Hello"))))),
+                StyleMap.builder().bold(HtmlPath.element("em")).build()),
+            deepEquals(list(Html.element("em", list(Html.text("Hello"))))));
     }
 
     @Test

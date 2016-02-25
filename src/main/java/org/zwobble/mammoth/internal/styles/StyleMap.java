@@ -16,17 +16,20 @@ public class StyleMap {
 
     public static final StyleMap EMPTY = new StyleMapBuilder().build();
 
+    private final Optional<HtmlPath> bold;
     private final Optional<HtmlPath> underline;
     private final Optional<HtmlPath> strikethrough;
     private final List<StyleMapping<Paragraph>> paragraphStyles;
     private final List<StyleMapping<Run>> runStyles;
 
     public StyleMap(
+        Optional<HtmlPath> bold,
         Optional<HtmlPath> underline,
         Optional<HtmlPath> strikethrough,
         List<StyleMapping<Paragraph>> paragraphStyles,
         List<StyleMapping<Run>> runStyles)
     {
+        this.bold = bold;
         this.underline = underline;
         this.strikethrough = strikethrough;
         this.paragraphStyles = paragraphStyles;
@@ -36,10 +39,15 @@ public class StyleMap {
     public StyleMap update(StyleMap styleMap) {
         // TODO: add appropriate tests
         return new StyleMap(
+            MammothOptionals.first(styleMap.bold, bold),
             MammothOptionals.first(styleMap.underline, underline),
             MammothOptionals.first(styleMap.strikethrough, strikethrough),
             MammothLists.concat(styleMap.paragraphStyles, paragraphStyles),
             MammothLists.concat(styleMap.runStyles, runStyles));
+    }
+
+    public Optional<HtmlPath> getBold() {
+        return bold;
     }
 
     public Optional<HtmlPath> getUnderline() {
