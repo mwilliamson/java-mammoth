@@ -9,12 +9,19 @@ import java.util.Optional;
 public class StyleMapBuilder {
     private Optional<HtmlPath> underline;
     private Optional<HtmlPath> strikethrough;
+    private Optional<HtmlPath> bold;
     private final ImmutableList.Builder<StyleMapping<Paragraph>> paragraphStyles = ImmutableList.builder();
     private final ImmutableList.Builder<StyleMapping<Run>> runStyles = ImmutableList.builder();
 
     public StyleMapBuilder() {
+        this.bold = Optional.empty();
         this.underline = Optional.empty();
         this.strikethrough = Optional.empty();
+    }
+
+    public StyleMapBuilder bold(HtmlPath path) {
+        this.bold = Optional.of(path);
+        return this;
     }
 
     public StyleMapBuilder underline(HtmlPath path) {

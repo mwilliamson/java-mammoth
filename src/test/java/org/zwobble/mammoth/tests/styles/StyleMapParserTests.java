@@ -30,6 +30,12 @@ public class StyleMapParserTests {
     }
 
     @Test
+    public void canMapBold() {
+        StyleMap styleMap = StyleMapParser.parse("b => em");
+        assertThat(styleMap, deepEquals(StyleMap.builder().bold(HtmlPath.collapsibleElement("em")).build()));
+    }
+
+    @Test
     public void canMapUnderline() {
         StyleMap styleMap = StyleMapParser.parse("u => em");
         assertThat(styleMap, deepEquals(StyleMap.builder().underline(HtmlPath.collapsibleElement("em")).build()));
