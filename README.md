@@ -42,10 +42,10 @@ The following features are currently supported:
 ## Other supported platforms
 
 * [JavaScript](https://github.com/mwilliamson/mammoth.js), both the browser and node.js.
-  [Available on npm](https://www.npmjs.com/package/mammoth).
+  Available [on npm](https://www.npmjs.com/package/mammoth).
 
 * [Python](https://github.com/mwilliamson/python-mammoth).
-  [Available on PyPI](https://pypi.python.org/pypi/mammoth).
+  Available [on PyPI](https://pypi.python.org/pypi/mammoth).
 
 * [WordPress](https://wordpress.org/plugins/mammoth-docx-converter/).
 
