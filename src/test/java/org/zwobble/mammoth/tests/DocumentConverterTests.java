@@ -29,8 +29,6 @@ import static org.zwobble.mammoth.tests.DeepReflectionMatcher.deepEquals;
 import static org.zwobble.mammoth.tests.documents.DocumentElementMakers.*;
 
 public class DocumentConverterTests {
-    // TODO: styles (paragraph, run)
-
     @Test
     public void plainParagraphIsConvertedToPlainParagraph() {
         assertThat(
