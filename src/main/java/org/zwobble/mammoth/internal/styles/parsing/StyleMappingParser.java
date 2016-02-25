@@ -55,7 +55,7 @@ public class StyleMappingParser extends BaseParser<StyleMapBuilder> {
                     }
                 }),
             Sequence(
-                "s",
+                "strike",
                 new Action() {
                     @Override
                     public boolean run(Context context) {
