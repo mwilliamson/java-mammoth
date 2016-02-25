@@ -10,6 +10,7 @@ public class StyleMapBuilder {
     private Optional<HtmlPath> underline;
     private Optional<HtmlPath> strikethrough;
     private Optional<HtmlPath> bold;
+    private Optional<HtmlPath> italic;
     private final ImmutableList.Builder<StyleMapping<Paragraph>> paragraphStyles = ImmutableList.builder();
     private final ImmutableList.Builder<StyleMapping<Run>> runStyles = ImmutableList.builder();
 
@@ -17,10 +18,16 @@ public class StyleMapBuilder {
         this.bold = Optional.empty();
         this.underline = Optional.empty();
         this.strikethrough = Optional.empty();
+        this.italic = Optional.empty();
     }
 
     public StyleMapBuilder bold(HtmlPath path) {
         this.bold = Optional.of(path);
+        return this;
+    }
+
+    public StyleMapBuilder italic(HtmlPath path) {
+        this.italic = Optional.of(path);
         return this;
     }
 

@@ -55,6 +55,15 @@ public class StyleMappingParser extends BaseParser<StyleMapBuilder> {
                     }
                 }),
             Sequence(
+                "i",
+                new Action() {
+                    @Override
+                    public boolean run(Context context) {
+                        updateBuilder.set(StyleMapBuilder::italic);
+                        return true;
+                    }
+                }),
+            Sequence(
                 "u",
                 new Action() {
                     @Override
