@@ -6,7 +6,7 @@ import static org.zwobble.mammoth.internal.util.MammothLists.orderedBy;
 
 public class HtmlWriter {
     public static void write(HtmlNode node, StringBuilder builder) {
-        node.visit(new HtmlNode.Visitor() {
+        node.accept(new HtmlNode.Visitor() {
             @Override
             public void visit(HtmlElement element) {
                 builder.append("<").append(element.getTagName());

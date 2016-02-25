@@ -1,8 +1,7 @@
 package org.zwobble.mammoth.internal.html;
 
 public interface HtmlNode {
-    // TODO: rename visit to accept
-    void visit(Visitor visitor);
+    void accept(Visitor visitor);
     <T> T accept(Mapper<T> visitor);
 
     interface Visitor {
