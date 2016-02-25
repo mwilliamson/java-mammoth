@@ -98,7 +98,7 @@ which can be useful if style maps are stored in text files:
 ```java
 String styleMap =
     "p[style-name='Section Title'] => h1:fresh\n" +
-    "p[style-name='Subsection Title'] => h2:fresh"
+    "p[style-name='Subsection Title'] => h2:fresh";
 DocumentConverter converter = new DocumentConverter()
     .addStyleMap(styleMap);
 ```
