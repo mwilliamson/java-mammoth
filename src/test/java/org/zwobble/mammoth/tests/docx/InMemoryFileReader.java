@@ -7,7 +7,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
-import java.util.Optional;
+
+import static org.zwobble.mammoth.internal.util.MammothMaps.lookup;
 
 public class InMemoryFileReader implements FileReader {
     private final Map<String, String> entries;
@@ -18,7 +19,7 @@ public class InMemoryFileReader implements FileReader {
 
     @Override
     public InputStream getInputStream(String name) throws IOException {
-        String value = Optional.ofNullable(entries.get(name)).get();
+        String value = lookup(entries, name).get();
         return new ByteArrayInputStream(value.getBytes(StandardCharsets.UTF_8));
     }
 }

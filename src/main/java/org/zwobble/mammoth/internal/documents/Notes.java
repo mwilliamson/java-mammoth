@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import static org.zwobble.mammoth.internal.util.MammothLists.list;
+import static org.zwobble.mammoth.internal.util.MammothMaps.lookup;
 
 public class Notes {
     public final static Notes EMPTY = new Notes(list());
@@ -21,7 +22,7 @@ public class Notes {
     }
 
     public Optional<Note> findNote(NoteType noteType, String noteId) {
-        return Optional.ofNullable(notes.get(noteType))
-            .flatMap(notesOfType -> Optional.ofNullable(notesOfType.get(noteId)));
+        return lookup(notes, noteType)
+            .flatMap(notesOfType -> lookup(notesOfType, noteId));
     }
 }

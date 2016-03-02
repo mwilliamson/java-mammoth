@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import static com.google.common.collect.Iterables.*;
+import static org.zwobble.mammoth.internal.util.MammothMaps.lookup;
 
 public class XmlElement implements XmlNode, XmlElementLike {
     private final String name;
@@ -35,7 +36,7 @@ public class XmlElement implements XmlNode, XmlElementLike {
 
     @Override
     public Optional<String> getAttributeOrNone(String name) {
-        return Optional.ofNullable(attributes.get(name));
+        return lookup(attributes, name);
     }
 
     public List<XmlNode> getChildren() {

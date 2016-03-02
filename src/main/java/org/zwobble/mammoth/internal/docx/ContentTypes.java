@@ -6,6 +6,7 @@ import com.google.common.io.Files;
 import java.util.Map;
 import java.util.Optional;
 
+import static org.zwobble.mammoth.internal.util.MammothMaps.lookup;
 import static org.zwobble.mammoth.internal.util.MammothMaps.map;
 
 public class ContentTypes {
@@ -31,13 +32,13 @@ public class ContentTypes {
 
     public Optional<String> findContentType(String path) {
         if (overrides.containsKey(path)) {
-            return Optional.ofNullable(overrides.get(path));
+            return lookup(overrides, path);
         } else {
             String extension = Files.getFileExtension(path);
             if (extensionDefaults.containsKey(extension)) {
-                return Optional.ofNullable(extensionDefaults.get(extension));
+                return lookup(extensionDefaults, extension);
             } else {
-                return Optional.ofNullable(imageExtensions.get(extension.toLowerCase()))
+                return lookup(imageExtensions, extension.toLowerCase())
                     .map(imageType -> "image/" + imageType);
             }
         }

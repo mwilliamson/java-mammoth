@@ -1,16 +1,17 @@
 package org.zwobble.mammoth.internal.xml.parsing;
 
-import java.io.InputStream;
-import java.util.ArrayDeque;
-import java.util.Deque;
-import java.util.Map;
-
 import com.google.common.base.Strings;
 import com.google.common.collect.BiMap;
 import org.zwobble.mammoth.internal.xml.XmlElement;
 import org.zwobble.mammoth.internal.xml.XmlTextNode;
 
+import java.io.InputStream;
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.Map;
+
 import static java.util.stream.Collectors.toMap;
+import static org.zwobble.mammoth.internal.util.MammothMaps.lookup;
 
 public class XmlParser {
     private final BiMap<String, String> namespaces;
@@ -58,7 +59,7 @@ public class XmlParser {
             if (Strings.isNullOrEmpty(name.getUri())) {
                 return name.getLocalName();                
             } else if (namespaces.containsValue(name.getUri())) {
-                return namespaces.inverse().get(name.getUri()) + ":" + name.getLocalName();
+                return lookup(namespaces.inverse(), name.getUri()).get() + ":" + name.getLocalName();
             } else {
                 return "{" + name.getUri() + "}" + name.getLocalName();
             }

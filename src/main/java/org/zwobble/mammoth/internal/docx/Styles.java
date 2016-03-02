@@ -5,6 +5,7 @@ import org.zwobble.mammoth.internal.documents.Style;
 import java.util.Map;
 import java.util.Optional;
 
+import static org.zwobble.mammoth.internal.util.MammothMaps.lookup;
 import static org.zwobble.mammoth.internal.util.MammothMaps.map;
 
 public class Styles {
@@ -19,10 +20,10 @@ public class Styles {
     }
 
     public Optional<Style> findParagraphStyleById(String id) {
-        return Optional.ofNullable(paragraphStyles.get(id));
+        return lookup(paragraphStyles, id);
     }
 
     public Optional<Style> findCharacterStyleById(String id) {
-        return Optional.ofNullable(characterStyles.get(id));
+        return lookup(characterStyles, id);
     }
 }

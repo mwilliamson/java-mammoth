@@ -1,8 +1,8 @@
 package org.zwobble.mammoth.internal.docx;
 
 import java.util.Map;
-import java.util.Optional;
 
+import static org.zwobble.mammoth.internal.util.MammothMaps.lookup;
 import static org.zwobble.mammoth.internal.util.MammothMaps.map;
 
 public class Relationships {
@@ -15,6 +15,6 @@ public class Relationships {
     }
 
     public Relationship findRelationshipById(String id) {
-        return Optional.ofNullable(relationships.get(id)).get();
+        return lookup(relationships, id).get();
     }
 }

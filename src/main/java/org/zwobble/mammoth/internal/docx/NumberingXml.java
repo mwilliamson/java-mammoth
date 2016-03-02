@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import static com.google.common.collect.Maps.immutableEntry;
+import static org.zwobble.mammoth.internal.util.MammothMaps.lookup;
 import static org.zwobble.mammoth.internal.util.MammothMaps.toMap;
 
 public class NumberingXml {
@@ -51,6 +52,6 @@ public class NumberingXml {
         // TODO: in python-mammoth, we allow None here. Check whether that's actually possible or not
         String numId = numElement.getAttribute("w:numId");
         String abstractNumId = numElement.findChild("w:abstractNumId").getAttribute("w:val");
-        return immutableEntry(numId, Optional.ofNullable(abstractNums.get(abstractNumId)).get());
+        return immutableEntry(numId, lookup(abstractNums, abstractNumId).get());
     }
 }

@@ -13,6 +13,8 @@ import java.util.Optional;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import static org.zwobble.mammoth.internal.util.MammothMaps.lookup;
+
 public class InMemoryDocxFile implements DocxFile {
     public static DocxFile fromStream(InputStream stream) throws IOException {
         ZipInputStream zipStream = new ZipInputStream(stream);
@@ -36,7 +38,7 @@ public class InMemoryDocxFile implements DocxFile {
 
     @Override
     public Optional<InputStream> tryGetInputStream(String name) throws IOException {
-        return Optional.ofNullable(entries.get(name))
+        return lookup(entries, name)
             .map(ByteArrayInputStream::new);
     }
 

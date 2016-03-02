@@ -5,6 +5,7 @@ import org.zwobble.mammoth.internal.documents.NumberingLevel;
 import java.util.Map;
 import java.util.Optional;
 
+import static org.zwobble.mammoth.internal.util.MammothMaps.lookup;
 import static org.zwobble.mammoth.internal.util.MammothMaps.map;
 
 public class Numbering {
@@ -17,7 +18,7 @@ public class Numbering {
     }
 
     public Optional<NumberingLevel> findLevel(String numId, String level) {
-        return Optional.ofNullable(numbering.get(numId))
-            .flatMap(levels -> Optional.ofNullable(levels.get(level)));
+        return lookup(numbering, numId)
+            .flatMap(levels -> lookup(levels, level));
     }
 }
