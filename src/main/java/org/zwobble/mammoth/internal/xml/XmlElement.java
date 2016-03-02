@@ -30,8 +30,8 @@ public class XmlElement implements XmlNode, XmlElementLike {
     }
 
     public String getAttribute(String name) {
-        // TODO: throw more informative error message
-        return getAttributeOrNone(name).get();
+        return getAttributeOrNone(name)
+            .orElseThrow(() -> new RuntimeException("Element has no '" + name + "' attribute"));
     }
 
     @Override
