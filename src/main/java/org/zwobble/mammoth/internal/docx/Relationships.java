@@ -15,6 +15,7 @@ public class Relationships {
     }
 
     public Relationship findRelationshipById(String id) {
-        return lookup(relationships, id).get();
+        return lookup(relationships, id)
+            .orElseThrow(() -> new RuntimeException("Could not find relationship '" + id + "'"));
     }
 }
