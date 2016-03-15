@@ -80,7 +80,7 @@ Each paragraph is followed by two newlines.
 
 ```java
 DocumentConverter converter = new DocumentConverter();
-Result<String> result = converter.convertToMarkdown(new File("document.docx"));
+Result<String> result = converter.extractRawText(new File("document.docx"));
 String html = result.getValue(); // The raw text
 List<String> warnings = result.getWarnings(); // Any warnings during conversion
 ```
