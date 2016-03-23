@@ -3,6 +3,31 @@
   <groupId>org.zwobble.mammoth</groupId>
   <artifactId>mammoth</artifactId>
   <version>0.0.1-SNAPSHOT</version>
+  <packaging>jar</packaging>
+  <name>Mammoth</name>
+  <description>Convert Word documents to simple and clean HTML</description>
+  <url>http://mike.zwobble.org/projects/mammoth/</url>
+  <licenses>
+    <license>
+      <name>The BSD 2-Clause License</name>
+      <url>https://opensource.org/licenses/BSD-2-Clause</url>
+    </license>
+  </licenses>
+  <developers>
+    <developer>
+      <name>Michael Williamson</name>
+      <url>http://mike.zwobble.org/</url>
+    </developer>
+  </developers>
+  <scm>
+    <connection>scm:git:git@github.com:mwilliamson/java-mammoth.git</connection>
+    <developerConnection>scm:git:git@github.com:mwilliamson/java-mammoth.git</developerConnection>
+    <url>git@github.com:mwilliamson/java-mammoth.git</url>
+  </scm>
+  <issueManagement>
+    <system>GitHub</system>
+    <url>https://github.com/mwilliamson/java-mammoth/issues</url>
+  </issueManagement>
   <build>
     <plugins>
       <plugin>
