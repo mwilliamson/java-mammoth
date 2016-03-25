@@ -1,6 +1,5 @@
 package org.zwobble.mammoth.internal.xml;
 
-import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
 
 import java.util.List;
@@ -45,7 +44,7 @@ public class XmlElement implements XmlNode, XmlElementLike {
 
     @Override
     public String innerText() {
-        return Joiner.on("").join(transform(children, XmlNode::innerText));
+        return String.join("", transform(children, XmlNode::innerText));
     }
 
     @Override

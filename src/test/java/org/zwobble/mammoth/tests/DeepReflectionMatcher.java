@@ -1,6 +1,5 @@
 package org.zwobble.mammoth.tests;
 
-import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
@@ -227,7 +226,7 @@ public class DeepReflectionMatcher<T> extends TypeSafeDiagnosingMatcher<T> {
     }
 
     private static String indentedList(Iterable<String> values) {
-        return Joiner.on(",").join(transform(values, value -> "\n  " + indent(value)));
+        return String.join(",", transform(values, value -> "\n  " + indent(value)));
     }
 
     private static String indent(String value) {

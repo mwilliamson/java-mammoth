@@ -1,11 +1,11 @@
 package org.zwobble.mammoth.tests.docx;
 
-import com.google.common.base.Charsets;
 import org.junit.Test;
 import org.zwobble.mammoth.internal.docx.OfficeXml;
 import org.zwobble.mammoth.internal.xml.XmlElement;
 
 import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.zwobble.mammoth.tests.DeepReflectionMatcher.deepEquals;
@@ -28,7 +28,7 @@ public class OfficeXmlTests {
             "</mc:AlternateContent>" +
             "</numbering>";
 
-        XmlElement result = OfficeXml.parseXml(new ByteArrayInputStream(xmlString.getBytes(Charsets.UTF_8)));
+        XmlElement result = OfficeXml.parseXml(new ByteArrayInputStream(xmlString.getBytes(StandardCharsets.UTF_8)));
         assertThat(result.children(), deepEquals(list(element("fallback"))));
     }
 }

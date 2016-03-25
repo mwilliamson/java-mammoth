@@ -1,6 +1,5 @@
 package org.zwobble.mammoth;
 
-import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import org.zwobble.mammoth.internal.DocumentToHtml;
 import org.zwobble.mammoth.internal.DocumentToHtmlOptions;
@@ -21,6 +20,7 @@ import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.zip.ZipFile;
 
 import static org.zwobble.mammoth.internal.docx.DocumentReader.readDocument;
