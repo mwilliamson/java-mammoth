@@ -1,6 +1,5 @@
 package org.zwobble.mammoth.internal.styles;
 
-import com.google.common.collect.Iterables;
 import org.zwobble.mammoth.internal.documents.Paragraph;
 import org.zwobble.mammoth.internal.documents.Run;
 import org.zwobble.mammoth.internal.util.MammothLists;
@@ -8,6 +7,8 @@ import org.zwobble.mammoth.internal.util.MammothOptionals;
 
 import java.util.List;
 import java.util.Optional;
+
+import static org.zwobble.mammoth.internal.util.MammothIterables.tryFind;
 
 public class StyleMap {
     public static StyleMapBuilder builder() {
@@ -67,18 +68,12 @@ public class StyleMap {
     }
 
     public Optional<HtmlPath> getParagraphHtmlPath(Paragraph paragraph) {
-        com.google.common.base.Optional<StyleMapping<Paragraph>> mapping = Iterables.tryFind(
-            paragraphStyles,
-            styleMapping -> styleMapping.matches(paragraph));
-        return Optional.ofNullable(mapping.orNull())
+        return tryFind(paragraphStyles, styleMapping -> styleMapping.matches(paragraph))
             .map(StyleMapping::getHtmlPath);
     }
 
     public Optional<HtmlPath> getRunHtmlPath(Run run) {
-        com.google.common.base.Optional<StyleMapping<Run>> mapping = Iterables.tryFind(
-            runStyles,
-            styleMapping -> styleMapping.matches(run));
-        return Optional.ofNullable(mapping.orNull())
+        return tryFind(runStyles, styleMapping -> styleMapping.matches(run))
             .map(StyleMapping::getHtmlPath);
     }
 }
