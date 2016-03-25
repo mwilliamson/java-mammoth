@@ -37,6 +37,10 @@ public class DocumentConverter {
         this.options = options;
     }
 
+    /**
+     * A string to prepend to any generated IDs,
+     * such as those used by bookmarks, footnotes and endnotes.
+     */
     public DocumentConverter idPrefix(String idPrefix) {
         return new DocumentConverter(options.idPrefix(idPrefix));
     }

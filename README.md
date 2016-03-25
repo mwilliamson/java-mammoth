@@ -201,6 +201,10 @@ Methods:
 * `DocumentConverter preserveEmptyParagraphs()`: by default, empty paragraphs are ignored.
   Call this to preserve empty paragraphs in the output.
 
+* `DocumentConverter idPrefix(String idPrefix)`:
+  A string to prepend to any generated IDs,
+  such as those used by bookmarks, footnotes and endnotes.
+
 #### `Result<T>`
 
 Represents the result of a conversion. Methods:
