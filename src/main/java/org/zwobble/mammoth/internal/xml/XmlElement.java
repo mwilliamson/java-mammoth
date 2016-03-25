@@ -6,7 +6,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import static com.google.common.collect.Iterables.*;
+import static com.google.common.collect.Iterables.filter;
+import static org.zwobble.mammoth.internal.util.MammothIterables.getFirst;
+import static org.zwobble.mammoth.internal.util.MammothIterables.lazyMap;
 import static org.zwobble.mammoth.internal.util.MammothMaps.lookup;
 
 public class XmlElement implements XmlNode, XmlElementLike {
@@ -44,7 +46,7 @@ public class XmlElement implements XmlNode, XmlElementLike {
 
     @Override
     public String innerText() {
-        return String.join("", transform(children, XmlNode::innerText));
+        return String.join("", lazyMap(children, XmlNode::innerText));
     }
 
     @Override

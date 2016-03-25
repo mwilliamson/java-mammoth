@@ -30,6 +30,15 @@ public class MammothIterables {
         };
     }
 
+    public static <T> T getFirst(Iterable<? extends T> iterable, T defaultValue) {
+        Iterator<? extends T> iterator = iterable.iterator();
+        if (iterator.hasNext()) {
+            return iterator.next();
+        } else {
+            return defaultValue;
+        }
+    }
+
     private static <T, R> Iterator<R> map(Iterator<T> iterator, Function<T, R> function) {
         return new Iterator<R>() {
             @Override
