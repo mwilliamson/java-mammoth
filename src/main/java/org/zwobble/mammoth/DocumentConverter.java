@@ -41,23 +41,43 @@ public class DocumentConverter {
         return new DocumentConverter(options.idPrefix(idPrefix));
     }
 
+    /**
+     * By default, empty paragraphs are ignored.
+     * Call this to preserve empty paragraphs in the output.
+     */
     public DocumentConverter preserveEmptyParagraphs() {
         return new DocumentConverter(options.preserveEmptyParagraphs());
     }
 
+    /**
+     * Add a style map to specify the mapping of Word styles to HTML.
+     * The most recently added style map has the greatest precedence.
+     */
     public DocumentConverter addStyleMap(String styleMap) {
         return new DocumentConverter(options.addStyleMap(styleMap));
     }
 
+    /**
+     * By default, any added style maps are combined with the default style map.
+     * Call this to stop using the default style map altogether.
+     */
     public DocumentConverter disableDefaultStyleMap() {
         return new DocumentConverter(options.disableDefaultStyleMap());
     }
 
+    /**
+     * Converts {@code stream} into an HTML string.
+     * Note that using this method instead of {@link #convertToHtml(File file)}
+     * means that relative paths to other files, such as images, cannot be resolved.
+     */
     public Result<String> convertToHtml(InputStream stream) throws IOException {
         return withDocxFile(stream, zipFile ->
             convertToHtml(Optional.empty(), zipFile));
     }
 
+    /**
+     * Converts {@code file} into an HTML string.
+     */
     public Result<String> convertToHtml(File file) throws IOException {
         return withDocxFile(file, zipFile ->
             convertToHtml(Optional.of(file.toPath()), zipFile));
@@ -71,6 +91,11 @@ public class DocumentConverter {
             .map(Html::write);
     }
 
+    /**
+     * Extract the raw text of the document.
+     * This will ignore all formatting in the document.
+     * Each paragraph is followed by two newlines.
+     */
     public Result<String> extractRawText(File file) throws IOException {
         return withDocxFile(file, zipFile ->
             readDocument(Optional.of(file.toPath()), zipFile)
