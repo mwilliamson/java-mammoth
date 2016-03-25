@@ -202,7 +202,7 @@ Methods:
   Call this to preserve empty paragraphs in the output.
 
 * `DocumentConverter idPrefix(String idPrefix)`:
-  A string to prepend to any generated IDs,
+  a string to prepend to any generated IDs,
   such as those used by bookmarks, footnotes and endnotes.
 
 #### `Result<T>`
