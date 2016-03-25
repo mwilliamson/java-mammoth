@@ -2,7 +2,9 @@ package org.zwobble.mammoth.internal.util;
 
 import com.google.common.collect.Iterables;
 
+import java.util.Iterator;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 public class MammothIterables {
@@ -17,5 +19,28 @@ public class MammothIterables {
             }
         }
         return Optional.empty();
+    }
+
+    public static <T, R> Iterable<R> lazyMap(Iterable<T> iterable, Function<T, R> function) {
+        return new Iterable<R>() {
+            @Override
+            public Iterator<R> iterator() {
+                return map(iterable.iterator(), function);
+            }
+        };
+    }
+
+    private static <T, R> Iterator<R> map(Iterator<T> iterator, Function<T, R> function) {
+        return new Iterator<R>() {
+            @Override
+            public boolean hasNext() {
+                return iterator.hasNext();
+            }
+
+            @Override
+            public R next() {
+                return function.apply(iterator.next());
+            }
+        };
     }
 }

@@ -1,6 +1,5 @@
 package org.zwobble.mammoth;
 
-import com.google.common.collect.Iterables;
 import org.zwobble.mammoth.internal.DocumentToHtml;
 import org.zwobble.mammoth.internal.DocumentToHtmlOptions;
 import org.zwobble.mammoth.internal.documents.DocumentElement;
@@ -24,6 +23,7 @@ import java.util.function.Function;
 import java.util.zip.ZipFile;
 
 import static org.zwobble.mammoth.internal.docx.DocumentReader.readDocument;
+import static org.zwobble.mammoth.internal.util.MammothIterables.lazyMap;
 import static org.zwobble.mammoth.internal.util.MammothLists.list;
 
 public class DocumentConverter {
@@ -138,7 +138,7 @@ public class DocumentConverter {
     }
 
     private static String extractRawText(List<DocumentElement> nodes) {
-        return String.join("", Iterables.transform(nodes, node -> extractRawText(node)));
+        return String.join("", lazyMap(nodes, node -> extractRawText(node)));
     }
 
     private static String extractRawText(DocumentElement node) {
