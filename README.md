@@ -204,6 +204,7 @@ Methods:
 * `DocumentConverter idPrefix(String idPrefix)`:
   a string to prepend to any generated IDs,
   such as those used by bookmarks, footnotes and endnotes.
+  Defaults to the empty string.
 
 #### `Result<T>`
 

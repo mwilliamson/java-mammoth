@@ -40,6 +40,7 @@ public class DocumentConverter {
     /**
      * A string to prepend to any generated IDs,
      * such as those used by bookmarks, footnotes and endnotes.
+     * Defaults to the empty string.
      */
     public DocumentConverter idPrefix(String idPrefix) {
         return new DocumentConverter(options.idPrefix(idPrefix));
