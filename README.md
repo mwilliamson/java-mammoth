@@ -71,7 +71,7 @@ import org.zwobble.mammoth.Result;
 DocumentConverter converter = new DocumentConverter();
 Result<String> result = converter.convertToHtml(new File("document.docx"));
 String html = result.getValue(); // The generated HTML
-List<String> warnings = result.getWarnings(); // Any warnings during conversion
+Set<String> warnings = result.getWarnings(); // Any warnings during conversion
 ```
 
 You can also extract the raw text of the document by using `extractRawText`.
@@ -82,7 +82,7 @@ Each paragraph is followed by two newlines.
 DocumentConverter converter = new DocumentConverter();
 Result<String> result = converter.extractRawText(new File("document.docx"));
 String html = result.getValue(); // The raw text
-List<String> warnings = result.getWarnings(); // Any warnings during conversion
+Set<String> warnings = result.getWarnings(); // Any warnings during conversion
 ```
 
 #### Custom style map
@@ -207,7 +207,7 @@ Represents the result of a conversion. Methods:
 
 * `T getValue()`: the generated text.
 
-* `List<String> getWarnings()`: any warnings generated during the conversion.
+* `Set<String> getWarnings()`: any warnings generated during the conversion.
 
 ## Writing style maps
 
