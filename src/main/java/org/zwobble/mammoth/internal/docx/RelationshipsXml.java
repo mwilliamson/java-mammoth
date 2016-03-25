@@ -4,7 +4,7 @@ import org.zwobble.mammoth.internal.xml.XmlElement;
 
 import java.util.Map;
 
-import static com.google.common.collect.Maps.immutableEntry;
+import static org.zwobble.mammoth.internal.util.MammothMaps.entry;
 import static org.zwobble.mammoth.internal.util.MammothMaps.toMap;
 
 public class RelationshipsXml {
@@ -15,7 +15,7 @@ public class RelationshipsXml {
     }
 
     private static Map.Entry<String, Relationship> readRelationship(XmlElement element) {
-        return immutableEntry(
+        return entry(
             element.getAttribute("Id"),
             new Relationship(element.getAttribute("Target")));
     }

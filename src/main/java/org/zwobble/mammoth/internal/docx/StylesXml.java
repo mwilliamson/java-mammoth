@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import static com.google.common.collect.Iterables.filter;
-import static com.google.common.collect.Maps.immutableEntry;
+import static org.zwobble.mammoth.internal.util.MammothMaps.entry;
 import static org.zwobble.mammoth.internal.util.MammothMaps.toMap;
 
 public class StylesXml {
@@ -28,6 +28,6 @@ public class StylesXml {
     private static Map.Entry<String, Style> readStyle(XmlElement element) {
         String styleId = element.getAttribute("w:styleId");
         Optional<String> styleName = element.findChildOrEmpty("w:name").getAttributeOrNone("w:val");
-        return immutableEntry(styleId, new Style(styleId, styleName));
+        return entry(styleId, new Style(styleId, styleName));
     }
 }

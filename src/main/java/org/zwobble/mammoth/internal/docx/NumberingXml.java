@@ -7,7 +7,7 @@ import org.zwobble.mammoth.internal.xml.XmlElementList;
 import java.util.Map;
 import java.util.Optional;
 
-import static com.google.common.collect.Maps.immutableEntry;
+import static org.zwobble.mammoth.internal.util.MammothMaps.entry;
 import static org.zwobble.mammoth.internal.util.MammothMaps.lookup;
 import static org.zwobble.mammoth.internal.util.MammothMaps.toMap;
 
@@ -24,7 +24,7 @@ public class NumberingXml {
     private static Map.Entry<String, Map<String, NumberingLevel>> readAbstractNum(XmlElement element) {
         // TODO: in python-mammoth, we allow None here. Check whether that's actually possible or not
         String abstractNumId = element.getAttribute("w:abstractNumId");
-        return immutableEntry(abstractNumId, readAbstractNumLevels(element));
+        return entry(abstractNumId, readAbstractNumLevels(element));
     }
 
     private static Map<String, NumberingLevel> readAbstractNumLevels(XmlElement element) {
@@ -35,7 +35,7 @@ public class NumberingXml {
         String levelIndex = element.getAttribute("w:ilvl");
         Optional<String> numFmt = element.findChildOrEmpty("w:numFmt").getAttributeOrNone("w:val");
         boolean isOrdered = !numFmt.equals(Optional.of("bullet"));
-        return immutableEntry(levelIndex, new NumberingLevel(levelIndex, isOrdered));
+        return entry(levelIndex, new NumberingLevel(levelIndex, isOrdered));
     }
 
     private static Map<String, Map<String, NumberingLevel>> readNums(
@@ -52,6 +52,6 @@ public class NumberingXml {
         // TODO: in python-mammoth, we allow None here. Check whether that's actually possible or not
         String numId = numElement.getAttribute("w:numId");
         String abstractNumId = numElement.findChild("w:abstractNumId").getAttribute("w:val");
-        return immutableEntry(numId, lookup(abstractNums, abstractNumId).get());
+        return entry(numId, lookup(abstractNums, abstractNumId).get());
     }
 }

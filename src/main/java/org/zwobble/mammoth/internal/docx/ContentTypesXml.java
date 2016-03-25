@@ -5,7 +5,7 @@ import org.zwobble.mammoth.internal.xml.XmlElementList;
 
 import java.util.Map;
 
-import static com.google.common.collect.Maps.immutableEntry;
+import static org.zwobble.mammoth.internal.util.MammothMaps.entry;
 import static org.zwobble.mammoth.internal.util.MammothMaps.toMap;
 import static org.zwobble.mammoth.internal.util.MammothStrings.trimLeft;
 
@@ -21,7 +21,7 @@ public class ContentTypesXml {
     }
 
     private static Map.Entry<String, String> readDefault(XmlElement element) {
-        return immutableEntry(
+        return entry(
             element.getAttribute("Extension"),
             element.getAttribute("ContentType"));
     }
@@ -31,7 +31,7 @@ public class ContentTypesXml {
     }
 
     private static Map.Entry<String, String> readOverride(XmlElement element) {
-        return immutableEntry(
+        return entry(
             trimLeft(element.getAttribute("PartName"), '/'),
             element.getAttribute("ContentType"));
     }
