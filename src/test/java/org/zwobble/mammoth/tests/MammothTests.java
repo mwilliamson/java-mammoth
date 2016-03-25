@@ -200,9 +200,16 @@ public class MammothTests {
     }
 
     @Test
-    public void canExtractRawText() throws IOException {
+    public void canExtractRawTextFromFile() throws IOException {
         assertThat(
             new DocumentConverter().extractRawText(TestData.file("simple-list.docx")),
+            deepEquals(success("Apple\n\nBanana\n\n")));
+    }
+
+    @Test
+    public void canExtractRawTextFromStream() throws IOException {
+        assertThat(
+            new DocumentConverter().extractRawText(TestData.file("simple-list.docx").toURI().toURL().openStream()),
             deepEquals(success("Apple\n\nBanana\n\n")));
     }
 

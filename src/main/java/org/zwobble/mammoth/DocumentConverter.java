@@ -96,10 +96,24 @@ public class DocumentConverter {
      * This will ignore all formatting in the document.
      * Each paragraph is followed by two newlines.
      */
+    public Result<String> extractRawText(InputStream stream) throws IOException {
+        return withDocxFile(stream, zipFile ->
+            extractRawText(Optional.empty(), zipFile));
+    }
+
+    /**
+     * Extract the raw text of the document.
+     * This will ignore all formatting in the document.
+     * Each paragraph is followed by two newlines.
+     */
     public Result<String> extractRawText(File file) throws IOException {
         return withDocxFile(file, zipFile ->
-            readDocument(Optional.of(file.toPath()), zipFile)
-                .map(DocumentConverter::extractRawTextOfChildren));
+            extractRawText(Optional.of(file.toPath()), zipFile));
+    }
+
+    private InternalResult<String> extractRawText(Optional<Path> path, DocxFile zipFile) {
+        return readDocument(path, zipFile)
+            .map(DocumentConverter::extractRawTextOfChildren);
     }
 
     private static <T> T withDocxFile(File file, Function<DocxFile, T> function) throws IOException {
