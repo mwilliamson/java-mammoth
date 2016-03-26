@@ -41,7 +41,15 @@ The following features are currently supported:
 
 ## Installation
 
-TODO: upload to Maven
+Available on [Maven Central](http://search.maven.org/#artifactdetails|org.zwobble.mammoth|mammoth|0.0.1|jar).
+
+```xml
+<dependency>
+  <groupId>org.zwobble.mammoth</groupId>
+  <artifactId>mammoth</artifactId>
+  <version>0.0.1</version>
+</dependency>
+```
 
 ## Other supported platforms
 
