@@ -14,8 +14,8 @@ import java.util.Set;
 
 import static com.google.common.collect.Iterables.any;
 import static com.google.common.collect.Iterables.filter;
-import static com.google.common.collect.Iterables.transform;
 import static java.util.Arrays.asList;
+import static org.zwobble.mammoth.internal.util.MammothIterables.lazyMap;
 
 public class DeepReflectionMatcher<T> extends TypeSafeDiagnosingMatcher<T> {
     public static <T> Matcher<T> deepEquals(T value) {
@@ -77,14 +77,14 @@ public class DeepReflectionMatcher<T> extends TypeSafeDiagnosingMatcher<T> {
         if (actual.size() > expected.size()) {
             appendPath(mismatchDescription, path);
             mismatchDescription.appendText("extra elements:" +
-                indentedList(transform(Iterables.skip(actual, expected.size()), DeepReflectionMatcher::describeValue)));
+                indentedList(lazyMap(Iterables.skip(actual, expected.size()), DeepReflectionMatcher::describeValue)));
             return false;
         }
 
         if (actual.size() < expected.size()) {
             appendPath(mismatchDescription, path);
             mismatchDescription.appendText("missing elements:" +
-                indentedList(transform(Iterables.skip(expected, actual.size()), DeepReflectionMatcher::describeValue)));
+                indentedList(lazyMap(Iterables.skip(expected, actual.size()), DeepReflectionMatcher::describeValue)));
             return false;
         }
 
@@ -105,7 +105,7 @@ public class DeepReflectionMatcher<T> extends TypeSafeDiagnosingMatcher<T> {
         if (!missing.isEmpty()) {
             appendPath(mismatchDescription, path);
             mismatchDescription.appendText("missing elements:" +
-                indentedList(transform(missing, DeepReflectionMatcher::describeValue)));
+                indentedList(lazyMap(missing, DeepReflectionMatcher::describeValue)));
             return false;
         }
 
@@ -116,7 +116,7 @@ public class DeepReflectionMatcher<T> extends TypeSafeDiagnosingMatcher<T> {
         if (!extra.isEmpty()) {
             appendPath(mismatchDescription, path);
             mismatchDescription.appendText("extra elements:" +
-                indentedList(transform(extra, DeepReflectionMatcher::describeValue)));
+                indentedList(lazyMap(extra, DeepReflectionMatcher::describeValue)));
             return false;
         }
 
@@ -145,7 +145,7 @@ public class DeepReflectionMatcher<T> extends TypeSafeDiagnosingMatcher<T> {
         if (!extraElements.isEmpty()) {
             appendPath(mismatchDescription, path);
             mismatchDescription.appendText(prefix +
-                indentedList(transform(
+                indentedList(lazyMap(
                     extraElements,
                     key -> describeValue(key) + "=" + describeValue(actual.get(key)))));
             return false;
@@ -205,21 +205,21 @@ public class DeepReflectionMatcher<T> extends TypeSafeDiagnosingMatcher<T> {
             }
         } else if (value instanceof List) {
             List<?> list = (List)value;
-            return "[" + indentedList(transform(list, DeepReflectionMatcher::describeValue)) + "]";
+            return "[" + indentedList(lazyMap(list, DeepReflectionMatcher::describeValue)) + "]";
         } else if (value instanceof Set) {
             Set<?> list = (Set)value;
-            return "{" + indentedList(transform(list, DeepReflectionMatcher::describeValue)) + "}";
+            return "{" + indentedList(lazyMap(list, DeepReflectionMatcher::describeValue)) + "}";
         } else if (value instanceof Map) {
             Map<?, ?> map = (Map)value;
             String entries = indentedList(
-                transform(
+                lazyMap(
                     map.entrySet(),
                     entry -> describeValue(entry.getKey()) + "=" + describeValue(entry.getValue())));
             return "{" + entries + "}";
         } else {
             Class<?> clazz = value.getClass();
             List<Field> fields = fields(clazz);
-            Iterable<String> fieldStrings = transform(
+            Iterable<String> fieldStrings = lazyMap(
                 fields,
                 field -> field.getName() + "=" + describeValue(readField(value, field)));
             return String.format("%s(%s)", clazz.getSimpleName(), indentedList(fieldStrings));
@@ -227,7 +227,7 @@ public class DeepReflectionMatcher<T> extends TypeSafeDiagnosingMatcher<T> {
     }
 
     private static String indentedList(Iterable<String> values) {
-        return String.join(",", transform(values, value -> "\n  " + indent(value)));
+        return String.join(",", lazyMap(values, value -> "\n  " + indent(value)));
     }
 
     private static String indent(String value) {

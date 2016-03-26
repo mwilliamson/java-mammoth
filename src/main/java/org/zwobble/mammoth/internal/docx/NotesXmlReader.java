@@ -8,7 +8,7 @@ import org.zwobble.mammoth.internal.xml.XmlElement;
 import java.util.List;
 
 import static com.google.common.collect.Iterables.filter;
-import static com.google.common.collect.Iterables.transform;
+import static org.zwobble.mammoth.internal.util.MammothIterables.lazyMap;
 
 public class NotesXmlReader {
     public static NotesXmlReader footnote(BodyXmlReader bodyReader) {
@@ -31,7 +31,7 @@ public class NotesXmlReader {
 
     public InternalResult<List<Note>> readElement(XmlElement element) {
         Iterable<XmlElement> elements = filter(element.findChildren("w:" + tagName), this::isNoteElement);
-        return InternalResult.concat(transform(elements, this::readNoteElement));
+        return InternalResult.concat(lazyMap(elements, this::readNoteElement));
     }
 
     private boolean isNoteElement(XmlElement element) {

@@ -31,10 +31,10 @@ public class DocumentToHtml {
     }
 
     private static List<Note> findNotes(Document document, Iterable<NoteReference> noteReferences) {
-        return ImmutableList.copyOf(Iterables.transform(
+        return eagerMap(
             noteReferences,
             // TODO: handle missing notes
-            reference -> document.getNotes().findNote(reference.getNoteType(), reference.getNoteId()).get()));
+            reference -> document.getNotes().findNote(reference.getNoteType(), reference.getNoteId()).get());
     }
 
     public static InternalResult<List<HtmlNode>> convertToHtml(DocumentElement element, DocumentToHtmlOptions options) {
@@ -64,7 +64,7 @@ public class DocumentToHtml {
             return mainBody;
         } else {
             HtmlNode noteNode = Html.element("ol",
-                ImmutableList.copyOf(Iterables.transform(notes, this::convertToHtml)));
+                eagerMap(notes, this::convertToHtml));
 
             return ImmutableList.copyOf(Iterables.concat(mainBody, list(noteNode)));
         }

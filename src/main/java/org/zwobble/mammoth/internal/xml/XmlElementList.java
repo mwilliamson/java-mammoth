@@ -1,10 +1,9 @@
 package org.zwobble.mammoth.internal.xml;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterables;
-
 import java.util.Iterator;
 import java.util.List;
+
+import static org.zwobble.mammoth.internal.util.MammothLists.eagerFlatMap;
 
 public class XmlElementList implements Iterable<XmlElement> {
     private final List<XmlElement> elements;
@@ -19,10 +18,8 @@ public class XmlElementList implements Iterable<XmlElement> {
     }
 
     public XmlElementList findChildren(String name) {
-        Iterable<XmlElement> children = Iterables.concat(
-            Iterables.transform(
-                elements,
-                element -> element.findChildren(name)));
-        return new XmlElementList(ImmutableList.copyOf(children));
+        return new XmlElementList(eagerFlatMap(
+            elements,
+            element -> element.findChildren(name)));
     }
 }
