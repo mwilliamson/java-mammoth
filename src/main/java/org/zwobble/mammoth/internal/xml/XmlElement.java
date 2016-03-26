@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import static com.google.common.collect.Iterables.filter;
 import static org.zwobble.mammoth.internal.util.MammothIterables.getFirst;
+import static org.zwobble.mammoth.internal.util.MammothIterables.lazyFilter;
 import static org.zwobble.mammoth.internal.util.MammothIterables.lazyMap;
 import static org.zwobble.mammoth.internal.util.MammothMaps.lookup;
 
@@ -84,8 +84,8 @@ public class XmlElement implements XmlNode, XmlElementLike {
     }
 
     private Iterable<XmlElement> findChildrenIterable(String name) {
-        return filter(
-            filter(children, XmlElement.class),
+        return lazyFilter(
+            lazyFilter(children, XmlElement.class),
             child -> child.getName().equals(name));
     }
 }

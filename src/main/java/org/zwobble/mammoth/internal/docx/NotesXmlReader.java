@@ -7,7 +7,7 @@ import org.zwobble.mammoth.internal.xml.XmlElement;
 
 import java.util.List;
 
-import static com.google.common.collect.Iterables.filter;
+import static org.zwobble.mammoth.internal.util.MammothIterables.lazyFilter;
 
 public class NotesXmlReader {
     public static NotesXmlReader footnote(BodyXmlReader bodyReader) {
@@ -29,7 +29,7 @@ public class NotesXmlReader {
     }
 
     public InternalResult<List<Note>> readElement(XmlElement element) {
-        Iterable<XmlElement> elements = filter(element.findChildren("w:" + tagName), this::isNoteElement);
+        Iterable<XmlElement> elements = lazyFilter(element.findChildren("w:" + tagName), this::isNoteElement);
         return InternalResult.flatMap(elements, this::readNoteElement);
     }
 

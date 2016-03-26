@@ -14,9 +14,9 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 
-import static com.google.common.collect.Iterables.filter;
 import static org.zwobble.mammoth.internal.docx.ReadResult.EMPTY_SUCCESS;
 import static org.zwobble.mammoth.internal.docx.ReadResult.success;
+import static org.zwobble.mammoth.internal.util.MammothIterables.lazyFilter;
 import static org.zwobble.mammoth.internal.util.MammothLists.list;
 import static org.zwobble.mammoth.internal.util.MammothStrings.trimLeft;
 
@@ -171,7 +171,7 @@ public class BodyXmlReader {
     }
 
     public ReadResult readElements(Iterable<XmlNode> nodes) {
-        return ReadResult.flatMap(filter(nodes, XmlElement.class), this::readElement);
+        return ReadResult.flatMap(lazyFilter(nodes, XmlElement.class), this::readElement);
     }
 
     private ReadResult readParagraph(XmlElement element) {

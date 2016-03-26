@@ -65,6 +65,29 @@ public class MammothIterables {
         };
     }
 
+    public static <T> Iterable<T> lazyFilter(Iterable<T> iterables, Predicate<T> predicate) {
+        return new Iterable<T>() {
+            @Override
+            public Iterator<T> iterator() {
+                return stream(iterables)
+                    .filter(predicate)
+                    .iterator();
+            }
+        };
+    }
+
+    public static <T, R> Iterable<R> lazyFilter(Iterable<T> iterables, Class<R> clazz) {
+        return new Iterable<R>() {
+            @Override
+            @SuppressWarnings("unchecked")
+            public Iterator<R> iterator() {
+                return (Iterator<R>) stream(iterables)
+                    .filter(clazz::isInstance)
+                    .iterator();
+            }
+        };
+    }
+
     private static <T, R> Iterator<R> map(Iterator<T> iterator, Function<T, R> function) {
         return new Iterator<R>() {
             @Override

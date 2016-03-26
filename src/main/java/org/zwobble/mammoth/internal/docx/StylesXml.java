@@ -7,7 +7,7 @@ import org.zwobble.mammoth.internal.xml.XmlElementList;
 import java.util.Map;
 import java.util.Optional;
 
-import static com.google.common.collect.Iterables.filter;
+import static org.zwobble.mammoth.internal.util.MammothIterables.lazyFilter;
 import static org.zwobble.mammoth.internal.util.MammothMaps.entry;
 import static org.zwobble.mammoth.internal.util.MammothMaps.toMap;
 
@@ -21,7 +21,7 @@ public class StylesXml {
 
     private static Map<String, Style> readStyles(XmlElementList styleElements, String styleType) {
         return toMap(
-            filter(styleElements, styleElement -> styleElement.getAttribute("w:type").equals(styleType)),
+            lazyFilter(styleElements, styleElement -> styleElement.getAttribute("w:type").equals(styleType)),
             StylesXml::readStyle);
     }
 
