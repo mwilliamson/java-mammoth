@@ -1,7 +1,7 @@
 package org.zwobble.mammoth.internal.docx;
 
-import com.google.common.io.Files;
 import org.zwobble.mammoth.internal.util.MammothMaps;
+import org.zwobble.mammoth.internal.util.Paths;
 
 import java.util.Map;
 import java.util.Optional;
@@ -34,7 +34,7 @@ public class ContentTypes {
         if (overrides.containsKey(path)) {
             return lookup(overrides, path);
         } else {
-            String extension = Files.getFileExtension(path);
+            String extension = Paths.getExtension(path);
             if (extensionDefaults.containsKey(extension)) {
                 return lookup(extensionDefaults, extension);
             } else {
