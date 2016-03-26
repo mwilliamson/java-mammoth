@@ -1,6 +1,5 @@
 package org.zwobble.mammoth.internal;
 
-import com.google.common.collect.ImmutableMap;
 import org.zwobble.mammoth.internal.documents.*;
 import org.zwobble.mammoth.internal.html.Html;
 import org.zwobble.mammoth.internal.html.HtmlNode;
@@ -206,7 +205,7 @@ public class DocumentToHtml {
                 return image.getContentType()
                     .map(contentType -> {
                         try {
-                            ImmutableMap.Builder<String, String> attributes = ImmutableMap.builder();
+                            Map<String, String> attributes = new HashMap<>();
 
                             String base64 = Base64.getEncoder().encodeToString(toByteArray(image.open()));
                             String src = "data:" + contentType + ";base64," + base64;
@@ -214,7 +213,7 @@ public class DocumentToHtml {
 
                             image.getAltText().ifPresent(altText -> attributes.put("alt", altText));
 
-                            return list(Html.selfClosingElement("img", attributes.build()));
+                            return list(Html.selfClosingElement("img", attributes));
                         } catch (IOException exception) {
                             warnings.add(exception.getMessage());
                             return MammothLists.<HtmlNode>list();
