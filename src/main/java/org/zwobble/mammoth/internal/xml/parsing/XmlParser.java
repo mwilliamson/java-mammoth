@@ -1,6 +1,6 @@
 package org.zwobble.mammoth.internal.xml.parsing;
 
-import com.google.common.collect.BiMap;
+import org.zwobble.mammoth.internal.xml.NamespacePrefixes;
 import org.zwobble.mammoth.internal.xml.XmlElement;
 import org.zwobble.mammoth.internal.xml.XmlTextNode;
 
@@ -10,13 +10,12 @@ import java.util.Deque;
 import java.util.Map;
 
 import static org.zwobble.mammoth.internal.util.MammothMaps.eagerMapKeys;
-import static org.zwobble.mammoth.internal.util.MammothMaps.lookup;
 import static org.zwobble.mammoth.internal.util.MammothStrings.isNullOrEmpty;
 
 public class XmlParser {
-    private final BiMap<String, String> namespaces;
+    private final NamespacePrefixes namespaces;
 
-    public XmlParser(BiMap<String, String> namespaces) {
+    public XmlParser(NamespacePrefixes namespaces) {
         this.namespaces = namespaces;
     }
 
@@ -53,10 +52,10 @@ public class XmlParser {
         private String readName(ElementName name) {
             if (isNullOrEmpty(name.getUri())) {
                 return name.getLocalName();                
-            } else if (namespaces.containsValue(name.getUri())) {
-                return lookup(namespaces.inverse(), name.getUri()).get() + ":" + name.getLocalName();
             } else {
-                return "{" + name.getUri() + "}" + name.getLocalName();
+                return namespaces.prefixForUri(name.getUri())
+                    .map(prefix -> prefix + ":" + name.getLocalName())
+                    .orElseGet(() -> "{" + name.getUri() + "}" + name.getLocalName());
             }
             
         }

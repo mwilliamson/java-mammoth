@@ -1,10 +1,6 @@
 package org.zwobble.mammoth.internal.docx;
 
-import com.google.common.collect.ImmutableBiMap;
-import org.zwobble.mammoth.internal.xml.XmlElement;
-import org.zwobble.mammoth.internal.xml.XmlNode;
-import org.zwobble.mammoth.internal.xml.XmlNodeVisitor;
-import org.zwobble.mammoth.internal.xml.XmlTextNode;
+import org.zwobble.mammoth.internal.xml.*;
 import org.zwobble.mammoth.internal.xml.parsing.XmlParser;
 
 import java.io.InputStream;
@@ -14,7 +10,7 @@ import static org.zwobble.mammoth.internal.util.MammothLists.eagerFlatMap;
 import static org.zwobble.mammoth.internal.util.MammothLists.list;
 
 public class OfficeXml {
-    private static ImmutableBiMap<String, String> XML_NAMESPACES = ImmutableBiMap.<String, String>builder()
+    private static NamespacePrefixes XML_NAMESPACES = NamespacePrefixes.builder()
         .put("w", "http://schemas.openxmlformats.org/wordprocessingml/2006/main")
         .put("wp", "http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing")
         .put("a", "http://schemas.openxmlformats.org/drawingml/2006/main")

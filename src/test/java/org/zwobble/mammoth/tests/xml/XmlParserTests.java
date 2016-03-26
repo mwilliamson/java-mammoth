@@ -1,10 +1,10 @@
 package org.zwobble.mammoth.tests.xml;
 
-import com.google.common.collect.ImmutableBiMap;
 import org.hamcrest.Matcher;
 import org.hamcrest.collection.IsEmptyIterable;
 import org.hamcrest.collection.IsIterableContainingInOrder;
 import org.junit.Test;
+import org.zwobble.mammoth.internal.xml.NamespacePrefixes;
 import org.zwobble.mammoth.internal.xml.XmlElement;
 import org.zwobble.mammoth.internal.xml.XmlNode;
 import org.zwobble.mammoth.internal.xml.XmlTextNode;
@@ -20,7 +20,7 @@ import static org.zwobble.mammoth.internal.util.MammothLists.list;
 import static org.zwobble.mammoth.internal.util.MammothMaps.map;
 
 public class XmlParserTests {
-    private final XmlParser parser = new XmlParser(ImmutableBiMap.of());
+    private final XmlParser parser = new XmlParser(new NamespacePrefixes(map()));
     
     @Test
     public void canParseSelfClosingElement() {
@@ -80,7 +80,7 @@ public class XmlParserTests {
     
     @Test
     public void mappedNamespaceUrisInElementNamesArePrefixedToLocalNameWithColon() {
-        XmlParser parser = new XmlParser(ImmutableBiMap.of("x", "word")); 
+        XmlParser parser = new XmlParser(NamespacePrefixes.builder().put("x", "word").build());
         assertThat(
             parser.parseString("<w:body xmlns:w='word'/>"),
             isElement("x:body"));
@@ -88,7 +88,7 @@ public class XmlParserTests {
     
     @Test
     public void mappedNamespaceUrisInAttributeNamesArePrefixedToLocalNameWithColon() {
-        XmlParser parser = new XmlParser(ImmutableBiMap.of("x", "word")); 
+        XmlParser parser = new XmlParser(NamespacePrefixes.builder().put("x", "word").build());
         assertThat(
             parser.parseString("<body xmlns:w='word' w:name='bob'/>"),
             isElement("body", map("x:name", "bob")));
