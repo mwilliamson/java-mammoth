@@ -18,7 +18,7 @@ import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.transform;
 import static org.zwobble.mammoth.internal.docx.ReadResult.EMPTY_SUCCESS;
 import static org.zwobble.mammoth.internal.docx.ReadResult.success;
-import static org.zwobble.mammoth.internal.util.MammothSets.set;
+import static org.zwobble.mammoth.internal.util.MammothLists.list;
 import static org.zwobble.mammoth.internal.util.MammothStrings.trimLeft;
 
 public class BodyXmlReader {
@@ -213,7 +213,7 @@ public class BodyXmlReader {
         } else {
             return new InternalResult<>(
                 Optional.of(new Style(styleId, Optional.empty())),
-                set(styleType + " style with ID " + styleId + " was referenced but not defined in the document"));
+                list(styleType + " style with ID " + styleId + " was referenced but not defined in the document"));
         }
 
     }

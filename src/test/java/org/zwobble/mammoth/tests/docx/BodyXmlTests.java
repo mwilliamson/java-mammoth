@@ -28,6 +28,7 @@ import static org.zwobble.mammoth.internal.documents.NoteReference.endnoteRefere
 import static org.zwobble.mammoth.internal.documents.NoteReference.footnoteReference;
 import static org.zwobble.mammoth.tests.DeepReflectionMatcher.deepEquals;
 import static org.zwobble.mammoth.tests.ResultMatchers.hasWarnings;
+import static org.zwobble.mammoth.tests.ResultMatchers.isInternalResult;
 import static org.zwobble.mammoth.tests.ResultMatchers.isResult;
 import static org.zwobble.mammoth.tests.documents.DocumentElementMakers.*;
 import static org.zwobble.mammoth.tests.docx.BodyXmlReaderMakers.*;
@@ -90,7 +91,7 @@ public class BodyXmlTests {
                 element("w:pStyle", map("w:val", "Heading1"))))));
         assertThat(
             read(a(bodyReader), element),
-            isResult(
+            isInternalResult(
                 hasStyle(Optional.of(new Style("Heading1", Optional.empty()))),
                 list("Paragraph style with ID Heading1 was referenced but not defined in the document")));
     }
@@ -179,7 +180,7 @@ public class BodyXmlTests {
 
         assertThat(
             read(a(bodyReader), element),
-            isResult(
+            isInternalResult(
                 hasStyle(Optional.of(new Style("Heading1Char", Optional.empty()))),
                 list("Run style with ID Heading1Char was referenced but not defined in the document")));
     }
@@ -309,7 +310,7 @@ public class BodyXmlTests {
 
         assertThat(
             readAll(a(bodyReader), element),
-            isResult(equalTo(list()), list("Unsupported break type: page")));
+            isInternalResult(equalTo(list()), list("Unsupported break type: page")));
     }
 
     @Test
@@ -358,7 +359,7 @@ public class BodyXmlTests {
         XmlElement element = element("w:bookmarkStart", map("w:name", "_GoBack"));
         assertThat(
             readAll(a(bodyReader), element),
-            isResult(equalTo(list()), list()));
+            isInternalResult(equalTo(list()), list()));
     }
 
     @Test
@@ -409,7 +410,7 @@ public class BodyXmlTests {
 
         assertThat(
             readAll(a(bodyReader), paragraph),
-            isResult(deepEquals(expected), list()));
+            isInternalResult(deepEquals(expected), list()));
     }
 
     @Test
@@ -573,7 +574,7 @@ public class BodyXmlTests {
 
         assertThat(
             readAll(a(bodyReader), element),
-            isResult(equalTo(list()), list()));
+            isInternalResult(equalTo(list()), list()));
     }
 
     @Test
@@ -581,7 +582,7 @@ public class BodyXmlTests {
         XmlElement element = element("w:huh");
         assertThat(
             readAll(a(bodyReader), element),
-            isResult(equalTo(list()), list("An unrecognised element was ignored: w:huh")));
+            isInternalResult(equalTo(list()), list("An unrecognised element was ignored: w:huh")));
     }
 
     @Test

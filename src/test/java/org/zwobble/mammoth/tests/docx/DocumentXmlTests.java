@@ -13,12 +13,12 @@ import org.zwobble.mammoth.internal.xml.XmlNodes;
 import static com.natpryce.makeiteasy.MakeItEasy.a;
 import static com.natpryce.makeiteasy.MakeItEasy.make;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.zwobble.mammoth.internal.results.InternalResult.success;
-import static org.zwobble.mammoth.tests.DeepReflectionMatcher.deepEquals;
-import static org.zwobble.mammoth.tests.documents.DocumentElementMakers.paragraphWithText;
-import static org.zwobble.mammoth.tests.docx.BodyXmlReaderMakers.bodyReader;
 import static org.zwobble.mammoth.internal.util.MammothLists.list;
 import static org.zwobble.mammoth.internal.xml.XmlNodes.element;
+import static org.zwobble.mammoth.tests.DeepReflectionMatcher.deepEquals;
+import static org.zwobble.mammoth.tests.ResultMatchers.isInternalSuccess;
+import static org.zwobble.mammoth.tests.documents.DocumentElementMakers.paragraphWithText;
+import static org.zwobble.mammoth.tests.docx.BodyXmlReaderMakers.bodyReader;
 
 public class DocumentXmlTests {
 
@@ -36,9 +36,9 @@ public class DocumentXmlTests {
 
         assertThat(
             document,
-            deepEquals(success(new Document(
+            isInternalSuccess(new Document(
                 list(paragraphWithText("Hello!")),
-                Notes.EMPTY))));
+                Notes.EMPTY)));
     }
 
     @Test

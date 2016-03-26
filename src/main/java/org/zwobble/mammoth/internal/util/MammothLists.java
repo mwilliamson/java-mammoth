@@ -6,6 +6,9 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Ordering;
 
 import java.util.List;
+import java.util.stream.Collectors;
+
+import static org.zwobble.mammoth.internal.util.MammothIterables.stream;
 
 public class MammothLists {
     public static <T> List<T> list() {
@@ -46,5 +49,9 @@ public class MammothLists {
 
     private static <T, R extends Comparable<R>> Ordering<T> orderBy(Function<T, R> getKey) {
         return Ordering.from((first, second) -> getKey.apply(first).compareTo(getKey.apply(second)));
+    }
+
+    public static <T> List<T> toList(Iterable<T> iterable) {
+        return stream(iterable).collect(Collectors.toList());
     }
 }

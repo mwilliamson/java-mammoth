@@ -77,7 +77,7 @@ public class DocumentConverter {
      */
     public Result<String> convertToHtml(InputStream stream) throws IOException {
         return withDocxFile(stream, zipFile ->
-            convertToHtml(Optional.empty(), zipFile));
+            convertToHtml(Optional.empty(), zipFile)).toResult();
     }
 
     /**
@@ -85,7 +85,7 @@ public class DocumentConverter {
      */
     public Result<String> convertToHtml(File file) throws IOException {
         return withDocxFile(file, zipFile ->
-            convertToHtml(Optional.of(file.toPath()), zipFile));
+            convertToHtml(Optional.of(file.toPath()), zipFile)).toResult();
     }
 
     private InternalResult<String> convertToHtml(Optional<Path> path, DocxFile zipFile) {
@@ -103,7 +103,7 @@ public class DocumentConverter {
      */
     public Result<String> extractRawText(InputStream stream) throws IOException {
         return withDocxFile(stream, zipFile ->
-            extractRawText(Optional.empty(), zipFile));
+            extractRawText(Optional.empty(), zipFile)).toResult();
     }
 
     /**
@@ -113,7 +113,7 @@ public class DocumentConverter {
      */
     public Result<String> extractRawText(File file) throws IOException {
         return withDocxFile(file, zipFile ->
-            extractRawText(Optional.of(file.toPath()), zipFile));
+            extractRawText(Optional.of(file.toPath()), zipFile)).toResult();
     }
 
     private InternalResult<String> extractRawText(Optional<Path> path, DocxFile zipFile) {

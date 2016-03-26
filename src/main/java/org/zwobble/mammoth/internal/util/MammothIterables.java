@@ -6,6 +6,8 @@ import java.util.Iterator;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 public class MammothIterables {
     public static <T> Optional<T> tryGetLast(Iterable<T> iterable) {
@@ -39,6 +41,30 @@ public class MammothIterables {
         }
     }
 
+    public static <T, R> Iterable<R> lazyFlatMap(Iterable<T> iterable, Function<T, Iterable<R>> function) {
+        return lazyFlatten(lazyMap(iterable, function));
+    }
+
+    public static <T> Iterable<T> lazyConcat(Iterable<T> iterable1, Iterable<T> iterable2) {
+        return new Iterable<T>() {
+            @Override
+            public Iterator<T> iterator() {
+                return Stream.concat(stream(iterable1), stream(iterable2)).iterator();
+            }
+        };
+    }
+
+    public static <T> Iterable<T> lazyFlatten(Iterable<? extends Iterable<T>> iterables) {
+        return new Iterable<T>() {
+            @Override
+            public Iterator<T> iterator() {
+                return stream(iterables)
+                    .flatMap(iterable -> stream(iterable))
+                    .iterator();
+            }
+        };
+    }
+
     private static <T, R> Iterator<R> map(Iterator<T> iterator, Function<T, R> function) {
         return new Iterator<R>() {
             @Override
@@ -51,5 +77,9 @@ public class MammothIterables {
                 return function.apply(iterator.next());
             }
         };
+    }
+
+    public static <T> Stream<T> stream(Iterable<T> iterable) {
+        return StreamSupport.stream(iterable.spliterator(), false);
     }
 }

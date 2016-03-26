@@ -1,5 +1,6 @@
 package org.zwobble.mammoth.tests;
 
+import org.hamcrest.Matcher;
 import org.junit.Test;
 import org.zwobble.mammoth.internal.DocumentToHtml;
 import org.zwobble.mammoth.internal.DocumentToHtmlOptions;
@@ -21,11 +22,11 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.zwobble.mammoth.internal.documents.VerticalAlignment.SUBSCRIPT;
 import static org.zwobble.mammoth.internal.documents.VerticalAlignment.SUPERSCRIPT;
-import static org.zwobble.mammoth.internal.results.InternalResult.success;
 import static org.zwobble.mammoth.internal.util.MammothLists.list;
 import static org.zwobble.mammoth.internal.util.MammothMaps.map;
 import static org.zwobble.mammoth.internal.util.MammothSets.set;
 import static org.zwobble.mammoth.tests.DeepReflectionMatcher.deepEquals;
+import static org.zwobble.mammoth.tests.ResultMatchers.isInternalSuccess;
 import static org.zwobble.mammoth.tests.documents.DocumentElementMakers.*;
 
 public class DocumentToHtmlTests {
@@ -41,7 +42,7 @@ public class DocumentToHtmlTests {
         DocumentToHtmlOptions options = DocumentToHtmlOptions.DEFAULT.preserveEmptyParagraphs();
         assertThat(
             DocumentToHtml.convertToHtml(make(a(PARAGRAPH)), options),
-            deepEquals(success(list(Html.element("p", list(Html.FORCE_WRITE))))));
+            isSuccess(list(Html.element("p", list(Html.FORCE_WRITE)))));
     }
 
     @Test
@@ -307,7 +308,7 @@ public class DocumentToHtmlTests {
         DocumentToHtmlOptions options = DocumentToHtmlOptions.DEFAULT
             .idPrefix("doc-42-");
         InternalResult<List<HtmlNode>> result = DocumentToHtml.convertToHtml(document, options);
-        assertThat(result.getWarnings(), hasSize(0));
+        assertThat(result.getWarnings(), emptyIterable());
         return result.getValue();
     }
 
@@ -317,7 +318,7 @@ public class DocumentToHtmlTests {
 
     private List<HtmlNode> convertToHtml(DocumentElement element, StyleMap styleMap) {
         InternalResult<List<HtmlNode>> result = convertToHtmlResult(element, styleMap);
-        assertThat(result.getWarnings(), hasSize(0));
+        assertThat(result.getWarnings(), emptyIterable());
         return result.getValue();
     }
 
@@ -330,5 +331,9 @@ public class DocumentToHtmlTests {
             .idPrefix("doc-42-")
             .addStyleMap(styleMap);
         return DocumentToHtml.convertToHtml(element, options);
+    }
+
+    private Matcher<? super InternalResult<List<HtmlNode>>> isSuccess(List<HtmlNode> expected) {
+        return isInternalSuccess(deepEquals(expected));
     }
 }

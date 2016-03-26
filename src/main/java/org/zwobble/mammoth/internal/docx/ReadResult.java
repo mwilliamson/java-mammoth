@@ -1,32 +1,26 @@
 package org.zwobble.mammoth.internal.docx;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
 import org.zwobble.mammoth.internal.documents.DocumentElement;
 import org.zwobble.mammoth.internal.results.InternalResult;
 
 import java.util.List;
-import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
+import static org.zwobble.mammoth.internal.util.MammothIterables.lazyConcat;
+import static org.zwobble.mammoth.internal.util.MammothIterables.lazyFlatMap;
+import static org.zwobble.mammoth.internal.util.MammothLists.eagerFlatMap;
 import static org.zwobble.mammoth.internal.util.MammothLists.list;
-import static org.zwobble.mammoth.internal.util.MammothSets.set;
 
 public class ReadResult {
     public static final ReadResult EMPTY_SUCCESS = success(list());
 
     public static ReadResult concat(Iterable<ReadResult> results) {
-        ImmutableList.Builder<DocumentElement> elements = ImmutableList.builder();
-        ImmutableList.Builder<DocumentElement> extra = ImmutableList.builder();
-        ImmutableSet.Builder<String> warnings = ImmutableSet.builder();
-        for (ReadResult result : results) {
-            elements.addAll(result.elements);
-            extra.addAll(result.extra);
-            warnings.addAll(result.warnings);
-        }
-        return new ReadResult(elements.build(), extra.build(), warnings.build());
+        return new ReadResult(
+            eagerFlatMap(results, result -> result.elements),
+            eagerFlatMap(results, result -> result.extra),
+            lazyFlatMap(results, result -> result.warnings));
     }
 
     public static <T> ReadResult map(
@@ -37,7 +31,7 @@ public class ReadResult {
         return new ReadResult(
             list(function.apply(first.getValue(), second.elements)),
             second.extra,
-            Sets.union(first.getWarnings(), second.warnings).immutableCopy());
+            lazyConcat(first.getWarnings(), second.warnings));
     }
 
     public static ReadResult success(DocumentElement element) {
@@ -45,22 +39,22 @@ public class ReadResult {
     }
 
     public static ReadResult success(List<DocumentElement> elements) {
-        return new ReadResult(elements, list(), set());
+        return new ReadResult(elements, list(), list());
     }
 
     public static ReadResult emptyWithWarning(String warning) {
-        return new ReadResult(list(), list(), set(warning));
+        return new ReadResult(list(), list(), list(warning));
     }
 
     public static ReadResult withWarning(DocumentElement element, String warning) {
-        return new ReadResult(list(element), list(), set(warning));
+        return new ReadResult(list(element), list(), list(warning));
     }
 
     private final List<DocumentElement> elements;
     private final List<DocumentElement> extra;
-    private final Set<String> warnings;
+    private final Iterable<String> warnings;
 
-    public ReadResult(List<DocumentElement> elements, List<DocumentElement> extra, Set<String> warnings) {
+    public ReadResult(List<DocumentElement> elements, List<DocumentElement> extra, Iterable<String> warnings) {
         this.elements = elements;
         this.extra = extra;
         this.warnings = warnings;

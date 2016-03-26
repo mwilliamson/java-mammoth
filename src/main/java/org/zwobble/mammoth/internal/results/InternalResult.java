@@ -1,8 +1,7 @@
 package org.zwobble.mammoth.internal.results;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
+import org.zwobble.mammoth.Result;
 import org.zwobble.mammoth.internal.documents.Style;
 
 import java.util.List;
@@ -11,17 +10,16 @@ import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-import static org.zwobble.mammoth.internal.util.MammothSets.set;
+import static org.zwobble.mammoth.internal.util.MammothIterables.lazyConcat;
+import static org.zwobble.mammoth.internal.util.MammothIterables.lazyFlatMap;
+import static org.zwobble.mammoth.internal.util.MammothLists.eagerMap;
+import static org.zwobble.mammoth.internal.util.MammothLists.list;
 
-public class InternalResult<T> implements org.zwobble.mammoth.Result<T> {
+public class InternalResult<T> {
     public static <T> InternalResult<List<T>> concat(Iterable<InternalResult<T>> results) {
-        ImmutableList.Builder<T> elements = ImmutableList.builder();
-        ImmutableSet.Builder<String> warnings = ImmutableSet.builder();
-        for (InternalResult<T> result : results) {
-            elements.add(result.value);
-            warnings.addAll(result.warnings);
-        }
-        return new InternalResult<>(elements.build(), warnings.build());
+        return new InternalResult<>(
+            eagerMap(results, result -> result.value),
+            lazyFlatMap(results, result -> result.warnings));
     }
 
     public static <T1, T2, R> InternalResult<R> map(
@@ -31,21 +29,21 @@ public class InternalResult<T> implements org.zwobble.mammoth.Result<T> {
     {
         return new InternalResult<>(
             function.apply(first.value, second.value),
-            Sets.union(first.warnings, second.warnings).immutableCopy());
+            lazyConcat(first.warnings, second.warnings));
     }
 
     public static InternalResult<Optional<Style>> empty() {
-        return new InternalResult<>(Optional.empty(), set());
+        return new InternalResult<>(Optional.empty(), list());
     }
 
     public static <T> InternalResult<T> success(T value) {
-        return new InternalResult<>(value, set());
+        return new InternalResult<>(value, list());
     }
 
     private final T value;
-    private final Set<String> warnings;
+    private final Iterable<String> warnings;
 
-    public InternalResult(T value, Set<String> warnings) {
+    public InternalResult(T value, Iterable<String> warnings) {
         this.value = value;
         this.warnings = warnings;
     }
@@ -54,7 +52,7 @@ public class InternalResult<T> implements org.zwobble.mammoth.Result<T> {
         return value;
     }
 
-    public Set<String> getWarnings() {
+    public Iterable<String> getWarnings() {
         return warnings;
     }
 
@@ -66,6 +64,21 @@ public class InternalResult<T> implements org.zwobble.mammoth.Result<T> {
         InternalResult<R> intermediateResult = function.apply(value);
         return new InternalResult<>(
             intermediateResult.value,
-            Sets.union(warnings, intermediateResult.warnings).immutableCopy());
+            lazyConcat(warnings, intermediateResult.warnings));
+    }
+
+    public Result<T> toResult() {
+        Set<String> warnings = ImmutableSet.copyOf(this.warnings);
+        return new Result<T>() {
+            @Override
+            public T getValue() {
+                return value;
+            }
+
+            @Override
+            public Set<String> getWarnings() {
+                return warnings;
+            }
+        };
     }
 }
