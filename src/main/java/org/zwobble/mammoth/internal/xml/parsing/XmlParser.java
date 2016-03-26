@@ -9,7 +9,7 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Map;
 
-import static java.util.stream.Collectors.toMap;
+import static org.zwobble.mammoth.internal.util.MammothMaps.eagerMapKeys;
 import static org.zwobble.mammoth.internal.util.MammothMaps.lookup;
 import static org.zwobble.mammoth.internal.util.MammothStrings.isNullOrEmpty;
 
@@ -45,12 +45,7 @@ public class XmlParser {
 
         @Override
         public void startElement(ElementName name, Map<ElementName, String> attributes) {
-            Map<String, String> simpleAttributes = attributes
-                .entrySet()
-                .stream()
-                .collect(toMap(
-                    entry -> readName(entry.getKey()),
-                    entry -> entry.getValue()));
+            Map<String, String> simpleAttributes = eagerMapKeys(attributes, this::readName);
             XmlElementBuilder element = new XmlElementBuilder(readName(name), simpleAttributes);
             elementStack.add(element);
         }

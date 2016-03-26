@@ -56,6 +56,14 @@ public class MammothMaps {
         return map;
     }
 
+    public static <K1, K2, V> Map<K2, V> eagerMapKeys(Map<K1, V> map, Function<K1, K2> function) {
+        Map<K2, V> result = new HashMap<>();
+        for (Map.Entry<K1, V> element : map.entrySet()) {
+            result.put(function.apply(element.getKey()), element.getValue());
+        }
+        return result;
+    }
+
     public static <K, V1, V2> Map<K, V2> eagerMapValues(Map<K, V1> map, Function<V1, V2> function) {
         Map<K, V2> result = new HashMap<>();
         for (Map.Entry<K, V1> element : map.entrySet()) {
