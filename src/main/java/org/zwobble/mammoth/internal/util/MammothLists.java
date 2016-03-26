@@ -1,11 +1,11 @@
 package org.zwobble.mammoth.internal.util;
 
-import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Ordering;
 
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static org.zwobble.mammoth.internal.util.MammothIterables.stream;
@@ -36,11 +36,13 @@ public class MammothLists {
     }
 
     public static <T, R> List<R> eagerMap(Iterable<T> iterable, Function<T, R> function) {
-        return ImmutableList.copyOf(Iterables.transform(iterable, function));
+        return stream(iterable).map(function).collect(Collectors.toList());
     }
 
     public static <T, R> List<R> eagerFlatMap(Iterable<T> iterable, Function<T, Iterable<R>> function) {
-        return ImmutableList.copyOf(Iterables.concat(Iterables.transform(iterable, function)));
+        return stream(iterable)
+            .flatMap(element -> stream(function.apply(element)))
+            .collect(Collectors.toList());
     }
 
     public static <T, R extends Comparable<R>> List<T> orderedBy(Iterable<T> iterable, Function<T, R> getKey) {
