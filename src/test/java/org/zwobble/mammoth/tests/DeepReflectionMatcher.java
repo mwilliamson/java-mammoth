@@ -13,8 +13,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-import static com.google.common.collect.Iterables.any;
 import static java.util.Arrays.asList;
+import static org.zwobble.mammoth.internal.util.MammothIterables.any;
 import static org.zwobble.mammoth.internal.util.MammothIterables.lazyMap;
 import static org.zwobble.mammoth.internal.util.MammothLists.eagerFilter;
 import static org.zwobble.mammoth.internal.util.MammothLists.skip;

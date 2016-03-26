@@ -96,6 +96,10 @@ public class MammothIterables {
         };
     }
 
+    public static <T> boolean any(Iterable<T> iterable, Predicate<T> predicate) {
+        return stream(iterable).anyMatch(predicate);
+    }
+
     public static <T> Stream<T> stream(Iterable<T> iterable) {
         return StreamSupport.stream(iterable.spliterator(), false);
     }
