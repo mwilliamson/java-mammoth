@@ -172,7 +172,7 @@ public class BodyXmlReader {
     }
 
     public ReadResult readElements(Iterable<XmlNode> nodes) {
-        return ReadResult.concat(
+        return ReadResult.flatten(
             lazyMap(
                 filter(nodes, XmlElement.class),
                 this::readElement));
@@ -286,7 +286,7 @@ public class BodyXmlReader {
     }
 
     private ReadResult readBlips(XmlElementList blips, Optional<String> altText) {
-        return ReadResult.concat(lazyMap(blips, blip -> readBlip(blip, altText)));
+        return ReadResult.flatten(lazyMap(blips, blip -> readBlip(blip, altText)));
     }
 
     private ReadResult readBlip(XmlElement blip, Optional<String> altText) {

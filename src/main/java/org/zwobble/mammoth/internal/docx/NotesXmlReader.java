@@ -31,7 +31,7 @@ public class NotesXmlReader {
 
     public InternalResult<List<Note>> readElement(XmlElement element) {
         Iterable<XmlElement> elements = filter(element.findChildren("w:" + tagName), this::isNoteElement);
-        return InternalResult.concat(lazyMap(elements, this::readNoteElement));
+        return InternalResult.flatten(lazyMap(elements, this::readNoteElement));
     }
 
     private boolean isNoteElement(XmlElement element) {

@@ -17,7 +17,7 @@ import static org.zwobble.mammoth.internal.util.MammothLists.list;
 import static org.zwobble.mammoth.internal.util.MammothLists.toList;
 
 public class InternalResult<T> {
-    public static <T> InternalResult<List<T>> concat(Iterable<InternalResult<T>> results) {
+    public static <T> InternalResult<List<T>> flatten(Iterable<InternalResult<T>> results) {
         results = toList(results);
         return new InternalResult<>(
             eagerMap(results, result -> result.value),

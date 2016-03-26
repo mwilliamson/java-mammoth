@@ -17,7 +17,7 @@ import static org.zwobble.mammoth.internal.util.MammothLists.toList;
 public class ReadResult {
     public static final ReadResult EMPTY_SUCCESS = success(list());
 
-    public static ReadResult concat(Iterable<ReadResult> results) {
+    public static ReadResult flatten(Iterable<ReadResult> results) {
         results = toList(results);
         return new ReadResult(
             eagerFlatMap(results, result -> result.elements),
