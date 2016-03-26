@@ -1,12 +1,12 @@
 package org.zwobble.mammoth.internal.styles;
 
-import com.google.common.collect.Lists;
 import org.zwobble.mammoth.internal.html.HtmlNode;
 
 import java.util.List;
 import java.util.Map;
 
 import static org.zwobble.mammoth.internal.util.MammothLists.list;
+import static org.zwobble.mammoth.internal.util.MammothLists.reversed;
 import static org.zwobble.mammoth.internal.util.MammothMaps.map;
 
 public class HtmlPath {
@@ -43,7 +43,7 @@ public class HtmlPath {
     }
 
     public List<HtmlNode> wrap(List<HtmlNode> nodes) {
-        for (HtmlPathElement element : Lists.reverse(elements)) {
+        for (HtmlPathElement element : reversed(elements)) {
             nodes = element.wrap(nodes);
         }
         return nodes;

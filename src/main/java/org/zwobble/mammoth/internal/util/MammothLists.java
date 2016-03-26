@@ -2,9 +2,7 @@ package org.zwobble.mammoth.internal.util;
 
 import com.google.common.collect.Ordering;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -79,5 +77,25 @@ public class MammothLists {
 
     public static <T> List<T> skip(List<T> list, int count) {
         return list.subList(Math.min(list.size(), count), list.size());
+    }
+
+    public static <T> Iterable<T> reversed(List<T> list) {
+        return new Iterable<T>() {
+            @Override
+            public Iterator<T> iterator() {
+                ListIterator<T> iterator = list.listIterator(list.size());
+                return new Iterator<T>() {
+                    @Override
+                    public boolean hasNext() {
+                        return iterator.hasPrevious();
+                    }
+
+                    @Override
+                    public T next() {
+                        return iterator.previous();
+                    }
+                };
+            }
+        };
     }
 }

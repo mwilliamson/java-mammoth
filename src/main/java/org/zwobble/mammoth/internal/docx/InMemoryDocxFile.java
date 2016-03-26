@@ -1,33 +1,32 @@
 package org.zwobble.mammoth.internal.docx;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import static org.zwobble.mammoth.internal.util.MammothMaps.eagerMapValues;
 import static org.zwobble.mammoth.internal.util.MammothMaps.lookup;
 import static org.zwobble.mammoth.internal.util.Streams.toByteArray;
 
 public class InMemoryDocxFile implements DocxFile {
     public static DocxFile fromStream(InputStream stream) throws IOException {
         ZipInputStream zipStream = new ZipInputStream(stream);
-        ImmutableMap.Builder<String, byte[]> entries = ImmutableMap.builder();
+        Map<String, byte[]> entries = new HashMap<>();
         ZipEntry entry;
         while ((entry = zipStream.getNextEntry()) != null) {
             entries.put(entry.getName(), toByteArray(zipStream));
         }
-        return new InMemoryDocxFile(entries.build());
+        return new InMemoryDocxFile(entries);
     }
 
     public static DocxFile fromStrings(Map<String, String> entries) {
-        return new InMemoryDocxFile(Maps.transformValues(entries, value -> value.getBytes(StandardCharsets.UTF_8)));
+        return new InMemoryDocxFile(eagerMapValues(entries, value -> value.getBytes(StandardCharsets.UTF_8)));
     }
 
     private final Map<String, byte[]> entries;
