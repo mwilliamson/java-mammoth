@@ -1,14 +1,13 @@
 package org.zwobble.mammoth.internal.docx;
 
+import org.zwobble.mammoth.internal.documents.Note;
 import org.zwobble.mammoth.internal.documents.NoteType;
 import org.zwobble.mammoth.internal.results.InternalResult;
-import org.zwobble.mammoth.internal.documents.Note;
 import org.zwobble.mammoth.internal.xml.XmlElement;
 
 import java.util.List;
 
 import static com.google.common.collect.Iterables.filter;
-import static org.zwobble.mammoth.internal.util.MammothIterables.lazyMap;
 
 public class NotesXmlReader {
     public static NotesXmlReader footnote(BodyXmlReader bodyReader) {
@@ -31,7 +30,7 @@ public class NotesXmlReader {
 
     public InternalResult<List<Note>> readElement(XmlElement element) {
         Iterable<XmlElement> elements = filter(element.findChildren("w:" + tagName), this::isNoteElement);
-        return InternalResult.flatten(lazyMap(elements, this::readNoteElement));
+        return InternalResult.flatMap(elements, this::readNoteElement);
     }
 
     private boolean isNoteElement(XmlElement element) {

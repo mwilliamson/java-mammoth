@@ -10,15 +10,13 @@ import java.util.function.Function;
 
 import static org.zwobble.mammoth.internal.util.MammothIterables.lazyConcat;
 import static org.zwobble.mammoth.internal.util.MammothIterables.lazyFlatMap;
-import static org.zwobble.mammoth.internal.util.MammothLists.eagerFlatMap;
-import static org.zwobble.mammoth.internal.util.MammothLists.list;
-import static org.zwobble.mammoth.internal.util.MammothLists.toList;
+import static org.zwobble.mammoth.internal.util.MammothLists.*;
 
 public class ReadResult {
     public static final ReadResult EMPTY_SUCCESS = success(list());
 
-    public static ReadResult flatten(Iterable<ReadResult> results) {
-        results = toList(results);
+    public static <T> ReadResult flatMap(Iterable<T> iterable, Function<T, ReadResult> function) {
+        List<ReadResult> results = eagerMap(iterable, function);
         return new ReadResult(
             eagerFlatMap(results, result -> result.elements),
             eagerFlatMap(results, result -> result.extra),
