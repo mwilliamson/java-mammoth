@@ -1,10 +1,10 @@
 package org.zwobble.mammoth.tests;
 
-import com.google.common.collect.Sets;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
 import org.hamcrest.TypeSafeDiagnosingMatcher;
+import org.zwobble.mammoth.internal.util.MammothSets;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -143,7 +143,7 @@ public class DeepReflectionMatcher<T> extends TypeSafeDiagnosingMatcher<T> {
     }
 
     private static boolean handleExtraElements(String path, Map<?, ?> expected, Map<?, ?> actual, Description mismatchDescription, String prefix) {
-        Sets.SetView<?> extraElements = Sets.difference(actual.keySet(), expected.keySet());
+        Set<?> extraElements = MammothSets.difference(actual.keySet(), expected.keySet());
         if (!extraElements.isEmpty()) {
             appendPath(mismatchDescription, path);
             mismatchDescription.appendText(prefix +
