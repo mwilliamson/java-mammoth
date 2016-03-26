@@ -1,6 +1,5 @@
 package org.zwobble.mammoth.tests.docx;
 
-import com.google.common.io.CharStreams;
 import com.natpryce.makeiteasy.Maker;
 import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
@@ -8,13 +7,15 @@ import org.junit.Test;
 import org.zwobble.mammoth.internal.documents.*;
 import org.zwobble.mammoth.internal.docx.*;
 import org.zwobble.mammoth.internal.results.InternalResult;
-import org.zwobble.mammoth.tests.DeepReflectionMatcher;
 import org.zwobble.mammoth.internal.xml.XmlElement;
 import org.zwobble.mammoth.internal.xml.XmlNode;
 import org.zwobble.mammoth.internal.xml.XmlNodes;
+import org.zwobble.mammoth.tests.DeepReflectionMatcher;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -26,16 +27,16 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.zwobble.mammoth.internal.documents.NoteReference.endnoteReference;
 import static org.zwobble.mammoth.internal.documents.NoteReference.footnoteReference;
+import static org.zwobble.mammoth.internal.util.MammothLists.list;
+import static org.zwobble.mammoth.internal.util.MammothMaps.map;
+import static org.zwobble.mammoth.internal.util.Streams.toByteArray;
+import static org.zwobble.mammoth.internal.xml.XmlNodes.element;
 import static org.zwobble.mammoth.tests.DeepReflectionMatcher.deepEquals;
 import static org.zwobble.mammoth.tests.ResultMatchers.hasWarnings;
 import static org.zwobble.mammoth.tests.ResultMatchers.isInternalResult;
-import static org.zwobble.mammoth.tests.ResultMatchers.isResult;
 import static org.zwobble.mammoth.tests.documents.DocumentElementMakers.*;
 import static org.zwobble.mammoth.tests.docx.BodyXmlReaderMakers.*;
 import static org.zwobble.mammoth.tests.docx.BodyXmlReaderMakers.NUMBERING;
-import static org.zwobble.mammoth.internal.util.MammothLists.list;
-import static org.zwobble.mammoth.internal.util.MammothMaps.map;
-import static org.zwobble.mammoth.internal.xml.XmlNodes.element;
 
 public class BodyXmlTests {
 
@@ -445,8 +446,12 @@ public class BodyXmlTests {
             hasProperty("altText", deepEquals(Optional.of("It's a hat"))),
             hasProperty("contentType", deepEquals(Optional.of("image/png")))));
         assertThat(
-            CharStreams.toString(new InputStreamReader(image.open())),
+            toString(image.open()),
             equalTo(imageBytes));
+    }
+
+    private static String toString(InputStream stream) throws IOException {
+        return new String(toByteArray(stream), StandardCharsets.UTF_8);
     }
 
     private class EmbeddedImage {
@@ -493,7 +498,7 @@ public class BodyXmlTests {
             element);
 
         assertThat(
-            CharStreams.toString(new InputStreamReader(image.open())),
+            toString(image.open()),
             equalTo(imageBytes));
     }
 
