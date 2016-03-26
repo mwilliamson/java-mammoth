@@ -1,6 +1,5 @@
 package org.zwobble.mammoth.internal.docx;
 
-import com.google.common.collect.ImmutableSet;
 import org.zwobble.mammoth.internal.documents.*;
 import org.zwobble.mammoth.internal.results.InternalResult;
 import org.zwobble.mammoth.internal.util.InputStreamSupplier;
@@ -18,10 +17,11 @@ import static org.zwobble.mammoth.internal.docx.ReadResult.EMPTY_SUCCESS;
 import static org.zwobble.mammoth.internal.docx.ReadResult.success;
 import static org.zwobble.mammoth.internal.util.MammothIterables.lazyFilter;
 import static org.zwobble.mammoth.internal.util.MammothLists.list;
+import static org.zwobble.mammoth.internal.util.MammothSets.set;
 import static org.zwobble.mammoth.internal.util.MammothStrings.trimLeft;
 
 public class BodyXmlReader {
-    private static final Set<String> IMAGE_TYPES_SUPPORTED_BY_BROWSERS = ImmutableSet.of(
+    private static final Set<String> IMAGE_TYPES_SUPPORTED_BY_BROWSERS = set(
         "image/png", "image/gif", "image/jpeg", "image/svg+xml", "image/tiff");
 
     private final Styles styles;

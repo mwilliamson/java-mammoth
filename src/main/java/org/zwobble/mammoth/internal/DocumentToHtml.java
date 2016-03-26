@@ -1,8 +1,6 @@
 package org.zwobble.mammoth.internal;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 import org.zwobble.mammoth.internal.documents.*;
 import org.zwobble.mammoth.internal.html.Html;
 import org.zwobble.mammoth.internal.html.HtmlNode;
@@ -12,10 +10,7 @@ import org.zwobble.mammoth.internal.styles.StyleMap;
 import org.zwobble.mammoth.internal.util.MammothLists;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.zwobble.mammoth.internal.util.MammothLists.*;
 import static org.zwobble.mammoth.internal.util.MammothMaps.map;
@@ -26,7 +21,7 @@ public class DocumentToHtml {
         DocumentToHtml documentConverter = new DocumentToHtml(options);
         return new InternalResult<>(
             documentConverter.convertToHtml(document),
-            documentConverter.warnings.build());
+            documentConverter.warnings);
     }
 
     private static List<Note> findNotes(Document document, Iterable<NoteReference> noteReferences) {
@@ -40,14 +35,14 @@ public class DocumentToHtml {
         DocumentToHtml documentConverter = new DocumentToHtml(options);
         return new InternalResult<>(
             documentConverter.convertToHtml(element),
-            documentConverter.warnings.build());
+            documentConverter.warnings);
     }
 
     private final String idPrefix;
     private final boolean preserveEmptyParagraphs;
     private final StyleMap styleMap;
     private final List<NoteReference> noteReferences = new ArrayList<>();
-    private final ImmutableSet.Builder<String> warnings = ImmutableSet.builder();
+    private final Set<String> warnings = new HashSet<>();
 
     private DocumentToHtml(DocumentToHtmlOptions options) {
         this.idPrefix = options.idPrefix();
@@ -72,14 +67,13 @@ public class DocumentToHtml {
     private HtmlNode convertToHtml(Note note) {
         String id = generateNoteHtmlId(note.getNoteType(), note.getId());
         String referenceId = generateNoteRefHtmlId(note.getNoteType(), note.getId());
-        ImmutableList.Builder<HtmlNode> children = ImmutableList.builder();
-        children.addAll(convertToHtml(note.getBody()));
+        List<HtmlNode> noteBody = convertToHtml(note.getBody());
         // TODO: we probably want this to collapse more eagerly than other collapsible elements
         // -- for instance, any paragraph will probably do, regardless of attributes. (Possible other elements will do too.)
-        children.add(Html.collapsibleElement("p", list(
+        HtmlNode backLink = Html.collapsibleElement("p", list(
             Html.text(" "),
-            Html.element("a", map("href", "#" + referenceId), list(Html.text("↑"))))));
-        return Html.element("li", map("id", id), children.build());
+            Html.element("a", map("href", "#" + referenceId), list(Html.text("↑")))));
+        return Html.element("li", map("id", id), eagerConcat(noteBody, list(backLink)));
     }
 
     private List<HtmlNode> convertToHtml(List<DocumentElement> elements) {

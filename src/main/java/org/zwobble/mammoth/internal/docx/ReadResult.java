@@ -1,6 +1,5 @@
 package org.zwobble.mammoth.internal.docx;
 
-import com.google.common.collect.ImmutableList;
 import org.zwobble.mammoth.internal.documents.DocumentElement;
 import org.zwobble.mammoth.internal.results.InternalResult;
 
@@ -68,21 +67,14 @@ public class ReadResult {
     }
 
     public ReadResult toExtra() {
-        return new ReadResult(list(), concat(extra, elements), warnings);
+        return new ReadResult(list(), eagerConcat(extra, elements), warnings);
     }
 
     public ReadResult appendExtra() {
-        return new ReadResult(concat(elements, extra), list(), warnings);
+        return new ReadResult(eagerConcat(elements, extra), list(), warnings);
     }
 
     public InternalResult<List<DocumentElement>> toResult() {
         return new InternalResult<>(elements, warnings);
-    }
-
-    private static <T> List<T> concat(List<T> first, List<T> second) {
-        ImmutableList.Builder<T> builder = ImmutableList.builder();
-        builder.addAll(first);
-        builder.addAll(second);
-        return builder.build();
     }
 }

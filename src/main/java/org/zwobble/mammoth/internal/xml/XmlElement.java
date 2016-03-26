@@ -1,14 +1,11 @@
 package org.zwobble.mammoth.internal.xml;
 
-import com.google.common.collect.ImmutableList;
-
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import static org.zwobble.mammoth.internal.util.MammothIterables.getFirst;
-import static org.zwobble.mammoth.internal.util.MammothIterables.lazyFilter;
-import static org.zwobble.mammoth.internal.util.MammothIterables.lazyMap;
+import static org.zwobble.mammoth.internal.util.MammothIterables.*;
+import static org.zwobble.mammoth.internal.util.MammothLists.toList;
 import static org.zwobble.mammoth.internal.util.MammothMaps.lookup;
 
 public class XmlElement implements XmlNode, XmlElementLike {
@@ -65,8 +62,7 @@ public class XmlElement implements XmlNode, XmlElementLike {
     }
 
     public XmlElementList findChildren(String name) {
-        Iterable<XmlElement> filtered = findChildrenIterable(name);
-        return new XmlElementList(ImmutableList.copyOf(filtered));
+        return new XmlElementList(toList(findChildrenIterable(name)));
     }
 
     public XmlElement findChild(String name) {

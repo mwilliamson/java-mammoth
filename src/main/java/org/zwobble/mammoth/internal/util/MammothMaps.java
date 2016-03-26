@@ -7,11 +7,11 @@ import java.util.function.Function;
 
 public class MammothMaps {
     public static <K, V> Map<K, V> map() {
-        return ImmutableMap.of();
+        return Collections.emptyMap();
     }
 
     public static <K, V> Map<K, V> map(K key1, V value1) {
-        return ImmutableMap.of(key1, value1);
+        return Collections.singletonMap(key1, value1);
     }
 
     public static <K, V> Map<K, V> map(K key1, V value1, K key2, V value2) {

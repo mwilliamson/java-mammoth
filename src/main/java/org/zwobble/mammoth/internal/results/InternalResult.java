@@ -1,6 +1,5 @@
 package org.zwobble.mammoth.internal.results;
 
-import com.google.common.collect.ImmutableSet;
 import org.zwobble.mammoth.Result;
 import org.zwobble.mammoth.internal.documents.Style;
 
@@ -14,6 +13,7 @@ import static org.zwobble.mammoth.internal.util.MammothIterables.lazyConcat;
 import static org.zwobble.mammoth.internal.util.MammothIterables.lazyFlatMap;
 import static org.zwobble.mammoth.internal.util.MammothLists.eagerMap;
 import static org.zwobble.mammoth.internal.util.MammothLists.list;
+import static org.zwobble.mammoth.internal.util.MammothSets.toSet;
 
 public class InternalResult<T> {
     public static <T, R> InternalResult<List<R>> flatMap(Iterable<T> iterable, Function<T, InternalResult<R>> function) {
@@ -69,7 +69,7 @@ public class InternalResult<T> {
     }
 
     public Result<T> toResult() {
-        Set<String> warnings = ImmutableSet.copyOf(this.warnings);
+        Set<String> warnings = toSet(this.warnings);
         return new Result<T>() {
             @Override
             public T getValue() {

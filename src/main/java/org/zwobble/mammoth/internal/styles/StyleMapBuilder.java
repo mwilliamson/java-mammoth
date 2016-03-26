@@ -1,9 +1,10 @@
 package org.zwobble.mammoth.internal.styles;
 
-import com.google.common.collect.ImmutableList;
 import org.zwobble.mammoth.internal.documents.Paragraph;
 import org.zwobble.mammoth.internal.documents.Run;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 public class StyleMapBuilder {
@@ -11,8 +12,8 @@ public class StyleMapBuilder {
     private Optional<HtmlPath> strikethrough;
     private Optional<HtmlPath> bold;
     private Optional<HtmlPath> italic;
-    private final ImmutableList.Builder<StyleMapping<Paragraph>> paragraphStyles = ImmutableList.builder();
-    private final ImmutableList.Builder<StyleMapping<Run>> runStyles = ImmutableList.builder();
+    private final List<StyleMapping<Paragraph>> paragraphStyles = new ArrayList<>();
+    private final List<StyleMapping<Run>> runStyles = new ArrayList<>();
 
     public StyleMapBuilder() {
         this.bold = Optional.empty();
@@ -42,16 +43,16 @@ public class StyleMapBuilder {
     }
 
     public StyleMapBuilder mapParagraph(ParagraphMatcher matcher, HtmlPath path) {
-        paragraphStyles.add(new StyleMapping<Paragraph>(matcher, path));
+        paragraphStyles.add(new StyleMapping<>(matcher, path));
         return this;
     }
 
     public StyleMapBuilder mapRun(RunMatcher matcher, HtmlPath path) {
-        runStyles.add(new StyleMapping<Run>(matcher, path));
+        runStyles.add(new StyleMapping<>(matcher, path));
         return this;
     }
 
     public StyleMap build() {
-        return new StyleMap(bold, italic, underline, strikethrough, paragraphStyles.build(), runStyles.build());
+        return new StyleMap(bold, italic, underline, strikethrough, paragraphStyles, runStyles);
     }
 }

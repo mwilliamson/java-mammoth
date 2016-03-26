@@ -1,8 +1,8 @@
 package org.zwobble.mammoth.internal.util;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Ordering;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
@@ -10,23 +10,29 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static java.util.Arrays.asList;
 import static org.zwobble.mammoth.internal.util.MammothIterables.stream;
 
 public class MammothLists {
     public static <T> List<T> list() {
-        return ImmutableList.of();
+        return Collections.emptyList();
     }
 
     public static <T> List<T> list(T value1) {
-        return ImmutableList.of(value1);
+        return Collections.singletonList(value1);
     }
 
     public static <T> List<T> list(T value1, T value2) {
-        return ImmutableList.of(value1, value2);
+        return asList(value1, value2);
     }
 
     public static <T> List<T> list(T value1, T value2, T value3) {
-        return ImmutableList.of(value1, value2, value3);
+        return asList(value1, value2, value3);
+    }
+
+    @SafeVarargs
+    public static <T> List<T> list(T... values) {
+        return asList(values);
     }
 
     public static <T> List<T> cons(T head, Iterable<T> tail) {
