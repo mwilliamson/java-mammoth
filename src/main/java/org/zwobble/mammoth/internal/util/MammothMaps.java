@@ -1,7 +1,5 @@
 package org.zwobble.mammoth.internal.util;
 
-import com.google.common.collect.ImmutableMap;
-
 import java.util.*;
 import java.util.function.Function;
 
@@ -15,11 +13,18 @@ public class MammothMaps {
     }
 
     public static <K, V> Map<K, V> map(K key1, V value1, K key2, V value2) {
-        return ImmutableMap.of(key1, value1, key2, value2);
+        Map<K, V> map = new HashMap<>();
+        map.put(key1, value1);
+        map.put(key2, value2);
+        return map;
     }
 
     public static <K, V> Map<K, V> map(K key1, V value1, K key2, V value2, K key3, V value3) {
-        return ImmutableMap.of(key1, value1, key2, value2, key3, value3);
+        Map<K, V> map = new HashMap<>();
+        map.put(key1, value1);
+        map.put(key2, value2);
+        map.put(key3, value3);
+        return map;
     }
 
     public static <K, V> Map.Entry<K, V> entry(K key, V value) {
@@ -35,11 +40,12 @@ public class MammothMaps {
     }
 
     public static <T, K, V> Map<K, V> toMap(Iterable<T> iterable, Function<T, Map.Entry<K, V>> function) {
-        ImmutableMap.Builder<K, V> builder = ImmutableMap.builder();
+        Map<K, V> map = new HashMap<>();
         for (T element : iterable) {
-            builder.put(function.apply(element));
+            Map.Entry<K, V> entry = function.apply(element);
+            map.put(entry.getKey(), entry.getValue());
         }
-        return builder.build();
+        return map;
     }
 
     public static <T, K> Map<K, List<T>> toMultiMapWithKey(Iterable<T> iterable, Function<T, K> function) {
