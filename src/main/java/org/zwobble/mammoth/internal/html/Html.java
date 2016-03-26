@@ -8,8 +8,8 @@ import java.util.List;
 import java.util.Map;
 
 import static org.zwobble.mammoth.internal.util.Casts.tryCast;
-import static org.zwobble.mammoth.internal.util.MammothIterables.tryGetLast;
 import static org.zwobble.mammoth.internal.util.MammothLists.list;
+import static org.zwobble.mammoth.internal.util.MammothLists.tryGetLast;
 import static org.zwobble.mammoth.internal.util.MammothMaps.map;
 
 public class Html {

@@ -5,6 +5,7 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Ordering;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -61,4 +62,13 @@ public class MammothLists {
     public static <T> List<T> toList(Iterable<T> iterable) {
         return stream(iterable).collect(Collectors.toList());
     }
+
+    public static <T> Optional<T> tryGetLast(List<T> list) {
+        if (list.isEmpty()) {
+            return Optional.empty();
+        } else {
+            return Optional.of(list.get(list.size() - 1));
+        }
+    }
+
 }
