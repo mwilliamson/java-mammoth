@@ -3,7 +3,6 @@ package org.zwobble.mammoth.internal;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.io.ByteStreams;
 import org.zwobble.mammoth.internal.documents.*;
 import org.zwobble.mammoth.internal.html.Html;
 import org.zwobble.mammoth.internal.html.HtmlNode;
@@ -20,6 +19,7 @@ import java.util.Map;
 
 import static org.zwobble.mammoth.internal.util.MammothLists.*;
 import static org.zwobble.mammoth.internal.util.MammothMaps.map;
+import static org.zwobble.mammoth.internal.util.Streams.toByteArray;
 
 public class DocumentToHtml {
     public static InternalResult<List<HtmlNode>> convertToHtml(Document document, DocumentToHtmlOptions options) {
@@ -214,7 +214,7 @@ public class DocumentToHtml {
                         try {
                             ImmutableMap.Builder<String, String> attributes = ImmutableMap.builder();
 
-                            String base64 = Base64.getEncoder().encodeToString(ByteStreams.toByteArray(image.open()));
+                            String base64 = Base64.getEncoder().encodeToString(toByteArray(image.open()));
                             String src = "data:" + contentType + ";base64," + base64;
                             attributes.put("src", src);
 

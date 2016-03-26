@@ -2,7 +2,6 @@ package org.zwobble.mammoth.internal.docx;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
-import com.google.common.io.ByteStreams;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -14,6 +13,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import static org.zwobble.mammoth.internal.util.MammothMaps.lookup;
+import static org.zwobble.mammoth.internal.util.Streams.toByteArray;
 
 public class InMemoryDocxFile implements DocxFile {
     public static DocxFile fromStream(InputStream stream) throws IOException {
@@ -21,7 +21,7 @@ public class InMemoryDocxFile implements DocxFile {
         ImmutableMap.Builder<String, byte[]> entries = ImmutableMap.builder();
         ZipEntry entry;
         while ((entry = zipStream.getNextEntry()) != null) {
-            entries.put(entry.getName(), ByteStreams.toByteArray(zipStream));
+            entries.put(entry.getName(), toByteArray(zipStream));
         }
         return new InMemoryDocxFile(entries.build());
     }
