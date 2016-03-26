@@ -8,4 +8,8 @@ public class MammothStrings {
         }
         return value.substring(index);
     }
+
+    public static boolean isNullOrEmpty(String value) {
+        return value == null || value.isEmpty();
+    }
 }

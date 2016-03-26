@@ -1,6 +1,5 @@
 package org.zwobble.mammoth.internal.xml.parsing;
 
-import com.google.common.base.Strings;
 import com.google.common.collect.BiMap;
 import org.zwobble.mammoth.internal.xml.XmlElement;
 import org.zwobble.mammoth.internal.xml.XmlTextNode;
@@ -12,6 +11,7 @@ import java.util.Map;
 
 import static java.util.stream.Collectors.toMap;
 import static org.zwobble.mammoth.internal.util.MammothMaps.lookup;
+import static org.zwobble.mammoth.internal.util.MammothStrings.isNullOrEmpty;
 
 public class XmlParser {
     private final BiMap<String, String> namespaces;
@@ -56,7 +56,7 @@ public class XmlParser {
         }
 
         private String readName(ElementName name) {
-            if (Strings.isNullOrEmpty(name.getUri())) {
+            if (isNullOrEmpty(name.getUri())) {
                 return name.getLocalName();                
             } else if (namespaces.containsValue(name.getUri())) {
                 return lookup(namespaces.inverse(), name.getUri()).get() + ":" + name.getLocalName();
