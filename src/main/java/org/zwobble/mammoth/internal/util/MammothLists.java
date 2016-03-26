@@ -30,10 +30,10 @@ public class MammothLists {
     }
 
     public static <T> List<T> cons(T head, Iterable<T> tail) {
-        return concat(list(head), tail);
+        return eagerConcat(list(head), tail);
     }
 
-    public static <T> List<T> concat(Iterable<T> first, Iterable<T> second) {
+    public static <T> List<T> eagerConcat(Iterable<T> first, Iterable<T> second) {
         return ImmutableList.copyOf(Iterables.concat(first, second));
     }
 

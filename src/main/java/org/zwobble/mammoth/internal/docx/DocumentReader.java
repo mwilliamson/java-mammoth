@@ -71,7 +71,7 @@ public class DocumentReader {
             tryParseOfficeXml(file, "word/endnotes.xml")
                 .map(NotesXmlReader.endnote(bodyReaders.forName("endnotes"))::readElement)
                 .orElse(InternalResult.success(list())),
-            MammothLists::concat).map(Notes::new);
+            MammothLists::eagerConcat).map(Notes::new);
     }
 
     private static Styles readStyles(DocxFile file) {

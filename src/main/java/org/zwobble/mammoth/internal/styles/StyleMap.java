@@ -47,8 +47,8 @@ public class StyleMap {
             MammothOptionals.first(styleMap.italic, italic),
             MammothOptionals.first(styleMap.underline, underline),
             MammothOptionals.first(styleMap.strikethrough, strikethrough),
-            MammothLists.concat(styleMap.paragraphStyles, paragraphStyles),
-            MammothLists.concat(styleMap.runStyles, runStyles));
+            MammothLists.eagerConcat(styleMap.paragraphStyles, paragraphStyles),
+            MammothLists.eagerConcat(styleMap.runStyles, runStyles));
     }
 
     public Optional<HtmlPath> getBold() {
