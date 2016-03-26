@@ -3,7 +3,6 @@ package org.zwobble.mammoth.internal;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
 import com.google.common.io.ByteStreams;
 import org.zwobble.mammoth.internal.documents.*;
 import org.zwobble.mammoth.internal.html.Html;
@@ -66,7 +65,7 @@ public class DocumentToHtml {
             HtmlNode noteNode = Html.element("ol",
                 eagerMap(notes, this::convertToHtml));
 
-            return ImmutableList.copyOf(Iterables.concat(mainBody, list(noteNode)));
+            return eagerConcat(mainBody, list(noteNode));
         }
     }
 
