@@ -4,7 +4,7 @@ import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
 import org.hamcrest.TypeSafeDiagnosingMatcher;
-import org.zwobble.mammoth.internal.util.MammothSets;
+import org.zwobble.mammoth.internal.util.Sets;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -14,10 +14,10 @@ import java.util.Optional;
 import java.util.Set;
 
 import static java.util.Arrays.asList;
-import static org.zwobble.mammoth.internal.util.MammothIterables.any;
-import static org.zwobble.mammoth.internal.util.MammothIterables.lazyMap;
-import static org.zwobble.mammoth.internal.util.MammothLists.eagerFilter;
-import static org.zwobble.mammoth.internal.util.MammothLists.skip;
+import static org.zwobble.mammoth.internal.util.Iterables.any;
+import static org.zwobble.mammoth.internal.util.Iterables.lazyMap;
+import static org.zwobble.mammoth.internal.util.Lists.eagerFilter;
+import static org.zwobble.mammoth.internal.util.Lists.skip;
 
 public class DeepReflectionMatcher<T> extends TypeSafeDiagnosingMatcher<T> {
     public static <T> Matcher<T> deepEquals(T value) {
@@ -143,7 +143,7 @@ public class DeepReflectionMatcher<T> extends TypeSafeDiagnosingMatcher<T> {
     }
 
     private static boolean handleExtraElements(String path, Map<?, ?> expected, Map<?, ?> actual, Description mismatchDescription, String prefix) {
-        Set<?> extraElements = MammothSets.difference(actual.keySet(), expected.keySet());
+        Set<?> extraElements = Sets.difference(actual.keySet(), expected.keySet());
         if (!extraElements.isEmpty()) {
             appendPath(mismatchDescription, path);
             mismatchDescription.appendText(prefix +

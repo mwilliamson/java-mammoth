@@ -3,7 +3,7 @@ package org.zwobble.mammoth.internal.docx;
 import org.zwobble.mammoth.internal.documents.Document;
 import org.zwobble.mammoth.internal.documents.Notes;
 import org.zwobble.mammoth.internal.results.InternalResult;
-import org.zwobble.mammoth.internal.util.MammothLists;
+import org.zwobble.mammoth.internal.util.Lists;
 import org.zwobble.mammoth.internal.xml.XmlElement;
 
 import java.io.IOException;
@@ -13,7 +13,7 @@ import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.util.Optional;
 
-import static org.zwobble.mammoth.internal.util.MammothLists.list;
+import static org.zwobble.mammoth.internal.util.Lists.list;
 
 public class DocumentReader {
     @FunctionalInterface
@@ -71,7 +71,7 @@ public class DocumentReader {
             tryParseOfficeXml(file, "word/endnotes.xml")
                 .map(NotesXmlReader.endnote(bodyReaders.forName("endnotes"))::readElement)
                 .orElse(InternalResult.success(list())),
-            MammothLists::eagerConcat).map(Notes::new);
+            Lists::eagerConcat).map(Notes::new);
     }
 
     private static Styles readStyles(DocxFile file) {

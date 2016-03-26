@@ -4,7 +4,7 @@ import org.junit.Test;
 import org.zwobble.mammoth.internal.docx.Relationships;
 
 import static org.junit.Assert.assertEquals;
-import static org.zwobble.mammoth.internal.util.MammothMaps.map;
+import static org.zwobble.mammoth.internal.util.Maps.map;
 import static org.zwobble.mammoth.tests.util.MammothAsserts.assertThrows;
 
 public class RelationshipsTests {

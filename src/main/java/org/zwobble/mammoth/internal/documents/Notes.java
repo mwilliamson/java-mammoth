@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import static org.zwobble.mammoth.internal.util.MammothLists.list;
-import static org.zwobble.mammoth.internal.util.MammothMaps.*;
+import static org.zwobble.mammoth.internal.util.Lists.list;
+import static org.zwobble.mammoth.internal.util.Maps.*;
 
 public class Notes {
     public final static Notes EMPTY = new Notes(list());

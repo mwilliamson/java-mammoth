@@ -5,8 +5,8 @@ import org.zwobble.mammoth.internal.documents.NumberingLevel;
 import java.util.Map;
 import java.util.Optional;
 
-import static org.zwobble.mammoth.internal.util.MammothMaps.lookup;
-import static org.zwobble.mammoth.internal.util.MammothMaps.map;
+import static org.zwobble.mammoth.internal.util.Maps.lookup;
+import static org.zwobble.mammoth.internal.util.Maps.map;
 
 public class Numbering {
     public static final Numbering EMPTY = new Numbering(map());

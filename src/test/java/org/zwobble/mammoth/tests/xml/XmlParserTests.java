@@ -16,8 +16,8 @@ import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.zwobble.mammoth.internal.util.MammothLists.list;
-import static org.zwobble.mammoth.internal.util.MammothMaps.map;
+import static org.zwobble.mammoth.internal.util.Lists.list;
+import static org.zwobble.mammoth.internal.util.Maps.map;
 
 public class XmlParserTests {
     private final XmlParser parser = new XmlParser(new NamespacePrefixes(map()));

@@ -2,7 +2,7 @@ package org.zwobble.mammoth.internal.html;
 
 import java.util.Map;
 
-import static org.zwobble.mammoth.internal.util.MammothLists.orderedBy;
+import static org.zwobble.mammoth.internal.util.Lists.orderedBy;
 
 public class HtmlWriter {
     public static void write(HtmlNode node, StringBuilder builder) {

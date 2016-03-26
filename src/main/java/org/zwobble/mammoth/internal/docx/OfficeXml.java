@@ -6,8 +6,8 @@ import org.zwobble.mammoth.internal.xml.parsing.XmlParser;
 import java.io.InputStream;
 import java.util.List;
 
-import static org.zwobble.mammoth.internal.util.MammothLists.eagerFlatMap;
-import static org.zwobble.mammoth.internal.util.MammothLists.list;
+import static org.zwobble.mammoth.internal.util.Lists.eagerFlatMap;
+import static org.zwobble.mammoth.internal.util.Lists.list;
 
 public class OfficeXml {
     private static NamespacePrefixes XML_NAMESPACES = NamespacePrefixes.builder()

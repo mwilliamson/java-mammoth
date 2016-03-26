@@ -2,13 +2,13 @@ package org.zwobble.mammoth.internal.styles;
 
 import org.zwobble.mammoth.internal.documents.Paragraph;
 import org.zwobble.mammoth.internal.documents.Run;
-import org.zwobble.mammoth.internal.util.MammothLists;
-import org.zwobble.mammoth.internal.util.MammothOptionals;
+import org.zwobble.mammoth.internal.util.Lists;
+import org.zwobble.mammoth.internal.util.Optionals;
 
 import java.util.List;
 import java.util.Optional;
 
-import static org.zwobble.mammoth.internal.util.MammothIterables.tryFind;
+import static org.zwobble.mammoth.internal.util.Iterables.tryFind;
 
 public class StyleMap {
     public static StyleMapBuilder builder() {
@@ -43,12 +43,12 @@ public class StyleMap {
     public StyleMap update(StyleMap styleMap) {
         // TODO: add appropriate tests
         return new StyleMap(
-            MammothOptionals.first(styleMap.bold, bold),
-            MammothOptionals.first(styleMap.italic, italic),
-            MammothOptionals.first(styleMap.underline, underline),
-            MammothOptionals.first(styleMap.strikethrough, strikethrough),
-            MammothLists.eagerConcat(styleMap.paragraphStyles, paragraphStyles),
-            MammothLists.eagerConcat(styleMap.runStyles, runStyles));
+            Optionals.first(styleMap.bold, bold),
+            Optionals.first(styleMap.italic, italic),
+            Optionals.first(styleMap.underline, underline),
+            Optionals.first(styleMap.strikethrough, strikethrough),
+            Lists.eagerConcat(styleMap.paragraphStyles, paragraphStyles),
+            Lists.eagerConcat(styleMap.runStyles, runStyles));
     }
 
     public Optional<HtmlPath> getBold() {

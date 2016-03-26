@@ -3,8 +3,8 @@ package org.zwobble.mammoth.internal.xml;
 import java.util.List;
 import java.util.Map;
 
-import static org.zwobble.mammoth.internal.util.MammothLists.list;
-import static org.zwobble.mammoth.internal.util.MammothMaps.map;
+import static org.zwobble.mammoth.internal.util.Lists.list;
+import static org.zwobble.mammoth.internal.util.Maps.map;
 
 public class XmlNodes {
     public static XmlElement element(String name) {

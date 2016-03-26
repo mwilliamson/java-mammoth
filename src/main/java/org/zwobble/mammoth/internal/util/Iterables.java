@@ -7,7 +7,7 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-public class MammothIterables {
+public class Iterables {
     public static <T> Optional<T> tryFind(Iterable<T> iterable, Predicate<T> predicate) {
         for (T element : iterable) {
             if (predicate.test(element)) {

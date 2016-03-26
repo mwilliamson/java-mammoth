@@ -1,16 +1,16 @@
 package org.zwobble.mammoth.internal.html;
 
-import org.zwobble.mammoth.internal.util.MammothLists;
-import org.zwobble.mammoth.internal.util.MammothOptionals;
+import org.zwobble.mammoth.internal.util.Lists;
+import org.zwobble.mammoth.internal.util.Optionals;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import static org.zwobble.mammoth.internal.util.Casts.tryCast;
-import static org.zwobble.mammoth.internal.util.MammothLists.list;
-import static org.zwobble.mammoth.internal.util.MammothLists.tryGetLast;
-import static org.zwobble.mammoth.internal.util.MammothMaps.map;
+import static org.zwobble.mammoth.internal.util.Lists.list;
+import static org.zwobble.mammoth.internal.util.Lists.tryGetLast;
+import static org.zwobble.mammoth.internal.util.Maps.map;
 
 public class Html {
     public static final HtmlNode FORCE_WRITE = HtmlForceWrite.FORCE_WRITE;
@@ -70,7 +70,7 @@ public class Html {
     }
 
     public static List<HtmlNode> stripEmpty(List<HtmlNode> nodes) {
-        return MammothLists.eagerFlatMap(nodes, node -> stripEmpty(node));
+        return Lists.eagerFlatMap(nodes, node -> stripEmpty(node));
     }
 
     private static List<HtmlNode> stripEmpty(HtmlNode node) {
@@ -156,7 +156,7 @@ public class Html {
     }
 
     private static boolean tryCollapse(List<HtmlNode> collapsed, HtmlNode node) {
-        return MammothOptionals.map(
+        return Optionals.map(
             tryGetLast(collapsed).flatMap(last -> tryCast(HtmlElement.class, last)),
             tryCast(HtmlElement.class, node),
             (last, next) -> {

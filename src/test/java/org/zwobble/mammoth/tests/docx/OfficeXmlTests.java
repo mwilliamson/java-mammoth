@@ -9,7 +9,7 @@ import java.nio.charset.StandardCharsets;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.zwobble.mammoth.tests.DeepReflectionMatcher.deepEquals;
-import static org.zwobble.mammoth.internal.util.MammothLists.list;
+import static org.zwobble.mammoth.internal.util.Lists.list;
 import static org.zwobble.mammoth.internal.xml.XmlNodes.element;
 
 public class OfficeXmlTests {

@@ -9,8 +9,8 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Map;
 
-import static org.zwobble.mammoth.internal.util.MammothMaps.eagerMapKeys;
-import static org.zwobble.mammoth.internal.util.MammothStrings.isNullOrEmpty;
+import static org.zwobble.mammoth.internal.util.Maps.eagerMapKeys;
+import static org.zwobble.mammoth.internal.util.Strings.isNullOrEmpty;
 
 public class XmlParser {
     private final NamespacePrefixes namespaces;

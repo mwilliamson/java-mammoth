@@ -9,11 +9,11 @@ import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-import static org.zwobble.mammoth.internal.util.MammothIterables.lazyConcat;
-import static org.zwobble.mammoth.internal.util.MammothIterables.lazyFlatMap;
-import static org.zwobble.mammoth.internal.util.MammothLists.eagerMap;
-import static org.zwobble.mammoth.internal.util.MammothLists.list;
-import static org.zwobble.mammoth.internal.util.MammothSets.toSet;
+import static org.zwobble.mammoth.internal.util.Iterables.lazyConcat;
+import static org.zwobble.mammoth.internal.util.Iterables.lazyFlatMap;
+import static org.zwobble.mammoth.internal.util.Lists.eagerMap;
+import static org.zwobble.mammoth.internal.util.Lists.list;
+import static org.zwobble.mammoth.internal.util.Sets.toSet;
 
 public class InternalResult<T> {
     public static <T, R> InternalResult<List<R>> flatMap(Iterable<T> iterable, Function<T, InternalResult<R>> function) {

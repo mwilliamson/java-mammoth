@@ -6,9 +6,9 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
-import static org.zwobble.mammoth.internal.util.MammothIterables.stream;
+import static org.zwobble.mammoth.internal.util.Iterables.stream;
 
-public class MammothSets {
+public class Sets {
     public static <T> Set<T> set() {
         return Collections.emptySet();
     }

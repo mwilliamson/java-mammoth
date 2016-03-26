@@ -6,13 +6,13 @@ import org.zwobble.mammoth.internal.html.HtmlNode;
 import org.zwobble.mammoth.internal.results.InternalResult;
 import org.zwobble.mammoth.internal.styles.HtmlPath;
 import org.zwobble.mammoth.internal.styles.StyleMap;
-import org.zwobble.mammoth.internal.util.MammothLists;
+import org.zwobble.mammoth.internal.util.Lists;
 
 import java.io.IOException;
 import java.util.*;
 
-import static org.zwobble.mammoth.internal.util.MammothLists.*;
-import static org.zwobble.mammoth.internal.util.MammothMaps.map;
+import static org.zwobble.mammoth.internal.util.Lists.*;
+import static org.zwobble.mammoth.internal.util.Maps.map;
 import static org.zwobble.mammoth.internal.util.Streams.toByteArray;
 
 public class DocumentToHtml {
@@ -164,7 +164,7 @@ public class DocumentToHtml {
             @Override
             public List<HtmlNode> visit(TableCell tableCell) {
                 return list(Html.element("td",
-                    MammothLists.cons(Html.FORCE_WRITE, convertChildrenToHtml(tableCell))));
+                    Lists.cons(Html.FORCE_WRITE, convertChildrenToHtml(tableCell))));
             }
 
             @Override
@@ -216,7 +216,7 @@ public class DocumentToHtml {
                             return list(Html.selfClosingElement("img", attributes));
                         } catch (IOException exception) {
                             warnings.add(exception.getMessage());
-                            return MammothLists.<HtmlNode>list();
+                            return Lists.<HtmlNode>list();
                         }
                     })
                     .orElse(list());

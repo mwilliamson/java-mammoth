@@ -1,18 +1,18 @@
 package org.zwobble.mammoth.internal.docx;
 
-import org.zwobble.mammoth.internal.util.MammothMaps;
+import org.zwobble.mammoth.internal.util.Maps;
 import org.zwobble.mammoth.internal.util.Paths;
 
 import java.util.Map;
 import java.util.Optional;
 
-import static org.zwobble.mammoth.internal.util.MammothMaps.lookup;
-import static org.zwobble.mammoth.internal.util.MammothMaps.map;
+import static org.zwobble.mammoth.internal.util.Maps.lookup;
+import static org.zwobble.mammoth.internal.util.Maps.map;
 
 public class ContentTypes {
     public static final ContentTypes DEFAULT = new ContentTypes(map(), map());
 
-    private static final Map<String, String> imageExtensions = MammothMaps.<String, String>builder()
+    private static final Map<String, String> imageExtensions = Maps.<String, String>builder()
         .put("png", "png")
         .put("gif", "gif")
         .put("jpeg", "jpeg")

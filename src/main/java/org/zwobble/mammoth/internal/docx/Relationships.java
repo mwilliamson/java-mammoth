@@ -2,8 +2,8 @@ package org.zwobble.mammoth.internal.docx;
 
 import java.util.Map;
 
-import static org.zwobble.mammoth.internal.util.MammothMaps.lookup;
-import static org.zwobble.mammoth.internal.util.MammothMaps.map;
+import static org.zwobble.mammoth.internal.util.Maps.lookup;
+import static org.zwobble.mammoth.internal.util.Maps.map;
 
 public class Relationships {
     public static final Relationships EMPTY = new Relationships(map());

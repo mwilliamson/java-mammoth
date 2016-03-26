@@ -3,7 +3,7 @@ package org.zwobble.mammoth.internal.docx;
 import org.zwobble.mammoth.internal.documents.*;
 import org.zwobble.mammoth.internal.results.InternalResult;
 import org.zwobble.mammoth.internal.util.InputStreamSupplier;
-import org.zwobble.mammoth.internal.util.MammothOptionals;
+import org.zwobble.mammoth.internal.util.Optionals;
 import org.zwobble.mammoth.internal.xml.XmlElement;
 import org.zwobble.mammoth.internal.xml.XmlElementLike;
 import org.zwobble.mammoth.internal.xml.XmlElementList;
@@ -15,10 +15,10 @@ import java.util.function.Function;
 
 import static org.zwobble.mammoth.internal.docx.ReadResult.EMPTY_SUCCESS;
 import static org.zwobble.mammoth.internal.docx.ReadResult.success;
-import static org.zwobble.mammoth.internal.util.MammothIterables.lazyFilter;
-import static org.zwobble.mammoth.internal.util.MammothLists.list;
-import static org.zwobble.mammoth.internal.util.MammothSets.set;
-import static org.zwobble.mammoth.internal.util.MammothStrings.trimLeft;
+import static org.zwobble.mammoth.internal.util.Iterables.lazyFilter;
+import static org.zwobble.mammoth.internal.util.Lists.list;
+import static org.zwobble.mammoth.internal.util.Sets.set;
+import static org.zwobble.mammoth.internal.util.Strings.trimLeft;
 
 public class BodyXmlReader {
     private static final Set<String> IMAGE_TYPES_SUPPORTED_BY_BROWSERS = set(
@@ -216,7 +216,7 @@ public class BodyXmlReader {
 
     private Optional<NumberingLevel> readNumbering(XmlElementLike properties) {
         XmlElementLike numberingProperties = properties.findChildOrEmpty("w:numPr");
-        return MammothOptionals.flatMap(
+        return Optionals.flatMap(
             readVal(numberingProperties, "w:numId"),
             readVal(numberingProperties, "w:ilvl"),
             numbering::findLevel);

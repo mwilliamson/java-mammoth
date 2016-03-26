@@ -3,7 +3,7 @@ package org.zwobble.mammoth.internal.xml;
 import java.util.Iterator;
 import java.util.List;
 
-import static org.zwobble.mammoth.internal.util.MammothLists.eagerFlatMap;
+import static org.zwobble.mammoth.internal.util.Lists.eagerFlatMap;
 
 public class XmlElementList implements Iterable<XmlElement> {
     private final List<XmlElement> elements;

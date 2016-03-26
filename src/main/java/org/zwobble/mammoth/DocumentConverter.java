@@ -23,8 +23,8 @@ import java.util.function.Function;
 import java.util.zip.ZipFile;
 
 import static org.zwobble.mammoth.internal.docx.DocumentReader.readDocument;
-import static org.zwobble.mammoth.internal.util.MammothIterables.lazyMap;
-import static org.zwobble.mammoth.internal.util.MammothLists.list;
+import static org.zwobble.mammoth.internal.util.Iterables.lazyMap;
+import static org.zwobble.mammoth.internal.util.Lists.list;
 
 public class DocumentConverter {
     private final DocumentToHtmlOptions options;

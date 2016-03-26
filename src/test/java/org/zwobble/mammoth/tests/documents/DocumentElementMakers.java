@@ -11,7 +11,7 @@ import static com.natpryce.makeiteasy.MakeItEasy.a;
 import static com.natpryce.makeiteasy.MakeItEasy.make;
 import static com.natpryce.makeiteasy.MakeItEasy.with;
 import static com.natpryce.makeiteasy.Property.newProperty;
-import static org.zwobble.mammoth.internal.util.MammothLists.list;
+import static org.zwobble.mammoth.internal.util.Lists.list;
 
 public class DocumentElementMakers {
     public static final Property<DocumentElement, Optional<Style>> STYLE = newProperty();

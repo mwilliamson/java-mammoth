@@ -5,9 +5,9 @@ import org.zwobble.mammoth.internal.xml.XmlElementList;
 
 import java.util.Map;
 
-import static org.zwobble.mammoth.internal.util.MammothMaps.entry;
-import static org.zwobble.mammoth.internal.util.MammothMaps.toMap;
-import static org.zwobble.mammoth.internal.util.MammothStrings.trimLeft;
+import static org.zwobble.mammoth.internal.util.Maps.entry;
+import static org.zwobble.mammoth.internal.util.Maps.toMap;
+import static org.zwobble.mammoth.internal.util.Strings.trimLeft;
 
 public class ContentTypesXml {
     public static ContentTypes readContentTypesXmlElement(XmlElement element) {

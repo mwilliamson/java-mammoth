@@ -8,7 +8,7 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
-import static org.zwobble.mammoth.internal.util.MammothMaps.lookup;
+import static org.zwobble.mammoth.internal.util.Maps.lookup;
 
 public class InMemoryFileReader implements FileReader {
     private final Map<String, String> entries;

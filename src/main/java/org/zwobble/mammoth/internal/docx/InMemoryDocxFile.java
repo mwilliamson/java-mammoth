@@ -10,8 +10,8 @@ import java.util.Optional;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import static org.zwobble.mammoth.internal.util.MammothMaps.eagerMapValues;
-import static org.zwobble.mammoth.internal.util.MammothMaps.lookup;
+import static org.zwobble.mammoth.internal.util.Maps.eagerMapValues;
+import static org.zwobble.mammoth.internal.util.Maps.lookup;
 import static org.zwobble.mammoth.internal.util.Streams.toByteArray;
 
 public class InMemoryDocxFile implements DocxFile {

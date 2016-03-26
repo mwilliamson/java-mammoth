@@ -5,7 +5,7 @@ import org.zwobble.mammoth.internal.html.Html;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.zwobble.mammoth.tests.DeepReflectionMatcher.deepEquals;
-import static org.zwobble.mammoth.internal.util.MammothLists.list;
+import static org.zwobble.mammoth.internal.util.Lists.list;
 
 public class HtmlStripEmptyTests {
     @Test

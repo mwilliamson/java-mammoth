@@ -7,9 +7,9 @@ import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-import static org.zwobble.mammoth.internal.util.MammothIterables.lazyConcat;
-import static org.zwobble.mammoth.internal.util.MammothIterables.lazyFlatMap;
-import static org.zwobble.mammoth.internal.util.MammothLists.*;
+import static org.zwobble.mammoth.internal.util.Iterables.lazyConcat;
+import static org.zwobble.mammoth.internal.util.Iterables.lazyFlatMap;
+import static org.zwobble.mammoth.internal.util.Lists.*;
 
 public class ReadResult {
     public static final ReadResult EMPTY_SUCCESS = success(list());

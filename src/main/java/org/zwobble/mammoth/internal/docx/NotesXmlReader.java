@@ -7,7 +7,7 @@ import org.zwobble.mammoth.internal.xml.XmlElement;
 
 import java.util.List;
 
-import static org.zwobble.mammoth.internal.util.MammothIterables.lazyFilter;
+import static org.zwobble.mammoth.internal.util.Iterables.lazyFilter;
 
 public class NotesXmlReader {
     public static NotesXmlReader footnote(BodyXmlReader bodyReader) {

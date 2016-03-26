@@ -12,7 +12,7 @@ import java.math.BigInteger;
 import java.util.Optional;
 import java.util.function.BiFunction;
 
-import static org.zwobble.mammoth.internal.util.MammothMaps.map;
+import static org.zwobble.mammoth.internal.util.Maps.map;
 
 public class StyleMappingParser extends BaseParser<StyleMapBuilder> {
     Rule StyleMapping(Var<StyleMapBuilder> styleMap) {

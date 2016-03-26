@@ -7,9 +7,9 @@ import org.zwobble.mammoth.internal.xml.XmlElementList;
 import java.util.Map;
 import java.util.Optional;
 
-import static org.zwobble.mammoth.internal.util.MammothIterables.lazyFilter;
-import static org.zwobble.mammoth.internal.util.MammothMaps.entry;
-import static org.zwobble.mammoth.internal.util.MammothMaps.toMap;
+import static org.zwobble.mammoth.internal.util.Iterables.lazyFilter;
+import static org.zwobble.mammoth.internal.util.Maps.entry;
+import static org.zwobble.mammoth.internal.util.Maps.toMap;
 
 public class StylesXml {
     public static Styles readStylesXmlElement(XmlElement element) {

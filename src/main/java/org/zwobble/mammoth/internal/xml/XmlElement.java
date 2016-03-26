@@ -4,9 +4,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import static org.zwobble.mammoth.internal.util.MammothIterables.*;
-import static org.zwobble.mammoth.internal.util.MammothLists.toList;
-import static org.zwobble.mammoth.internal.util.MammothMaps.lookup;
+import static org.zwobble.mammoth.internal.util.Iterables.*;
+import static org.zwobble.mammoth.internal.util.Lists.toList;
+import static org.zwobble.mammoth.internal.util.Maps.lookup;
 
 public class XmlElement implements XmlNode, XmlElementLike {
     private final String name;

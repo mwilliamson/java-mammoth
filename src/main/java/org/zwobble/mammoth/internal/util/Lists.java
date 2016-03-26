@@ -7,9 +7,9 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.Arrays.asList;
-import static org.zwobble.mammoth.internal.util.MammothIterables.stream;
+import static org.zwobble.mammoth.internal.util.Iterables.stream;
 
-public class MammothLists {
+public class Lists {
     public static <T> List<T> list() {
         return Collections.emptyList();
     }

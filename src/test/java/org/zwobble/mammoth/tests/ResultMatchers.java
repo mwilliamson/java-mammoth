@@ -7,8 +7,8 @@ import org.zwobble.mammoth.Result;
 import org.zwobble.mammoth.internal.results.InternalResult;
 
 import static org.hamcrest.Matchers.*;
-import static org.zwobble.mammoth.internal.util.MammothLists.eagerMap;
-import static org.zwobble.mammoth.internal.util.MammothLists.list;
+import static org.zwobble.mammoth.internal.util.Lists.eagerMap;
+import static org.zwobble.mammoth.internal.util.Lists.list;
 import static org.zwobble.mammoth.tests.DeepReflectionMatcher.deepEquals;
 
 public class ResultMatchers {

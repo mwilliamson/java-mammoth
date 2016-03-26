@@ -3,7 +3,7 @@ package org.zwobble.mammoth.internal.util;
 import java.util.Optional;
 import java.util.function.BiFunction;
 
-public class MammothOptionals {
+public class Optionals {
     public static <T> Optional<T> first(Optional<T> first, Optional<T> second) {
         if (first.isPresent()) {
             return first;

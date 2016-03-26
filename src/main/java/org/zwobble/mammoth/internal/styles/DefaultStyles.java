@@ -2,7 +2,7 @@ package org.zwobble.mammoth.internal.styles;
 
 import org.zwobble.mammoth.internal.styles.parsing.StyleMapParser;
 
-import static org.zwobble.mammoth.internal.util.MammothLists.list;
+import static org.zwobble.mammoth.internal.util.Lists.list;
 
 public class DefaultStyles {
     public static final StyleMap DEFAULT_STYLE_MAP = StyleMapParser.parseStyleMappings(list(

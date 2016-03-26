@@ -5,9 +5,9 @@ import org.zwobble.mammoth.internal.html.HtmlNode;
 import java.util.List;
 import java.util.Map;
 
-import static org.zwobble.mammoth.internal.util.MammothLists.list;
-import static org.zwobble.mammoth.internal.util.MammothLists.reversed;
-import static org.zwobble.mammoth.internal.util.MammothMaps.map;
+import static org.zwobble.mammoth.internal.util.Lists.list;
+import static org.zwobble.mammoth.internal.util.Lists.reversed;
+import static org.zwobble.mammoth.internal.util.Maps.map;
 
 public class HtmlPath {
     public static final HtmlPath EMPTY = new HtmlPath(list());

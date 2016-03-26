@@ -3,7 +3,7 @@ package org.zwobble.mammoth.internal.util;
 import java.util.*;
 import java.util.function.Function;
 
-public class MammothMaps {
+public class Maps {
     public static <K, V> Map<K, V> map() {
         return Collections.emptyMap();
     }

@@ -6,8 +6,8 @@ import org.zwobble.mammoth.internal.xml.XmlElement;
 
 import static org.junit.Assert.assertEquals;
 import static org.zwobble.mammoth.internal.docx.RelationshipsXml.readRelationshipsXmlElement;
-import static org.zwobble.mammoth.internal.util.MammothLists.list;
-import static org.zwobble.mammoth.internal.util.MammothMaps.map;
+import static org.zwobble.mammoth.internal.util.Lists.list;
+import static org.zwobble.mammoth.internal.util.Maps.map;
 import static org.zwobble.mammoth.internal.xml.XmlNodes.element;
 
 public class RelationshipsXmlTests {
