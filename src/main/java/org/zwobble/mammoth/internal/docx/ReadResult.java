@@ -12,11 +12,13 @@ import static org.zwobble.mammoth.internal.util.MammothIterables.lazyConcat;
 import static org.zwobble.mammoth.internal.util.MammothIterables.lazyFlatMap;
 import static org.zwobble.mammoth.internal.util.MammothLists.eagerFlatMap;
 import static org.zwobble.mammoth.internal.util.MammothLists.list;
+import static org.zwobble.mammoth.internal.util.MammothLists.toList;
 
 public class ReadResult {
     public static final ReadResult EMPTY_SUCCESS = success(list());
 
     public static ReadResult concat(Iterable<ReadResult> results) {
+        results = toList(results);
         return new ReadResult(
             eagerFlatMap(results, result -> result.elements),
             eagerFlatMap(results, result -> result.extra),
