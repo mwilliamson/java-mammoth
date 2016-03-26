@@ -1,7 +1,6 @@
 package org.zwobble.mammoth.internal.util;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Ordering;
 
 import java.util.List;
@@ -9,6 +8,7 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.zwobble.mammoth.internal.util.MammothIterables.stream;
 
@@ -34,7 +34,7 @@ public class MammothLists {
     }
 
     public static <T> List<T> eagerConcat(Iterable<T> first, Iterable<T> second) {
-        return ImmutableList.copyOf(Iterables.concat(first, second));
+        return Stream.concat(stream(first), stream(second)).collect(Collectors.toList());
     }
 
     public static <T> List<T> eagerFilter(Iterable<T> iterable, Predicate<T> predicate) {
