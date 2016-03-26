@@ -1,7 +1,5 @@
 package org.zwobble.mammoth.internal.util;
 
-import com.google.common.collect.Ordering;
-
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -56,11 +54,13 @@ public class MammothLists {
     }
 
     public static <T, R extends Comparable<R>> List<T> orderedBy(Iterable<T> iterable, Function<T, R> getKey) {
-        return orderBy(getKey).sortedCopy(iterable);
+        return stream(iterable)
+            .sorted(orderBy(getKey))
+            .collect(Collectors.toList());
     }
 
-    private static <T, R extends Comparable<R>> Ordering<T> orderBy(Function<T, R> getKey) {
-        return Ordering.from((first, second) -> getKey.apply(first).compareTo(getKey.apply(second)));
+    private static <T, R extends Comparable<R>> Comparator<T> orderBy(Function<T, R> getKey) {
+        return (first, second) -> getKey.apply(first).compareTo(getKey.apply(second));
     }
 
     public static <T> List<T> toList(Iterable<T> iterable) {
