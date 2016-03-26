@@ -52,6 +52,7 @@ public class DeepReflectionMatcher<T> extends TypeSafeDiagnosingMatcher<T> {
         }
 
         if (!expected.getClass().equals(actual.getClass())) {
+            appendPath(mismatchDescription, path);
             mismatchDescription.appendText("was " + actual.getClass().getName());
             return false;
         }
