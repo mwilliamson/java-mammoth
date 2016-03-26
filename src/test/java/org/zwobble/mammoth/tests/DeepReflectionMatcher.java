@@ -1,6 +1,5 @@
 package org.zwobble.mammoth.tests;
 
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -18,6 +17,7 @@ import static com.google.common.collect.Iterables.any;
 import static java.util.Arrays.asList;
 import static org.zwobble.mammoth.internal.util.MammothIterables.lazyMap;
 import static org.zwobble.mammoth.internal.util.MammothLists.eagerFilter;
+import static org.zwobble.mammoth.internal.util.MammothLists.skip;
 
 public class DeepReflectionMatcher<T> extends TypeSafeDiagnosingMatcher<T> {
     public static <T> Matcher<T> deepEquals(T value) {
@@ -79,14 +79,14 @@ public class DeepReflectionMatcher<T> extends TypeSafeDiagnosingMatcher<T> {
         if (actual.size() > expected.size()) {
             appendPath(mismatchDescription, path);
             mismatchDescription.appendText("extra elements:" +
-                indentedList(lazyMap(Iterables.skip(actual, expected.size()), DeepReflectionMatcher::describeValue)));
+                indentedList(lazyMap(skip(actual, expected.size()), DeepReflectionMatcher::describeValue)));
             return false;
         }
 
         if (actual.size() < expected.size()) {
             appendPath(mismatchDescription, path);
             mismatchDescription.appendText("missing elements:" +
-                indentedList(lazyMap(Iterables.skip(expected, actual.size()), DeepReflectionMatcher::describeValue)));
+                indentedList(lazyMap(skip(expected, actual.size()), DeepReflectionMatcher::describeValue)));
             return false;
         }
 

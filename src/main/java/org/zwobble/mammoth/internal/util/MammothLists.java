@@ -71,4 +71,7 @@ public class MammothLists {
         }
     }
 
+    public static <T> List<T> skip(List<T> list, int count) {
+        return list.subList(Math.min(list.size(), count), list.size());
+    }
 }
