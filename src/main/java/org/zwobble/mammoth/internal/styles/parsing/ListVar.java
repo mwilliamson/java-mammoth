@@ -1,34 +1,30 @@
 package org.zwobble.mammoth.internal.styles.parsing;
 
 
-import com.google.common.collect.ImmutableList;
 import org.parboiled.support.Var;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import static org.zwobble.mammoth.internal.util.MammothLists.list;
-
-class ListVar<T> extends Var<ImmutableList.Builder<T>> {
+class ListVar<T> extends Var<List<T>> {
     boolean append(Var<T> element) {
         return append(element.get());
     }
 
     boolean append(T element) {
-        if (get() == null) {
-            set(ImmutableList.builder());
-        }
-        return set(get().add(element));
+        get().add(element);
+        return set(get());
     }
 
-    public List<T> build() {
-        if (get() == null) {
-            return list();
-        } else {
-            return get().build();
+    @Override
+    public List<T> get() {
+        if (isNotSet()) {
+            set(new ArrayList<T>());
         }
+        return super.get();
     }
 
     public boolean isEmpty() {
-        return get() == null;
+        return get().isEmpty();
     }
 }

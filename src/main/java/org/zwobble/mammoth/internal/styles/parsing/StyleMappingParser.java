@@ -135,7 +135,7 @@ public class StyleMappingParser extends BaseParser<StyleMapBuilder> {
 
     public Rule HtmlPath(Var<HtmlPath> htmlPath) {
         ListVar<HtmlPathElement> elements = new ListVar<>();
-        return Sequence(Optional(HtmlPathElements(elements)), htmlPath.set(new HtmlPath(elements.build())));
+        return Sequence(Optional(HtmlPathElements(elements)), htmlPath.set(new HtmlPath(elements.get())));
     }
 
     Rule HtmlPathElements(ListVar<HtmlPathElement> elements) {
@@ -155,8 +155,8 @@ public class StyleMappingParser extends BaseParser<StyleMapBuilder> {
             ClassNames(classNames),
             Fresh(fresh),
             element.set(new HtmlPathElement(
-                tagNames.build(),
-                classNames.isEmpty() ? map() : map("class", String.join(" ", classNames.build())),
+                tagNames.get(),
+                classNames.isEmpty() ? map() : map("class", String.join(" ", classNames.get())),
                 !fresh.get())));
     }
 
