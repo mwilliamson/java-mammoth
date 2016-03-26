@@ -1,7 +1,7 @@
 package org.zwobble.mammoth.internal.docx;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.io.Files;
+import org.zwobble.mammoth.internal.util.MammothMaps;
 
 import java.util.Map;
 import java.util.Optional;
@@ -12,7 +12,7 @@ import static org.zwobble.mammoth.internal.util.MammothMaps.map;
 public class ContentTypes {
     public static final ContentTypes DEFAULT = new ContentTypes(map(), map());
 
-    private static final Map<String, String> imageExtensions = ImmutableMap.<String, String>builder()
+    private static final Map<String, String> imageExtensions = MammothMaps.<String, String>builder()
         .put("png", "png")
         .put("gif", "gif")
         .put("jpeg", "jpeg")

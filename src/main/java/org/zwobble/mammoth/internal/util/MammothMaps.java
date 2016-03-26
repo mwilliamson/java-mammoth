@@ -77,4 +77,21 @@ public class MammothMaps {
         }
         return result;
     }
+
+    public static <K, V> Builder<K, V> builder() {
+        return new Builder<>();
+    }
+
+    public static class Builder<K, V> {
+        private final Map<K, V> values = new HashMap<>();
+
+        public Builder<K, V> put(K key, V value) {
+            values.put(key, value);
+            return this;
+        }
+
+        public Map<K, V> build() {
+            return values;
+        }
+    }
 }
