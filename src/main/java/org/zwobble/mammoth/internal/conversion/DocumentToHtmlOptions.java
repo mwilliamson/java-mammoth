@@ -1,4 +1,4 @@
-package org.zwobble.mammoth.internal;
+package org.zwobble.mammoth.internal.conversion;
 
 import org.zwobble.mammoth.internal.styles.DefaultStyles;
 import org.zwobble.mammoth.internal.styles.StyleMap;

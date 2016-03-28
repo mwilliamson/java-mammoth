@@ -1,7 +1,7 @@
 package org.zwobble.mammoth;
 
-import org.zwobble.mammoth.internal.DocumentToHtml;
-import org.zwobble.mammoth.internal.DocumentToHtmlOptions;
+import org.zwobble.mammoth.internal.conversion.DocumentToHtml;
+import org.zwobble.mammoth.internal.conversion.DocumentToHtmlOptions;
 import org.zwobble.mammoth.internal.documents.DocumentElement;
 import org.zwobble.mammoth.internal.documents.HasChildren;
 import org.zwobble.mammoth.internal.documents.Paragraph;
