@@ -18,9 +18,7 @@ import static org.zwobble.mammoth.internal.util.Streams.toByteArray;
 public class DocumentToHtml {
     public static InternalResult<List<HtmlNode>> convertToHtml(Document document, DocumentToHtmlOptions options) {
         DocumentToHtml documentConverter = new DocumentToHtml(options);
-        return new InternalResult<>(
-            documentConverter.convertToHtml(document),
-            documentConverter.warnings);
+        return documentConverter.convertToHtml(document).toInternalResult();
     }
 
     private static List<Note> findNotes(Document document, Iterable<NoteReference> noteReferences) {
@@ -32,16 +30,12 @@ public class DocumentToHtml {
 
     public static InternalResult<List<HtmlNode>> convertToHtml(DocumentElement element, DocumentToHtmlOptions options) {
         DocumentToHtml documentConverter = new DocumentToHtml(options);
-        return new InternalResult<>(
-            documentConverter.convertToHtml(element),
-            documentConverter.warnings);
+        return documentConverter.convertToHtml(element).toInternalResult();
     }
 
     private final String idPrefix;
     private final boolean preserveEmptyParagraphs;
     private final StyleMap styleMap;
-    private final List<NoteReference> noteReferences = new ArrayList<>();
-    private final Set<String> warnings = new HashSet<>();
 
     private DocumentToHtml(DocumentToHtmlOptions options) {
         this.idPrefix = options.idPrefix();
@@ -49,60 +43,67 @@ public class DocumentToHtml {
         this.styleMap = options.styleMap();
     }
 
-    private List<HtmlNode> convertToHtml(Document document) {
-        List<HtmlNode> mainBody = convertChildrenToHtml(document);
-        // TODO: can you have note references inside a note?
-        List<Note> notes = findNotes(document, noteReferences);
-        if (notes.isEmpty()) {
-            return mainBody;
-        } else {
-            HtmlNode noteNode = Html.element("ol",
-                eagerMap(notes, this::convertToHtml));
-
-            return eagerConcat(mainBody, list(noteNode));
-        }
+    private ConversionResult convertToHtml(Document document) {
+        return convertChildrenToHtml(document).flatMap(mainBody -> {
+            // TODO: can you have note references inside a note?
+            List<Note> notes = findNotes(document, noteReferences);
+            return ConversionResult.flatMap(notes, this::convertToHtml)
+                .map(noteNodes -> eagerConcat(mainBody, list(Html.element("ol", noteNodes))));
+        });
     }
 
-    private HtmlNode convertToHtml(Note note) {
+    private ConversionResult convertToHtml(Note note) {
         String id = generateNoteHtmlId(note.getNoteType(), note.getId());
         String referenceId = generateNoteRefHtmlId(note.getNoteType(), note.getId());
-        List<HtmlNode> noteBody = convertToHtml(note.getBody());
-        // TODO: we probably want this to collapse more eagerly than other collapsible elements
-        // -- for instance, any paragraph will probably do, regardless of attributes. (Possible other elements will do too.)
-        HtmlNode backLink = Html.collapsibleElement("p", list(
-            Html.text(" "),
-            Html.element("a", map("href", "#" + referenceId), list(Html.text("↑")))));
-        return Html.element("li", map("id", id), eagerConcat(noteBody, list(backLink)));
+        return convertToHtml(note.getBody()).map(noteBody -> {
+
+            // TODO: we probably want this to collapse more eagerly than other collapsible elements
+            // -- for instance, any paragraph will probably do, regardless of attributes. (Possible other elements will do too.)
+            HtmlNode backLink = Html.collapsibleElement("p", list(
+                Html.text(" "),
+                Html.element("a", map("href", "#" + referenceId), list(Html.text("↑")))));
+            return list(Html.element("li", map("id", id), eagerConcat(noteBody, list(backLink))));
+        });
     }
 
-    private List<HtmlNode> convertToHtml(List<DocumentElement> elements) {
-        return eagerFlatMap(
+    private ConversionResult convertToHtml(List<DocumentElement> elements) {
+        return ConversionResult.flatMap(
             elements,
             this::convertToHtml);
     }
 
-    private List<HtmlNode> convertChildrenToHtml(HasChildren element) {
+    private ConversionResult convertChildrenToHtml(HasChildren element) {
         return convertToHtml(element.getChildren());
     }
 
-    private List<HtmlNode> convertToHtml(DocumentElement element) {
-        return element.accept(new DocumentElementVisitor<List<HtmlNode>>() {
+    private ConversionResult convertToHtml(DocumentElement element) {
+        return element.accept(new DocumentElementVisitor<ConversionResult>() {
             @Override
-            public List<HtmlNode> visit(Paragraph paragraph) {
-                List<HtmlNode> content = convertChildrenToHtml(paragraph);
-                List<HtmlNode> children = preserveEmptyParagraphs ? cons(Html.FORCE_WRITE, content) : content;
-                HtmlPath mapping = styleMap.getParagraphHtmlPath(paragraph)
-                    .orElseGet(() -> {
-                        if (paragraph.getStyle().isPresent()) {
-                            warnings.add("Unrecognised paragraph style: " + paragraph.getStyle().get().describe());
-                        }
-                        return HtmlPath.element("p");
-                    });
-                return mapping.wrap(children);
+            public ConversionResult visit(Paragraph paragraph) {
+                return ConversionResult.map(
+                    findHtmlPathForParagraph(paragraph),
+                    convertChildrenToHtml(paragraph),
+                    (mapping, content) -> {
+                        List<HtmlNode> children = preserveEmptyParagraphs ? cons(Html.FORCE_WRITE, content) : content;
+                        return mapping.wrap(children);
+                    }
+                );
             }
 
+            private InternalResult<HtmlPath> findHtmlPathForParagraph(Paragraph paragraph) {
+                return styleMap.getParagraphHtmlPath(paragraph)
+                    .map(InternalResult::success)
+                    .orElseGet(() -> {
+                        List<String> warnings = paragraph.getStyle().isPresent()
+                            ? list("Unrecognised paragraph style: " + paragraph.getStyle().get().describe())
+                            : list();
+                        return new InternalResult<>(HtmlPath.element("p"), warnings);
+                    });
+            }
+
+
             @Override
-            public List<HtmlNode> visit(Run run) {
+            public ConversionResult visit(Run run) {
                 List<HtmlNode> nodes = convertChildrenToHtml(run);
                 if (run.isStrikethrough()) {
                     nodes = styleMap.getStrikethrough().orElse(HtmlPath.collapsibleElement("s")).wrap(nodes);
@@ -133,44 +134,48 @@ public class DocumentToHtml {
             }
 
             @Override
-            public List<HtmlNode> visit(Text text) {
+            public ConversionResult visit(Text text) {
                 if (text.getValue().isEmpty()) {
-                    return list();
+                    return ConversionResult.EMPTY_SUCCESS;
                 } else {
-                    return list(Html.text(text.getValue()));
+                    return ConversionResult.success(Html.text(text.getValue()));
                 }
             }
 
             @Override
-            public List<HtmlNode> visit(Tab tab) {
-                return list(Html.text("\t"));
+            public ConversionResult visit(Tab tab) {
+                return ConversionResult.success(Html.text("\t"));
             }
 
             @Override
-            public List<HtmlNode> visit(LineBreak lineBreak) {
-                return list(Html.selfClosingElement("br"));
+            public ConversionResult visit(LineBreak lineBreak) {
+                return ConversionResult.success(Html.selfClosingElement("br"));
             }
 
             @Override
-            public List<HtmlNode> visit(Table table) {
-                return list(Html.element("table", convertChildrenToHtml(table)));
+            public ConversionResult visit(Table table) {
+                return convertChildrenToHtml(table)
+                    .map(children -> list(Html.element("table", children)));
             }
 
             @Override
-            public List<HtmlNode> visit(TableRow tableRow) {
-                return list(Html.element("tr", convertChildrenToHtml(tableRow)));
+            public ConversionResult visit(TableRow tableRow) {
+                return convertChildrenToHtml(tableRow)
+                    .map(children -> list(Html.element("tr", children)));
             }
 
             @Override
-            public List<HtmlNode> visit(TableCell tableCell) {
-                return list(Html.element("td",
-                    Lists.cons(Html.FORCE_WRITE, convertChildrenToHtml(tableCell))));
+            public ConversionResult visit(TableCell tableCell) {
+                return convertChildrenToHtml(tableCell)
+                    .map(children -> list(Html.element("td",
+                        Lists.cons(Html.FORCE_WRITE, children))));
             }
 
             @Override
-            public List<HtmlNode> visit(Hyperlink hyperlink) {
+            public ConversionResult visit(Hyperlink hyperlink) {
                 Map<String, String> attributes = map("href", generateHref(hyperlink));
-                return list(Html.collapsibleElement("a", attributes, convertChildrenToHtml(hyperlink)));
+                return convertChildrenToHtml(hyperlink)
+                    .map(children -> list(Html.collapsibleElement("a", attributes, children)));
             }
 
             private String generateHref(Hyperlink hyperlink) {
@@ -184,12 +189,13 @@ public class DocumentToHtml {
             }
 
             @Override
-            public List<HtmlNode> visit(Bookmark bookmark) {
-                return list(Html.element("a", map("id", generateId(bookmark.getName())), list(Html.FORCE_WRITE)));
+            public ConversionResult visit(Bookmark bookmark) {
+                HtmlNode element = Html.element("a", map("id", generateId(bookmark.getName())), list(Html.FORCE_WRITE));
+                return ConversionResult.success(element);
             }
 
             @Override
-            public List<HtmlNode> visit(NoteReference noteReference) {
+            public ConversionResult visit(NoteReference noteReference) {
                 noteReferences.add(noteReference);
                 String noteAnchor = generateNoteHtmlId(noteReference.getNoteType(), noteReference.getNoteId());
                 String noteReferenceAnchor = generateNoteRefHtmlId(noteReference.getNoteType(), noteReference.getNoteId());
@@ -199,7 +205,7 @@ public class DocumentToHtml {
             }
 
             @Override
-            public List<HtmlNode> visit(Image image) {
+            public ConversionResult visit(Image image) {
                 // TODO: custom image handlers
                 // TODO: handle empty content type
                 return image.getContentType()
@@ -213,13 +219,13 @@ public class DocumentToHtml {
 
                             image.getAltText().ifPresent(altText -> attributes.put("alt", altText));
 
-                            return list(Html.selfClosingElement("img", attributes));
+                            return ConversionResult.success(Html.selfClosingElement("img", attributes));
                         } catch (IOException exception) {
                             warnings.add(exception.getMessage());
                             return Lists.<HtmlNode>list();
                         }
                     })
-                    .orElse(list());
+                    .orElse(ConversionResult.EMPTY_SUCCESS);
             }
         });
     }
