@@ -1,0 +1,10 @@
+{
+  "backend": "csharp",
+  "sourcepath": [
+    "src/main/java"
+  ],
+  "files": [
+    "src/main/java/org/zwobble/mammoth/internal/docx/BodyXmlReader.java"
+  ],
+  "output": "_dotnet"
+}
