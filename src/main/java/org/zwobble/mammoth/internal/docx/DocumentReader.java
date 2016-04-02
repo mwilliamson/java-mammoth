@@ -7,9 +7,6 @@ import org.zwobble.mammoth.internal.util.Lists;
 import org.zwobble.mammoth.internal.xml.XmlElement;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.util.Optional;
 
@@ -25,20 +22,7 @@ public class DocumentReader {
         Styles styles = readStyles(zipFile);
         Numbering numbering = readNumbering(zipFile);
         ContentTypes contentTypes = readContentTypes(zipFile);
-        FileReader fileReader = uri -> {
-            try {
-                Optional<URI> absoluteUri = asAbsoluteUri(uri);
-                if (absoluteUri.isPresent()) {
-                    return open(absoluteUri.get());
-                } else if (path.isPresent()) {
-                    return open(path.get().toUri().resolve(uri));
-                } else {
-                    throw new IOException("path of document is unknown, but is required for relative URI");
-                }
-            } catch (IOException exception) {
-                throw new IOException("could not open external image '" + uri + "': " + exception.getMessage());
-            }
-        };
+        FileReader fileReader = new PathRelativeFileReader(path);
         BodyReaders bodyReaders = name -> {
             Relationships relationships = readRelationships(zipFile, name);
             return new BodyXmlReader(styles, numbering, relationships, contentTypes, zipFile, fileReader);
@@ -48,19 +32,6 @@ public class DocumentReader {
                 DocumentXmlReader reader = new DocumentXmlReader(bodyReaders.forName("document"), notes);
                 return reader.readElement(parseOfficeXml(zipFile, "word/document.xml"));
             });
-    }
-
-    private static InputStream open(URI uri) throws IOException {
-        return uri.toURL().openStream();
-    }
-
-    private static Optional<URI> asAbsoluteUri(String uriString) {
-        try {
-            URI uri = new URI(uriString);
-            return uri.isAbsolute() ? Optional.of(uri) : Optional.empty();
-        } catch (URISyntaxException exception) {
-            return Optional.empty();
-        }
     }
 
     private static InternalResult<Notes> readNotes(DocxFile file, BodyReaders bodyReaders) {
