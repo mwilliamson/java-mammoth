@@ -4,6 +4,7 @@ import org.zwobble.mammoth.internal.documents.Document;
 import org.zwobble.mammoth.internal.documents.Notes;
 import org.zwobble.mammoth.internal.results.InternalResult;
 import org.zwobble.mammoth.internal.util.Lists;
+import org.zwobble.mammoth.internal.util.PassThroughException;
 import org.zwobble.mammoth.internal.xml.XmlElement;
 
 import java.io.IOException;
@@ -70,17 +71,12 @@ public class DocumentReader {
     }
 
     private static Optional<XmlElement> tryParseOfficeXml(DocxFile zipFile, String name) {
-        try {
-            return zipFile.tryGetInputStream(name).map(OfficeXml::parseXml);
-        } catch (IOException exception) {
-            // TODO: wrap in more specific exception and catch at the top
-            throw new RuntimeException(exception);
-        }
+        return PassThroughException.wrap(() ->
+            zipFile.tryGetInputStream(name).map(OfficeXml::parseXml));
     }
 
     private static XmlElement parseOfficeXml(DocxFile zipFile, String name) {
         return tryParseOfficeXml(zipFile, name)
-            // TODO: wrap in more specific exception and catch at the top
-            .orElseThrow(() -> new RuntimeException(new IOException("Missing entry in file: " + name)));
+            .orElseThrow(() -> new PassThroughException(new IOException("Missing entry in file: " + name)));
     }
 }

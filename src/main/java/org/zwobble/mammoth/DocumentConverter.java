@@ -12,6 +12,7 @@ import org.zwobble.mammoth.internal.docx.ZippedDocxFile;
 import org.zwobble.mammoth.internal.html.Html;
 import org.zwobble.mammoth.internal.results.InternalResult;
 import org.zwobble.mammoth.internal.util.Casts;
+import org.zwobble.mammoth.internal.util.PassThroughException;
 
 import java.io.File;
 import java.io.IOException;
@@ -76,16 +77,18 @@ public class DocumentConverter {
      * means that relative paths to other files, such as images, cannot be resolved.
      */
     public Result<String> convertToHtml(InputStream stream) throws IOException {
-        return withDocxFile(stream, zipFile ->
-            convertToHtml(Optional.empty(), zipFile)).toResult();
+        return PassThroughException.unwrap(() ->
+            withDocxFile(stream, zipFile ->
+                convertToHtml(Optional.empty(), zipFile)).toResult());
     }
 
     /**
      * Converts {@code file} into an HTML string.
      */
     public Result<String> convertToHtml(File file) throws IOException {
-        return withDocxFile(file, zipFile ->
-            convertToHtml(Optional.of(file.toPath()), zipFile)).toResult();
+        return PassThroughException.unwrap(() ->
+            withDocxFile(file, zipFile ->
+                convertToHtml(Optional.of(file.toPath()), zipFile)).toResult());
     }
 
     private InternalResult<String> convertToHtml(Optional<Path> path, DocxFile zipFile) {
@@ -102,8 +105,9 @@ public class DocumentConverter {
      * Each paragraph is followed by two newlines.
      */
     public Result<String> extractRawText(InputStream stream) throws IOException {
-        return withDocxFile(stream, zipFile ->
-            extractRawText(Optional.empty(), zipFile)).toResult();
+        return PassThroughException.unwrap(() ->
+            withDocxFile(stream, zipFile ->
+                extractRawText(Optional.empty(), zipFile)).toResult());
     }
 
     /**
@@ -112,8 +116,9 @@ public class DocumentConverter {
      * Each paragraph is followed by two newlines.
      */
     public Result<String> extractRawText(File file) throws IOException {
-        return withDocxFile(file, zipFile ->
-            extractRawText(Optional.of(file.toPath()), zipFile)).toResult();
+        return PassThroughException.unwrap(() ->
+            withDocxFile(file, zipFile ->
+                extractRawText(Optional.of(file.toPath()), zipFile)).toResult());
     }
 
     private InternalResult<String> extractRawText(Optional<Path> path, DocxFile zipFile) {
