@@ -15,7 +15,7 @@ public class HtmlWriter {
 
                 builder.append(">");
 
-                element.getChildren().forEach(node -> write(node, builder));
+                element.getChildren().forEach(child -> write(child, builder));
 
                 builder
                     .append("</")
