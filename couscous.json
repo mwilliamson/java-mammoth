@@ -7,7 +7,9 @@
     "src/main/java/org/zwobble/mammoth/internal/docx",
     "!src/main/java/org/zwobble/mammoth/internal/docx/ZippedDocxFile.java",
     "!src/main/java/org/zwobble/mammoth/internal/docx/InMemoryDocxFile.java",
-    "!src/main/java/org/zwobble/mammoth/internal/docx/PathRelativeFileReader.java"
+    "!src/main/java/org/zwobble/mammoth/internal/docx/PathRelativeFileReader.java",
+    "src/main/java/org/zwobble/mammoth/internal/html",
+    "src/main/java/org/zwobble/mammoth/internal/documents"
   ],
   "output": "_dotnet"
 }
