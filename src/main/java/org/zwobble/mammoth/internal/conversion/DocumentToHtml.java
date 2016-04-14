@@ -173,16 +173,6 @@ public class DocumentToHtml {
                 return list(Html.collapsibleElement("a", attributes, convertChildrenToHtml(hyperlink)));
             }
 
-            private String generateHref(Hyperlink hyperlink) {
-                if (hyperlink.getHref().isPresent()) {
-                    return hyperlink.getHref().get();
-                } else if (hyperlink.getAnchor().isPresent()) {
-                    return "#" + generateId(hyperlink.getAnchor().get());
-                } else {
-                    return "";
-                }
-            }
-
             @Override
             public List<HtmlNode> visit(Bookmark bookmark) {
                 return list(Html.element("a", map("id", generateId(bookmark.getName())), list(Html.FORCE_WRITE)));
@@ -222,6 +212,16 @@ public class DocumentToHtml {
                     .orElse(list());
             }
         });
+    }
+
+    private String generateHref(Hyperlink hyperlink) {
+        if (hyperlink.getHref().isPresent()) {
+            return hyperlink.getHref().get();
+        } else if (hyperlink.getAnchor().isPresent()) {
+            return "#" + generateId(hyperlink.getAnchor().get());
+        } else {
+            return "";
+        }
     }
 
     private String generateNoteHtmlId(NoteType noteType, String noteId) {

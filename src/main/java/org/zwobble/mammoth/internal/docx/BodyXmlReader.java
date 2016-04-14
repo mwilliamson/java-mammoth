@@ -268,7 +268,7 @@ public class BodyXmlReader {
         Optional<String> title = element.getAttributeOrNone("o:title");
         String relationshipId = element.getAttribute("r:id");
         String imagePath = relationshipIdToDocxPath(relationshipId);
-        return readImage(imagePath, title, () -> DocxFile.getInputStream(file, imagePath));
+        return readImage(imagePath, title, () -> DocxFiles.getInputStream(file, imagePath));
     }
 
     private ReadResult readInline(XmlElement element) {
@@ -290,7 +290,7 @@ public class BodyXmlReader {
         Optional<String> linkRelationshipId = blip.getAttributeOrNone("r:link");
         if (embedRelationshipId.isPresent()) {
             String imagePath = relationshipIdToDocxPath(embedRelationshipId.get());
-            return readImage(imagePath, altText, () -> DocxFile.getInputStream(file, imagePath));
+            return readImage(imagePath, altText, () -> DocxFiles.getInputStream(file, imagePath));
         } else if (linkRelationshipId.isPresent()) {
             String imagePath = relationships.findRelationshipById(linkRelationshipId.get()).getTarget();
             return readImage(imagePath, altText, () -> fileReader.getInputStream(imagePath));

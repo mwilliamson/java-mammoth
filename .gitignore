@@ -1,4 +1,6 @@
 /target
 /.idea
 /*.iml
-/_dotnet
+/dotnet/Mammoth/generated.cs
+/dotnet/Mammoth/bin
+/dotnet/Mammoth/obj

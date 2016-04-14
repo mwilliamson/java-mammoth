@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{51C5CBD6-8809-4D5E-BABE-1787A16F5ED8}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>Mammoth</RootNamespace>
+    <AssemblyName>Mammoth</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>full</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="generated.cs" />
+    <Compile Include="Couscous\Adapters.cs" />
+    <Compile Include="Couscous\HorribleHacks.cs" />
+    <Compile Include="Couscous\IterableExtensions.cs" />
+    <Compile Include="Couscous\JavaStringExtensions.cs" />
+    <Compile Include="Couscous\java\io\InputStream.cs" />
+    <Compile Include="Couscous\java\io\IOException.cs" />
+    <Compile Include="Couscous\java\io\Closeable.cs" />
+    <Compile Include="Couscous\java\nio\file\Path.cs" />
+    <Compile Include="Couscous\java\lang\IndexOutOfBoundsException.cs" />
+    <Compile Include="Couscous\java\lang\RuntimeException.cs" />
+    <Compile Include="Couscous\java\lang\String.cs" />
+    <Compile Include="Couscous\java\lang\StringBuilder.cs" />
+    <Compile Include="Couscous\java\lang\UnsupportedOperationException.cs" />
+    <Compile Include="Couscous\java\util\function\BiFunction.cs" />
+    <Compile Include="Couscous\java\util\function\BiPredicate.cs" />
+    <Compile Include="Couscous\java\util\function\Consumer.cs" />
+    <Compile Include="Couscous\java\util\function\Function.cs" />
+    <Compile Include="Couscous\java\util\function\Predicate.cs" />
+    <Compile Include="Couscous\java\util\function\Supplier.cs" />
+    <Compile Include="Couscous\java\util\ArrayList.cs" />
+    <Compile Include="Couscous\java\util\Collection.cs" />
+    <Compile Include="Couscous\java\util\HashMap.cs" />
+    <Compile Include="Couscous\java\util\HashSet.cs" />
+    <Compile Include="Couscous\java\util\List.cs" />
+    <Compile Include="Couscous\java\util\Map.cs" />
+    <Compile Include="Couscous\java\util\NoSuchElementException.cs" />
+    <Compile Include="Couscous\java\util\Optional.cs" />
+    <Compile Include="Couscous\java\util\Set.cs" />
+    <Compile Include="Couscous\mammoth\internal\docx\PathRelativeFileReader.cs" />
+    <Compile Include="Couscous\mammoth\internal\styles\parsing\StyleMapParser.cs" />
+    <Compile Include="Couscous\mammoth\internal\util\Base64Encoding.cs" />
+    <Compile Include="Couscous\mammoth\internal\util\Casts.cs" />
+    <Compile Include="Couscous\mammoth\internal\util\Lists.cs" />
+    <Compile Include="Couscous\mammoth\internal\util\Maps.cs" />
+    <Compile Include="Couscous\mammoth\internal\util\Paths.cs" />
+    <Compile Include="Couscous\mammoth\internal\util\PassThroughException.cs" />
+    <Compile Include="Couscous\mammoth\internal\util\Sets.cs" />
+    <Compile Include="Couscous\mammoth\internal\util\Strings.cs" />
+    <Compile Include="Couscous\mammoth\internal\util\Iterables.cs" />
+    <Compile Include="Couscous\mammoth\internal\xml\parsing\SimpleSax.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Folder Include="Couscous\" />
+    <Folder Include="Couscous\java\" />
+    <Folder Include="Couscous\mammoth\" />
+    <Folder Include="Couscous\mammoth\internal\" />
+    <Folder Include="Couscous\mammoth\internal\util\" />
+    <Folder Include="Couscous\java\nio\" />
+    <Folder Include="Couscous\java\nio\file\" />
+  </ItemGroup>
+</Project>
