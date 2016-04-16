@@ -6,14 +6,15 @@ import org.zwobble.mammoth.internal.html.HtmlNode;
 import org.zwobble.mammoth.internal.results.InternalResult;
 import org.zwobble.mammoth.internal.styles.HtmlPath;
 import org.zwobble.mammoth.internal.styles.StyleMap;
+import org.zwobble.mammoth.internal.util.Base64Encoding;
 import org.zwobble.mammoth.internal.util.Lists;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 
 import static org.zwobble.mammoth.internal.util.Lists.*;
 import static org.zwobble.mammoth.internal.util.Maps.map;
-import static org.zwobble.mammoth.internal.util.Streams.toByteArray;
 
 public class DocumentToHtml {
     public static InternalResult<List<HtmlNode>> convertToHtml(Document document, DocumentToHtmlOptions options) {
@@ -207,7 +208,7 @@ public class DocumentToHtml {
                         try {
                             Map<String, String> attributes = new HashMap<>();
 
-                            String base64 = Base64.getEncoder().encodeToString(toByteArray(image.open()));
+                            String base64 = imageToBase64(image);
                             String src = "data:" + contentType + ";base64," + base64;
                             attributes.put("src", src);
 
@@ -222,6 +223,12 @@ public class DocumentToHtml {
                     .orElse(list());
             }
         });
+    }
+
+    private static String imageToBase64(Image image) throws IOException {
+        try (InputStream stream = image.open()) {
+            return Base64Encoding.streamToBase64(stream);
+        }
     }
 
     private String generateNoteHtmlId(NoteType noteType, String noteId) {
