@@ -10,7 +10,6 @@ import org.zwobble.mammoth.internal.util.Base64Encoding;
 import org.zwobble.mammoth.internal.util.Lists;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.*;
 
 import static org.zwobble.mammoth.internal.util.Lists.*;
@@ -208,7 +207,7 @@ public class DocumentToHtml {
                         try {
                             Map<String, String> attributes = new HashMap<>();
 
-                            String base64 = imageToBase64(image);
+                            String base64 = Base64Encoding.streamToBase64(image::open);
                             String src = "data:" + contentType + ";base64," + base64;
                             attributes.put("src", src);
 
@@ -223,12 +222,6 @@ public class DocumentToHtml {
                     .orElse(list());
             }
         });
-    }
-
-    private static String imageToBase64(Image image) throws IOException {
-        try (InputStream stream = image.open()) {
-            return Base64Encoding.streamToBase64(stream);
-        }
     }
 
     private String generateNoteHtmlId(NoteType noteType, String noteId) {
