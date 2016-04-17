@@ -29,14 +29,21 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.IO.Compression.FileSystem" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="DocumentConverter.cs" />
+    <Compile Include="IResult.cs" />
+    <Compile Include="SimpleResult.cs" />
     <Compile Include="generated.cs" />
     <Compile Include="Couscous\Adapters.cs" />
     <Compile Include="Couscous\HorribleHacks.cs" />
     <Compile Include="Couscous\IterableExtensions.cs" />
     <Compile Include="Couscous\JavaStringExtensions.cs" />
+    <Compile Include="Couscous\java\io\File.cs" />
     <Compile Include="Couscous\java\io\InputStream.cs" />
     <Compile Include="Couscous\java\io\IOException.cs" />
     <Compile Include="Couscous\java\io\Closeable.cs" />
@@ -61,7 +68,9 @@
     <Compile Include="Couscous\java\util\NoSuchElementException.cs" />
     <Compile Include="Couscous\java\util\Optional.cs" />
     <Compile Include="Couscous\java\util\Set.cs" />
+    <Compile Include="Couscous\mammoth\internal\docx\InMemoryDocxFile.cs" />
     <Compile Include="Couscous\mammoth\internal\docx\PathRelativeFileReader.cs" />
+    <Compile Include="Couscous\mammoth\internal\docx\ZippedDocxFile.cs" />
     <Compile Include="Couscous\mammoth\internal\styles\parsing\StyleMapParser.cs" />
     <Compile Include="Couscous\mammoth\internal\util\Base64Encoding.cs" />
     <Compile Include="Couscous\mammoth\internal\util\Casts.cs" />

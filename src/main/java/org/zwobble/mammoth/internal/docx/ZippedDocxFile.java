@@ -1,5 +1,6 @@
 package org.zwobble.mammoth.internal.docx;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Optional;
@@ -11,6 +12,10 @@ public class ZippedDocxFile implements DocxFile {
 
     public ZippedDocxFile(ZipFile zipFile) {
         this.zipFile = zipFile;
+    }
+
+    public ZippedDocxFile(File file) throws IOException {
+        this(new ZipFile(file));
     }
 
     @Override

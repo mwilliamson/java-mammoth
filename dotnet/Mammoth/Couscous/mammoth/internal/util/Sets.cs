@@ -5,8 +5,7 @@ using System;
 
 namespace Mammoth.Couscous.org.zwobble.mammoth.@internal.util
 {
-	internal static class Sets
-	{
+	internal static class Sets {
 		internal static Set<T> set<T>(T[] values) {
 			return new HashSet<T>(new System.Collections.Generic.HashSet<T>(values));
 		}

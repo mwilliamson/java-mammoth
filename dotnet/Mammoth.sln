@@ -3,12 +3,18 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mammoth", "Mammoth\Mammoth.csproj", "{51C5CBD6-8809-4D5E-BABE-1787A16F5ED8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mammoth.Cli", "Mammoth.Cli\Mammoth.Cli.csproj", "{20602E78-EEBD-407B-B8C3-EDB6254BD663}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{20602E78-EEBD-407B-B8C3-EDB6254BD663}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{20602E78-EEBD-407B-B8C3-EDB6254BD663}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{20602E78-EEBD-407B-B8C3-EDB6254BD663}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{20602E78-EEBD-407B-B8C3-EDB6254BD663}.Release|Any CPU.Build.0 = Release|Any CPU
 		{51C5CBD6-8809-4D5E-BABE-1787A16F5ED8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{51C5CBD6-8809-4D5E-BABE-1787A16F5ED8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{51C5CBD6-8809-4D5E-BABE-1787A16F5ED8}.Release|Any CPU.ActiveCfg = Release|Any CPU

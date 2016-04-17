@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Mammoth.Couscous.java.lang;
 using Mammoth.Couscous.java.util;
+using Mammoth.Couscous.java.io;
 
 namespace Mammoth.Couscous {
     internal static class FromJava {
@@ -81,6 +82,18 @@ namespace Mammoth.Couscous {
         
         internal static java.util.List<T> ListToList<T>(IList<T> list) {
             return new ArrayList<T>(list);
+        }
+        
+        internal static java.io.InputStream StreamToInputStream(System.IO.Stream stream) {
+            return new StreamToInputStreamAdapter(stream);
+        }
+        
+        private class StreamToInputStreamAdapter : InputStream {
+            public System.IO.Stream Stream { get; }
+            
+            internal StreamToInputStreamAdapter(System.IO.Stream stream) {
+                Stream = stream;
+            }
         }
     }
 }
