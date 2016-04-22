@@ -71,20 +71,14 @@ public class InternalDocumentConverter {
     }
 
     private static <T> T withDocxFile(File file, Function<DocxFile, T> function) throws IOException {
-        DocxFile zipFile = new ZippedDocxFile(file);
-        try {
+        try (DocxFile zipFile = new ZippedDocxFile(file)) {
             return function.apply(zipFile);
-        } finally {
-            zipFile.close();
         }
     }
 
     private static <T> T withDocxFile(InputStream stream, Function<DocxFile, T> function) throws IOException {
-        DocxFile zipFile = InMemoryDocxFile.fromStream(stream);
-        try {
+        try (DocxFile zipFile = InMemoryDocxFile.fromStream(stream)) {
             return function.apply(zipFile);
-        } finally {
-            zipFile.close();
         }
     }
 
