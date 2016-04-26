@@ -9,6 +9,10 @@ namespace Mammoth.Couscous.org.zwobble.mammoth.@internal.docx {
         internal ZippedDocxFile(File file) {
             _zipFile = ZipFile.OpenRead(file.Path);
         }
+
+        internal ZippedDocxFile(System.IO.Stream stream) {
+            _zipFile = new ZipArchive(stream);
+        }
         
         public Optional<InputStream> tryGetInputStream(string name) {
             var entry = _zipFile.GetEntry(name);

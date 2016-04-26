@@ -1,17 +1,13 @@
 using Mammoth.Couscous.java.io;
 using Mammoth.Couscous.java.util;
+using System.IO;
 
 namespace Mammoth.Couscous.org.zwobble.mammoth.@internal.docx {
-    internal class InMemoryDocxFile : DocxFile {
+    internal class InMemoryDocxFile {
         internal static DocxFile fromStream(InputStream stream) {
-            return new InMemoryDocxFile();
-        }
-        
-        public Optional<InputStream> tryGetInputStream(string name) {
-            throw new System.NotImplementedException();
-        }
-        
-        public void close() {
+            var memoryStream = new MemoryStream();
+            stream.Stream.CopyTo(memoryStream);
+            return new ZippedDocxFile(memoryStream);
         }
     }
 }

@@ -68,6 +68,15 @@ namespace Mammoth.Tests {
 				"Apple\n\nBanana\n\n");
 		}
 
+		[Fact]
+		public void CanExtractRawTextFromStream() {
+			using (var file = File.OpenRead(TestFilePath("simple-list.docx"))) {
+				assertSuccessfulConversion(
+					new DocumentConverter().ExtractRawText(file),
+					"Apple\n\nBanana\n\n");
+			}
+		}
+
 		private void assertSuccessfulConversion(IResult<string> result, string expectedValue) {
 			if (result.Warnings.Count > 0) {
 				throw new XunitException("Unexpected warnings: " + string.Join(", ", result.Warnings));
