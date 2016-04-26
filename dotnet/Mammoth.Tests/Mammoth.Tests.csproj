@@ -51,4 +51,27 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="TestData\empty.docx" />
+    <EmbeddedResource Include="TestData\endnotes.docx" />
+    <EmbeddedResource Include="TestData\external-picture.docx" />
+    <EmbeddedResource Include="TestData\footnote-hyperlink.docx" />
+    <EmbeddedResource Include="TestData\footnotes.docx" />
+    <EmbeddedResource Include="TestData\simple-list.docx" />
+    <EmbeddedResource Include="TestData\single-paragraph.docx" />
+    <EmbeddedResource Include="TestData\strikethrough.docx" />
+    <EmbeddedResource Include="TestData\tables.docx" />
+    <EmbeddedResource Include="TestData\text-box.docx" />
+    <EmbeddedResource Include="TestData\tiny-picture.docx" />
+    <EmbeddedResource Include="TestData\tiny-picture.png" />
+    <EmbeddedResource Include="TestData\tiny-picture-custom-content-type.docx" />
+    <EmbeddedResource Include="TestData\underline.docx" />
+    <EmbeddedResource Include="TestData\utf8-bom.docx" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Mammoth\Mammoth.csproj">
+      <Project>{51C5CBD6-8809-4D5E-BABE-1787A16F5ED8}</Project>
+      <Name>Mammoth</Name>
+    </ProjectReference>
+  </ItemGroup>
 </Project>
