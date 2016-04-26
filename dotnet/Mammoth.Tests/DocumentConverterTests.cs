@@ -6,8 +6,15 @@ namespace Mammoth.Tests {
 		[Fact]
 		public void DocxContainingOneParagraphIsConvertedToSingleParagraphElement() {
 			assertSuccessfulConversion(
-				convertToHtml("single-paragraph.docx"),
+				ConvertToHtml("single-paragraph.docx"),
 				"<p>Walking on imported air</p>");
+		}
+
+		[Fact]
+		public void CanReadFilesWithUtf8Bom() {
+			assertSuccessfulConversion(
+				ConvertToHtml("utf8-bom.docx"),
+				"<p>This XML has a byte order mark.</p>");
 		}
 
 		private void assertSuccessfulConversion(IResult<string> result, string expectedValue) {
@@ -15,7 +22,7 @@ namespace Mammoth.Tests {
 			Assert.Equal(expectedValue, result.Value);
 		}
 
-		private IResult<string> convertToHtml(string name) {
+		private IResult<string> ConvertToHtml(string name) {
 			return new DocumentConverter().ConvertToHtml(TestFilePath(name));
 		}
 
