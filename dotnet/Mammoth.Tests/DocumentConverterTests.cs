@@ -7,28 +7,28 @@ namespace Mammoth.Tests {
 	public class DocumentConverterTests {
 		[Fact]
 		public void DocxContainingOneParagraphIsConvertedToSingleParagraphElement() {
-			assertSuccessfulConversion(
+			AssertSuccessfulConversion(
 				ConvertToHtml("single-paragraph.docx"),
 				"<p>Walking on imported air</p>");
 		}
 
 		[Fact]
 		public void CanReadFilesWithUtf8Bom() {
-			assertSuccessfulConversion(
+			AssertSuccessfulConversion(
 				ConvertToHtml("utf8-bom.docx"),
 				"<p>This XML has a byte order mark.</p>");
 		}
 
 		[Fact]
 		public void EmptyParagraphsAreIgnoredByDefault() {
-			assertSuccessfulConversion(
+			AssertSuccessfulConversion(
 				ConvertToHtml("empty.docx"),
 				"");
 		}
 
 		[Fact]
 		public void EmptyParagraphsArePreservedIfIgnoreEmptyParagraphsIsFalse() {
-			assertSuccessfulConversion(
+			AssertSuccessfulConversion(
 				ConvertToHtml("empty.docx", converter => converter.PreserveEmptyParagraphs()),
 				"<p></p>");
 		}
@@ -37,7 +37,7 @@ namespace Mammoth.Tests {
 
 		[Fact]
 		public void WordTablesAreConvertedToHtmlTables() {
-			assertSuccessfulConversion(
+			AssertSuccessfulConversion(
 				ConvertToHtml("tables.docx"),
 				"<p>Above</p>" +
 				"<table>" +
@@ -49,21 +49,21 @@ namespace Mammoth.Tests {
 
 		[Fact]
 		public void InlineImagesAreIncludedInOutput() {
-			assertSuccessfulConversion(
+			AssertSuccessfulConversion(
 				ConvertToHtml("tiny-picture.docx"),
 				"<p><img src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAIAAAACUFjqAAAAAXNSR0IArs4c6QAAAAlwSFlzAAAOvgAADr4B6kKxwAAAABNJREFUKFNj/M+ADzDhlWUYqdIAQSwBE8U+X40AAAAASUVORK5CYII=\" /></p>");
 		}
 
 		[Fact]
 		public void ImagesStoredOutsideOfDocumentAreIncludedInOutput() {
-			assertSuccessfulConversion(
+			AssertSuccessfulConversion(
 				ConvertToHtml("external-picture.docx"),
 				"<p><img src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAIAAAACUFjqAAAAAXNSR0IArs4c6QAAAAlwSFlzAAAOvgAADr4B6kKxwAAAABNJREFUKFNj/M+ADzDhlWUYqdIAQSwBE8U+X40AAAAASUVORK5CYII=\" /></p>");
 		}
 
 		[Fact]
 		public void CanExtractRawTextFromFile() {
-			assertSuccessfulConversion(
+			AssertSuccessfulConversion(
 				new DocumentConverter().ExtractRawText(TestFilePath("simple-list.docx")),
 				"Apple\n\nBanana\n\n");
 		}
@@ -71,13 +71,13 @@ namespace Mammoth.Tests {
 		[Fact]
 		public void CanExtractRawTextFromStream() {
 			using (var file = File.OpenRead(TestFilePath("simple-list.docx"))) {
-				assertSuccessfulConversion(
+				AssertSuccessfulConversion(
 					new DocumentConverter().ExtractRawText(file),
 					"Apple\n\nBanana\n\n");
 			}
 		}
 
-		private void assertSuccessfulConversion(IResult<string> result, string expectedValue) {
+		private void AssertSuccessfulConversion(IResult<string> result, string expectedValue) {
 			if (result.Warnings.Count > 0) {
 				throw new XunitException("Unexpected warnings: " + string.Join(", ", result.Warnings));
 			}
