@@ -60,8 +60,10 @@
     <Compile Include="Couscous\java\util\function\Function.cs" />
     <Compile Include="Couscous\java\util\function\Predicate.cs" />
     <Compile Include="Couscous\java\util\function\Supplier.cs" />
+    <Compile Include="Couscous\java\util\ArrayDeque.cs" />
     <Compile Include="Couscous\java\util\ArrayList.cs" />
     <Compile Include="Couscous\java\util\Collection.cs" />
+    <Compile Include="Couscous\java\util\Deque.cs" />
     <Compile Include="Couscous\java\util\HashMap.cs" />
     <Compile Include="Couscous\java\util\HashSet.cs" />
     <Compile Include="Couscous\java\util\Iterator.cs" />

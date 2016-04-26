@@ -5,8 +5,8 @@ import org.zwobble.mammoth.internal.xml.XmlElement;
 import org.zwobble.mammoth.internal.xml.XmlTextNode;
 
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.Map;
 
 import static org.zwobble.mammoth.internal.util.Maps.eagerMapKeys;
@@ -32,14 +32,14 @@ public class XmlParser {
     }
     
     private class NodeGenerator implements SimpleSaxHandler {
-        private final List<XmlElementBuilder> elementStack;
+        private final Deque<XmlElementBuilder> elementStack;
         
         public NodeGenerator() {
-            elementStack = new ArrayList<>();
+            elementStack = new ArrayDeque<>();
         }
         
         public XmlElement getRoot() {
-            return elementStack.get(0).build();
+            return elementStack.getFirst().build();
         }
 
         @Override
@@ -63,14 +63,14 @@ public class XmlParser {
         @Override
         public void endElement() {
             if (elementStack.size() > 1) {
-                XmlElementBuilder element = elementStack.remove(elementStack.size() - 1);
-                elementStack.get(elementStack.size() - 1).addChild(element.build());
+                XmlElementBuilder element = elementStack.removeLast();
+                elementStack.getLast().addChild(element.build());   
             }            
         }
 
         @Override
         public void characters(String string) {
-            elementStack.get(elementStack.size() - 1).addChild(new XmlTextNode(string));
+            elementStack.getLast().addChild(new XmlTextNode(string));
         }
     }
 }
