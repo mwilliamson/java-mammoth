@@ -6,4 +6,7 @@
 /dotnet/Mammoth/obj
 /dotnet/Mammoth.Cli/bin
 /dotnet/Mammoth.Cli/obj
+/dotnet/Mammoth.Tests/bin
+/dotnet/Mammoth.Tests/obj
+/dotnet/packages
 *.userprefs
