@@ -33,6 +33,20 @@ namespace Mammoth.Tests {
 				"<p></p>");
 		}
 
+		// TODO: simple list
+
+		[Fact]
+		public void WordTablesAreConvertedToHtmlTables() {
+			assertSuccessfulConversion(
+				ConvertToHtml("tables.docx"),
+				"<p>Above</p>" +
+				"<table>" +
+				"<tr><td><p>Top left</p></td><td><p>Top right</p></td></tr>" +
+				"<tr><td><p>Bottom left</p></td><td><p>Bottom right</p></td></tr>" +
+				"</table>" +
+				"<p>Below</p>");
+		}
+
 		private void assertSuccessfulConversion(IResult<string> result, string expectedValue) {
 			if (result.Warnings.Count > 0) {
 				throw new XunitException("Unexpected warnings: " + string.Join(", ", result.Warnings));
