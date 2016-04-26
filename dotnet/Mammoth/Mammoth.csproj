@@ -54,6 +54,9 @@
     <Compile Include="Couscous\java\lang\String.cs" />
     <Compile Include="Couscous\java\lang\StringBuilder.cs" />
     <Compile Include="Couscous\java\lang\UnsupportedOperationException.cs" />
+    <Compile Include="Couscous\java\net\URI.cs" />
+    <Compile Include="Couscous\java\net\URISyntaxException.cs" />
+    <Compile Include="Couscous\java\net\URL.cs" />
     <Compile Include="Couscous\java\util\function\BiFunction.cs" />
     <Compile Include="Couscous\java\util\function\BiPredicate.cs" />
     <Compile Include="Couscous\java\util\function\Consumer.cs" />
@@ -73,7 +76,6 @@
     <Compile Include="Couscous\java\util\Optional.cs" />
     <Compile Include="Couscous\java\util\Set.cs" />
     <Compile Include="Couscous\mammoth\internal\docx\InMemoryDocxFile.cs" />
-    <Compile Include="Couscous\mammoth\internal\docx\PathRelativeFileReader.cs" />
     <Compile Include="Couscous\mammoth\internal\docx\ZippedDocxFile.cs" />
     <Compile Include="Couscous\mammoth\internal\styles\parsing\StyleMapParser.cs" />
     <Compile Include="Couscous\mammoth\internal\util\Base64Encoding.cs" />

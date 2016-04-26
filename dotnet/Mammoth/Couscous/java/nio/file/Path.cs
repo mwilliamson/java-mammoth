@@ -1,4 +1,4 @@
-﻿using System;
+﻿using Mammoth.Couscous.java.net;
 
 namespace Mammoth.Couscous.java.nio.file {
 	internal class Path {
@@ -7,6 +7,10 @@ namespace Mammoth.Couscous.java.nio.file {
 		internal Path(string path) {
 			_path = path;
 		}
+
+        internal URI toUri() {
+            return new URI(_path);
+        }
 	}
 }
 
