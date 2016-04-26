@@ -1,5 +1,6 @@
 ﻿using Xunit;
 using System.IO;
+using Xunit.Sdk;
 
 namespace Mammoth.Tests {
 	public class DocumentConverterTests {
@@ -17,8 +18,17 @@ namespace Mammoth.Tests {
 				"<p>This XML has a byte order mark.</p>");
 		}
 
+		[Fact]
+		public void EmptyParagraphsAreIgnoredByDefault() {
+			assertSuccessfulConversion(
+				ConvertToHtml("empty.docx"),
+				"");
+		}
+
 		private void assertSuccessfulConversion(IResult<string> result, string expectedValue) {
-			Assert.Empty(result.Warnings);
+			if (result.Warnings.Count > 0) {
+				throw new XunitException("Unexpected warnings: " + string.Join(", ", result.Warnings));
+			}
 			Assert.Equal(expectedValue, result.Value);
 		}
 
