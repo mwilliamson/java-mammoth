@@ -61,6 +61,13 @@ namespace Mammoth.Tests {
 				"<p><img src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAIAAAACUFjqAAAAAXNSR0IArs4c6QAAAAlwSFlzAAAOvgAADr4B6kKxwAAAABNJREFUKFNj/M+ADzDhlWUYqdIAQSwBE8U+X40AAAAASUVORK5CYII=\" /></p>");
 		}
 
+		[Fact]
+		public void CanExtractRawTextFromFile() {
+			assertSuccessfulConversion(
+				new DocumentConverter().ExtractRawText(TestFilePath("simple-list.docx")),
+				"Apple\n\nBanana\n\n");
+		}
+
 		private void assertSuccessfulConversion(IResult<string> result, string expectedValue) {
 			if (result.Warnings.Count > 0) {
 				throw new XunitException("Unexpected warnings: " + string.Join(", ", result.Warnings));
