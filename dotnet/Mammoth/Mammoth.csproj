@@ -49,6 +49,7 @@
     <Compile Include="Couscous\java\io\Closeable.cs" />
     <Compile Include="Couscous\java\nio\file\Path.cs" />
     <Compile Include="Couscous\java\lang\IndexOutOfBoundsException.cs" />
+    <Compile Include="Couscous\java\lang\Iterable.cs" />
     <Compile Include="Couscous\java\lang\RuntimeException.cs" />
     <Compile Include="Couscous\java\lang\String.cs" />
     <Compile Include="Couscous\java\lang\StringBuilder.cs" />
@@ -63,6 +64,7 @@
     <Compile Include="Couscous\java\util\Collection.cs" />
     <Compile Include="Couscous\java\util\HashMap.cs" />
     <Compile Include="Couscous\java\util\HashSet.cs" />
+    <Compile Include="Couscous\java\util\Iterator.cs" />
     <Compile Include="Couscous\java\util\List.cs" />
     <Compile Include="Couscous\java\util\Map.cs" />
     <Compile Include="Couscous\java\util\NoSuchElementException.cs" />
