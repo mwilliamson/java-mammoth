@@ -1,6 +1,7 @@
 ﻿using Xunit;
 using System.IO;
 using Xunit.Sdk;
+using System;
 
 namespace Mammoth.Tests {
 	public class DocumentConverterTests {
@@ -25,6 +26,13 @@ namespace Mammoth.Tests {
 				"");
 		}
 
+		[Fact]
+		public void EmptyParagraphsArePreservedIfIgnoreEmptyParagraphsIsFalse() {
+			assertSuccessfulConversion(
+				ConvertToHtml("empty.docx", converter => converter.PreserveEmptyParagraphs()),
+				"<p></p>");
+		}
+
 		private void assertSuccessfulConversion(IResult<string> result, string expectedValue) {
 			if (result.Warnings.Count > 0) {
 				throw new XunitException("Unexpected warnings: " + string.Join(", ", result.Warnings));
@@ -33,7 +41,11 @@ namespace Mammoth.Tests {
 		}
 
 		private IResult<string> ConvertToHtml(string name) {
-			return new DocumentConverter().ConvertToHtml(TestFilePath(name));
+			return ConvertToHtml(name, converter => converter);
+		}
+
+		private IResult<string> ConvertToHtml(string name, Func<DocumentConverter, DocumentConverter> configure) {
+			return configure(new DocumentConverter()).ConvertToHtml(TestFilePath(name));
 		}
 
 		private string TestFilePath(string name) {
