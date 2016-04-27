@@ -48,15 +48,18 @@
     <Compile Include="Couscous\java\io\IOException.cs" />
     <Compile Include="Couscous\java\io\Closeable.cs" />
     <Compile Include="Couscous\java\nio\file\Path.cs" />
+    <Compile Include="Couscous\java\lang\IllegalArgumentException.cs" />
     <Compile Include="Couscous\java\lang\IndexOutOfBoundsException.cs" />
     <Compile Include="Couscous\java\lang\Iterable.cs" />
     <Compile Include="Couscous\java\lang\RuntimeException.cs" />
     <Compile Include="Couscous\java\lang\String.cs" />
     <Compile Include="Couscous\java\lang\StringBuilder.cs" />
     <Compile Include="Couscous\java\lang\UnsupportedOperationException.cs" />
+    <Compile Include="Couscous\java\math\BigInteger.cs" />
     <Compile Include="Couscous\java\net\URI.cs" />
     <Compile Include="Couscous\java\net\URISyntaxException.cs" />
     <Compile Include="Couscous\java\net\URL.cs" />
+    <Compile Include="Couscous\java\util\function\BiConsumer.cs" />
     <Compile Include="Couscous\java\util\function\BiFunction.cs" />
     <Compile Include="Couscous\java\util\function\BiPredicate.cs" />
     <Compile Include="Couscous\java\util\function\Consumer.cs" />
@@ -65,6 +68,7 @@
     <Compile Include="Couscous\java\util\function\Supplier.cs" />
     <Compile Include="Couscous\java\util\ArrayDeque.cs" />
     <Compile Include="Couscous\java\util\ArrayList.cs" />
+    <Compile Include="Couscous\java\util\Arrays.cs" />
     <Compile Include="Couscous\java\util\Collection.cs" />
     <Compile Include="Couscous\java\util\Deque.cs" />
     <Compile Include="Couscous\java\util\HashMap.cs" />
@@ -77,7 +81,6 @@
     <Compile Include="Couscous\java\util\Set.cs" />
     <Compile Include="Couscous\mammoth\internal\docx\InMemoryDocxFile.cs" />
     <Compile Include="Couscous\mammoth\internal\docx\ZippedDocxFile.cs" />
-    <Compile Include="Couscous\mammoth\internal\styles\parsing\StyleMapParser.cs" />
     <Compile Include="Couscous\mammoth\internal\util\Base64Encoding.cs" />
     <Compile Include="Couscous\mammoth\internal\util\Casts.cs" />
     <Compile Include="Couscous\mammoth\internal\util\Lists.cs" />

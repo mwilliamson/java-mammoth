@@ -1,10 +1,12 @@
 package org.zwobble.mammoth.internal.styles.parsing;
 
-import org.parboiled.support.Var;
+import org.zwobble.mammoth.internal.styles.HtmlPath;
 import org.zwobble.mammoth.internal.styles.StyleMap;
 import org.zwobble.mammoth.internal.styles.StyleMapBuilder;
 
 import java.util.List;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 import static java.util.Arrays.asList;
 
@@ -14,14 +16,14 @@ public class StyleMapParser {
     }
 
     public static StyleMap parseStyleMappings(List<String> lines) {
-        Var<StyleMapBuilder> styleMap = new Var<>(StyleMap.builder());
+        StyleMapBuilder styleMap = StyleMap.builder();
         for (String line : lines) {
             handleLine(styleMap, line);
         }
-        return styleMap.get().build();
+        return styleMap.build();
     }
 
-    private static void handleLine(Var<StyleMapBuilder> styleMap, String line) {
+    private static void handleLine(StyleMapBuilder styleMap, String line) {
         if (line.startsWith("#")) {
             return;
         }
@@ -29,6 +31,31 @@ public class StyleMapParser {
         if (line.isEmpty()) {
             return;
         }
-        Parsing.parse(StyleMappingParser.class, parser -> parser.StyleMapping(styleMap), line);
+
+        parseStyleMapping(line).accept(styleMap);
+    }
+
+    private static Consumer<StyleMapBuilder> parseStyleMapping(String line) {
+        TokenIterator tokens = new TokenIterator(StyleMappingTokeniser.tokenise(line));
+
+        BiConsumer<StyleMapBuilder, HtmlPath> documentMatcher = DocumentMatcherParser.parse(tokens);
+
+        tokens.skip(TokenType.WHITESPACE);
+        tokens.skip(TokenType.ARROW);
+
+        HtmlPath htmlPath = parseHtmlPath(tokens);
+
+        tokens.skip(TokenType.EOF);
+
+        return styleMap -> documentMatcher.accept(styleMap, htmlPath);
+    }
+
+    private static HtmlPath parseHtmlPath(TokenIterator tokens) {
+        if (tokens.peekTokenType() == TokenType.EOF) {
+            return HtmlPath.EMPTY;
+        } else {
+            tokens.skip(TokenType.WHITESPACE);
+            return HtmlPathParser.parse(tokens);
+        }
     }
 }

@@ -1,11 +1,12 @@
-package org.zwobble.mammoth.tests.styles;
+package org.zwobble.mammoth.tests.styles.parsing;
 
 import org.junit.Test;
-import org.parboiled.support.Var;
 import org.zwobble.mammoth.internal.styles.ParagraphMatcher;
 import org.zwobble.mammoth.internal.styles.RunMatcher;
-import org.zwobble.mammoth.internal.styles.parsing.Parsing;
-import org.zwobble.mammoth.internal.styles.parsing.StyleMappingParser;
+import org.zwobble.mammoth.internal.styles.parsing.DocumentMatcherParser;
+import org.zwobble.mammoth.internal.styles.parsing.StyleMappingTokeniser;
+import org.zwobble.mammoth.internal.styles.parsing.TokenIterator;
+import org.zwobble.mammoth.internal.styles.parsing.TokenType;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.zwobble.mammoth.tests.DeepReflectionMatcher.deepEquals;
@@ -67,14 +68,14 @@ public class DocumentMatcherParsingTests {
     }
 
     private ParagraphMatcher parseParagraphMatcher(String input) {
-        Var<ParagraphMatcher> matcher = new Var<>();
-        Parsing.parse(StyleMappingParser.class, parser -> parser.ParagraphMatcher(matcher), input);
-        return matcher.get();
+        TokenIterator tokens = new TokenIterator(StyleMappingTokeniser.tokenise(input));
+        tokens.skip(TokenType.IDENTIFIER, "p");
+        return DocumentMatcherParser.parseParagraphMatcher(tokens);
     }
 
     private RunMatcher parseRunMatcher(String input) {
-        Var<RunMatcher> matcher = new Var<>();
-        Parsing.parse(StyleMappingParser.class, parser -> parser.RunMatcher(matcher), input);
-        return matcher.get();
+        TokenIterator tokens = new TokenIterator(StyleMappingTokeniser.tokenise(input));
+        tokens.skip(TokenType.IDENTIFIER, "r");
+        return DocumentMatcherParser.parseRunMatcher(tokens);
     }
 }

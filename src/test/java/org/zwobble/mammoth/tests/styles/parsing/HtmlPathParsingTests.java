@@ -1,16 +1,16 @@
-package org.zwobble.mammoth.tests.styles;
+package org.zwobble.mammoth.tests.styles.parsing;
 
 import org.junit.Test;
-import org.parboiled.support.Var;
 import org.zwobble.mammoth.internal.styles.HtmlPath;
 import org.zwobble.mammoth.internal.styles.HtmlPathElement;
-import org.zwobble.mammoth.internal.styles.parsing.Parsing;
-import org.zwobble.mammoth.internal.styles.parsing.StyleMappingParser;
+import org.zwobble.mammoth.internal.styles.parsing.HtmlPathParser;
+import org.zwobble.mammoth.internal.styles.parsing.StyleMappingTokeniser;
+import org.zwobble.mammoth.internal.styles.parsing.TokenIterator;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.zwobble.mammoth.tests.DeepReflectionMatcher.deepEquals;
 import static org.zwobble.mammoth.internal.util.Lists.list;
 import static org.zwobble.mammoth.internal.util.Maps.map;
+import static org.zwobble.mammoth.tests.DeepReflectionMatcher.deepEquals;
 
 public class HtmlPathParsingTests {
     @Test
@@ -67,8 +67,6 @@ public class HtmlPathParsingTests {
     }
 
     private HtmlPath parseHtmlPath(String input) {
-        Var<HtmlPath> path = new Var<>();
-        Parsing.parse(StyleMappingParser.class, parser -> parser.HtmlPath(path), input);
-        return path.get();
+        return HtmlPathParser.parse(new TokenIterator(StyleMappingTokeniser.tokenise(input)));
     }
 }

@@ -1,4 +1,4 @@
-package org.zwobble.mammoth.tests.styles;
+package org.zwobble.mammoth.tests.styles.parsing;
 
 import org.junit.Test;
 import org.zwobble.mammoth.internal.styles.HtmlPath;
