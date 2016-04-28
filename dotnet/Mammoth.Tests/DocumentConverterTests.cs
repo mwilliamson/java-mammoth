@@ -108,6 +108,13 @@ namespace Mammoth.Tests {
                     "<ol><li id=\"doc-42-footnote-1\"><p> <a href=\"http://www.example.com\">Example</a> <a href=\"#doc-42-footnote-ref-1\">↑</a></p></li></ol>");
         }
 
+        [Fact]
+        public void TextBoxesAreRead() {
+            AssertSuccessfulConversion(
+                ConvertToHtml("text-box.docx"),
+                "<p>Datum plane</p>");
+        }
+
 		[Fact]
 		public void CanExtractRawTextFromFile() {
 			AssertSuccessfulConversion(
