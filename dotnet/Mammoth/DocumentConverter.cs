@@ -25,10 +25,10 @@ namespace Mammoth {
         public DocumentConverter AddStyleMap(string styleMap) {
             return new DocumentConverter(options.addStyleMap(styleMap));
         }
-//
-//        public DocumentConverter DisableDefaultStyleMap() {
-//            return new DocumentConverter(options.disableDefaultStyleMap());
-//        }
+
+        public DocumentConverter DisableDefaultStyleMap() {
+            return new DocumentConverter(options.disableDefaultStyleMap());
+        }
 
         public IResult<string> ConvertToHtml(Stream stream) {
             return new InternalDocumentConverter(options)

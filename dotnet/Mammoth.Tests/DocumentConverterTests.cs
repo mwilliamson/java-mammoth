@@ -136,6 +136,13 @@ namespace Mammoth.Tests {
                 "<p><strong>The <em>Sunset</em> Tree</strong></p>");
         }
 
+        [Fact]
+        public void CanDisableDefaultStyleMap() {
+            var result = ConvertToHtml("simple-list.docx", mammoth => mammoth.DisableDefaultStyleMap());
+            Assert.Equal(new[]{"Unrecognised paragraph style: List Paragraph (Style ID: ListParagraph)"}, result.Warnings);
+            Assert.Equal("<p>Apple</p><p>Banana</p>", result.Value);
+        }
+
 		[Fact]
 		public void CanExtractRawTextFromFile() {
 			AssertSuccessfulConversion(
