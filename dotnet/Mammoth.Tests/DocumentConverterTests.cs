@@ -64,7 +64,16 @@ namespace Mammoth.Tests {
 			AssertSuccessfulConversion(
 				ConvertToHtml("external-picture.docx"),
 				"<p><img src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAIAAAACUFjqAAAAAXNSR0IArs4c6QAAAAlwSFlzAAAOvgAADr4B6kKxwAAAABNJREFUKFNj/M+ADzDhlWUYqdIAQSwBE8U+X40AAAAASUVORK5CYII=\" /></p>");
-		}
+        }
+
+        [Fact]
+        public void WarnIfDocumentHasImagesStoredOutsideOfDocumentWhenPathOfDocumentIsUnknown() {
+            using (var file = File.OpenRead(TestFilePath("external-picture.docx"))) {
+                var result = new DocumentConverter().ConvertToHtml(file);
+                Assert.Equal("", result.Value);
+                Assert.Equal(new[]{"could not open external image 'tiny-picture.png': path of document is unknown, but is required for relative URI"}, result.Warnings);
+            }
+        }
 
         // TODO: image warnings
 
