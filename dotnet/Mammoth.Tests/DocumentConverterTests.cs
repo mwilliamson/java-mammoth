@@ -31,9 +31,14 @@ namespace Mammoth.Tests {
 			AssertSuccessfulConversion(
 				ConvertToHtml("empty.docx", converter => converter.PreserveEmptyParagraphs()),
 				"<p></p>");
-		}
+        }
 
-		// TODO: simple list
+        [Fact]
+        public void simpleListIsConvertedToListElements()  {
+            AssertSuccessfulConversion(
+                ConvertToHtml("simple-list.docx"),
+                "<ul><li>Apple</li><li>Banana</li></ul>");
+        }
 
 		[Fact]
 		public void WordTablesAreConvertedToHtmlTables() {
