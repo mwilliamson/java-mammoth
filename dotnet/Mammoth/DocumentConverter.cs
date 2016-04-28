@@ -22,10 +22,9 @@ namespace Mammoth {
             return new DocumentConverter(options.preserveEmptyParagraphs());
         }
 
-        // TODO
-//        public DocumentConverter AddStyleMap(string styleMap) {
-//            return new DocumentConverter(options.addStyleMap(styleMap));
-//        }
+        public DocumentConverter AddStyleMap(string styleMap) {
+            return new DocumentConverter(options.addStyleMap(styleMap));
+        }
 //
 //        public DocumentConverter DisableDefaultStyleMap() {
 //            return new DocumentConverter(options.disableDefaultStyleMap());

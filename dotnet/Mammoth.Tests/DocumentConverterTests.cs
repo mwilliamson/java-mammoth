@@ -115,6 +115,27 @@ namespace Mammoth.Tests {
                 "<p>Datum plane</p>");
         }
 
+        [Fact]
+        public void CanUseCustomStyleMap() {
+            AssertSuccessfulConversion(
+                ConvertToHtml("underline.docx", mammoth => mammoth.AddStyleMap("u => em")),
+                "<p><strong>The <em>Sunset</em> Tree</strong></p>");
+        }
+
+        [Fact]
+        public void MostRecentlyAddedStyleMapTakesPrecedence() {
+            AssertSuccessfulConversion(
+                ConvertToHtml("underline.docx", mammoth => mammoth.AddStyleMap("u => em").AddStyleMap("u => strong")),
+                "<p><strong>The <strong>Sunset</strong> Tree</strong></p>");
+        }
+
+        [Fact]
+        public void RulesFromPreviouslyAddedStyleMapsStillTakeEffectIfNotOverriden() {
+            AssertSuccessfulConversion(
+                ConvertToHtml("underline.docx", mammoth => mammoth.AddStyleMap("u => em").AddStyleMap("strike => del")),
+                "<p><strong>The <em>Sunset</em> Tree</strong></p>");
+        }
+
 		[Fact]
 		public void CanExtractRawTextFromFile() {
 			AssertSuccessfulConversion(
