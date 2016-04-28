@@ -77,6 +77,28 @@ namespace Mammoth.Tests {
                 "<p><img src=\"data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAIAAAACUFjqAAAAAXNSR0IArs4c6QAAAAlwSFlzAAAOvgAADr4B6kKxwAAAABNJREFUKFNj/M+ADzDhlWUYqdIAQSwBE8U+X40AAAAASUVORK5CYII=\" /></p>");
         }
 
+        [Fact]
+        public void FootnotesAreAppendedToText() {
+            AssertSuccessfulConversion(
+                ConvertToHtml("footnotes.docx", mammoth => mammoth.IdPrefix("doc-42-")),
+                    "<p>Ouch" +
+                    "<sup><a href=\"#doc-42-footnote-1\" id=\"doc-42-footnote-ref-1\">[1]</a></sup>." +
+                    "<sup><a href=\"#doc-42-footnote-2\" id=\"doc-42-footnote-ref-2\">[2]</a></sup></p>" +
+                    "<ol><li id=\"doc-42-footnote-1\"><p> A tachyon walks into a bar. <a href=\"#doc-42-footnote-ref-1\">↑</a></p></li>" +
+                    "<li id=\"doc-42-footnote-2\"><p> Fin. <a href=\"#doc-42-footnote-ref-2\">↑</a></p></li></ol>");
+        }
+
+        [Fact]
+        public void EndNotesAreAppendedToText() {
+            AssertSuccessfulConversion(
+                ConvertToHtml("endnotes.docx", mammoth => mammoth.IdPrefix("doc-42-")),
+                    "<p>Ouch" +
+                    "<sup><a href=\"#doc-42-endnote-2\" id=\"doc-42-endnote-ref-2\">[1]</a></sup>." +
+                    "<sup><a href=\"#doc-42-endnote-3\" id=\"doc-42-endnote-ref-3\">[2]</a></sup></p>" +
+                    "<ol><li id=\"doc-42-endnote-2\"><p> A tachyon walks into a bar. <a href=\"#doc-42-endnote-ref-2\">↑</a></p></li>" +
+                    "<li id=\"doc-42-endnote-3\"><p> Fin. <a href=\"#doc-42-endnote-ref-3\">↑</a></p></li></ol>");
+        }
+
 		[Fact]
 		public void CanExtractRawTextFromFile() {
 			AssertSuccessfulConversion(
