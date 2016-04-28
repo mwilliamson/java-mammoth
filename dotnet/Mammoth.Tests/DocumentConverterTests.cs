@@ -34,7 +34,7 @@ namespace Mammoth.Tests {
         }
 
         [Fact]
-        public void simpleListIsConvertedToListElements()  {
+        public void SimpleListIsConvertedToListElements()  {
             AssertSuccessfulConversion(
                 ConvertToHtml("simple-list.docx"),
                 "<ul><li>Apple</li><li>Banana</li></ul>");
@@ -65,6 +65,17 @@ namespace Mammoth.Tests {
 				ConvertToHtml("external-picture.docx"),
 				"<p><img src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAIAAAACUFjqAAAAAXNSR0IArs4c6QAAAAlwSFlzAAAOvgAADr4B6kKxwAAAABNJREFUKFNj/M+ADzDhlWUYqdIAQSwBE8U+X40AAAAASUVORK5CYII=\" /></p>");
 		}
+
+        // TODO: image warnings
+
+
+
+        [Fact]
+        public void ContentTypesAreRead() {
+            AssertSuccessfulConversion(
+                ConvertToHtml("tiny-picture-custom-content-type.docx"),
+                "<p><img src=\"data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAIAAAACUFjqAAAAAXNSR0IArs4c6QAAAAlwSFlzAAAOvgAADr4B6kKxwAAAABNJREFUKFNj/M+ADzDhlWUYqdIAQSwBE8U+X40AAAAASUVORK5CYII=\" /></p>");
+        }
 
 		[Fact]
 		public void CanExtractRawTextFromFile() {
