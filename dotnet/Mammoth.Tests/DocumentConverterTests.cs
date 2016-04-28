@@ -2,6 +2,7 @@
 using System.IO;
 using Xunit.Sdk;
 using System;
+using System.Linq;
 
 namespace Mammoth.Tests {
 	public class DocumentConverterTests {
@@ -75,9 +76,20 @@ namespace Mammoth.Tests {
             }
         }
 
-        // TODO: image warnings
-
-
+        [Fact]
+        public void WarnIfImagesStoredOutsideOfDocumentAreNotFound() {
+            var tempDirectory = Path.Combine(Path.GetTempPath(), "mammoth-" + Guid.NewGuid());
+            Directory.CreateDirectory(tempDirectory);
+            try {
+                var documentPath = Path.Combine(tempDirectory, "external-picture.docx");
+                File.Copy(TestFilePath("external-picture.docx"), documentPath);
+                var result = new DocumentConverter().ConvertToHtml(documentPath);
+                Assert.Equal("", result.Value);
+                Assert.StartsWith("could not open external image 'tiny-picture.png':", result.Warnings.Single());
+            } finally {
+                Directory.Delete(tempDirectory, recursive: true);
+            }
+        }
 
         [Fact]
         public void ContentTypesAreRead() {
