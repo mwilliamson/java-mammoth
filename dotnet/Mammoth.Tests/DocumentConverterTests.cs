@@ -99,6 +99,15 @@ namespace Mammoth.Tests {
                     "<li id=\"doc-42-endnote-3\"><p> Fin. <a href=\"#doc-42-endnote-ref-3\">↑</a></p></li></ol>");
         }
 
+        [Fact]
+        public void RelationshipsAreReadForEachFileContainingBodyXml() {
+            AssertSuccessfulConversion(
+                ConvertToHtml("footnote-hyperlink.docx", mammoth => mammoth.IdPrefix("doc-42-")),
+
+                    "<p><sup><a href=\"#doc-42-footnote-1\" id=\"doc-42-footnote-ref-1\">[1]</a></sup></p>" +
+                    "<ol><li id=\"doc-42-footnote-1\"><p> <a href=\"http://www.example.com\">Example</a> <a href=\"#doc-42-footnote-ref-1\">↑</a></p></li></ol>");
+        }
+
 		[Fact]
 		public void CanExtractRawTextFromFile() {
 			AssertSuccessfulConversion(
