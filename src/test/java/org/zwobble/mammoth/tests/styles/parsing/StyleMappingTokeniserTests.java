@@ -41,6 +41,11 @@ public class StyleMappingTokeniserTests {
     }
 
     @Test
+    public void unterminatedStringsAreTokenised() {
+        assertTokens("'Tristan", isToken(TokenType.UNTERMINATED_STRING, "'Tristan"));
+    }
+
+    @Test
     public void arrowsAreTokenised() {
         assertTokens("=>=>", isToken(TokenType.ARROW, "=>"), isToken(TokenType.ARROW, "=>"));
     }

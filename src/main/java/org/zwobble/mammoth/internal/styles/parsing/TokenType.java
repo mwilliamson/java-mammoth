@@ -13,6 +13,7 @@ public enum TokenType {
     OPEN_SQUARE_BRACKET,
     CLOSE_SQUARE_BRACKET,
     STRING,
+    UNTERMINATED_STRING,
     INTEGER,
     CHOICE,
     EOF,
