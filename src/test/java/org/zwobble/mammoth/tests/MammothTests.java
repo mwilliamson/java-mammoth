@@ -3,6 +3,7 @@ package org.zwobble.mammoth.tests;
 import org.junit.Test;
 import org.zwobble.mammoth.DocumentConverter;
 import org.zwobble.mammoth.Result;
+import org.zwobble.mammoth.internal.styles.parsing.ParseException;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,6 +16,7 @@ import static org.junit.Assert.assertThat;
 import static org.zwobble.mammoth.internal.util.Lists.list;
 import static org.zwobble.mammoth.tests.ResultMatchers.isResult;
 import static org.zwobble.mammoth.tests.ResultMatchers.isSuccess;
+import static org.zwobble.mammoth.tests.util.MammothAsserts.assertThrows;
 
 public class MammothTests {
     @Test
@@ -187,6 +189,16 @@ public class MammothTests {
         assertThat(
             convertToHtml("underline.docx", mammoth -> mammoth.addStyleMap("u => em").addStyleMap("strike => del")),
             isSuccess("<p><strong>The <em>Sunset</em> Tree</strong></p>"));
+    }
+
+    @Test
+    public void errorIsRaisedIfStyleMapCannotBeParsed() throws IOException {
+        RuntimeException exception = assertThrows(
+            ParseException.class,
+            () -> new DocumentConverter().addStyleMap("p =>\np[style-name=] =>"));
+        assertThat(
+            exception.getMessage(),
+            equalTo("expected token of type STRING but was of type CLOSE_SQUARE_BRACKET"));
     }
 
     @Test

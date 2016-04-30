@@ -29,7 +29,7 @@ public class DocumentMatcherParser {
             case "strike":
                 return StyleMapBuilder::strikethrough;
             default:
-                throw new IllegalArgumentException("Unrecognised document element: " + identifier);
+                throw new ParseException("Unrecognised document element: " + identifier);
         }
     }
 
@@ -88,7 +88,7 @@ public class DocumentMatcherParser {
         } else if (listType.equals("unordered-list")) {
             return false;
         } else {
-            throw new IllegalArgumentException("Unrecognised list type: " + listType);
+            throw new ParseException("Unrecognised list type: " + listType);
         }
     }
 }
