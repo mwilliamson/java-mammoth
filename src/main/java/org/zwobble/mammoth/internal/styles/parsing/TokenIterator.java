@@ -52,12 +52,12 @@ public class TokenIterator {
         }
         String actualValue = token.getValue();
         if (!actualValue.equals(tokenValue)) {
-            throw new ParseException(token, "expected " + tokenType + " token with value " + tokenValue + " but value was " + actualValue);
+            throw new LineParseException(token, "expected " + tokenType + " token with value " + tokenValue + " but value was " + actualValue);
         }
         index += 1;
     }
 
-    private ParseException unexpectedTokenType(TokenType expected, Token actual) {
-        return new ParseException(actual, "expected token of type " + expected + " but was of type " + actual.getTokenType());
+    private LineParseException unexpectedTokenType(TokenType expected, Token actual) {
+        return new LineParseException(actual, "expected token of type " + expected + " but was of type " + actual.getTokenType());
     }
 }

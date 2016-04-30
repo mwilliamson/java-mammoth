@@ -29,7 +29,7 @@ public class DocumentMatcherParser {
             case "strike":
                 return StyleMapBuilder::strikethrough;
             default:
-                throw new ParseException(identifier, "Unrecognised document element: " + identifier);
+                throw new LineParseException(identifier, "Unrecognised document element: " + identifier);
         }
     }
 
@@ -89,7 +89,7 @@ public class DocumentMatcherParser {
             case "unordered-list":
                 return false;
             default:
-                throw new ParseException(listType, "Unrecognised list type: " + listType);
+                throw new LineParseException(listType, "Unrecognised list type: " + listType);
         }
     }
 }
