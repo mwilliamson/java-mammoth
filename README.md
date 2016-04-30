@@ -1,4 +1,4 @@
-# Mammoth .docx to HTML converter
+# Mammoth .docx to HTML converter for Java/JVM
 
 Mammoth is designed to convert .docx documents,
 such as those created by Microsoft Word,
