@@ -198,7 +198,10 @@ public class MammothTests {
             () -> new DocumentConverter().addStyleMap("p =>\np[style-name=] =>"));
         assertThat(
             exception.getMessage(),
-            equalTo("error reading style map at line 2, character 14: expected token of type STRING but was of type CLOSE_SQUARE_BRACKET"));
+            equalTo(
+                "error reading style map at line 2, character 14: expected token of type STRING but was of type CLOSE_SQUARE_BRACKET\n\n" +
+                "p[style-name=] =>\n" +
+                "             ^"));
     }
 
     @Test

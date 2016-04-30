@@ -18,10 +18,11 @@ public class StyleMapParser {
     public static StyleMap parseStyleMappings(List<String> lines) {
         StyleMapBuilder styleMap = StyleMap.builder();
         for (int lineIndex = 0; lineIndex < lines.size(); lineIndex += 1) {
+            String line = lines.get(lineIndex);
             try {
-                handleLine(styleMap, lines.get(lineIndex));
+                handleLine(styleMap, line);
             } catch (LineParseException exception) {
-                throw new ParseException(lineIndex + 1, exception.getToken(), exception.getMessage());
+                throw new ParseException(line, lineIndex + 1, exception.getToken(), exception.getMessage());
             }
         }
         return styleMap.build();
