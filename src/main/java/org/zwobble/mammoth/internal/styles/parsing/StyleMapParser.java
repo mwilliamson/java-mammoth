@@ -22,7 +22,7 @@ public class StyleMapParser {
             try {
                 handleLine(styleMap, line);
             } catch (LineParseException exception) {
-                throw new ParseException(line, lineIndex + 1, exception.getToken(), exception.getMessage());
+                throw new ParseException(generateErrorMessage(line, lineIndex + 1, exception.getToken(), exception.getMessage()));
             }
         }
         return styleMap.build();
@@ -62,5 +62,20 @@ public class StyleMapParser {
             tokens.skip(TokenType.WHITESPACE);
             return HtmlPathParser.parse(tokens);
         }
+    }
+
+    private static String generateErrorMessage(String line, int lineNumber, Token token, String message) {
+        return "error reading style map at line " + lineNumber + ", character " + (token.getCharacterIndex() + 1) +
+            ": " + message + "\n\n" +
+            line + "\n" +
+            repeatString(" ", token.getCharacterIndex()) + "^";
+    }
+
+    private static String repeatString(String value, int times) {
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < times; i += 1) {
+            builder.append(value);
+        }
+        return builder.toString();
     }
 }

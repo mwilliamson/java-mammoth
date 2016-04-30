@@ -151,10 +151,21 @@ namespace Mammoth.Tests {
         }
 
         [Fact]
-        public void RulesFromPreviouslyAddedStyleMapsStillTakeEffectIfNotOverriden() {
+        public void RulesFromPreviouslyAddedStyleMapsStillTakeEffectIfNotOverridden() {
             AssertSuccessfulConversion(
                 ConvertToHtml("underline.docx", mammoth => mammoth.AddStyleMap("u => em").AddStyleMap("strike => del")),
                 "<p><strong>The <em>Sunset</em> Tree</strong></p>");
+        }
+
+        [Fact]
+        public void ErrorIsRaisedIfStyleMapCannotBeParsed() {
+	    var exception = Assert.ThrowsAny<Exception>(() =>
+		new DocumentConverter().AddStyleMap("p =>\np[style-name=] =>"));
+	    Assert.Equal(
+		"error reading style map at line 2, character 14: expected token of type _STRING but was of type _CLOSE_SQUARE_BRACKET\n\n" +
+                "p[style-name=] =>\n" +
+                "             ^",
+		exception.Message);
         }
 
         [Fact]

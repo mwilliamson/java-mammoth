@@ -8,6 +8,8 @@
     "!src/main/java/org/zwobble/mammoth/DocumentConverter.java",
     "!src/main/java/org/zwobble/mammoth/internal/docx/ZippedDocxFile.java",
     "!src/main/java/org/zwobble/mammoth/internal/docx/InMemoryDocxFile.java",
+    "!src/main/java/org/zwobble/mammoth/internal/styles/parsing/LineParseException.java",
+    "!src/main/java/org/zwobble/mammoth/internal/styles/parsing/ParseException.java",
     "!src/main/java/org/zwobble/mammoth/internal/util",
     "src/main/java/org/zwobble/mammoth/internal/util/InputStreamSupplier.java",
     "src/main/java/org/zwobble/mammoth/internal/util/Optionals.java",

@@ -26,5 +26,9 @@ namespace Mammoth.Couscous {
         internal static bool equals(this TokenType first, TokenType second) {
             return first == second;
         }
+        
+        internal static string getMessage(this System.Exception exception) {
+            return exception.Message;
+        }
     }
 }

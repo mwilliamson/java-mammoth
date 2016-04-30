@@ -81,6 +81,8 @@
     <Compile Include="Couscous\java\util\Set.cs" />
     <Compile Include="Couscous\mammoth\internal\docx\InMemoryDocxFile.cs" />
     <Compile Include="Couscous\mammoth\internal\docx\ZippedDocxFile.cs" />
+    <Compile Include="Couscous\mammoth\internal\styles\parsing\LineParseException.cs" />
+    <Compile Include="Couscous\mammoth\internal\styles\parsing\ParseException.cs" />
     <Compile Include="Couscous\mammoth\internal\util\Base64Encoding.cs" />
     <Compile Include="Couscous\mammoth\internal\util\Casts.cs" />
     <Compile Include="Couscous\mammoth\internal\util\Lists.cs" />
