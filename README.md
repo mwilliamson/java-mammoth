@@ -61,6 +61,9 @@ Available on [Maven Central](http://search.maven.org/#artifactdetails|org.zwobbl
 
 * [WordPress](https://wordpress.org/plugins/mammoth-docx-converter/).
 
+* [.NET](https://github.com/mwilliamson/dotnet-mammoth).
+  Available [on NuGet](https://www.nuget.org/packages/Mammoth/).
+
 ## Usage
 
 ### Library
