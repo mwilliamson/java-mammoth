@@ -19,14 +19,18 @@ public class TokenIterator {
         return tokens.get(index + count).getTokenType();
     }
 
-    public String nextValue(TokenType type) {
+    public Token next(TokenType type) {
         Token token = tokens.get(index);
         if (token.getTokenType() == type) {
             index += 1;
-            return token.getValue();
+            return token;
         } else {
-            throw unexpectedTokenType(type, token.getTokenType());
+            throw unexpectedTokenType(type, token);
         }
+    }
+
+    public String nextValue(TokenType type) {
+        return next(type).getValue();
     }
 
     public void skip() {
@@ -34,24 +38,26 @@ public class TokenIterator {
     }
 
     public void skip(TokenType tokenType) {
-        if (peekTokenType() != tokenType) {
-            throw unexpectedTokenType(tokenType, peekTokenType());
+        Token token = tokens.get(index);
+        if (token.getTokenType() != tokenType) {
+            throw unexpectedTokenType(tokenType, token);
         }
         index += 1;
     }
 
     public void skip(TokenType tokenType, String tokenValue) {
-        if (peekTokenType() != tokenType) {
-            throw unexpectedTokenType(tokenType, peekTokenType());
+        Token token = tokens.get(index);
+        if (token.getTokenType() != tokenType) {
+            throw unexpectedTokenType(tokenType, token);
         }
-        String actualValue = tokens.get(index).getValue();
+        String actualValue = token.getValue();
         if (!actualValue.equals(tokenValue)) {
-            throw new ParseException("expected " + tokenType + " token with value " + tokenValue + " but value was " + actualValue);
+            throw new ParseException(token, "expected " + tokenType + " token with value " + tokenValue + " but value was " + actualValue);
         }
         index += 1;
     }
 
-    private ParseException unexpectedTokenType(TokenType expected, TokenType actual) {
-        return new ParseException("expected token of type " + expected + " but was of type " + actual);
+    private ParseException unexpectedTokenType(TokenType expected, Token actual) {
+        return new ParseException(actual, "expected token of type " + expected + " but was of type " + actual.getTokenType());
     }
 }

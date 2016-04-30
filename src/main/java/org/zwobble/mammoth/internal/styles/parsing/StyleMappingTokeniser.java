@@ -14,7 +14,7 @@ public class StyleMappingTokeniser {
             index += token.getValue().length();
         }
 
-        tokens.add(new Token(TokenType.EOF, ""));
+        tokens.add(new Token(index, TokenType.EOF, ""));
         return tokens;
     }
 
@@ -32,7 +32,7 @@ public class StyleMappingTokeniser {
                 index -= 1;
             }
         }
-        return new Token(tokenType, line.substring(startIndex, index));
+        return new Token(startIndex, tokenType, line.substring(startIndex, index));
     }
 
     private static TokenType tokenType(char nextChar) {

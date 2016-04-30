@@ -12,8 +12,8 @@ import java.util.function.BiConsumer;
 
 public class DocumentMatcherParser {
     public static BiConsumer<StyleMapBuilder, HtmlPath> parse(TokenIterator tokens) {
-        String identifier = tokens.nextValue(TokenType.IDENTIFIER);
-        switch (identifier) {
+        Token identifier = tokens.next(TokenType.IDENTIFIER);
+        switch (identifier.getValue()) {
             case "p":
                 ParagraphMatcher paragraph = parseParagraphMatcher(tokens);
                 return (builder, path) -> builder.mapParagraph(paragraph, path);
@@ -29,7 +29,7 @@ public class DocumentMatcherParser {
             case "strike":
                 return StyleMapBuilder::strikethrough;
             default:
-                throw new ParseException("Unrecognised document element: " + identifier);
+                throw new ParseException(identifier, "Unrecognised document element: " + identifier);
         }
     }
 
@@ -82,13 +82,14 @@ public class DocumentMatcherParser {
     }
 
     private static boolean parseListType(TokenIterator tokens) {
-        String listType = tokens.nextValue(TokenType.IDENTIFIER);
-        if (listType.equals("ordered-list")) {
-            return true;
-        } else if (listType.equals("unordered-list")) {
-            return false;
-        } else {
-            throw new ParseException("Unrecognised list type: " + listType);
+        Token listType = tokens.next(TokenType.IDENTIFIER);
+        switch (listType.getValue()) {
+            case "ordered-list":
+                return true;
+            case "unordered-list":
+                return false;
+            default:
+                throw new ParseException(listType, "Unrecognised list type: " + listType);
         }
     }
 }
