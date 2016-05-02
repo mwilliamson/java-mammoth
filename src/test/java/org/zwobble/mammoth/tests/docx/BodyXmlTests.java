@@ -324,8 +324,34 @@ public class BodyXmlTests {
             readSuccess(a(bodyReader), element),
             deepEquals(new Table(list(
                 new TableRow(list(
-                    new TableCell(list(
-                        make(a(PARAGRAPH))))))))));
+                    new TableCell(1, list(
+                        make(a(PARAGRAPH))
+                    ))
+                ))
+            )))
+        );
+    }
+
+    @Test
+    public void gridspanIsReadAsColspanForTableCell() {
+        XmlElement element = element("w:tbl", list(
+            element("w:tr", list(
+                element("w:tc", list(
+                    element("w:tcPr", list(
+                        element("w:gridSpan", map("w:val", "2"))
+                    )),
+                    element("w:p")))))));
+
+        assertThat(
+            readSuccess(a(bodyReader), element),
+            deepEquals(new Table(list(
+                new TableRow(list(
+                    new TableCell(2, list(
+                        make(a(PARAGRAPH))
+                    ))
+                ))
+            )))
+        );
     }
 
     @Test

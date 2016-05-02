@@ -66,7 +66,7 @@ public class BodyXmlReader {
             case "w:tr":
                 return readElements(element.children()).map(TableRow::new);
             case "w:tc":
-                return readElements(element.children()).map(TableCell::new);
+                return readTableCell(element);
 
             case "w:hyperlink":
                 return readHyperlink(element);
@@ -229,6 +229,15 @@ public class BodyXmlReader {
         } else {
             return ReadResult.emptyWithWarning("Unsupported break type: " + breakType);
         }
+    }
+
+    private ReadResult readTableCell(XmlElement element) {
+        Optional<String> gridSpan = element
+            .findChildOrEmpty("w:tcPr")
+            .findChildOrEmpty("w:gridSpan")
+            .getAttributeOrNone("w:val");
+        int colspan = gridSpan.map(Integer::parseInt).orElse(1);
+        return readElements(element.children()).map(children -> new TableCell(colspan, children));
     }
 
     private ReadResult readHyperlink(XmlElement element) {

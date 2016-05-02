@@ -62,7 +62,7 @@ public class DeepReflectionMatcher<T> extends TypeSafeDiagnosingMatcher<T> {
             return matchesOptional(path, (Optional)expected, (Optional)actual, mismatchDescription);
         }
 
-        if (expected instanceof String || expected instanceof Boolean || expected instanceof Enum) {
+        if (expected instanceof String || expected instanceof Boolean || expected instanceof Enum || expected instanceof Integer) {
             return matchesPrimitive(path, expected, actual, mismatchDescription);
         }
 
@@ -196,7 +196,7 @@ public class DeepReflectionMatcher<T> extends TypeSafeDiagnosingMatcher<T> {
     }
 
     private static String describeValue(Object value) {
-        if (value instanceof String || value instanceof Boolean) {
+        if (value instanceof String || value instanceof Boolean || value instanceof Integer) {
             return value.toString();
         } else if (value instanceof Optional) {
             Optional<?> optional = (Optional)value;

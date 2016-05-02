@@ -207,11 +207,11 @@ public class DocumentToHtmlTests {
         assertThat(
             convertToHtml(new Table(list(
                 new TableRow(list(
-                    new TableCell(list(paragraphWithText("Top left"))),
-                    new TableCell(list(paragraphWithText("Top right"))))),
+                    tableCell(list(paragraphWithText("Top left"))),
+                    tableCell(list(paragraphWithText("Top right"))))),
                 new TableRow(list(
-                    new TableCell(list(paragraphWithText("Bottom left"))),
-                    new TableCell(list(paragraphWithText("Bottom right")))))))),
+                    tableCell(list(paragraphWithText("Bottom left"))),
+                    tableCell(list(paragraphWithText("Bottom right")))))))),
 
             deepEquals(list(Html.element("table", list(
                 Html.element("tr", list(

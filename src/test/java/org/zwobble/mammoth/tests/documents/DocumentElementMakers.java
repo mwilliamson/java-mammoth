@@ -22,6 +22,7 @@ public class DocumentElementMakers {
     public static final Property<Run, Boolean> STRIKETHROUGH = newProperty();
     public static final Property<Run, VerticalAlignment> VERTICAL_ALIGNMENT = newProperty();
     public static final Property<HasChildren, List<DocumentElement>> CHILDREN = newProperty();
+    public static final Property<TableCell, Integer> COLSPAN = newProperty();
 
     public static final Instantiator<Paragraph> PARAGRAPH =
         propertyLookup -> new Paragraph(
@@ -38,6 +39,15 @@ public class DocumentElementMakers {
             propertyLookup.valueOf(VERTICAL_ALIGNMENT, VerticalAlignment.BASELINE),
             propertyLookup.valueOf(STYLE, Optional.empty()),
             propertyLookup.valueOf(CHILDREN, list()));
+
+    public static final Instantiator<TableCell> TABLE_CELL =
+        propertyLookup -> new TableCell(
+            propertyLookup.valueOf(COLSPAN, 1),
+            propertyLookup.valueOf(CHILDREN, list()));
+
+    public static TableCell tableCell(List<DocumentElement> children) {
+        return make(a(TABLE_CELL, with(CHILDREN, children)));
+    }
 
     public static Paragraph paragraphWithText(String text) {
         return make(a(PARAGRAPH, with(CHILDREN, list(runWithText(text)))));
