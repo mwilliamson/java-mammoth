@@ -223,6 +223,26 @@ public class DocumentToHtmlTests {
     }
 
     @Test
+    public void tableCellsAreWrittenWithColspanIfNotEqualToOne() {
+        assertThat(
+            convertToHtml(new Table(list(
+                new TableRow(list(
+                    make(a(TABLE_CELL,
+                        with(CHILDREN, list(paragraphWithText("Top left"))),
+                        with(COLSPAN, 2)
+                    )),
+                    tableCell(list(paragraphWithText("Top right")))))))),
+
+            deepEquals(list(Html.element("table", list(
+                Html.element("tr", list(
+                    Html.element("td", map("colspan", "2"), list(Html.FORCE_WRITE, Html.element("p", list(Html.text("Top left"))))),
+                    Html.element("td", list(Html.FORCE_WRITE, Html.element("p", list(Html.text("Top right")))))
+                ))
+            ))))
+        );
+    }
+
+    @Test
     public void hyperlinkWithHrefIsConvertedToAnchorTag() {
         assertThat(
             convertToHtml(Hyperlink.href("http://example.com", list(new Text("Hello")))),
