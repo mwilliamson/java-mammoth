@@ -163,9 +163,13 @@ public class DocumentToHtml {
 
             @Override
             public List<HtmlNode> visit(TableCell tableCell) {
-                Map<String, String> attributes = tableCell.getColspan() == 1
-                    ? map()
-                    : map("colspan", Integer.toString(tableCell.getColspan()));
+                Map<String, String> attributes = new HashMap<>();
+                if (tableCell.getColspan() != 1) {
+                    attributes.put("colspan", Integer.toString(tableCell.getColspan()));
+                }
+                if (tableCell.getRowspan() != 1) {
+                    attributes.put("rowspan", Integer.toString(tableCell.getRowspan()));
+                }
                 return list(Html.element("td", attributes,
                     Lists.cons(Html.FORCE_WRITE, convertChildrenToHtml(tableCell))));
             }

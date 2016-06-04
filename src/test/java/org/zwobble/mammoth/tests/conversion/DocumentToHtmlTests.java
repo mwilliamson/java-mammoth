@@ -243,6 +243,22 @@ public class DocumentToHtmlTests {
     }
 
     @Test
+    public void tableCellsAreWrittenWithRowspanIfNotEqualToOne() {
+        assertThat(
+            convertToHtml(new Table(list(
+                new TableRow(list(
+                    make(a(TABLE_CELL, with(ROWSPAN, 2)))
+                ))
+            ))),
+            deepEquals(list(Html.element("table", list(
+                Html.element("tr", list(
+                    Html.element("td", map("rowspan", "2"), list(Html.FORCE_WRITE))
+                ))
+            ))))
+        );
+    }
+
+    @Test
     public void hyperlinkWithHrefIsConvertedToAnchorTag() {
         assertThat(
             convertToHtml(Hyperlink.href("http://example.com", list(new Text("Hello")))),

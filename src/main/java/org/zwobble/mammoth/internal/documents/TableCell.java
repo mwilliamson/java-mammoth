@@ -17,6 +17,10 @@ public class TableCell implements DocumentElement, HasChildren {
         return colspan;
     }
 
+    public int getRowspan() {
+        return rowspan;
+    }
+
     @Override
     public List<DocumentElement> getChildren() {
         return children;

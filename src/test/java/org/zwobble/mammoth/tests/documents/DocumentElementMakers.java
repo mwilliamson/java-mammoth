@@ -24,6 +24,7 @@ DocumentElementMakers {
     public static final Property<Run, VerticalAlignment> VERTICAL_ALIGNMENT = newProperty();
     public static final Property<HasChildren, List<DocumentElement>> CHILDREN = newProperty();
     public static final Property<TableCell, Integer> COLSPAN = newProperty();
+    public static final Property<TableCell, Integer> ROWSPAN = newProperty();
 
     public static final Instantiator<Paragraph> PARAGRAPH =
         propertyLookup -> new Paragraph(
@@ -43,7 +44,7 @@ DocumentElementMakers {
 
     public static final Instantiator<TableCell> TABLE_CELL =
         propertyLookup -> new TableCell(
-            1,
+            propertyLookup.valueOf(ROWSPAN, 1),
             propertyLookup.valueOf(COLSPAN, 1),
             propertyLookup.valueOf(CHILDREN, list()));
 
