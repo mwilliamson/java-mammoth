@@ -33,7 +33,7 @@ public class OfficeXml {
             @Override
             public List<XmlNode> visit(XmlElement element) {
                 if (element.getName().equals("mc:AlternateContent")) {
-                    return element.findChild("mc:Fallback").getChildren();
+                    return element.findChildOrEmpty("mc:Fallback").getChildren();
                 } else {
                     XmlElement collapsedElement = new XmlElement(
                         element.getName(),

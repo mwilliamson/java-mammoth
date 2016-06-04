@@ -51,7 +51,7 @@ public class NumberingXml {
     ) {
         // TODO: in python-mammoth, we allow None here. Check whether that's actually possible or not
         String numId = numElement.getAttribute("w:numId");
-        String abstractNumId = numElement.findChild("w:abstractNumId").getAttribute("w:val");
+        String abstractNumId = numElement.findChild("w:abstractNumId").get().getAttribute("w:val");
         return entry(numId, lookup(abstractNums, abstractNumId).get());
     }
 }

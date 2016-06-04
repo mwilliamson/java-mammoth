@@ -26,6 +26,15 @@ public class Iterables {
         };
     }
 
+    public static <T> Optional<T> getFirst(Iterable<? extends T> iterable) {
+        Iterator<? extends T> iterator = iterable.iterator();
+        if (iterator.hasNext()) {
+            return Optional.of(iterator.next());
+        } else {
+            return Optional.empty();
+        }
+    }
+
     public static <T> T getFirst(Iterable<? extends T> iterable, T defaultValue) {
         Iterator<? extends T> iterator = iterable.iterator();
         if (iterator.hasNext()) {

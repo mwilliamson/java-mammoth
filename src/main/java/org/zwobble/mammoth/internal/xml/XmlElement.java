@@ -1,5 +1,7 @@
 package org.zwobble.mammoth.internal.xml;
 
+import org.zwobble.mammoth.internal.util.Iterables;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -47,6 +49,7 @@ public class XmlElement implements XmlNode, XmlElementLike {
         return visitor.visit(this);
     }
 
+    @Override
     public List<XmlNode> getChildren() {
         return children;
     }
@@ -61,8 +64,8 @@ public class XmlElement implements XmlNode, XmlElementLike {
         return new XmlElementList(toList(findChildrenIterable(name)));
     }
 
-    public XmlElement findChild(String name) {
-        return findChildrenIterable(name).iterator().next();
+    public Optional<XmlElement> findChild(String name) {
+        return Iterables.getFirst(findChildrenIterable(name));
     }
 
     @Override
