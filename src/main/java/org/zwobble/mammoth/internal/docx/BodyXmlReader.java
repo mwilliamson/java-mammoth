@@ -2,6 +2,7 @@ package org.zwobble.mammoth.internal.docx;
 
 import org.zwobble.mammoth.internal.documents.*;
 import org.zwobble.mammoth.internal.results.InternalResult;
+import org.zwobble.mammoth.internal.util.Casts;
 import org.zwobble.mammoth.internal.util.InputStreamSupplier;
 import org.zwobble.mammoth.internal.util.Optionals;
 import org.zwobble.mammoth.internal.xml.XmlElement;
@@ -9,14 +10,15 @@ import org.zwobble.mammoth.internal.xml.XmlElementLike;
 import org.zwobble.mammoth.internal.xml.XmlElementList;
 import org.zwobble.mammoth.internal.xml.XmlNode;
 
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 
 import static org.zwobble.mammoth.internal.docx.ReadResult.EMPTY_SUCCESS;
 import static org.zwobble.mammoth.internal.docx.ReadResult.success;
 import static org.zwobble.mammoth.internal.util.Iterables.lazyFilter;
 import static org.zwobble.mammoth.internal.util.Lists.list;
+import static org.zwobble.mammoth.internal.util.Maps.entry;
+import static org.zwobble.mammoth.internal.util.Maps.lookup;
 import static org.zwobble.mammoth.internal.util.Sets.set;
 import static org.zwobble.mammoth.internal.util.Strings.trimLeft;
 
@@ -62,7 +64,7 @@ public class BodyXmlReader {
                 return readBreak(element);
 
             case "w:tbl":
-                return readElements(element.getChildren()).map(Table::new);
+                return readTable(element);
             case "w:tr":
                 return readElements(element.getChildren()).map(TableRow::new);
             case "w:tc":
@@ -231,13 +233,102 @@ public class BodyXmlReader {
         }
     }
 
+    private ReadResult readTable(XmlElement element) {
+        return readElements(element.getChildren())
+            .flatMap(this::calculateRowspans)
+            .map(Table::new);
+    }
+
+    private ReadResult calculateRowspans(List<DocumentElement> rows) {
+        for (DocumentElement rowElement : rows) {
+            Optional<TableRow> row = Casts.tryCast(TableRow.class, rowElement);
+            if (!row.isPresent()) {
+                return ReadResult.withWarning(rows, "unexpected non-row element in table, cell merging may be incorrect");
+            } else {
+                for (DocumentElement cell : row.get().getChildren()) {
+                    if (!(cell instanceof UnmergedTableCell)) {
+                        return ReadResult.withWarning(rows, "unexpected non-cell element in table row, cell merging may be incorrect");
+                    }
+                }
+            }
+        }
+
+
+        Map<Map.Entry<Integer, Integer>, Integer> rowspans = new HashMap<>();
+        Set<Map.Entry<Integer, Integer>> merged = new HashSet<>();
+
+        Map<Integer, Map.Entry<Integer, Integer>> lastCellForColumn = new HashMap<>();
+        for (int rowIndex = 0; rowIndex < rows.size(); rowIndex += 1) {
+            TableRow row = (TableRow) rows.get(rowIndex);
+            int columnIndex = 0;
+            for (int cellIndex = 0; cellIndex < row.getChildren().size(); cellIndex += 1) {
+                UnmergedTableCell cell = (UnmergedTableCell) row.getChildren().get(cellIndex);
+                Optional<Map.Entry<Integer, Integer>> spanningCell = lookup(lastCellForColumn, columnIndex);
+                Map.Entry<Integer, Integer> position = entry(rowIndex, cellIndex);
+                if (cell.vmerge && spanningCell.isPresent()) {
+                    rowspans.put(spanningCell.get(), lookup(rowspans, spanningCell.get()).get() + 1);
+                    merged.add(position);
+                } else {
+                    lastCellForColumn.put(columnIndex, position);
+                    rowspans.put(position, 1);
+                }
+                columnIndex += cell.colspan;
+            }
+        }
+
+        List<DocumentElement> mergedRows = new ArrayList<>();
+        for (int rowIndex = 0; rowIndex < rows.size(); rowIndex += 1) {
+            TableRow row = (TableRow) rows.get(rowIndex);
+
+            List<DocumentElement> mergedCells = new ArrayList<>();
+            for (int cellIndex = 0; cellIndex < row.getChildren().size(); cellIndex += 1) {
+                UnmergedTableCell cell = (UnmergedTableCell) row.getChildren().get(cellIndex);
+                Map.Entry<Integer, Integer> position = entry(rowIndex, cellIndex);
+                if (!merged.contains(position)) {
+                    mergedCells.add(new TableCell(
+                        lookup(rowspans, position).get(),
+                        cell.colspan,
+                        cell.children
+                    ));
+                }
+            }
+
+            mergedRows.add(new TableRow(mergedCells));
+        }
+        return success(mergedRows);
+    }
+
     private ReadResult readTableCell(XmlElement element) {
-        Optional<String> gridSpan = element
-            .findChildOrEmpty("w:tcPr")
+        XmlElementLike properties = element.findChildOrEmpty("w:tcPr");
+        Optional<String> gridSpan = properties
             .findChildOrEmpty("w:gridSpan")
             .getAttributeOrNone("w:val");
         int colspan = gridSpan.map(Integer::parseInt).orElse(1);
-        return readElements(element.getChildren()).map(children -> new TableCell(colspan, children));
+        return readElements(element.getChildren())
+            .map(children -> new UnmergedTableCell(readVmerge(properties), colspan, children));
+    }
+
+    private boolean readVmerge(XmlElementLike properties) {
+        return properties.findChild("w:vMerge")
+            .map(element -> element.getAttributeOrNone("w:val").map(val -> val.equals("continue")).orElse(true))
+            .orElse(false);
+    }
+
+    private static class UnmergedTableCell implements DocumentElement {
+        private final boolean vmerge;
+        private final int colspan;
+        private final List<DocumentElement> children;
+
+        private UnmergedTableCell(boolean vmerge, int colspan, List<DocumentElement> children) {
+            this.vmerge = vmerge;
+            this.colspan = colspan;
+            this.children = children;
+        }
+
+        @Override
+        public <T> T accept(DocumentElementVisitor<T> visitor) {
+            return visitor.visit(new TableCell(1, colspan, children));
+        }
     }
 
     private ReadResult readHyperlink(XmlElement element) {

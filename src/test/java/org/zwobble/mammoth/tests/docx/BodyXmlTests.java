@@ -36,6 +36,7 @@ import static org.zwobble.mammoth.tests.ResultMatchers.isInternalResult;
 import static org.zwobble.mammoth.tests.documents.DocumentElementMakers.*;
 import static org.zwobble.mammoth.tests.docx.BodyXmlReaderMakers.*;
 import static org.zwobble.mammoth.tests.docx.BodyXmlReaderMakers.NUMBERING;
+import static org.zwobble.mammoth.tests.docx.OfficeXmlBuilders.*;
 
 public class BodyXmlTests {
 
@@ -324,7 +325,7 @@ public class BodyXmlTests {
             readSuccess(a(bodyReader), element),
             deepEquals(new Table(list(
                 new TableRow(list(
-                    new TableCell(1, list(
+                    new TableCell(1, 1, list(
                         make(a(PARAGRAPH))
                     ))
                 ))
@@ -346,11 +347,115 @@ public class BodyXmlTests {
             readSuccess(a(bodyReader), element),
             deepEquals(new Table(list(
                 new TableRow(list(
-                    new TableCell(2, list(
+                    new TableCell(1, 2, list(
                         make(a(PARAGRAPH))
                     ))
                 ))
             )))
+        );
+    }
+
+    @Test
+    public void vmergeIsReadAsRowspanForTableCell() {
+        XmlElement element = element("w:tbl", list(
+            wTr(wTc()),
+            wTr(wTc(wTcPr(wVmerge("restart")))),
+            wTr(wTc(wTcPr(wVmerge("continue")))),
+            wTr(wTc(wTcPr(wVmerge("continue")))),
+            wTr(wTc())
+        ));
+
+        assertThat(
+            readSuccess(a(bodyReader), element),
+            deepEquals(new Table(list(
+                new TableRow(list(new TableCell(1, 1, list()))),
+                new TableRow(list(new TableCell(3, 1, list()))),
+                new TableRow(list()),
+                new TableRow(list()),
+                new TableRow(list(new TableCell(1, 1, list())))
+            )))
+        );
+    }
+
+    @Test
+    public void vmergeWithoutValIsTreatedAsContinue() {
+        XmlElement element = element("w:tbl", list(
+            wTr(wTc(wTcPr(wVmerge("restart")))),
+            wTr(wTc(wTcPr(element("w:vMerge"))))
+        ));
+
+        assertThat(
+            readSuccess(a(bodyReader), element),
+            deepEquals(new Table(list(
+                new TableRow(list(new TableCell(2, 1, list()))),
+                new TableRow(list())
+            )))
+        );
+    }
+
+    @Test
+    public void vmergeAccountsForCellsSpanningColumns() {
+        XmlElement element = element("w:tbl", list(
+            wTr(wTc(), wTc(), wTc(wTcPr(wVmerge("restart")))),
+            wTr(wTc(wTcPr(wGridspan("2"))), wTc(wTcPr(wVmerge("continue")))),
+            wTr(wTc(), wTc(), wTc(wTcPr(wVmerge("continue")))),
+            wTr(wTc(), wTc(), wTc())
+        ));
+
+        assertThat(
+            readSuccess(a(bodyReader), element),
+            deepEquals(new Table(list(
+                new TableRow(list(new TableCell(1, 1, list()), new TableCell(1, 1, list()), new TableCell(3, 1, list()))),
+                new TableRow(list(new TableCell(1, 2, list()))),
+                new TableRow(list(new TableCell(1, 1, list()), new TableCell(1, 1, list()))),
+                new TableRow(list(new TableCell(1, 1, list()), new TableCell(1, 1, list()), new TableCell(1, 1, list())))
+            )))
+        );
+    }
+
+    @Test
+    public void noVerticalCellMergingIfMergedCellsDoNotLineUp() {
+        XmlElement element = element("w:tbl", list(
+            wTr(wTc(wTcPr(wGridspan("2"))), wTc(wTcPr(wVmerge("restart")))),
+            wTr(wTc(), wTc(wTcPr(wVmerge("continue"))))
+        ));
+
+        assertThat(
+            readSuccess(a(bodyReader), element),
+            deepEquals(new Table(list(
+                new TableRow(list(new TableCell(1, 2, list()), new TableCell(1, 1, list()))),
+                new TableRow(list(new TableCell(1, 1, list()), new TableCell(1, 1, list())))
+            )))
+        );
+    }
+
+    @Test
+    public void warningIfNonRowInTable() {
+        XmlElement element = element("w:tbl", list(
+            element("w:p")
+        ));
+
+        assertThat(
+            read(a(bodyReader), element),
+            isInternalResult(
+                deepEquals(new Table(list(make(a(PARAGRAPH))))),
+                list("unexpected non-row element in table, cell merging may be incorrect")
+            )
+        );
+    }
+
+    @Test
+    public void warningIfNonCellInTableRow() {
+        XmlElement element = element("w:tbl", list(
+            wTr(element("w:p"))
+        ));
+
+        assertThat(
+            read(a(bodyReader), element),
+            isInternalResult(
+                deepEquals(new Table(list(new TableRow(list(make(a(PARAGRAPH))))))),
+                list("unexpected non-cell element in table row, cell merging may be incorrect")
+            )
         );
     }
 

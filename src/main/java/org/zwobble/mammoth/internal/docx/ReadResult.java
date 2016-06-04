@@ -42,11 +42,15 @@ public class ReadResult {
     }
 
     public static ReadResult emptyWithWarning(String warning) {
-        return new ReadResult(list(), list(), list(warning));
+        return withWarning(list(), warning);
     }
 
     public static ReadResult withWarning(DocumentElement element, String warning) {
-        return new ReadResult(list(element), list(), list(warning));
+        return withWarning(list(element), warning);
+    }
+
+    public static ReadResult withWarning(List<DocumentElement> elements, String warning) {
+        return new ReadResult(elements, list(), list(warning));
     }
 
     private final List<DocumentElement> elements;
@@ -64,6 +68,14 @@ public class ReadResult {
             list(function.apply(elements)),
             extra,
             warnings);
+    }
+
+    public ReadResult flatMap(Function<List<DocumentElement>, ReadResult> function) {
+        ReadResult result = function.apply(elements);
+        return new ReadResult(
+            result.elements,
+            eagerConcat(extra, result.extra),
+            lazyConcat(warnings, result.warnings));
     }
 
     public ReadResult toExtra() {

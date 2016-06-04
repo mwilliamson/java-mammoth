@@ -3,10 +3,12 @@ package org.zwobble.mammoth.internal.documents;
 import java.util.List;
 
 public class TableCell implements DocumentElement, HasChildren {
+    private final int rowspan;
     private final int colspan;
     private final List<DocumentElement> children;
 
-    public TableCell(int colspan, List<DocumentElement> children) {
+    public TableCell(int rowspan, int colspan, List<DocumentElement> children) {
+        this.rowspan = rowspan;
         this.children = children;
         this.colspan = colspan;
     }

@@ -57,8 +57,8 @@ Install-Package Mammoth
 
 * [WordPress](https://wordpress.org/plugins/mammoth-docx-converter/).
 
-* [Java](https://github.com/mwilliamson/java-mammoth).
-  Available on Maven Central.
+* [Java/JVM](https://github.com/mwilliamson/java-mammoth).
+  Available [on Maven Central](http://search.maven.org/#search|ga|1|g%3A%22org.zwobble.mammoth%22%20AND%20a%3A%22mammoth%22).
 
 ## Usage
 

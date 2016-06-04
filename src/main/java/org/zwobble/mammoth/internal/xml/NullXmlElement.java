@@ -17,6 +17,11 @@ public class NullXmlElement implements XmlElementLike {
     }
 
     @Override
+    public Optional<XmlElement> findChild(String name) {
+        return Optional.empty();
+    }
+
+    @Override
     public XmlElementLike findChildOrEmpty(String name) {
         return this;
     }

@@ -13,7 +13,8 @@ import static com.natpryce.makeiteasy.MakeItEasy.with;
 import static com.natpryce.makeiteasy.Property.newProperty;
 import static org.zwobble.mammoth.internal.util.Lists.list;
 
-public class DocumentElementMakers {
+public class
+DocumentElementMakers {
     public static final Property<DocumentElement, Optional<Style>> STYLE = newProperty();
     public static final Property<Paragraph, Optional<NumberingLevel>> NUMBERING = newProperty();
     public static final Property<Run, Boolean> BOLD = newProperty();
@@ -42,6 +43,7 @@ public class DocumentElementMakers {
 
     public static final Instantiator<TableCell> TABLE_CELL =
         propertyLookup -> new TableCell(
+            1,
             propertyLookup.valueOf(COLSPAN, 1),
             propertyLookup.valueOf(CHILDREN, list()));
 
