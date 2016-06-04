@@ -62,9 +62,9 @@ public class BodyXmlReader {
                 return readBreak(element);
 
             case "w:tbl":
-                return readElements(element.children()).map(Table::new);
+                return readElements(element.getChildren()).map(Table::new);
             case "w:tr":
-                return readElements(element.children()).map(TableRow::new);
+                return readElements(element.getChildren()).map(TableRow::new);
             case "w:tc":
                 return readTableCell(element);
 
@@ -94,7 +94,7 @@ public class BodyXmlReader {
             case "v:shape":
             case "v:textbox":
             case "w:txbxContent":
-                return readElements(element.children());
+                return readElements(element.getChildren());
 
             case "office-word:wrap":
             case "v:shadow":
@@ -126,7 +126,7 @@ public class BodyXmlReader {
         XmlElementLike properties = element.findChildOrEmpty("w:rPr");
         return ReadResult.map(
             readRunStyle(properties),
-            readElements(element.children()),
+            readElements(element.getChildren()),
             (style, children) -> new Run(
                 isBold(properties),
                 isItalic(properties),
@@ -179,7 +179,7 @@ public class BodyXmlReader {
         Optional<NumberingLevel> numbering = readNumbering(properties);
         return ReadResult.map(
             readParagraphStyle(properties),
-            readElements(element.children()),
+            readElements(element.getChildren()),
             (style, children) -> new Paragraph(style, numbering, children)).appendExtra();
     }
 
@@ -237,13 +237,13 @@ public class BodyXmlReader {
             .findChildOrEmpty("w:gridSpan")
             .getAttributeOrNone("w:val");
         int colspan = gridSpan.map(Integer::parseInt).orElse(1);
-        return readElements(element.children()).map(children -> new TableCell(colspan, children));
+        return readElements(element.getChildren()).map(children -> new TableCell(colspan, children));
     }
 
     private ReadResult readHyperlink(XmlElement element) {
         Optional<String> relationshipId = element.getAttributeOrNone("r:id");
         Optional<String> anchor = element.getAttributeOrNone("w:anchor");
-        ReadResult childrenResult = readElements(element.children());
+        ReadResult childrenResult = readElements(element.getChildren());
         if (relationshipId.isPresent()) {
             return childrenResult.map(children -> Hyperlink.href(
                 relationships.findRelationshipById(relationshipId.get()).getTarget(), children));
@@ -270,7 +270,7 @@ public class BodyXmlReader {
     }
 
     private ReadResult readPict(XmlElement element) {
-        return readElements(element.children()).toExtra();
+        return readElements(element.getChildren()).toExtra();
     }
 
     private ReadResult readImagedata(XmlElement element) {

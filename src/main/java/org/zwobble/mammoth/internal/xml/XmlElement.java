@@ -37,10 +37,6 @@ public class XmlElement implements XmlNode, XmlElementLike {
         return lookup(attributes, name);
     }
 
-    public List<XmlNode> getChildren() {
-        return children;
-    }
-
     @Override
     public String innerText() {
         return String.join("", lazyMap(children, XmlNode::innerText));
@@ -51,7 +47,7 @@ public class XmlElement implements XmlNode, XmlElementLike {
         return visitor.visit(this);
     }
 
-    public Iterable<XmlNode> children() {
+    public List<XmlNode> getChildren() {
         return children;
     }
 

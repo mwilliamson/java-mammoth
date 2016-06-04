@@ -44,7 +44,7 @@ public class NotesXmlReader {
     }
 
     private InternalResult<Note> readNoteElement(XmlElement element) {
-        return bodyReader.readElements(element.children())
+        return bodyReader.readElements(element.getChildren())
             .toResult()
             .map(children -> new Note(
                 noteType,

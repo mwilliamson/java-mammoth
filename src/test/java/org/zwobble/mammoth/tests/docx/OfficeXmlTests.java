@@ -29,6 +29,6 @@ public class OfficeXmlTests {
             "</numbering>";
 
         XmlElement result = OfficeXml.parseXml(new ByteArrayInputStream(xmlString.getBytes(StandardCharsets.UTF_8)));
-        assertThat(result.children(), deepEquals(list(element("fallback"))));
+        assertThat(result.getChildren(), deepEquals(list(element("fallback"))));
     }
 }

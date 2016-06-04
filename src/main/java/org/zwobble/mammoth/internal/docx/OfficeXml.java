@@ -38,7 +38,7 @@ public class OfficeXml {
                     XmlElement collapsedElement = new XmlElement(
                         element.getName(),
                         element.getAttributes(),
-                        eagerFlatMap(element.children(), OfficeXml::collapseAlternateContent));
+                        eagerFlatMap(element.getChildren(), OfficeXml::collapseAlternateContent));
                     return list(collapsedElement);
                 }
             }

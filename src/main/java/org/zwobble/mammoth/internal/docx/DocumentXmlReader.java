@@ -16,7 +16,7 @@ public class DocumentXmlReader {
 
     public InternalResult<Document> readElement(XmlElement element) {
         XmlElement body = element.findChild("w:body");
-        return bodyReader.readElements(body.children())
+        return bodyReader.readElements(body.getChildren())
             .toResult()
             .map(children -> new Document(children, notes));
     }
