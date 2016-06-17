@@ -27,7 +27,7 @@ public class Iterables {
         };
     }
 
-    public static <T, R> Iterable<R> lazyMap(Iterable<T> iterable, BiFunction<Integer, T, R> function) {
+    public static <T, R> Iterable<R> lazyMapWithIndex(Iterable<T> iterable, BiFunction<Integer, T, R> function) {
         return new Iterable<R>() {
             @Override
             public Iterator<R> iterator() {

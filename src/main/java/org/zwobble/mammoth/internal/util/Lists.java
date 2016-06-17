@@ -8,7 +8,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.Arrays.asList;
-import static org.zwobble.mammoth.internal.util.Iterables.lazyMap;
 import static org.zwobble.mammoth.internal.util.Iterables.stream;
 
 public class Lists {
@@ -49,8 +48,8 @@ public class Lists {
         return stream(iterable).map(function).collect(Collectors.toList());
     }
 
-    public static <T, R> List<R> eagerMap(Iterable<T> iterable, BiFunction<Integer, T, R> function) {
-        return toList(lazyMap(iterable, function));
+    public static <T, R> List<R> eagerMapWithIndex(Iterable<T> iterable, BiFunction<Integer, T, R> function) {
+        return toList(Iterables.lazyMapWithIndex(iterable, function));
     }
 
     public static <T, R> List<R> eagerFlatMap(Iterable<T> iterable, Function<T, Iterable<R>> function) {

@@ -4,6 +4,7 @@ import org.zwobble.mammoth.internal.documents.*;
 import org.zwobble.mammoth.internal.results.InternalResult;
 import org.zwobble.mammoth.internal.util.Casts;
 import org.zwobble.mammoth.internal.util.InputStreamSupplier;
+import org.zwobble.mammoth.internal.util.Lists;
 import org.zwobble.mammoth.internal.util.Optionals;
 import org.zwobble.mammoth.internal.xml.XmlElement;
 import org.zwobble.mammoth.internal.xml.XmlElementLike;
@@ -16,7 +17,6 @@ import java.util.function.Function;
 import static org.zwobble.mammoth.internal.docx.ReadResult.EMPTY_SUCCESS;
 import static org.zwobble.mammoth.internal.docx.ReadResult.success;
 import static org.zwobble.mammoth.internal.util.Iterables.lazyFilter;
-import static org.zwobble.mammoth.internal.util.Lists.eagerMap;
 import static org.zwobble.mammoth.internal.util.Lists.list;
 import static org.zwobble.mammoth.internal.util.Maps.entry;
 import static org.zwobble.mammoth.internal.util.Maps.lookup;
@@ -268,7 +268,7 @@ public class BodyXmlReader {
             }
         }
 
-        return success(eagerMap(rows, (rowIndex, rowElement) -> {
+        return success(Lists.eagerMapWithIndex(rows, (rowIndex, rowElement) -> {
             TableRow row = (TableRow) rowElement;
 
             List<DocumentElement> mergedCells = new ArrayList<>();
