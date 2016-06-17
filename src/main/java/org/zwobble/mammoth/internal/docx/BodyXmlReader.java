@@ -240,19 +240,10 @@ public class BodyXmlReader {
     }
 
     private ReadResult calculateRowspans(List<DocumentElement> rows) {
-        for (DocumentElement rowElement : rows) {
-            Optional<TableRow> row = Casts.tryCast(TableRow.class, rowElement);
-            if (!row.isPresent()) {
-                return ReadResult.withWarning(rows, "unexpected non-row element in table, cell merging may be incorrect");
-            } else {
-                for (DocumentElement cell : row.get().getChildren()) {
-                    if (!(cell instanceof UnmergedTableCell)) {
-                        return ReadResult.withWarning(rows, "unexpected non-cell element in table row, cell merging may be incorrect");
-                    }
-                }
-            }
+        Optional<String> error = checkTableRows(rows);
+        if (error.isPresent()) {
+            return ReadResult.withWarning(rows, error.get());
         }
-
 
         Map<Map.Entry<Integer, Integer>, Integer> rowspans = new HashMap<>();
         Set<Map.Entry<Integer, Integer>> merged = new HashSet<>();
@@ -296,6 +287,22 @@ public class BodyXmlReader {
             mergedRows.add(new TableRow(mergedCells));
         }
         return success(mergedRows);
+    }
+
+    private Optional<String> checkTableRows(List<DocumentElement> rows) {
+        for (DocumentElement rowElement : rows) {
+            Optional<TableRow> row = Casts.tryCast(TableRow.class, rowElement);
+            if (!row.isPresent()) {
+                return Optional.of("unexpected non-row element in table, cell merging may be incorrect");
+            } else {
+                for (DocumentElement cell : row.get().getChildren()) {
+                    if (!(cell instanceof UnmergedTableCell)) {
+                        return Optional.of("unexpected non-cell element in table row, cell merging may be incorrect");
+                    }
+                }
+            }
+        }
+        return Optional.empty();
     }
 
     private ReadResult readTableCell(XmlElement element) {
