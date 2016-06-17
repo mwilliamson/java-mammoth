@@ -16,6 +16,7 @@ import java.util.function.Function;
 import static org.zwobble.mammoth.internal.docx.ReadResult.EMPTY_SUCCESS;
 import static org.zwobble.mammoth.internal.docx.ReadResult.success;
 import static org.zwobble.mammoth.internal.util.Iterables.lazyFilter;
+import static org.zwobble.mammoth.internal.util.Lists.eagerMap;
 import static org.zwobble.mammoth.internal.util.Lists.list;
 import static org.zwobble.mammoth.internal.util.Maps.entry;
 import static org.zwobble.mammoth.internal.util.Maps.lookup;
@@ -267,9 +268,8 @@ public class BodyXmlReader {
             }
         }
 
-        List<DocumentElement> mergedRows = new ArrayList<>();
-        for (int rowIndex = 0; rowIndex < rows.size(); rowIndex += 1) {
-            TableRow row = (TableRow) rows.get(rowIndex);
+        return success(eagerMap(rows, (rowIndex, rowElement) -> {
+            TableRow row = (TableRow) rowElement;
 
             List<DocumentElement> mergedCells = new ArrayList<>();
             for (int cellIndex = 0; cellIndex < row.getChildren().size(); cellIndex += 1) {
@@ -283,10 +283,9 @@ public class BodyXmlReader {
                     ));
                 }
             }
-
-            mergedRows.add(new TableRow(mergedCells));
-        }
-        return success(mergedRows);
+            
+            return new TableRow(mergedCells);
+        }));
     }
 
     private Optional<String> checkTableRows(List<DocumentElement> rows) {

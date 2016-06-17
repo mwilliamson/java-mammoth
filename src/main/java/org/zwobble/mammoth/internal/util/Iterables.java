@@ -2,6 +2,7 @@ package org.zwobble.mammoth.internal.util;
 
 import java.util.Iterator;
 import java.util.Optional;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
@@ -18,6 +19,15 @@ public class Iterables {
     }
 
     public static <T, R> Iterable<R> lazyMap(Iterable<T> iterable, Function<T, R> function) {
+        return new Iterable<R>() {
+            @Override
+            public Iterator<R> iterator() {
+                return map(iterable.iterator(), function);
+            }
+        };
+    }
+
+    public static <T, R> Iterable<R> lazyMap(Iterable<T> iterable, BiFunction<Integer, T, R> function) {
         return new Iterable<R>() {
             @Override
             public Iterator<R> iterator() {
@@ -101,6 +111,22 @@ public class Iterables {
             @Override
             public R next() {
                 return function.apply(iterator.next());
+            }
+        };
+    }
+
+    private static <T, R> Iterator<R> map(Iterator<T> iterator, BiFunction<Integer, T, R> function) {
+        return new Iterator<R>() {
+            private int nextIndex = 0;
+
+            @Override
+            public boolean hasNext() {
+                return iterator.hasNext();
+            }
+
+            @Override
+            public R next() {
+                return function.apply(nextIndex++, iterator.next());
             }
         };
     }
