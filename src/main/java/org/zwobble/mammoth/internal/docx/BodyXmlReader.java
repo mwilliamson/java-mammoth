@@ -90,6 +90,9 @@ public class BodyXmlReader {
             case "wp:anchor":
                 return readInline(element);
 
+            case "w:sdt":
+                return readSdt(element);
+
             case "w:ins":
             case "w:smartTag":
             case "w:drawing":
@@ -416,6 +419,10 @@ public class BodyXmlReader {
         } else {
             return ReadResult.withWarning(image, "Image of type " + contentTypeString + " is unlikely to display in web browsers");
         }
+    }
+
+    private ReadResult readSdt(XmlElement element) {
+        return readElements(element.findChildOrEmpty("w:sdtContent").getChildren());
     }
 
     private String relationshipIdToDocxPath(String relationshipId) {

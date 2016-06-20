@@ -33,6 +33,7 @@ import static org.zwobble.mammoth.internal.xml.XmlNodes.element;
 import static org.zwobble.mammoth.tests.DeepReflectionMatcher.deepEquals;
 import static org.zwobble.mammoth.tests.ResultMatchers.hasWarnings;
 import static org.zwobble.mammoth.tests.ResultMatchers.isInternalResult;
+import static org.zwobble.mammoth.tests.ResultMatchers.isInternalSuccess;
 import static org.zwobble.mammoth.tests.documents.DocumentElementMakers.*;
 import static org.zwobble.mammoth.tests.docx.BodyXmlReaderMakers.*;
 import static org.zwobble.mammoth.tests.docx.BodyXmlReaderMakers.NUMBERING;
@@ -661,6 +662,15 @@ public class BodyXmlTests {
 
     private XmlElement blipXml(Map<String, String> attributes) {
         return element("a:blip", attributes);
+    }
+
+    @Test
+    public void sdtIsReadUsingSdtContent() throws IOException {
+        XmlElement element = element("w:sdt", list(element("w:sdtContent", list(textXml("Blackdown")))));
+
+        assertThat(
+            readAll(a(bodyReader), element),
+            isInternalSuccess(deepEquals(list(text("Blackdown")))));
     }
 
     @Test
