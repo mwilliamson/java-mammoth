@@ -28,6 +28,8 @@ public class DocumentMatcherParser {
                 return StyleMapBuilder::underline;
             case "strike":
                 return StyleMapBuilder::strikethrough;
+            case "comment-reference":
+                return StyleMapBuilder::commentReference;
             default:
                 throw new LineParseException(identifier, "Unrecognised document element: " + identifier);
         }

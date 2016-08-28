@@ -54,6 +54,12 @@ public class StyleMapParserTests {
     }
 
     @Test
+    public void canMapCommentReference() {
+        StyleMap styleMap = StyleMapParser.parse("comment-reference =>");
+        assertThat(styleMap, deepEquals(StyleMap.builder().commentReference(HtmlPath.EMPTY).build()));
+    }
+
+    @Test
     public void blankLinesAreIgnored() {
         StyleMap styleMap = StyleMapParser.parse("\n\n  \n\np =>\n\r\n");
         assertThat(styleMap, deepEquals(StyleMap.builder().mapParagraph(ParagraphMatcher.ANY, HtmlPath.EMPTY).build()));

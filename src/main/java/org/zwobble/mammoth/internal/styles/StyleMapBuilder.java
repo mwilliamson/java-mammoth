@@ -12,6 +12,7 @@ public class StyleMapBuilder {
     private Optional<HtmlPath> strikethrough;
     private Optional<HtmlPath> bold;
     private Optional<HtmlPath> italic;
+    private Optional<HtmlPath> commentReference;
     private final List<StyleMapping<Paragraph>> paragraphStyles = new ArrayList<>();
     private final List<StyleMapping<Run>> runStyles = new ArrayList<>();
 
@@ -20,6 +21,7 @@ public class StyleMapBuilder {
         this.underline = Optional.empty();
         this.strikethrough = Optional.empty();
         this.italic = Optional.empty();
+        this.commentReference = Optional.empty();
     }
 
     public StyleMapBuilder bold(HtmlPath path) {
@@ -42,6 +44,11 @@ public class StyleMapBuilder {
         return this;
     }
 
+    public StyleMapBuilder commentReference(HtmlPath path) {
+        this.commentReference = Optional.of(path);
+        return this;
+    }
+
     public StyleMapBuilder mapParagraph(ParagraphMatcher matcher, HtmlPath path) {
         paragraphStyles.add(new StyleMapping<>(matcher, path));
         return this;
@@ -53,6 +60,6 @@ public class StyleMapBuilder {
     }
 
     public StyleMap build() {
-        return new StyleMap(bold, italic, underline, strikethrough, paragraphStyles, runStyles);
+        return new StyleMap(bold, italic, underline, strikethrough, commentReference, paragraphStyles, runStyles);
     }
 }

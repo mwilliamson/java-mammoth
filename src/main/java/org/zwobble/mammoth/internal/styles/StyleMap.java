@@ -21,6 +21,7 @@ public class StyleMap {
     private final Optional<HtmlPath> italic;
     private final Optional<HtmlPath> underline;
     private final Optional<HtmlPath> strikethrough;
+    private final Optional<HtmlPath> commentReference;
     private final List<StyleMapping<Paragraph>> paragraphStyles;
     private final List<StyleMapping<Run>> runStyles;
 
@@ -29,6 +30,7 @@ public class StyleMap {
         Optional<HtmlPath> italic,
         Optional<HtmlPath> underline,
         Optional<HtmlPath> strikethrough,
+        Optional<HtmlPath> commentReference,
         List<StyleMapping<Paragraph>> paragraphStyles,
         List<StyleMapping<Run>> runStyles)
     {
@@ -36,6 +38,7 @@ public class StyleMap {
         this.italic = italic;
         this.underline = underline;
         this.strikethrough = strikethrough;
+        this.commentReference = commentReference;
         this.paragraphStyles = paragraphStyles;
         this.runStyles = runStyles;
     }
@@ -47,6 +50,7 @@ public class StyleMap {
             Optionals.first(styleMap.italic, italic),
             Optionals.first(styleMap.underline, underline),
             Optionals.first(styleMap.strikethrough, strikethrough),
+            Optionals.first(styleMap.commentReference, commentReference),
             Lists.eagerConcat(styleMap.paragraphStyles, paragraphStyles),
             Lists.eagerConcat(styleMap.runStyles, runStyles));
     }
