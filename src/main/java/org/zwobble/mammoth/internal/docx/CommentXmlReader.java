@@ -28,8 +28,17 @@ public class CommentXmlReader {
             .map(children -> new Comment(
                 commentId,
                 children,
-                Optional.empty(),
-                Optional.empty()
+                readOptionalAttribute(element, "w:author"),
+                readOptionalAttribute(element, "w:initials")
             ));
+    }
+
+    private Optional<String> readOptionalAttribute(XmlElement element, String name) {
+        String value = element.getAttributeOrNone(name).orElse("").trim();
+        if (value.isEmpty()) {
+            return Optional.empty();
+        } else {
+            return Optional.of(value);
+        }
     }
 }

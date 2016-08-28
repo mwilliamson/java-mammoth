@@ -42,10 +42,9 @@ public class CommentXmlTests {
 
     @Test
     public void whenOptionalAttributesOfCommentAreMissingThenTheyAreReadAsNone() {
-        List<XmlNode> body = list(element("w:p"));
         CommentXmlReader reader = new CommentXmlReader(bodyReader());
         InternalResult<List<Comment>> result = reader.readElement(element("w:comments", list(
-            element("w:comment", map("w:id", "1"), body)
+            element("w:comment", map("w:id", "1"))
         )));
         assertThat(
             result,
@@ -54,6 +53,42 @@ public class CommentXmlTests {
                     isA(Comment.class),
                     hasProperty("authorName", equalTo(Optional.empty())),
                     hasProperty("authorInitials", equalTo(Optional.empty()))
+                )
+            ))
+        );
+    }
+
+    @Test
+    public void whenOptionalAttributesOfCommentAreBlankThenTheyAreReadAsNone() {
+        CommentXmlReader reader = new CommentXmlReader(bodyReader());
+        InternalResult<List<Comment>> result = reader.readElement(element("w:comments", list(
+            element("w:comment", map("w:id", "1", "w:author", " ", "w:initials", " "))
+        )));
+        assertThat(
+            result,
+            isInternalSuccess(contains(
+                allOf(
+                    isA(Comment.class),
+                    hasProperty("authorName", equalTo(Optional.empty())),
+                    hasProperty("authorInitials", equalTo(Optional.empty()))
+                )
+            ))
+        );
+    }
+
+    @Test
+    public void whenOptionalAttributesOfCommentAreNotBlankThenTheyAreRead() {
+        CommentXmlReader reader = new CommentXmlReader(bodyReader());
+        InternalResult<List<Comment>> result = reader.readElement(element("w:comments", list(
+            element("w:comment", map("w:id", "1", "w:author", "The Piemaker", "w:initials", "TP"))
+        )));
+        assertThat(
+            result,
+            isInternalSuccess(contains(
+                allOf(
+                    isA(Comment.class),
+                    hasProperty("authorName", equalTo(Optional.of("The Piemaker"))),
+                    hasProperty("authorInitials", equalTo(Optional.of("TP")))
                 )
             ))
         );
