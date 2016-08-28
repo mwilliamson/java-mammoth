@@ -79,6 +79,8 @@ public class BodyXmlReader {
                 return readNoteReference(NoteType.FOOTNOTE, element);
             case "w:endnoteReference":
                 return readNoteReference(NoteType.ENDNOTE, element);
+            case "w:commentReference":
+                return readCommentReference(element);
 
             case "w:pict":
                 return readPict(element);
@@ -111,7 +113,6 @@ public class BodyXmlReader {
             case "w:lastRenderedPageBreak":
             case "w:commentRangeStart":
             case "w:commentRangeEnd":
-            case "w:commentReference":
             case "w:del":
             case "w:footnoteRef":
             case "w:endnoteRef":
@@ -367,6 +368,11 @@ public class BodyXmlReader {
     private ReadResult readNoteReference(NoteType noteType, XmlElement element) {
         String noteId = element.getAttribute("w:id");
         return success(new NoteReference(noteType, noteId));
+    }
+
+    private ReadResult readCommentReference(XmlElement element) {
+        String commentId = element.getAttribute("w:id");
+        return success(new CommentReference(commentId));
     }
 
     private ReadResult readPict(XmlElement element) {

@@ -514,6 +514,14 @@ public class BodyXmlTests {
     }
 
     @Test
+    public void commentReferenceHasIdRead() {
+        XmlElement element = element("w:commentReference", map("w:id", "4"));
+        assertThat(
+            readSuccess(bodyReader(), element),
+            deepEquals(new CommentReference("4")));
+    }
+
+    @Test
     public void textBoxesHaveContentAppendedAfterContainingParagraph() {
         XmlElement textBox = element("w:pict", list(
             element("v:shape", list(
@@ -693,7 +701,6 @@ public class BodyXmlTests {
         assertIsIgnored("w:lastRenderedPageBreak");
         assertIsIgnored("w:commentRangeStart");
         assertIsIgnored("w:commentRangeEnd");
-        assertIsIgnored("w:commentReference");
         assertIsIgnored("w:del");
         assertIsIgnored("w:footnoteRef");
         assertIsIgnored("w:endnoteRef");

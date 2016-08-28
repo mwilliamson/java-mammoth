@@ -206,6 +206,11 @@ public class DocumentToHtml {
             }
 
             @Override
+            public List<HtmlNode> visit(CommentReference commentReference) {
+                return list();
+            }
+
+            @Override
             public List<HtmlNode> visit(Image image) {
                 // TODO: custom image handlers
                 // TODO: handle empty content type
