@@ -5,6 +5,7 @@ import org.zwobble.mammoth.internal.results.InternalResult;
 import org.zwobble.mammoth.internal.xml.XmlElement;
 
 import java.util.List;
+import java.util.Optional;
 
 public class CommentXmlReader {
     private final BodyXmlReader bodyReader;
@@ -26,7 +27,9 @@ public class CommentXmlReader {
             .toResult()
             .map(children -> new Comment(
                 commentId,
-                children
+                children,
+                Optional.empty(),
+                Optional.empty()
             ));
     }
 }
