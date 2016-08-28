@@ -64,6 +64,16 @@ public class DocumentElementMakers {
         return arg(COLSPAN, colspan);
     }
 
+    public static Document document(Object... args) {
+        Arguments arguments = new Arguments(args);
+        return new Document(
+            arguments.get(CHILDREN, list()),
+            arguments.get(Notes.class, Notes.EMPTY),
+            list()
+        );
+
+    }
+
     public static Paragraph paragraph(Object... args) {
         Arguments arguments = new Arguments(args);
         return new Paragraph(

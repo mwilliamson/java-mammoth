@@ -47,12 +47,11 @@ public class DocumentToHtmlTests {
     @Test
     public void multipleParagraphsInDocumentAreConvertedToMultipleParagraphs() {
         assertThat(
-            convertToHtml(new Document(
-                list(
+            convertToHtml(document(
+                withChildren(
                     paragraph(withChildren(runWithText("Hello"))),
                     paragraph(withChildren(runWithText("there")))
-                ),
-                Notes.EMPTY
+                )
             )),
 
             deepEquals(list(
@@ -284,8 +283,8 @@ public class DocumentToHtmlTests {
 
     @Test
     public void noteReferencesAreConvertedToLinksToReferenceBodyAfterMainBody() {
-        Document document = new Document(
-            list(paragraph(withChildren(
+        Document document = document(withChildren(
+            paragraph(withChildren(
                 runWithText("Knock knock"),
                 run(withChildren(new NoteReference(NoteType.FOOTNOTE, "4")))))),
             new Notes(list(new Note(NoteType.FOOTNOTE, "4", list(paragraphWithText("Who's there?"))))));

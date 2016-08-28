@@ -15,7 +15,9 @@ import static org.zwobble.mammoth.internal.util.Lists.list;
 import static org.zwobble.mammoth.internal.xml.XmlNodes.element;
 import static org.zwobble.mammoth.tests.DeepReflectionMatcher.deepEquals;
 import static org.zwobble.mammoth.tests.ResultMatchers.isInternalSuccess;
+import static org.zwobble.mammoth.tests.documents.DocumentElementMakers.document;
 import static org.zwobble.mammoth.tests.documents.DocumentElementMakers.paragraphWithText;
+import static org.zwobble.mammoth.tests.documents.DocumentElementMakers.withChildren;
 import static org.zwobble.mammoth.tests.docx.BodyXmlReaderMakers.bodyReader;
 
 public class DocumentXmlTests {
@@ -30,13 +32,13 @@ public class DocumentXmlTests {
                             XmlNodes.text("Hello!")))))))))));
 
         DocumentXmlReader reader = new DocumentXmlReader(bodyReader(), Notes.EMPTY);
-        InternalResult<Document> document = reader.readElement(documentElement);
 
         assertThat(
-            document,
-            isInternalSuccess(new Document(
-                list(paragraphWithText("Hello!")),
-                Notes.EMPTY)));
+            reader.readElement(documentElement),
+            isInternalSuccess(document(
+                withChildren(paragraphWithText("Hello!"))
+            ))
+        );
     }
 
     @Test
