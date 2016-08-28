@@ -23,6 +23,7 @@ public class DocumentElementMakers {
     private static final ArgumentKey<List<DocumentElement>> CHILDREN = new ArgumentKey<>("children");
     private static final ArgumentKey<Integer> COLSPAN = new ArgumentKey<>("colspan");
     private static final ArgumentKey<Integer> ROWSPAN = new ArgumentKey<>("rowspan");
+    private static final ArgumentKey<List<Comment>> COMMENTS = new ArgumentKey<>("comments");
 
     public static Argument<Optional<Style>> withStyle(Style style) {
         return arg(STYLE, Optional.of(style));
@@ -64,14 +65,17 @@ public class DocumentElementMakers {
         return arg(COLSPAN, colspan);
     }
 
+    public static Argument<List<Comment>> withComments(Comment... comments) {
+        return arg(COMMENTS, asList(comments));
+    }
+
     public static Document document(Object... args) {
         Arguments arguments = new Arguments(args);
         return new Document(
             arguments.get(CHILDREN, list()),
             arguments.get(Notes.class, Notes.EMPTY),
-            list()
+            arguments.get(COMMENTS, list())
         );
-
     }
 
     public static Paragraph paragraph(Object... args) {
@@ -81,6 +85,10 @@ public class DocumentElementMakers {
             arguments.get(NUMBERING, Optional.empty()),
             arguments.get(CHILDREN, list())
         );
+    }
+
+    public static Paragraph paragraphWithText(String text) {
+        return paragraph(withChildren(runWithText(text)));
     }
 
     public static Run run(Object... args) {
@@ -96,6 +104,10 @@ public class DocumentElementMakers {
         );
     }
 
+    public static Run runWithText(String text) {
+        return run(withChildren(new Text(text)));
+    }
+
     public static TableCell tableCell(Object... args) {
         Arguments arguments = new Arguments(args);
         return new TableCell(
@@ -105,11 +117,7 @@ public class DocumentElementMakers {
         );
     }
 
-    public static Paragraph paragraphWithText(String text) {
-        return paragraph(withChildren(runWithText(text)));
-    }
-
-    public static Run runWithText(String text) {
-        return run(withChildren(new Text(text)));
+    public static Comment comment(String commentId, List<DocumentElement> body) {
+        return new Comment(commentId, body, Optional.empty(), Optional.empty());
     }
 }

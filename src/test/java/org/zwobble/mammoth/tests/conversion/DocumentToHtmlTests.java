@@ -321,6 +321,21 @@ public class DocumentToHtmlTests {
     }
 
     @Test
+    public void commentsAreIgnoredByDefault() {
+        Document document = document(withChildren(
+            paragraph(withChildren(
+                runWithText("Knock knock"),
+                run(withChildren(new CommentReference("4")))))),
+            withComments(comment("4", list(paragraphWithText("Who's there?")))));
+
+        assertThat(
+            convertToHtml(document),
+            deepEquals(list(
+                Html.element("p", list(
+                    Html.text("Knock knock"))))));
+    }
+
+    @Test
     public void imagesAreConvertedToImageTagsWithDataUriByDefault() {
         Image image = new Image(
             Optional.empty(),
