@@ -4,6 +4,7 @@ import org.zwobble.mammoth.internal.html.HtmlNode;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 
 import static org.zwobble.mammoth.internal.util.Lists.list;
 import static org.zwobble.mammoth.internal.util.Lists.reversed;
@@ -42,10 +43,10 @@ public class HtmlPath {
         this.elements = elements;
     }
 
-    public List<HtmlNode> wrap(List<HtmlNode> nodes) {
+    public Supplier<List<HtmlNode>> wrap(Supplier<List<HtmlNode>> generateNodes) {
         for (HtmlPathElement element : reversed(elements)) {
-            nodes = element.wrap(nodes);
+            generateNodes = element.wrap(generateNodes);
         }
-        return nodes;
+        return generateNodes;
     }
 }

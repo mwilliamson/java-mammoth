@@ -5,6 +5,7 @@ import org.zwobble.mammoth.internal.html.HtmlNode;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 
 import static org.zwobble.mammoth.internal.util.Lists.list;
 import static org.zwobble.mammoth.internal.util.Maps.map;
@@ -32,7 +33,11 @@ public class HtmlPathElement {
         this.isCollapsible = isCollapsible;
     }
 
-    public List<HtmlNode> wrap(List<HtmlNode> nodes) {
+    public Supplier<List<HtmlNode>> wrap(Supplier<List<HtmlNode>> generateNodes) {
+        return () -> wrapNodes(generateNodes.get());
+    }
+
+    private List<HtmlNode> wrapNodes(List<HtmlNode> nodes) {
         return list(new HtmlElement(tagNames, attributes, nodes, isCollapsible));
     }
 }

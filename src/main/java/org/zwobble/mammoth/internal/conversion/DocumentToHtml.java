@@ -11,6 +11,7 @@ import org.zwobble.mammoth.internal.util.Lists;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.function.Supplier;
 
 import static org.zwobble.mammoth.internal.util.Lists.*;
 import static org.zwobble.mammoth.internal.util.Maps.map;
@@ -89,8 +90,10 @@ public class DocumentToHtml {
         return element.accept(new DocumentElementVisitor<List<HtmlNode>>() {
             @Override
             public List<HtmlNode> visit(Paragraph paragraph) {
-                List<HtmlNode> content = convertChildrenToHtml(paragraph);
-                List<HtmlNode> children = preserveEmptyParagraphs ? cons(Html.FORCE_WRITE, content) : content;
+                Supplier<List<HtmlNode>> children = () -> {
+                    List<HtmlNode> content = convertChildrenToHtml(paragraph);
+                    return preserveEmptyParagraphs ? cons(Html.FORCE_WRITE, content) : content;
+                };
                 HtmlPath mapping = styleMap.getParagraphHtmlPath(paragraph)
                     .orElseGet(() -> {
                         if (paragraph.getStyle().isPresent()) {
@@ -98,12 +101,12 @@ public class DocumentToHtml {
                         }
                         return HtmlPath.element("p");
                     });
-                return mapping.wrap(children);
+                return mapping.wrap(children).get();
             }
 
             @Override
             public List<HtmlNode> visit(Run run) {
-                List<HtmlNode> nodes = convertChildrenToHtml(run);
+                Supplier<List<HtmlNode>> nodes = () -> convertChildrenToHtml(run);
                 if (run.isStrikethrough()) {
                     nodes = styleMap.getStrikethrough().orElse(HtmlPath.collapsibleElement("s")).wrap(nodes);
                 }
@@ -111,10 +114,10 @@ public class DocumentToHtml {
                     nodes = styleMap.getUnderline().orElse(HtmlPath.EMPTY).wrap(nodes);
                 }
                 if (run.getVerticalAlignment() == VerticalAlignment.SUBSCRIPT) {
-                    nodes = list(Html.collapsibleElement("sub", nodes));
+                    nodes = HtmlPath.collapsibleElement("sub").wrap(nodes);
                 }
                 if (run.getVerticalAlignment() == VerticalAlignment.SUPERSCRIPT) {
-                    nodes = list(Html.collapsibleElement("sup", nodes));
+                    nodes = HtmlPath.collapsibleElement("sup").wrap(nodes);
                 }
                 if (run.isItalic()) {
                     nodes = styleMap.getItalic().orElse(HtmlPath.collapsibleElement("em")).wrap(nodes);
@@ -129,7 +132,7 @@ public class DocumentToHtml {
                         }
                         return HtmlPath.EMPTY;
                     });
-                return mapping.wrap(nodes);
+                return mapping.wrap(nodes).get();
             }
 
             @Override
