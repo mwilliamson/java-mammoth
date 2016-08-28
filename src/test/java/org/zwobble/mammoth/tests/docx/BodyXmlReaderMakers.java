@@ -1,30 +1,21 @@
 package org.zwobble.mammoth.tests.docx;
 
-import com.natpryce.makeiteasy.Instantiator;
-import com.natpryce.makeiteasy.Property;
 import org.zwobble.mammoth.internal.docx.*;
+import org.zwobble.mammoth.tests.Arguments;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Optional;
 
-import static com.natpryce.makeiteasy.Property.newProperty;
-
 public class BodyXmlReaderMakers {
-    public static final Property<BodyXmlReader, Styles> STYLES = newProperty();
-    public static final Property<BodyXmlReader, Numbering> NUMBERING = newProperty();
-    public static final Property<BodyXmlReader, Relationships> RELATIONSHIPS = newProperty();
-    public static final Property<BodyXmlReader, ContentTypes> CONTENT_TYPES = newProperty();
-    public static final Property<BodyXmlReader, DocxFile> DOCX_FILE = newProperty();
-    public static final Property<BodyXmlReader, FileReader> FILE_READER = newProperty();
-
-    public static final Instantiator<BodyXmlReader> bodyReader =
-        propertyLookup -> new BodyXmlReader(
-            propertyLookup.valueOf(STYLES, Styles.EMPTY),
-            propertyLookup.valueOf(NUMBERING, Numbering.EMPTY),
-            propertyLookup.valueOf(RELATIONSHIPS, Relationships.EMPTY),
-            propertyLookup.valueOf(CONTENT_TYPES, ContentTypes.DEFAULT),
-            propertyLookup.valueOf(DOCX_FILE, new DocxFile() {
+    public static BodyXmlReader bodyReader(Object... args) {
+        Arguments arguments = new Arguments(args);
+        return new BodyXmlReader(
+            arguments.get(Styles.class, Styles.EMPTY),
+            arguments.get(Numbering.class, Numbering.EMPTY),
+            arguments.get(Relationships.class, Relationships.EMPTY),
+            arguments.get(ContentTypes.class, ContentTypes.DEFAULT),
+            arguments.get(DocxFile.class, new DocxFile() {
                 @Override
                 public Optional<InputStream> tryGetInputStream(String name) throws IOException {
                     throw new UnsupportedOperationException();
@@ -34,10 +25,12 @@ public class BodyXmlReaderMakers {
                 public void close() throws IOException {
                 }
             }),
-            propertyLookup.valueOf(FILE_READER, new FileReader() {
+            arguments.get(FileReader.class, new FileReader() {
                 @Override
                 public InputStream getInputStream(String uri) throws IOException {
                     throw new UnsupportedOperationException();
                 }
-            }));
+            })
+        );
+    }
 }

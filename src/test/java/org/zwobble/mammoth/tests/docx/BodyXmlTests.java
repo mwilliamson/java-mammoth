@@ -1,6 +1,5 @@
 package org.zwobble.mammoth.tests.docx;
 
-import com.natpryce.makeiteasy.Maker;
 import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -31,12 +30,9 @@ import static org.zwobble.mammoth.internal.util.Maps.map;
 import static org.zwobble.mammoth.internal.util.Streams.toByteArray;
 import static org.zwobble.mammoth.internal.xml.XmlNodes.element;
 import static org.zwobble.mammoth.tests.DeepReflectionMatcher.deepEquals;
-import static org.zwobble.mammoth.tests.ResultMatchers.hasWarnings;
-import static org.zwobble.mammoth.tests.ResultMatchers.isInternalResult;
-import static org.zwobble.mammoth.tests.ResultMatchers.isInternalSuccess;
+import static org.zwobble.mammoth.tests.ResultMatchers.*;
 import static org.zwobble.mammoth.tests.documents.DocumentElementMakers.*;
-import static org.zwobble.mammoth.tests.docx.BodyXmlReaderMakers.*;
-import static org.zwobble.mammoth.tests.docx.BodyXmlReaderMakers.NUMBERING;
+import static org.zwobble.mammoth.tests.docx.BodyXmlReaderMakers.bodyReader;
 import static org.zwobble.mammoth.tests.docx.OfficeXmlBuilders.*;
 
 public class BodyXmlTests {
@@ -44,14 +40,14 @@ public class BodyXmlTests {
     @Test
     public void textFromTextElementIsRead() {
         XmlElement element = textXml("Hello!");
-        assertThat(readSuccess(a(bodyReader), element), isTextElement("Hello!"));
+        assertThat(readSuccess(bodyReader(), element), isTextElement("Hello!"));
     }
 
     @Test
     public void canReadTextWithinRun() {
         XmlElement element = runXml(list(textXml("Hello!")));
         assertThat(
-            readSuccess(a(bodyReader), element),
+            readSuccess(bodyReader(), element),
             isRun(run(text("Hello!"))));
     }
 
@@ -59,7 +55,7 @@ public class BodyXmlTests {
     public void canReadTextWithinParagraph() {
         XmlElement element = paragraphXml(list(runXml(list(textXml("Hello!")))));
         assertThat(
-            readSuccess(a(bodyReader), element),
+            readSuccess(bodyReader(), element),
             isParagraph(make(a(PARAGRAPH, with(CHILDREN, list(run(text("Hello!"))))))));
     }
 
@@ -67,7 +63,7 @@ public class BodyXmlTests {
     public void paragraphHasNoStyleIfItHasNoProperties() {
         XmlElement element = paragraphXml();
         assertThat(
-            readSuccess(a(bodyReader), element),
+            readSuccess(bodyReader(), element),
             hasStyle(Optional.empty()));
     }
 
@@ -82,7 +78,7 @@ public class BodyXmlTests {
             map("Heading1", style),
             map());
         assertThat(
-            readSuccess(a(bodyReader, with(STYLES, styles)), element),
+            readSuccess(bodyReader(styles), element),
             hasStyle(Optional.of(style)));
     }
 
@@ -92,7 +88,7 @@ public class BodyXmlTests {
             element("w:pPr", list(
                 element("w:pStyle", map("w:val", "Heading1"))))));
         assertThat(
-            read(a(bodyReader), element),
+            read(bodyReader(), element),
             isInternalResult(
                 hasStyle(Optional.of(new Style("Heading1", Optional.empty()))),
                 list("Paragraph style with ID Heading1 was referenced but not defined in the document")));
@@ -102,7 +98,7 @@ public class BodyXmlTests {
     public void paragraphHasNoNumberingIfItHasNoNumberingProperties() {
         XmlElement element = paragraphXml();
         assertThat(
-            readSuccess(a(bodyReader), element),
+            readSuccess(bodyReader(), element),
             hasNumbering(Optional.empty()));
     }
 
@@ -117,7 +113,7 @@ public class BodyXmlTests {
         Numbering numbering = new Numbering(map("42", map("1", NumberingLevel.ordered("1"))));
 
         assertThat(
-            readSuccess(a(bodyReader, with(NUMBERING, numbering)), element),
+            readSuccess(bodyReader(numbering), element),
             hasNumbering(NumberingLevel.ordered("1")));
     }
 
@@ -132,7 +128,7 @@ public class BodyXmlTests {
         Numbering numbering = new Numbering(map("42", map("1", NumberingLevel.ordered("1"))));
 
         assertThat(
-            readSuccess(a(bodyReader, with(NUMBERING, numbering)), element),
+            readSuccess(bodyReader(numbering), element),
             hasNumbering(Optional.empty()));
     }
 
@@ -147,7 +143,7 @@ public class BodyXmlTests {
         Numbering numbering = new Numbering(map("42", map("1", NumberingLevel.ordered("1"))));
 
         assertThat(
-            readSuccess(a(bodyReader, with(NUMBERING, numbering)), element),
+            readSuccess(bodyReader(numbering), element),
             hasNumbering(Optional.empty()));
     }
 
@@ -155,7 +151,7 @@ public class BodyXmlTests {
     public void runHasNoStyleIfItHasNoProperties() {
         XmlElement element = runXml(list());
         assertThat(
-            readSuccess(a(bodyReader), element),
+            readSuccess(bodyReader(), element),
             hasStyle(Optional.empty()));
     }
 
@@ -170,7 +166,7 @@ public class BodyXmlTests {
             map(),
             map("Heading1Char", style));
         assertThat(
-            readSuccess(a(bodyReader, with(STYLES, styles)), element),
+            readSuccess(bodyReader(styles), element),
             hasStyle(Optional.of(style)));
     }
 
@@ -181,7 +177,7 @@ public class BodyXmlTests {
                 element("w:rStyle", map("w:val", "Heading1Char"))))));
 
         assertThat(
-            read(a(bodyReader), element),
+            read(bodyReader(), element),
             isInternalResult(
                 hasStyle(Optional.of(new Style("Heading1Char", Optional.empty()))),
                 list("Run style with ID Heading1Char was referenced but not defined in the document")));
@@ -192,7 +188,7 @@ public class BodyXmlTests {
         XmlElement element = runXmlWithProperties();
 
         assertThat(
-            readSuccess(a(bodyReader), element),
+            readSuccess(bodyReader(), element),
             hasProperty("bold", equalTo(false)));
     }
 
@@ -201,7 +197,7 @@ public class BodyXmlTests {
         XmlElement element = runXmlWithProperties(element("w:b"));
 
         assertThat(
-            readSuccess(a(bodyReader), element),
+            readSuccess(bodyReader(), element),
             hasProperty("bold", equalTo(true)));
     }
 
@@ -210,7 +206,7 @@ public class BodyXmlTests {
         XmlElement element = runXmlWithProperties();
 
         assertThat(
-            readSuccess(a(bodyReader), element),
+            readSuccess(bodyReader(), element),
             hasProperty("italic", equalTo(false)));
     }
 
@@ -219,7 +215,7 @@ public class BodyXmlTests {
         XmlElement element = runXmlWithProperties(element("w:i"));
 
         assertThat(
-            readSuccess(a(bodyReader), element),
+            readSuccess(bodyReader(), element),
             hasProperty("italic", equalTo(true)));
     }
 
@@ -228,7 +224,7 @@ public class BodyXmlTests {
         XmlElement element = runXmlWithProperties();
 
         assertThat(
-            readSuccess(a(bodyReader), element),
+            readSuccess(bodyReader(), element),
             hasProperty("underline", equalTo(false)));
     }
 
@@ -237,7 +233,7 @@ public class BodyXmlTests {
         XmlElement element = runXmlWithProperties(element("w:u"));
 
         assertThat(
-            readSuccess(a(bodyReader), element),
+            readSuccess(bodyReader(), element),
             hasProperty("underline", equalTo(true)));
     }
 
@@ -246,7 +242,7 @@ public class BodyXmlTests {
         XmlElement element = runXmlWithProperties();
 
         assertThat(
-            readSuccess(a(bodyReader), element),
+            readSuccess(bodyReader(), element),
             hasProperty("strikethrough", equalTo(false)));
     }
 
@@ -255,7 +251,7 @@ public class BodyXmlTests {
         XmlElement element = runXmlWithProperties(element("w:strike"));
 
         assertThat(
-            readSuccess(a(bodyReader), element),
+            readSuccess(bodyReader(), element),
             hasProperty("strikethrough", equalTo(true)));
     }
 
@@ -264,7 +260,7 @@ public class BodyXmlTests {
         XmlElement element = runXmlWithProperties();
 
         assertThat(
-            readSuccess(a(bodyReader), element),
+            readSuccess(bodyReader(), element),
             hasProperty("verticalAlignment", equalTo(VerticalAlignment.BASELINE)));
     }
 
@@ -274,7 +270,7 @@ public class BodyXmlTests {
             element("w:vertAlign", map("w:val", "superscript")));
 
         assertThat(
-            readSuccess(a(bodyReader), element),
+            readSuccess(bodyReader(), element),
             hasProperty("verticalAlignment", equalTo(VerticalAlignment.SUPERSCRIPT)));
     }
 
@@ -284,7 +280,7 @@ public class BodyXmlTests {
             element("w:vertAlign", map("w:val", "subscript")));
 
         assertThat(
-            readSuccess(a(bodyReader), element),
+            readSuccess(bodyReader(), element),
             hasProperty("verticalAlignment", equalTo(VerticalAlignment.SUBSCRIPT)));
     }
 
@@ -293,7 +289,7 @@ public class BodyXmlTests {
         XmlElement element = element("w:tab");
 
         assertThat(
-            readSuccess(a(bodyReader), element),
+            readSuccess(bodyReader(), element),
             equalTo(Tab.TAB));
     }
 
@@ -302,7 +298,7 @@ public class BodyXmlTests {
         XmlElement element = element("w:br");
 
         assertThat(
-            readSuccess(a(bodyReader), element),
+            readSuccess(bodyReader(), element),
             equalTo(LineBreak.LINE_BREAK));
     }
 
@@ -311,7 +307,7 @@ public class BodyXmlTests {
         XmlElement element = element("w:br", map("w:type", "page"));
 
         assertThat(
-            readAll(a(bodyReader), element),
+            readAll(bodyReader(), element),
             isInternalResult(equalTo(list()), list("Unsupported break type: page")));
     }
 
@@ -323,7 +319,7 @@ public class BodyXmlTests {
                     element("w:p")))))));
 
         assertThat(
-            readSuccess(a(bodyReader), element),
+            readSuccess(bodyReader(), element),
             deepEquals(new Table(list(
                 new TableRow(list(
                     new TableCell(1, 1, list(
@@ -345,7 +341,7 @@ public class BodyXmlTests {
                     element("w:p")))))));
 
         assertThat(
-            readSuccess(a(bodyReader), element),
+            readSuccess(bodyReader(), element),
             deepEquals(new Table(list(
                 new TableRow(list(
                     new TableCell(1, 2, list(
@@ -367,7 +363,7 @@ public class BodyXmlTests {
         ));
 
         assertThat(
-            readSuccess(a(bodyReader), element),
+            readSuccess(bodyReader(), element),
             deepEquals(new Table(list(
                 new TableRow(list(new TableCell(1, 1, list()))),
                 new TableRow(list(new TableCell(3, 1, list()))),
@@ -386,7 +382,7 @@ public class BodyXmlTests {
         ));
 
         assertThat(
-            readSuccess(a(bodyReader), element),
+            readSuccess(bodyReader(), element),
             deepEquals(new Table(list(
                 new TableRow(list(new TableCell(2, 1, list()))),
                 new TableRow(list())
@@ -404,7 +400,7 @@ public class BodyXmlTests {
         ));
 
         assertThat(
-            readSuccess(a(bodyReader), element),
+            readSuccess(bodyReader(), element),
             deepEquals(new Table(list(
                 new TableRow(list(new TableCell(1, 1, list()), new TableCell(1, 1, list()), new TableCell(3, 1, list()))),
                 new TableRow(list(new TableCell(1, 2, list()))),
@@ -422,7 +418,7 @@ public class BodyXmlTests {
         ));
 
         assertThat(
-            readSuccess(a(bodyReader), element),
+            readSuccess(bodyReader(), element),
             deepEquals(new Table(list(
                 new TableRow(list(new TableCell(1, 2, list()), new TableCell(1, 1, list()))),
                 new TableRow(list(new TableCell(1, 1, list()), new TableCell(1, 1, list())))
@@ -437,7 +433,7 @@ public class BodyXmlTests {
         ));
 
         assertThat(
-            read(a(bodyReader), element),
+            read(bodyReader(), element),
             isInternalResult(
                 deepEquals(new Table(list(make(a(PARAGRAPH))))),
                 list("unexpected non-row element in table, cell merging may be incorrect")
@@ -452,7 +448,7 @@ public class BodyXmlTests {
         ));
 
         assertThat(
-            read(a(bodyReader), element),
+            read(bodyReader(), element),
             isInternalResult(
                 deepEquals(new Table(list(new TableRow(list(make(a(PARAGRAPH))))))),
                 list("unexpected non-cell element in table row, cell merging may be incorrect")
@@ -466,7 +462,7 @@ public class BodyXmlTests {
             map("r42", new Relationship("http://example.com")));
         XmlElement element = element("w:hyperlink", map("r:id", "r42"), list(runXml(list())));
         assertThat(
-            readSuccess(a(bodyReader, with(RELATIONSHIPS, relationships)), element),
+            readSuccess(bodyReader(relationships), element),
             deepEquals(Hyperlink.href("http://example.com", list(make(a(RUN))))));
     }
 
@@ -474,7 +470,7 @@ public class BodyXmlTests {
     public void hyperlinkIsReadIfItHasAnAnchorAttribute() {
         XmlElement element = element("w:hyperlink", map("w:anchor", "start"), list(runXml(list())));
         assertThat(
-            readSuccess(a(bodyReader), element),
+            readSuccess(bodyReader(), element),
             deepEquals(Hyperlink.anchor("start", list(make(a(RUN))))));
     }
 
@@ -482,7 +478,7 @@ public class BodyXmlTests {
     public void hyperlinkIsIgnoredIfItDoesNotHaveARelationshipIdNorAnchor() {
         XmlElement element = element("w:hyperlink", list(runXml(list())));
         assertThat(
-            readSuccess(a(bodyReader), element),
+            readSuccess(bodyReader(), element),
             deepEquals(make(a(RUN))));
     }
 
@@ -490,7 +486,7 @@ public class BodyXmlTests {
     public void goBackBookmarkIsIgnored() {
         XmlElement element = element("w:bookmarkStart", map("w:name", "_GoBack"));
         assertThat(
-            readAll(a(bodyReader), element),
+            readAll(bodyReader(), element),
             isInternalResult(equalTo(list()), list()));
     }
 
@@ -498,7 +494,7 @@ public class BodyXmlTests {
     public void bookmarkStartIsReadIfNameIsNotGoBack() {
         XmlElement element = element("w:bookmarkStart", map("w:name", "start"));
         assertThat(
-            readSuccess(a(bodyReader), element),
+            readSuccess(bodyReader(), element),
             deepEquals(new Bookmark("start")));
     }
 
@@ -506,7 +502,7 @@ public class BodyXmlTests {
     public void footnoteReferenceHasIdRead() {
         XmlElement element = element("w:footnoteReference", map("w:id", "4"));
         assertThat(
-            readSuccess(a(bodyReader), element),
+            readSuccess(bodyReader(), element),
             deepEquals(footnoteReference("4")));
     }
 
@@ -514,7 +510,7 @@ public class BodyXmlTests {
     public void endnoteReferenceHasIdRead() {
         XmlElement element = element("w:endnoteReference", map("w:id", "4"));
         assertThat(
-            readSuccess(a(bodyReader), element),
+            readSuccess(bodyReader(), element),
             deepEquals(endnoteReference("4")));
     }
 
@@ -541,7 +537,7 @@ public class BodyXmlTests {
                     new Text("[textbox-content]"))))))))));
 
         assertThat(
-            readAll(a(bodyReader), paragraph),
+            readAll(bodyReader(), paragraph),
             isInternalResult(deepEquals(expected), list()));
     }
 
@@ -571,7 +567,7 @@ public class BodyXmlTests {
         DocxFile file = InMemoryDocxFile.fromStrings(map("word/media/hat.png", imageBytes));
 
         Image image = (Image) readSuccess(
-            a(bodyReader, with(RELATIONSHIPS, relationships), with(DOCX_FILE, file)),
+            bodyReader(relationships, file),
             element);
         assertThat(image, allOf(
             hasProperty("altText", deepEquals(Optional.of("It's a hat"))),
@@ -604,10 +600,7 @@ public class BodyXmlTests {
         ContentTypes contentTypes = new ContentTypes(map("emf", "image/x-emf"), map());
 
         InternalResult<?> result = read(
-            a(bodyReader,
-                with(RELATIONSHIPS, relationships),
-                with(DOCX_FILE, file),
-                with(CONTENT_TYPES, contentTypes)),
+            bodyReader(relationships, file, contentTypes),
             element);
 
         assertThat(
@@ -623,9 +616,7 @@ public class BodyXmlTests {
         String imageBytes = "Not an image at all!";
 
         Image image = (Image) readSuccess(
-            a(bodyReader,
-                with(RELATIONSHIPS, relationships),
-                with(FILE_READER, new InMemoryFileReader(map("file:///media/hat.png", imageBytes)))),
+            bodyReader(relationships, new InMemoryFileReader(map("file:///media/hat.png", imageBytes))),
             element);
 
         assertThat(
@@ -669,7 +660,7 @@ public class BodyXmlTests {
         XmlElement element = element("w:sdt", list(element("w:sdtContent", list(textXml("Blackdown")))));
 
         assertThat(
-            readAll(a(bodyReader), element),
+            readAll(bodyReader(), element),
             isInternalSuccess(deepEquals(list(text("Blackdown")))));
     }
 
@@ -688,7 +679,7 @@ public class BodyXmlTests {
         XmlElement element = element(name, list(paragraphXml()));
 
         assertThat(
-            readSuccess(a(bodyReader), element),
+            readSuccess(bodyReader(), element),
             deepEquals(make(a(PARAGRAPH))));
     }
 
@@ -718,7 +709,7 @@ public class BodyXmlTests {
         XmlElement element = element(name, list(paragraphXml()));
 
         assertThat(
-            readAll(a(bodyReader), element),
+            readAll(bodyReader(), element),
             isInternalResult(equalTo(list()), list()));
     }
 
@@ -726,7 +717,7 @@ public class BodyXmlTests {
     public void unrecognisedElementsAreIgnoredWithWarning() {
         XmlElement element = element("w:huh");
         assertThat(
-            readAll(a(bodyReader), element),
+            readAll(bodyReader(), element),
             isInternalResult(equalTo(list()), list("An unrecognised element was ignored: w:huh")));
     }
 
@@ -734,24 +725,24 @@ public class BodyXmlTests {
     public void textNodesAreIgnoredWhenReadingChildren() {
         XmlElement element = runXml(list(XmlNodes.text("[text]")));
         assertThat(
-            readSuccess(a(bodyReader), element),
+            readSuccess(bodyReader(), element),
             deepEquals(make(a(RUN))));
     }
 
-    private static DocumentElement readSuccess(Maker<BodyXmlReader> reader, XmlElement element) {
+    private static DocumentElement readSuccess(BodyXmlReader reader, XmlElement element) {
         InternalResult<DocumentElement> result = read(reader, element);
         assertThat(result.getWarnings(), emptyIterable());
         return result.getValue();
     }
 
-    private static InternalResult<DocumentElement> read(Maker<BodyXmlReader> reader, XmlElement element) {
+    private static InternalResult<DocumentElement> read(BodyXmlReader reader, XmlElement element) {
         InternalResult<List<DocumentElement>> result = readAll(reader, element);
         assertThat(result.getValue(), Matchers.hasSize(1));
         return result.map(elements -> elements.get(0));
     }
 
-    private static InternalResult<List<DocumentElement>> readAll(Maker<BodyXmlReader> reader, XmlElement element) {
-        return reader.make().readElement(element).toResult();
+    private static InternalResult<List<DocumentElement>> readAll(BodyXmlReader reader, XmlElement element) {
+        return reader.readElement(element).toResult();
     }
 
     private XmlElement paragraphXml() {

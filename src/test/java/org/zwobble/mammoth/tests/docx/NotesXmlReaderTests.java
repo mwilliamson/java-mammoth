@@ -18,9 +18,10 @@ import static org.zwobble.mammoth.internal.util.Maps.map;
 import static org.zwobble.mammoth.internal.xml.XmlNodes.element;
 import static org.zwobble.mammoth.tests.ResultMatchers.isInternalSuccess;
 import static org.zwobble.mammoth.tests.documents.DocumentElementMakers.PARAGRAPH;
+import static org.zwobble.mammoth.tests.docx.BodyXmlReaderMakers.bodyReader;
 
 public class NotesXmlReaderTests {
-    private static final BodyXmlReader bodyReader = make(a(BodyXmlReaderMakers.bodyReader));
+    private static final BodyXmlReader BODY_READER = bodyReader();
 
     @Test
     public void idAndBodyOfFootnoteAreRead() {
@@ -28,7 +29,7 @@ public class NotesXmlReaderTests {
             element("w:footnote", map("w:id", "1"), list(
                 element("w:p")))));
 
-        NotesXmlReader reader = NotesXmlReader.footnote(bodyReader);
+        NotesXmlReader reader = NotesXmlReader.footnote(BODY_READER);
         InternalResult<List<Note>> notes = reader.readElement(element);
 
         assertThat(
@@ -51,7 +52,7 @@ public class NotesXmlReaderTests {
             element("w:footnote", map("w:id", "1", "w:type", noteType), list(
                 element("w:p")))));
 
-        NotesXmlReader reader = NotesXmlReader.footnote(bodyReader);
+        NotesXmlReader reader = NotesXmlReader.footnote(BODY_READER);
         InternalResult<List<Note>> notes = reader.readElement(element);
 
         assertThat(notes, isInternalSuccess(list()));

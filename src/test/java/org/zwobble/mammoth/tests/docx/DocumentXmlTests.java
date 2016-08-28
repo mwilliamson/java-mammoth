@@ -10,8 +10,6 @@ import org.zwobble.mammoth.internal.results.InternalResult;
 import org.zwobble.mammoth.internal.xml.XmlElement;
 import org.zwobble.mammoth.internal.xml.XmlNodes;
 
-import static com.natpryce.makeiteasy.MakeItEasy.a;
-import static com.natpryce.makeiteasy.MakeItEasy.make;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.zwobble.mammoth.internal.util.Lists.list;
 import static org.zwobble.mammoth.internal.xml.XmlNodes.element;
@@ -31,7 +29,7 @@ public class DocumentXmlTests {
                         element("w:t", list(
                             XmlNodes.text("Hello!")))))))))));
 
-        DocumentXmlReader reader = new DocumentXmlReader(make(a(bodyReader)), Notes.EMPTY);
+        DocumentXmlReader reader = new DocumentXmlReader(bodyReader(), Notes.EMPTY);
         InternalResult<Document> document = reader.readElement(documentElement);
 
         assertThat(
@@ -45,7 +43,7 @@ public class DocumentXmlTests {
     public void notesOfDocumentAreIncludedInDocument() {
         Note note = new Note(NoteType.FOOTNOTE, "4", list(paragraphWithText("Hello")));
         Notes notes = new Notes(list(note));
-        DocumentXmlReader reader = new DocumentXmlReader(make(a(bodyReader)), notes);
+        DocumentXmlReader reader = new DocumentXmlReader(bodyReader(), notes);
 
         XmlElement documentElement = element("w:document", list(element("w:body")));
         InternalResult<Document> document = reader.readElement(documentElement);

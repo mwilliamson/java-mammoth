@@ -26,7 +26,7 @@ public class CommentXmlTests {
     @Test
     public void idAndBodyOfCommentIsRead() {
         List<XmlNode> body = list(element("w:p"));
-        CommentXmlReader reader = new CommentXmlReader(make(a(bodyReader)));
+        CommentXmlReader reader = new CommentXmlReader(bodyReader());
         InternalResult<List<Comment>> result = reader.readElement(element("w:comments", list(
             element("w:comment", map("w:id", "1"), body)
         )));
@@ -45,7 +45,7 @@ public class CommentXmlTests {
     @Test
     public void whenOptionalAttributesOfCommentAreMissingThenTheyAreReadAsNone() {
         List<XmlNode> body = list(element("w:p"));
-        CommentXmlReader reader = new CommentXmlReader(make(a(bodyReader)));
+        CommentXmlReader reader = new CommentXmlReader(bodyReader());
         InternalResult<List<Comment>> result = reader.readElement(element("w:comments", list(
             element("w:comment", map("w:id", "1"), body)
         )));
