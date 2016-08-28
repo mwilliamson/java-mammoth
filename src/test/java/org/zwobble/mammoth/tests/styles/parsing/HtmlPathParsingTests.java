@@ -42,7 +42,7 @@ public class HtmlPathParsingTests {
     public void canReadNestedElements() {
         assertThat(
             parseHtmlPath("ul > li"),
-            deepEquals(new HtmlPath(list(HtmlPathElement.collapsible("ul"), HtmlPathElement.collapsible("li")))));
+            deepEquals(HtmlPath.elements(HtmlPathElement.collapsible("ul"), HtmlPathElement.collapsible("li"))));
     }
 
     @Test

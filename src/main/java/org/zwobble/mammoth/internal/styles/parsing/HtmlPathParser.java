@@ -2,6 +2,7 @@ package org.zwobble.mammoth.internal.styles.parsing;
 
 import org.zwobble.mammoth.internal.styles.HtmlPath;
 import org.zwobble.mammoth.internal.styles.HtmlPathElement;
+import org.zwobble.mammoth.internal.styles.HtmlPathElements;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +25,7 @@ public class HtmlPathParser {
             }
         }
 
-        return new HtmlPath(elements);
+        return new HtmlPathElements(elements);
     }
 
     private static HtmlPathElement parseElement(TokenIterator tokens) {
