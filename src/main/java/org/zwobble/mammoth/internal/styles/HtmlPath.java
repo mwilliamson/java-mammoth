@@ -12,6 +12,7 @@ import static org.zwobble.mammoth.internal.util.Maps.map;
 
 public interface HtmlPath {
     HtmlPath EMPTY = new HtmlPathElements(list());
+    HtmlPath IGNORE = Ignore.INSTANCE;
 
     static HtmlPath elements(HtmlPathElement... elements) {
         return new HtmlPathElements(asList(elements));

@@ -64,6 +64,8 @@ public class StyleMappingTokeniser {
                     return TokenType.CLOSE_SQUARE_BRACKET;
                 case '|':
                     return TokenType.CHOICE;
+                case '!':
+                    return TokenType.BANG;
                 default:
                     return TokenType.UNKNOWN;
             }

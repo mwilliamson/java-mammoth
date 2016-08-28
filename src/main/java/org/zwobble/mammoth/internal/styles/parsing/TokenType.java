@@ -16,6 +16,7 @@ public enum TokenType {
     UNTERMINATED_STRING,
     INTEGER,
     CHOICE,
+    BANG,
     EOF,
     UNKNOWN
 }

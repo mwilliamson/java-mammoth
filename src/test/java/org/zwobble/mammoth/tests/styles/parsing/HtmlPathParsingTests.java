@@ -66,6 +66,14 @@ public class HtmlPathParsingTests {
             deepEquals(HtmlPath.element("p")));
     }
 
+    @Test
+    public void canReadIgnoreElement() {
+        assertThat(
+            parseHtmlPath("!"),
+            deepEquals(HtmlPath.IGNORE)
+        );
+    }
+
     private HtmlPath parseHtmlPath(String input) {
         return HtmlPathParser.parse(new TokenIterator(StyleMappingTokeniser.tokenise(input)));
     }

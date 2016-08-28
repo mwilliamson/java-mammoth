@@ -7,7 +7,12 @@ import java.util.function.Supplier;
 
 import static org.zwobble.mammoth.internal.util.Lists.list;
 
-public class Ignore implements HtmlPath {
+class Ignore implements HtmlPath {
+    static final HtmlPath INSTANCE = new Ignore();
+
+    private Ignore() {
+    }
+
     @Override
     public Supplier<List<HtmlNode>> wrap(Supplier<List<HtmlNode>> generateNodes) {
         return () -> list();

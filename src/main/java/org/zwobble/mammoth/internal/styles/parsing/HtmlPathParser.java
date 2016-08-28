@@ -12,6 +12,15 @@ import static org.zwobble.mammoth.internal.util.Maps.map;
 
 public class HtmlPathParser {
     public static HtmlPath parse(TokenIterator tokens) {
+        if (tokens.peekTokenType() == TokenType.BANG) {
+            tokens.skip(TokenType.BANG);
+            return HtmlPath.IGNORE;
+        } else {
+            return parseHtmlPathElements(tokens);
+        }
+    }
+
+    private static HtmlPath parseHtmlPathElements(TokenIterator tokens) {
         List<HtmlPathElement> elements = new ArrayList<>();
 
         if (tokens.peekTokenType() == TokenType.IDENTIFIER) {
