@@ -9,8 +9,6 @@ import org.zwobble.mammoth.internal.xml.XmlNode;
 import java.util.List;
 import java.util.Optional;
 
-import static com.natpryce.makeiteasy.MakeItEasy.a;
-import static com.natpryce.makeiteasy.MakeItEasy.make;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.Is.isA;
@@ -19,7 +17,7 @@ import static org.zwobble.mammoth.internal.util.Maps.map;
 import static org.zwobble.mammoth.internal.xml.XmlNodes.element;
 import static org.zwobble.mammoth.tests.DeepReflectionMatcher.deepEquals;
 import static org.zwobble.mammoth.tests.ResultMatchers.isInternalSuccess;
-import static org.zwobble.mammoth.tests.documents.DocumentElementMakers.PARAGRAPH;
+import static org.zwobble.mammoth.tests.documents.DocumentElementMakers.paragraph;
 import static org.zwobble.mammoth.tests.docx.BodyXmlReaderMakers.bodyReader;
 
 public class CommentXmlTests {
@@ -36,7 +34,7 @@ public class CommentXmlTests {
                 allOf(
                     isA(Comment.class),
                     hasProperty("commentId", equalTo("1")),
-                    hasProperty("body", deepEquals(list(make(a(PARAGRAPH)))))
+                    hasProperty("body", deepEquals(list(paragraph())))
                 )
             ))
         );

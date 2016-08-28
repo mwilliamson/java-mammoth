@@ -8,104 +8,97 @@ import org.zwobble.mammoth.internal.styles.ParagraphMatcher;
 
 import java.util.Optional;
 
-import static com.natpryce.makeiteasy.MakeItEasy.a;
-import static com.natpryce.makeiteasy.MakeItEasy.make;
-import static com.natpryce.makeiteasy.MakeItEasy.with;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.zwobble.mammoth.tests.documents.DocumentElementMakers.NUMBERING;
-import static org.zwobble.mammoth.tests.documents.DocumentElementMakers.PARAGRAPH;
-import static org.zwobble.mammoth.tests.documents.DocumentElementMakers.STYLE;
+import static org.zwobble.mammoth.tests.documents.DocumentElementMakers.*;
 
 public class ParagraphMatcherTests {
     @Test
     public void matcherWithoutConstraintsMatchesEverything() {
-        assertTrue(ParagraphMatcher.ANY.matches(make(a(PARAGRAPH))));
+        assertTrue(ParagraphMatcher.ANY.matches(paragraph()));
 
-        Paragraph paragraphWithStyleId = make(a(PARAGRAPH,
-            with(STYLE, Optional.of(new Style("TipsParagraph", Optional.empty())))));
+        Paragraph paragraphWithStyleId = paragraph(withStyle(new Style("TipsParagraph", Optional.empty())));
         assertTrue(ParagraphMatcher.ANY.matches(paragraphWithStyleId));
 
-        Paragraph paragraphWithStyleName = make(a(PARAGRAPH,
-            with(STYLE, Optional.of(new Style("TipsParagraph", Optional.of("Tips Paragraph"))))));
+        Paragraph paragraphWithStyleName = paragraph(withStyle(new Style("TipsParagraph", Optional.of("Tips Paragraph"))));
         assertTrue(ParagraphMatcher.ANY.matches(paragraphWithStyleName));
     }
 
     @Test
     public void matcherWithStyleIdOnlyMatchesParagraphsWithThatStyleId() {
         ParagraphMatcher matcher = ParagraphMatcher.styleId("TipsParagraph");
-        assertFalse(matcher.matches(make(a(PARAGRAPH))));
+        assertFalse(matcher.matches(paragraph()));
 
-        Paragraph paragraphWithCorrectStyleId = make(a(PARAGRAPH,
-            with(STYLE, Optional.of(new Style("TipsParagraph", Optional.empty())))));
+        Paragraph paragraphWithCorrectStyleId = paragraph(
+            withStyle(new Style("TipsParagraph", Optional.empty())));
         assertTrue(matcher.matches(paragraphWithCorrectStyleId));
 
-        Paragraph paragraphWithIncorrectStyleId = make(a(PARAGRAPH,
-            with(STYLE, Optional.of(new Style("Heading 1", Optional.empty())))));
+        Paragraph paragraphWithIncorrectStyleId = paragraph(
+            withStyle(new Style("Heading 1", Optional.empty())));
         assertFalse(matcher.matches(paragraphWithIncorrectStyleId));
     }
 
     @Test
     public void matcherWithStyleNameOnlyMatchesParagraphsWithThatStyleName() {
         ParagraphMatcher matcher = ParagraphMatcher.styleName("Tips Paragraph");
-        assertFalse(matcher.matches(make(a(PARAGRAPH))));
+        assertFalse(matcher.matches(paragraph()));
 
-        Paragraph paragraphWithNamelessStyle = make(a(PARAGRAPH,
-            with(STYLE, Optional.of(new Style("TipsParagraph", Optional.empty())))));
+        Paragraph paragraphWithNamelessStyle = paragraph(
+            withStyle(new Style("TipsParagraph", Optional.empty())));
         assertFalse(matcher.matches(paragraphWithNamelessStyle));
 
-        Paragraph paragraphWithCorrectStyleName = make(a(PARAGRAPH,
-            with(STYLE, Optional.of(new Style("TipsParagraph", Optional.of("Tips Paragraph"))))));
+        Paragraph paragraphWithCorrectStyleName = paragraph(
+            withStyle(new Style("TipsParagraph", Optional.of("Tips Paragraph"))));
         assertTrue(matcher.matches(paragraphWithCorrectStyleName));
 
-        Paragraph paragraphWithIncorrectStyleName = make(a(PARAGRAPH,
-            with(STYLE, Optional.of(new Style("Heading 1", Optional.of("Heading 1"))))));
+        Paragraph paragraphWithIncorrectStyleName = paragraph(
+            withStyle(new Style("Heading 1", Optional.of("Heading 1"))));
         assertFalse(matcher.matches(paragraphWithIncorrectStyleName));
     }
 
     @Test
     public void styleNamesAreCaseInsensitive() {
         ParagraphMatcher matcher = ParagraphMatcher.styleName("tips paragraph");
-        assertFalse(matcher.matches(make(a(PARAGRAPH))));
+        assertFalse(matcher.matches(paragraph()));
 
-        Paragraph paragraphWithCorrectStyleName = make(a(PARAGRAPH,
-            with(STYLE, Optional.of(new Style("TipsParagraph", Optional.of("Tips Paragraph"))))));
+        Paragraph paragraphWithCorrectStyleName = paragraph(
+            withStyle(new Style("TipsParagraph", Optional.of("Tips Paragraph"))));
         assertTrue(matcher.matches(paragraphWithCorrectStyleName));
     }
 
     @Test
     public void matcherWithOrderedListOnlyMatchesParagraphsWithOrderedListAtThatLeve() {
         ParagraphMatcher matcher = ParagraphMatcher.orderedList("4");
-        assertFalse(matcher.matches(make(a(PARAGRAPH))));
+        assertFalse(matcher.matches(paragraph()));
 
-        Paragraph paragraphWithCorrectNumbering = make(a(PARAGRAPH,
-            with(NUMBERING, Optional.of(NumberingLevel.ordered("4")))));
+        Paragraph paragraphWithCorrectNumbering = paragraph(
+            withNumbering(NumberingLevel.ordered("4")));
         assertTrue(matcher.matches(paragraphWithCorrectNumbering));
 
-        Paragraph paragraphWithIncorrectLevel = make(a(PARAGRAPH,
-            with(NUMBERING, Optional.of(NumberingLevel.ordered("3")))));
+        Paragraph paragraphWithIncorrectLevel = paragraph(
+            withNumbering(NumberingLevel.ordered("3")));
         assertFalse(matcher.matches(paragraphWithIncorrectLevel));
 
-        Paragraph paragraphWithIncorrectOrdering = make(a(PARAGRAPH,
-            with(NUMBERING, Optional.of(NumberingLevel.unordered("4")))));
+        Paragraph paragraphWithIncorrectOrdering = paragraph(
+            withNumbering(NumberingLevel.unordered("4")));
         assertFalse(matcher.matches(paragraphWithIncorrectOrdering));
     }
 
     @Test
     public void matcherWithUnorderedListOnlyMatchesParagraphsWithUnrderedListAtThatLeve() {
         ParagraphMatcher matcher = ParagraphMatcher.unorderedList("4");
-        assertFalse(matcher.matches(make(a(PARAGRAPH))));
+        assertFalse(matcher.matches(paragraph()));
 
-        Paragraph paragraphWithCorrectNumbering = make(a(PARAGRAPH,
-            with(NUMBERING, Optional.of(NumberingLevel.unordered("4")))));
+        Paragraph paragraphWithCorrectNumbering = paragraph(
+            withNumbering(NumberingLevel.unordered("4")));
         assertTrue(matcher.matches(paragraphWithCorrectNumbering));
 
-        Paragraph paragraphWithIncorrectLevel = make(a(PARAGRAPH,
-            with(NUMBERING, Optional.of(NumberingLevel.unordered("3")))));
+        Paragraph paragraphWithIncorrectLevel = paragraph(
+            withNumbering(NumberingLevel.unordered("3")));
         assertFalse(matcher.matches(paragraphWithIncorrectLevel));
 
-        Paragraph paragraphWithIncorrectOrdering = make(a(PARAGRAPH,
-            with(NUMBERING, Optional.of(NumberingLevel.ordered("4")))));
+        Paragraph paragraphWithIncorrectOrdering = paragraph(
+            withNumbering(NumberingLevel.ordered("4")));
         assertFalse(matcher.matches(paragraphWithIncorrectOrdering));
     }
 }

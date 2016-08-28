@@ -99,12 +99,6 @@
       </build>
     </profile>
   </profiles>
-  <repositories>
-    <repository>
-      <id>jitpack.io</id>
-      <url>https://jitpack.io</url>
-    </repository>
-  </repositories>
   <dependencies>
     <dependency>
       <groupId>org.hamcrest</groupId>
@@ -118,20 +112,6 @@
       <version>4.12</version>
       <scope>test</scope>
     </dependency>
-    <dependency>
-      <groupId>com.github.npryce</groupId>
-      <artifactId>make-it-easy</artifactId>
-      <version>dad3ac7</version>
-      <scope>test</scope>
-    </dependency>
-    <!--
-    <dependency>
-      <groupId>com.natpryce</groupId>
-      <artifactId>make-it-easy</artifactId>
-      <version>4.0.0</version>
-      <scope>test</scope>
-    </dependency>
-    -->
   </dependencies>
   <distributionManagement>
     <snapshotRepository>

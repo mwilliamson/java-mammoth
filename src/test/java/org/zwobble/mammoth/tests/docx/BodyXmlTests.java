@@ -19,7 +19,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 
-import static com.natpryce.makeiteasy.MakeItEasy.*;
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -48,7 +47,7 @@ public class BodyXmlTests {
         XmlElement element = runXml(list(textXml("Hello!")));
         assertThat(
             readSuccess(bodyReader(), element),
-            isRun(run(text("Hello!"))));
+            isRun(run(withChildren(text("Hello!")))));
     }
 
     @Test
@@ -56,7 +55,7 @@ public class BodyXmlTests {
         XmlElement element = paragraphXml(list(runXml(list(textXml("Hello!")))));
         assertThat(
             readSuccess(bodyReader(), element),
-            isParagraph(make(a(PARAGRAPH, with(CHILDREN, list(run(text("Hello!"))))))));
+            isParagraph(paragraph(withChildren(run(withChildren(text("Hello!")))))));
     }
 
     @Test
@@ -323,7 +322,7 @@ public class BodyXmlTests {
             deepEquals(new Table(list(
                 new TableRow(list(
                     new TableCell(1, 1, list(
-                        make(a(PARAGRAPH))
+                        paragraph()
                     ))
                 ))
             )))
@@ -345,7 +344,7 @@ public class BodyXmlTests {
             deepEquals(new Table(list(
                 new TableRow(list(
                     new TableCell(1, 2, list(
-                        make(a(PARAGRAPH))
+                        paragraph()
                     ))
                 ))
             )))
@@ -435,7 +434,7 @@ public class BodyXmlTests {
         assertThat(
             read(bodyReader(), element),
             isInternalResult(
-                deepEquals(new Table(list(make(a(PARAGRAPH))))),
+                deepEquals(new Table(list(paragraph()))),
                 list("unexpected non-row element in table, cell merging may be incorrect")
             )
         );
@@ -450,7 +449,7 @@ public class BodyXmlTests {
         assertThat(
             read(bodyReader(), element),
             isInternalResult(
-                deepEquals(new Table(list(new TableRow(list(make(a(PARAGRAPH))))))),
+                deepEquals(new Table(list(new TableRow(list(paragraph()))))),
                 list("unexpected non-cell element in table row, cell merging may be incorrect")
             )
         );
@@ -463,7 +462,7 @@ public class BodyXmlTests {
         XmlElement element = element("w:hyperlink", map("r:id", "r42"), list(runXml(list())));
         assertThat(
             readSuccess(bodyReader(relationships), element),
-            deepEquals(Hyperlink.href("http://example.com", list(make(a(RUN))))));
+            deepEquals(Hyperlink.href("http://example.com", list(run(withChildren())))));
     }
 
     @Test
@@ -471,7 +470,7 @@ public class BodyXmlTests {
         XmlElement element = element("w:hyperlink", map("w:anchor", "start"), list(runXml(list())));
         assertThat(
             readSuccess(bodyReader(), element),
-            deepEquals(Hyperlink.anchor("start", list(make(a(RUN))))));
+            deepEquals(Hyperlink.anchor("start", list(run(withChildren())))));
     }
 
     @Test
@@ -479,7 +478,7 @@ public class BodyXmlTests {
         XmlElement element = element("w:hyperlink", list(runXml(list())));
         assertThat(
             readSuccess(bodyReader(), element),
-            deepEquals(make(a(RUN))));
+            deepEquals(run(withChildren())));
     }
 
     @Test
@@ -527,14 +526,14 @@ public class BodyXmlTests {
             runXml(list(textBox, textXml("[paragragh end]")))));
 
         List<DocumentElement> expected = list(
-            make(a(PARAGRAPH, with(CHILDREN, list(
-                make(a(RUN, with(CHILDREN, list(
-                    new Text("[paragragh start]"))))),
-                make(a(RUN, with(CHILDREN, list(
-                    new Text("[paragragh end]"))))))))),
-            make(a(PARAGRAPH, with(CHILDREN, list(
-                make(a(RUN, with(CHILDREN, list(
-                    new Text("[textbox-content]"))))))))));
+            paragraph(withChildren(
+                run(withChildren(
+                    new Text("[paragragh start]"))),
+                run(withChildren(
+                    new Text("[paragragh end]"))))),
+            paragraph(withChildren(
+                run(withChildren(
+                    new Text("[textbox-content]"))))));
 
         assertThat(
             readAll(bodyReader(), paragraph),
@@ -680,7 +679,7 @@ public class BodyXmlTests {
 
         assertThat(
             readSuccess(bodyReader(), element),
-            deepEquals(make(a(PARAGRAPH))));
+            deepEquals(paragraph()));
     }
 
     @Test
@@ -726,7 +725,7 @@ public class BodyXmlTests {
         XmlElement element = runXml(list(XmlNodes.text("[text]")));
         assertThat(
             readSuccess(bodyReader(), element),
-            deepEquals(make(a(RUN))));
+            deepEquals(run(withChildren())));
     }
 
     private static DocumentElement readSuccess(BodyXmlReader reader, XmlElement element) {
@@ -787,10 +786,6 @@ public class BodyXmlTests {
 
     private Matcher<? super DocumentElement> hasNumbering(Optional<NumberingLevel> expected) {
         return hasProperty("numbering", deepEquals(expected));
-    }
-
-    private Run run(DocumentElement... children) {
-        return make(a(RUN, with(CHILDREN, asList(children))));
     }
 
     private Text text(String value) {

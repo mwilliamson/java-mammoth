@@ -10,14 +10,12 @@ import org.zwobble.mammoth.internal.xml.XmlElement;
 
 import java.util.List;
 
-import static com.natpryce.makeiteasy.MakeItEasy.a;
-import static com.natpryce.makeiteasy.MakeItEasy.make;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.zwobble.mammoth.internal.util.Lists.list;
 import static org.zwobble.mammoth.internal.util.Maps.map;
 import static org.zwobble.mammoth.internal.xml.XmlNodes.element;
 import static org.zwobble.mammoth.tests.ResultMatchers.isInternalSuccess;
-import static org.zwobble.mammoth.tests.documents.DocumentElementMakers.PARAGRAPH;
+import static org.zwobble.mammoth.tests.documents.DocumentElementMakers.paragraph;
 import static org.zwobble.mammoth.tests.docx.BodyXmlReaderMakers.bodyReader;
 
 public class NotesXmlReaderTests {
@@ -34,7 +32,7 @@ public class NotesXmlReaderTests {
 
         assertThat(
             notes,
-            isInternalSuccess(list(new Note(NoteType.FOOTNOTE, "1", list(make(a(PARAGRAPH)))))));
+            isInternalSuccess(list(new Note(NoteType.FOOTNOTE, "1", list(paragraph())))));
     }
 
     @Test

@@ -17,7 +17,6 @@ import java.io.ByteArrayInputStream;
 import java.util.List;
 import java.util.Optional;
 
-import static com.natpryce.makeiteasy.MakeItEasy.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.zwobble.mammoth.internal.documents.VerticalAlignment.SUBSCRIPT;
@@ -33,7 +32,7 @@ public class DocumentToHtmlTests {
     @Test
     public void plainParagraphIsConvertedToPlainParagraph() {
         assertThat(
-            convertToHtml(make(a(PARAGRAPH, with(CHILDREN, list(runWithText("Hello")))))),
+            convertToHtml(paragraph(withChildren(runWithText("Hello")))),
             deepEquals(list(Html.element("p", list(Html.text("Hello"))))));
     }
 
@@ -41,16 +40,20 @@ public class DocumentToHtmlTests {
     public void forceWriteIsInsertedIntoParagraphIfEmptyParagraphsShouldBePreserved() {
         DocumentToHtmlOptions options = DocumentToHtmlOptions.DEFAULT.preserveEmptyParagraphs();
         assertThat(
-            DocumentToHtml.convertToHtml(make(a(PARAGRAPH)), options),
+            DocumentToHtml.convertToHtml(paragraph(), options),
             isSuccess(list(Html.element("p", list(Html.FORCE_WRITE)))));
     }
 
     @Test
     public void multipleParagraphsInDocumentAreConvertedToMultipleParagraphs() {
         assertThat(
-            convertToHtml(new Document(list(
-                make(a(PARAGRAPH, with(CHILDREN, list(runWithText("Hello"))))),
-                make(a(PARAGRAPH, with(CHILDREN, list(runWithText("there")))))), Notes.EMPTY)),
+            convertToHtml(new Document(
+                list(
+                    paragraph(withChildren(runWithText("Hello"))),
+                    paragraph(withChildren(runWithText("there")))
+                ),
+                Notes.EMPTY
+            )),
 
             deepEquals(list(
                 Html.element("p", list(Html.text("Hello"))),
@@ -61,7 +64,7 @@ public class DocumentToHtmlTests {
     public void paragraphStyleMappingsCanBeUsedToMapParagraphs() {
         assertThat(
             convertToHtml(
-                make(a(PARAGRAPH, with(STYLE, Optional.of(new Style("TipsParagraph", Optional.empty()))))),
+                paragraph(withStyle(new Style("TipsParagraph", Optional.empty()))),
                 StyleMap.builder()
                     .mapParagraph(
                         ParagraphMatcher.styleId("TipsParagraph"),
@@ -75,7 +78,7 @@ public class DocumentToHtmlTests {
     public void warningIfParagraphHasUnrecognisedStyle() {
         assertThat(
             convertToHtmlResult(
-                make(a(PARAGRAPH, with(STYLE, Optional.of(new Style("TipsParagraph", Optional.of("Tips Paragraph"))))))),
+                paragraph(withStyle(new Style("TipsParagraph", Optional.of("Tips Paragraph"))))),
 
             deepEquals(new InternalResult<>(
                 list(Html.element("p")),
@@ -86,7 +89,7 @@ public class DocumentToHtmlTests {
     public void runStyleMappingsCanBeUsedToMapRuns() {
         assertThat(
             convertToHtml(
-                make(a(RUN, with(STYLE, Optional.of(new Style("TipsRun", Optional.empty()))))),
+                run(withStyle(new Style("TipsRun", Optional.empty()))),
                 StyleMap.builder()
                     .mapRun(
                         RunMatcher.styleId("TipsRun"),
@@ -100,9 +103,9 @@ public class DocumentToHtmlTests {
     public void warningIfRunHasUnrecognisedStyle() {
         assertThat(
             convertToHtmlResult(
-                make(a(RUN,
-                    with(STYLE, Optional.of(new Style("TipsRun", Optional.of("Tips Run")))),
-                    with(CHILDREN, list(new Text("Hello")))))),
+                run(
+                    withStyle(new Style("TipsRun", Optional.of("Tips Run"))),
+                    withChildren(new Text("Hello")))),
 
             deepEquals(new InternalResult<>(
                 list(Html.text("Hello")),
@@ -112,7 +115,7 @@ public class DocumentToHtmlTests {
     @Test
     public void boldRunsAreWrappedInStrongTagsByDefault() {
         assertThat(
-            convertToHtml(make(a(RUN, with(BOLD, true), with(CHILDREN, list(new Text("Hello")))))),
+            convertToHtml(run(withBold(true), withChildren(new Text("Hello")))),
             deepEquals(list(Html.collapsibleElement("strong", list(Html.text("Hello"))))));
     }
 
@@ -120,7 +123,7 @@ public class DocumentToHtmlTests {
     public void boldRunsCanBeMappedUsingStyleMapping() {
         assertThat(
             convertToHtml(
-                make(a(RUN, with(BOLD, true), with(CHILDREN, list(new Text("Hello"))))),
+                run(withBold(true), withChildren(new Text("Hello"))),
                 StyleMap.builder().bold(HtmlPath.element("em")).build()),
             deepEquals(list(Html.element("em", list(Html.text("Hello"))))));
     }
@@ -128,7 +131,7 @@ public class DocumentToHtmlTests {
     @Test
     public void italicRunsAreWrappedInEmphasisTags() {
         assertThat(
-            convertToHtml(make(a(RUN, with(ITALIC, true), with(CHILDREN, list(new Text("Hello")))))),
+            convertToHtml(run(withItalic(true), withChildren(new Text("Hello")))),
             deepEquals(list(Html.collapsibleElement("em", list(Html.text("Hello"))))));
     }
 
@@ -136,7 +139,7 @@ public class DocumentToHtmlTests {
     public void italicRunsCanBeMappedUsingStyleMapping() {
         assertThat(
             convertToHtml(
-                make(a(RUN, with(ITALIC, true), with(CHILDREN, list(new Text("Hello"))))),
+                run(withItalic(true), withChildren(new Text("Hello"))),
                 StyleMap.builder().italic(HtmlPath.element("strong")).build()),
             deepEquals(list(Html.element("strong", list(Html.text("Hello"))))));
     }
@@ -144,7 +147,7 @@ public class DocumentToHtmlTests {
     @Test
     public void underliningIsIgnoredByDefault() {
         assertThat(
-            convertToHtml(make(a(RUN, with(UNDERLINE, true), with(CHILDREN, list(new Text("Hello")))))),
+            convertToHtml(run(withUnderline(true), withChildren(new Text("Hello")))),
             deepEquals(list(Html.text("Hello"))));
     }
 
@@ -152,7 +155,7 @@ public class DocumentToHtmlTests {
     public void underliningCanBeMappedUsingStyleMapping() {
         assertThat(
             convertToHtml(
-                make(a(RUN, with(UNDERLINE, true), with(CHILDREN, list(new Text("Hello"))))),
+                run(withUnderline(true), withChildren(new Text("Hello"))),
                 StyleMap.builder().underline(HtmlPath.element("em")).build()),
 
             deepEquals(list(Html.element("em", list(Html.text("Hello"))))));
@@ -161,7 +164,7 @@ public class DocumentToHtmlTests {
     @Test
     public void struckthroughRunsAreWrappedInStrikethroughTagsByDefault() {
         assertThat(
-            convertToHtml(make(a(RUN, with(STRIKETHROUGH, true), with(CHILDREN, list(new Text("Hello")))))),
+            convertToHtml(run(withStrikethrough(true), withChildren(new Text("Hello")))),
             deepEquals(list(Html.collapsibleElement("s", list(Html.text("Hello"))))));
     }
 
@@ -169,7 +172,7 @@ public class DocumentToHtmlTests {
     public void struckthroughRunsCanBeMappedUsingStyleMapping() {
         assertThat(
             convertToHtml(
-                make(a(RUN, with(STRIKETHROUGH, true), with(CHILDREN, list(new Text("Hello"))))),
+                run(withStrikethrough(true), withChildren(new Text("Hello"))),
                 StyleMap.builder().strikethrough(HtmlPath.element("del")).build()),
             deepEquals(list(Html.element("del", list(Html.text("Hello"))))));
     }
@@ -177,14 +180,14 @@ public class DocumentToHtmlTests {
     @Test
     public void superscriptRunsAreWrappedInSuperscriptTags() {
         assertThat(
-            convertToHtml(make(a(RUN, with(VERTICAL_ALIGNMENT, SUPERSCRIPT), with(CHILDREN, list(new Text("Hello")))))),
+            convertToHtml(run(withVerticalAlignment(SUPERSCRIPT), withChildren(new Text("Hello")))),
             deepEquals(list(Html.collapsibleElement("sup", list(Html.text("Hello"))))));
     }
 
     @Test
     public void subscriptRunsAreWrappedInSubscriptTags() {
         assertThat(
-            convertToHtml(make(a(RUN, with(VERTICAL_ALIGNMENT, SUBSCRIPT), with(CHILDREN, list(new Text("Hello")))))),
+            convertToHtml(run(withVerticalAlignment(SUBSCRIPT), withChildren(new Text("Hello")))),
             deepEquals(list(Html.collapsibleElement("sub", list(Html.text("Hello"))))));
     }
 
@@ -207,11 +210,11 @@ public class DocumentToHtmlTests {
         assertThat(
             convertToHtml(new Table(list(
                 new TableRow(list(
-                    tableCell(list(paragraphWithText("Top left"))),
-                    tableCell(list(paragraphWithText("Top right"))))),
+                    tableCell(withChildren(paragraphWithText("Top left"))),
+                    tableCell(withChildren(paragraphWithText("Top right"))))),
                 new TableRow(list(
-                    tableCell(list(paragraphWithText("Bottom left"))),
-                    tableCell(list(paragraphWithText("Bottom right")))))))),
+                    tableCell(withChildren(paragraphWithText("Bottom left"))),
+                    tableCell(withChildren(paragraphWithText("Bottom right")))))))),
 
             deepEquals(list(Html.element("table", list(
                 Html.element("tr", list(
@@ -227,11 +230,11 @@ public class DocumentToHtmlTests {
         assertThat(
             convertToHtml(new Table(list(
                 new TableRow(list(
-                    make(a(TABLE_CELL,
-                        with(CHILDREN, list(paragraphWithText("Top left"))),
-                        with(COLSPAN, 2)
-                    )),
-                    tableCell(list(paragraphWithText("Top right")))))))),
+                    tableCell(
+                        withChildren(paragraphWithText("Top left")),
+                        withColspan(2)
+                    ),
+                    tableCell(withChildren(paragraphWithText("Top right")))))))),
 
             deepEquals(list(Html.element("table", list(
                 Html.element("tr", list(
@@ -247,7 +250,7 @@ public class DocumentToHtmlTests {
         assertThat(
             convertToHtml(new Table(list(
                 new TableRow(list(
-                    make(a(TABLE_CELL, with(ROWSPAN, 2)))
+                    tableCell(withRowspan(2))
                 ))
             ))),
             deepEquals(list(Html.element("table", list(
@@ -282,9 +285,9 @@ public class DocumentToHtmlTests {
     @Test
     public void noteReferencesAreConvertedToLinksToReferenceBodyAfterMainBody() {
         Document document = new Document(
-            list(make(a(PARAGRAPH, with(CHILDREN, list(
+            list(paragraph(withChildren(
                 runWithText("Knock knock"),
-                make(a(RUN, with(CHILDREN, list(new NoteReference(NoteType.FOOTNOTE, "4")))))))))),
+                run(withChildren(new NoteReference(NoteType.FOOTNOTE, "4")))))),
             new Notes(list(new Note(NoteType.FOOTNOTE, "4", list(paragraphWithText("Who's there?"))))));
 
         assertThat(
@@ -305,9 +308,9 @@ public class DocumentToHtmlTests {
 
     @Test
     public void noteReferencesAreConvertedWithSequentialNumbers() {
-        Run run = make(a(RUN, with(CHILDREN, list(
+        Run run = run(withChildren(
             new NoteReference(NoteType.FOOTNOTE, "4"),
-            new NoteReference(NoteType.FOOTNOTE, "7")))));
+            new NoteReference(NoteType.FOOTNOTE, "7")));
 
         assertThat(
             convertToHtml(run),
