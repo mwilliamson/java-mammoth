@@ -39,6 +39,8 @@ The following features are currently supported:
 * Text boxes. The contents of the text box are treated as a separate paragraph
   that appears after the paragraph containing the text box.
 
+* Comments.
+
 ## Installation
 
 Available on [Maven Central](http://search.maven.org/#artifactdetails|org.zwobble.mammoth|mammoth|0.0.3|jar).
@@ -178,6 +180,22 @@ For instance, to wrap strikethrough text in `<del>` tags:
 DocumentConverter converter = new DocumentConverter()
     .addStyleMap("strike => del");
 ```
+
+#### Comments
+
+By default, comments are ignored.
+To include comments in the generated HTML,
+add a style mapping for `comment-reference`.
+For instance:
+
+```java
+DocumentConverter converter = new DocumentConverter()
+    .addStyleMap("comment-reference => sup");
+```
+
+Comments will be appended to the end of the document,
+with links to the comments wrapped using the specified style mapping.
+
 ### API
 
 #### `DocumentConverter`

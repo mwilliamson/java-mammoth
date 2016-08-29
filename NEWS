@@ -1,3 +1,7 @@
+# 0.0.4
+
+* Add support for comments.
+
 # 0.0.3
 
 * Add support for w:sdt elements. This allows the bodies of content controls,
