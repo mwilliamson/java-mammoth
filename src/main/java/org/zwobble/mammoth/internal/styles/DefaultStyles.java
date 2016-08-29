@@ -26,6 +26,8 @@ public class DefaultStyles {
         "r[style-name='footnote reference'] =>",
         "p[style-name='endnote text'] => p",
         "r[style-name='endnote reference'] =>",
+        "p[style-name='annotation text'] => p",
+        "r[style-name='annotation reference'] =>",
 
         // LibreOffice
         "p[style-name='Footnote'] => p",

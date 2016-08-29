@@ -23,6 +23,17 @@ public class InternalResult<T> {
             lazyFlatMap(results, result -> result.warnings));
     }
 
+    public static <T1, T2, R> InternalResult<R> flatMap(
+        InternalResult<T1> first,
+        InternalResult<T2> second,
+        BiFunction<T1, T2, InternalResult<R>> function)
+    {
+        InternalResult<R> intermediateResult = function.apply(first.value, second.value);
+        return new InternalResult<>(
+            intermediateResult.value,
+            lazyConcat(lazyConcat(first.warnings, second.warnings), intermediateResult.warnings));
+    }
+
     public static <T1, T2, R> InternalResult<R> map(
         InternalResult<T1> first,
         InternalResult<T2> second,

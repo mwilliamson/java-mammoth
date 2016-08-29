@@ -31,7 +31,7 @@ public class DocumentXmlTests {
                         element("w:t", list(
                             XmlNodes.text("Hello!")))))))))));
 
-        DocumentXmlReader reader = new DocumentXmlReader(bodyReader(), Notes.EMPTY);
+        DocumentXmlReader reader = new DocumentXmlReader(bodyReader(), Notes.EMPTY, list());
 
         assertThat(
             reader.readElement(documentElement),
@@ -45,7 +45,7 @@ public class DocumentXmlTests {
     public void notesOfDocumentAreIncludedInDocument() {
         Note note = new Note(NoteType.FOOTNOTE, "4", list(paragraphWithText("Hello")));
         Notes notes = new Notes(list(note));
-        DocumentXmlReader reader = new DocumentXmlReader(bodyReader(), notes);
+        DocumentXmlReader reader = new DocumentXmlReader(bodyReader(), notes, list());
 
         XmlElement documentElement = element("w:document", list(element("w:body")));
         InternalResult<Document> document = reader.readElement(documentElement);

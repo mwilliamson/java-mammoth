@@ -155,6 +155,19 @@ public class MammothTests {
     }
 
     @Test
+    public void whenStyleMappingIsDefinedForCommentReferencesThenCommentsAreIncluded() throws IOException {
+        assertThat(
+            convertToHtml("comments.docx", mammoth -> mammoth.idPrefix("doc-42-").addStyleMap("comment-reference => sup")),
+            isSuccess(
+                "<p>Ouch" +
+                "<sup><a href=\"#doc-42-comment-0\" id=\"doc-42-comment-ref-0\">[MW1]</a></sup>." +
+                "<sup><a href=\"#doc-42-comment-2\" id=\"doc-42-comment-ref-2\">[MW2]</a></sup></p>" +
+                "<dl><dt id=\"doc-42-comment-0\">Comment [MW1]</dt><dd><p>A tachyon walks into a bar. <a href=\"#doc-42-comment-ref-0\">↑</a></p></dd>" +
+                "<dt id=\"doc-42-comment-2\">Comment [MW2]</dt><dd><p>Fin. <a href=\"#doc-42-comment-ref-2\">↑</a></p></dd></dl>"
+            ));
+    }
+
+    @Test
     public void relationshipsAreReadForEachFileContainingBodyXml() throws IOException {
         assertThat(
             convertToHtml("footnote-hyperlink.docx", mammoth -> mammoth.idPrefix("doc-42-")),

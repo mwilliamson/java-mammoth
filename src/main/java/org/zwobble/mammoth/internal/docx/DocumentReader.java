@@ -1,5 +1,6 @@
 package org.zwobble.mammoth.internal.docx;
 
+import org.zwobble.mammoth.internal.documents.Comment;
 import org.zwobble.mammoth.internal.documents.Document;
 import org.zwobble.mammoth.internal.documents.Notes;
 import org.zwobble.mammoth.internal.results.InternalResult;
@@ -9,6 +10,7 @@ import org.zwobble.mammoth.internal.xml.XmlElement;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Optional;
 
 import static org.zwobble.mammoth.internal.util.Lists.list;
@@ -28,11 +30,19 @@ public class DocumentReader {
             Relationships relationships = readRelationships(zipFile, name);
             return new BodyXmlReader(styles, numbering, relationships, contentTypes, zipFile, fileReader);
         };
-        return readNotes(zipFile, bodyReaders)
-            .flatMap(notes -> {
-                DocumentXmlReader reader = new DocumentXmlReader(bodyReaders.forName("document"), notes);
+        return InternalResult.flatMap(
+            readNotes(zipFile, bodyReaders),
+            readComments(zipFile, bodyReaders),
+            (notes, comments) -> {
+                DocumentXmlReader reader = new DocumentXmlReader(bodyReaders.forName("document"), notes, comments);
                 return reader.readElement(parseOfficeXml(zipFile, "word/document.xml"));
             });
+    }
+
+    private static InternalResult<List<Comment>> readComments(DocxFile file, BodyReaders bodyReaders) {
+        return tryParseOfficeXml(file, "word/comments.xml")
+            .map(new CommentXmlReader(bodyReaders.forName("comments"))::readElement)
+            .orElse(InternalResult.success(list()));
     }
 
     private static InternalResult<Notes> readNotes(DocxFile file, BodyReaders bodyReaders) {

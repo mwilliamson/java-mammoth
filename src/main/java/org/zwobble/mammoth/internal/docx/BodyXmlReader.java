@@ -116,6 +116,7 @@ public class BodyXmlReader {
             case "w:del":
             case "w:footnoteRef":
             case "w:endnoteRef":
+            case "w:annotationRef":
             case "w:pPr":
             case "w:rPr":
             case "w:tblPr":

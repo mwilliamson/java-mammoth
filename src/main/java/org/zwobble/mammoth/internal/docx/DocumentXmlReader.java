@@ -1,26 +1,29 @@
 package org.zwobble.mammoth.internal.docx;
 
+import org.zwobble.mammoth.internal.documents.Comment;
 import org.zwobble.mammoth.internal.documents.Document;
 import org.zwobble.mammoth.internal.documents.Notes;
 import org.zwobble.mammoth.internal.results.InternalResult;
 import org.zwobble.mammoth.internal.xml.XmlElement;
 import org.zwobble.mammoth.internal.xml.XmlElementLike;
 
-import static org.zwobble.mammoth.internal.util.Lists.list;
+import java.util.List;
 
 public class DocumentXmlReader {
     private final BodyXmlReader bodyReader;
     private final Notes notes;
+    private final List<Comment> comments;
 
-    public DocumentXmlReader(BodyXmlReader bodyReader, Notes notes) {
+    public DocumentXmlReader(BodyXmlReader bodyReader, Notes notes, List<Comment> comments) {
         this.bodyReader = bodyReader;
         this.notes = notes;
+        this.comments = comments;
     }
 
     public InternalResult<Document> readElement(XmlElement element) {
         XmlElementLike body = element.findChildOrEmpty("w:body");
         return bodyReader.readElements(body.getChildren())
             .toResult()
-            .map(children -> new Document(children, notes, list()));
+            .map(children -> new Document(children, notes, comments));
     }
 }

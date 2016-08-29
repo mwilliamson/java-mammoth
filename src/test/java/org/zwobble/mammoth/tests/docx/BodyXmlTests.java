@@ -704,6 +704,7 @@ public class BodyXmlTests {
         assertIsIgnored("w:del");
         assertIsIgnored("w:footnoteRef");
         assertIsIgnored("w:endnoteRef");
+        assertIsIgnored("w:annotationRef");
         assertIsIgnored("w:pPr");
         assertIsIgnored("w:rPr");
         assertIsIgnored("w:tblPr");
