@@ -8,17 +8,19 @@ import org.zwobble.mammoth.internal.styles.HtmlPath;
 import org.zwobble.mammoth.internal.styles.StyleMap;
 import org.zwobble.mammoth.internal.util.Base64Encoding;
 import org.zwobble.mammoth.internal.util.Lists;
+import org.zwobble.mammoth.internal.util.Maps;
 
 import java.io.IOException;
 import java.util.*;
 import java.util.function.Supplier;
 
 import static org.zwobble.mammoth.internal.util.Lists.*;
+import static org.zwobble.mammoth.internal.util.Maps.lookup;
 import static org.zwobble.mammoth.internal.util.Maps.map;
 
 public class DocumentToHtml {
     public static InternalResult<List<HtmlNode>> convertToHtml(Document document, DocumentToHtmlOptions options) {
-        DocumentToHtml documentConverter = new DocumentToHtml(options);
+        DocumentToHtml documentConverter = new DocumentToHtml(options, document.getComments());
         return new InternalResult<>(
             documentConverter.convertToHtml(document),
             documentConverter.warnings);
@@ -32,36 +34,51 @@ public class DocumentToHtml {
     }
 
     public static InternalResult<List<HtmlNode>> convertToHtml(DocumentElement element, DocumentToHtmlOptions options) {
-        DocumentToHtml documentConverter = new DocumentToHtml(options);
+        DocumentToHtml documentConverter = new DocumentToHtml(options, list());
         return new InternalResult<>(
             documentConverter.convertToHtml(element),
             documentConverter.warnings);
     }
 
+    private static class ReferencedComment {
+        private final String label;
+        private final Comment comment;
+
+        private ReferencedComment(String label, Comment comment) {
+            this.label = label;
+            this.comment = comment;
+        }
+    }
+
     private final String idPrefix;
     private final boolean preserveEmptyParagraphs;
     private final StyleMap styleMap;
+    private final Map<String, Comment> comments;
     private final List<NoteReference> noteReferences = new ArrayList<>();
+    private final List<ReferencedComment> referencedComments = new ArrayList<>();
     private final Set<String> warnings = new HashSet<>();
 
-    private DocumentToHtml(DocumentToHtmlOptions options) {
+    private DocumentToHtml(DocumentToHtmlOptions options, List<Comment> comments) {
         this.idPrefix = options.idPrefix();
         this.preserveEmptyParagraphs = options.shouldPreserveEmptyParagraphs();
         this.styleMap = options.styleMap();
+        this.comments = Maps.toMapWithKey(comments, Comment::getCommentId);
     }
 
     private List<HtmlNode> convertToHtml(Document document) {
         List<HtmlNode> mainBody = convertChildrenToHtml(document);
         // TODO: can you have note references inside a note?
         List<Note> notes = findNotes(document, noteReferences);
-        if (notes.isEmpty()) {
-            return mainBody;
-        } else {
-            HtmlNode noteNode = Html.element("ol",
-                eagerMap(notes, this::convertToHtml));
 
-            return eagerConcat(mainBody, list(noteNode));
-        }
+        List<HtmlNode> noteNodes = notes.isEmpty()
+            ? list()
+            : list(Html.element("ol", eagerMap(notes, this::convertToHtml)));
+
+        List<HtmlNode> commentNodes = referencedComments.isEmpty()
+            ? list()
+            : list(Html.element("dl", eagerFlatMap(referencedComments, this::convertToHtml)));
+
+        return eagerConcat(mainBody, noteNodes, commentNodes);
     }
 
     private HtmlNode convertToHtml(Note note) {
@@ -74,6 +91,25 @@ public class DocumentToHtml {
             Html.text(" "),
             Html.element("a", map("href", "#" + referenceId), list(Html.text("↑")))));
         return Html.element("li", map("id", id), eagerConcat(noteBody, list(backLink)));
+    }
+
+    private List<HtmlNode> convertToHtml(ReferencedComment referencedComment) {
+        // TODO: remove duplication with notes
+        String commentId = referencedComment.comment.getCommentId();
+        List<HtmlNode> body = convertToHtml(referencedComment.comment.getBody());
+        // TODO: we probably want this to collapse more eagerly than other collapsible elements
+        // -- for instance, any paragraph will probably do, regardless of attributes. (Possible other elements will do too.)
+        HtmlNode backLink = Html.collapsibleElement("p", list(
+            Html.text(" "),
+            Html.element("a", map("href", "#" + generateReferenceHtmlId("comment", commentId)), list(Html.text("↑")))));
+
+        return list(
+            Html.element(
+                "dt",
+                map("id", generateReferentHtmlId("comment", commentId)),
+                list(Html.text("Comment " + referencedComment.label))),
+            Html.element("dd",
+                eagerConcat(body, list(backLink))));
     }
 
     private List<HtmlNode> convertToHtml(List<DocumentElement> elements) {
@@ -210,7 +246,21 @@ public class DocumentToHtml {
 
             @Override
             public List<HtmlNode> visit(CommentReference commentReference) {
-                return list();
+                return styleMap.getCommentReference().orElse(HtmlPath.IGNORE).wrap(() -> {
+                    String commentId = commentReference.getCommentId();
+                    Comment comment = lookup(comments, commentId)
+                        .orElseThrow(() -> new RuntimeException("Referenced comment could not be found, id: " + commentId));
+                    String label = "[" + comment.getAuthorInitials().orElse("") + (referencedComments.size() + 1) + "]";
+                    referencedComments.add(new ReferencedComment(label, comment));
+
+                    // TODO: Remove duplication with note references
+                    return list(Html.element(
+                        "a",
+                        map(
+                            "href", "#" + generateReferentHtmlId("comment", commentId),
+                            "id", generateReferenceHtmlId("comment", commentId)),
+                        list(Html.text(label))));
+                }).get();
             }
 
             @Override
@@ -240,11 +290,19 @@ public class DocumentToHtml {
     }
 
     private String generateNoteHtmlId(NoteType noteType, String noteId) {
-        return generateId(noteTypeToIdFragment(noteType) + "-" + noteId);
+        return generateReferentHtmlId(noteTypeToIdFragment(noteType), noteId);
     }
 
     private String generateNoteRefHtmlId(NoteType noteType, String noteId) {
-        return generateId(noteTypeToIdFragment(noteType) + "-ref-" + noteId);
+        return generateReferenceHtmlId(noteTypeToIdFragment(noteType), noteId);
+    }
+
+    private String generateReferentHtmlId(String referenceType, String referenceId) {
+        return generateId(referenceType + "-" + referenceId);
+    }
+
+    private String generateReferenceHtmlId(String referenceType, String referenceId) {
+        return generateId(referenceType + "-ref-" + referenceId);
     }
 
     private String noteTypeToIdFragment(NoteType noteType) {

@@ -71,6 +71,10 @@ public class StyleMap {
         return strikethrough;
     }
 
+    public Optional<HtmlPath> getCommentReference() {
+        return commentReference;
+    }
+
     public Optional<HtmlPath> getParagraphHtmlPath(Paragraph paragraph) {
         return tryFind(paragraphStyles, styleMapping -> styleMapping.matches(paragraph))
             .map(StyleMapping::getHtmlPath);

@@ -20,4 +20,8 @@ public class Document implements HasChildren {
     public Notes getNotes() {
         return notes;
     }
+
+    public List<Comment> getComments() {
+        return comments;
+    }
 }

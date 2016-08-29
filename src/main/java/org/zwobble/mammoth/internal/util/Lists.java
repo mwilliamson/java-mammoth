@@ -40,6 +40,14 @@ public class Lists {
         return Stream.concat(stream(first), stream(second)).collect(Collectors.toList());
     }
 
+    public static <T> List<T> eagerConcat(Collection<T> first, Collection<T> second, Collection<T> third) {
+        List<T> result = new ArrayList<>(first.size() + second.size() + third.size());
+        result.addAll(first);
+        result.addAll(second);
+        result.addAll(third);
+        return result;
+    }
+
     public static <T> List<T> eagerFilter(Iterable<T> iterable, Predicate<T> predicate) {
         return stream(iterable).filter(predicate).collect(Collectors.toList());
     }

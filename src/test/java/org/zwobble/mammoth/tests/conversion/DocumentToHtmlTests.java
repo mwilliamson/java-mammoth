@@ -8,10 +8,7 @@ import org.zwobble.mammoth.internal.documents.*;
 import org.zwobble.mammoth.internal.html.Html;
 import org.zwobble.mammoth.internal.html.HtmlNode;
 import org.zwobble.mammoth.internal.results.InternalResult;
-import org.zwobble.mammoth.internal.styles.HtmlPath;
-import org.zwobble.mammoth.internal.styles.ParagraphMatcher;
-import org.zwobble.mammoth.internal.styles.RunMatcher;
-import org.zwobble.mammoth.internal.styles.StyleMap;
+import org.zwobble.mammoth.internal.styles.*;
 
 import java.io.ByteArrayInputStream;
 import java.util.List;
@@ -322,10 +319,11 @@ public class DocumentToHtmlTests {
 
     @Test
     public void commentsAreIgnoredByDefault() {
-        Document document = document(withChildren(
-            paragraph(withChildren(
-                runWithText("Knock knock"),
-                run(withChildren(new CommentReference("4")))))),
+        Document document = document(
+            withChildren(
+                paragraph(withChildren(
+                    runWithText("Knock knock"),
+                    run(withChildren(new CommentReference("4")))))),
             withComments(comment("4", list(paragraphWithText("Who's there?")))));
 
         assertThat(
@@ -333,6 +331,42 @@ public class DocumentToHtmlTests {
             deepEquals(list(
                 Html.element("p", list(
                     Html.text("Knock knock"))))));
+    }
+
+    @Test
+    public void commentReferencesAreLinkedToCommentAfterMainBody() {
+        CommentReference reference = new CommentReference("4");
+        Comment comment = new Comment(
+            "4",
+            list(paragraphWithText("Who's there?")),
+            Optional.of("The Piemaker"),
+            Optional.of("TP")
+        );
+        Document document = document(
+            withChildren(
+                paragraph(withChildren(
+                    runWithText("Knock knock"),
+                    run(withChildren(reference))))),
+            withComments(comment)
+        );
+
+        StyleMap styleMap = StyleMap.builder().commentReference(HtmlPath.element("sup")).build();
+        assertThat(
+            convertToHtml(document, styleMap),
+            deepEquals(list(
+                Html.element("p", list(
+                    Html.text("Knock knock"),
+                    Html.element("sup", list(
+                        Html.element("a", map("href", "#doc-42-comment-4", "id", "doc-42-comment-ref-4"), list(Html.text("[TP1]"))))))),
+                Html.element("dl", list(
+                    Html.element("dt", map("id", "doc-42-comment-4"), list(
+                        Html.text("Comment [TP1]"))),
+                    Html.element("dd", list(
+                        Html.element("p", list(
+                            Html.text("Who's there?"))),
+                        Html.collapsibleElement("p", list(
+                            Html.text(" "),
+                            Html.element("a", map("href", "#doc-42-comment-ref-4"), list(Html.text("↑"))))))))))));
     }
 
     @Test
@@ -358,8 +392,13 @@ public class DocumentToHtmlTests {
     }
 
     private List<HtmlNode> convertToHtml(Document document) {
+        return convertToHtml(document, StyleMap.EMPTY);
+    }
+
+    private List<HtmlNode> convertToHtml(Document document, StyleMap styleMap) {
         DocumentToHtmlOptions options = DocumentToHtmlOptions.DEFAULT
-            .idPrefix("doc-42-");
+            .idPrefix("doc-42-")
+            .addStyleMap(styleMap);
         InternalResult<List<HtmlNode>> result = DocumentToHtml.convertToHtml(document, options);
         assertThat(result.getWarnings(), emptyIterable());
         return result.getValue();
