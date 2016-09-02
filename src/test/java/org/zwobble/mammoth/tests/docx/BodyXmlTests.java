@@ -35,7 +35,6 @@ import static org.zwobble.mammoth.tests.docx.BodyXmlReaderMakers.bodyReader;
 import static org.zwobble.mammoth.tests.docx.OfficeXmlBuilders.*;
 
 public class BodyXmlTests {
-
     @Test
     public void textFromTextElementIsRead() {
         XmlElement element = textXml("Hello!");
@@ -548,6 +547,10 @@ public class BodyXmlTests {
             isInternalResult(deepEquals(expected), list()));
     }
 
+
+    private static final String IMAGE_BYTES = "Not an image at all!";
+
+
     @Test
     public void canReadImagedataElementsWithIdAttribute() throws IOException {
         assertCanReadEmbeddedImage(image ->
@@ -570,8 +573,7 @@ public class BodyXmlTests {
         XmlElement element = generateXml.apply(new EmbeddedImage("rId5", "It's a hat"));
         Relationships relationships = new Relationships(map(
             "rId5", new Relationship("media/hat.png")));
-        String imageBytes = "Not an image at all!";
-        DocxFile file = InMemoryDocxFile.fromStrings(map("word/media/hat.png", imageBytes));
+        DocxFile file = InMemoryDocxFile.fromStrings(map("word/media/hat.png", IMAGE_BYTES));
 
         Image image = (Image) readSuccess(
             bodyReader(relationships, file),
@@ -581,7 +583,7 @@ public class BodyXmlTests {
             hasProperty("contentType", deepEquals(Optional.of("image/png")))));
         assertThat(
             toString(image.open()),
-            equalTo(imageBytes));
+            equalTo(IMAGE_BYTES));
     }
 
     private static String toString(InputStream stream) throws IOException {
@@ -603,7 +605,7 @@ public class BodyXmlTests {
         XmlElement element = inlineImageXml(embeddedBlipXml("rId5"), "");
         Relationships relationships = new Relationships(map(
             "rId5", new Relationship("media/hat.emf")));
-        DocxFile file = InMemoryDocxFile.fromStrings(map("word/media/hat.emf", "Not an image at all!"));
+        DocxFile file = InMemoryDocxFile.fromStrings(map("word/media/hat.emf", IMAGE_BYTES));
         ContentTypes contentTypes = new ContentTypes(map("emf", "image/x-emf"), map());
 
         InternalResult<?> result = read(
@@ -620,15 +622,14 @@ public class BodyXmlTests {
         XmlElement element = inlineImageXml(linkedBlipXml("rId5"), "");
         Relationships relationships = new Relationships(map(
             "rId5", new Relationship("file:///media/hat.png")));
-        String imageBytes = "Not an image at all!";
 
         Image image = (Image) readSuccess(
-            bodyReader(relationships, new InMemoryFileReader(map("file:///media/hat.png", imageBytes))),
+            bodyReader(relationships, new InMemoryFileReader(map("file:///media/hat.png", IMAGE_BYTES))),
             element);
 
         assertThat(
             toString(image.open()),
-            equalTo(imageBytes));
+            equalTo(IMAGE_BYTES));
     }
 
     private XmlElement inlineImageXml(XmlElement blip, String description) {
