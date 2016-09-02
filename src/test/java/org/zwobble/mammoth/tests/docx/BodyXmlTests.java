@@ -14,6 +14,7 @@ import org.zwobble.mammoth.tests.DeepReflectionMatcher;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -565,6 +566,45 @@ public class BodyXmlTests {
     }
 
     @Test
+    public void altTextTitleIsUsedIfAltTextDescriptionIsBlank() throws IOException {
+        XmlElement element = inlineImageXml(
+            embeddedBlipXml(IMAGE_RELATIONSHIP_ID),
+            Optional.of(" "),
+            Optional.of("It's a hat")
+        );
+
+        Image image = readEmbeddedImage(element);
+
+        assertThat(image, hasProperty("altText", deepEquals(Optional.of("It's a hat"))));
+    }
+
+    @Test
+    public void altTextTitleIsUsedIfAltTextDescriptionIsMissing() throws IOException {
+        XmlElement element = inlineImageXml(
+            embeddedBlipXml(IMAGE_RELATIONSHIP_ID),
+            Optional.empty(),
+            Optional.of("It's a hat")
+        );
+
+        Image image = readEmbeddedImage(element);
+
+        assertThat(image, hasProperty("altText", deepEquals(Optional.of("It's a hat"))));
+    }
+
+    @Test
+    public void altTextDescriptionIsPreferredToAltTextTitle() throws IOException {
+        XmlElement element = inlineImageXml(
+            embeddedBlipXml(IMAGE_RELATIONSHIP_ID),
+            Optional.of("It's a hat"),
+            Optional.of("hat")
+        );
+
+        Image image = readEmbeddedImage(element);
+
+        assertThat(image, hasProperty("altText", deepEquals(Optional.of("It's a hat"))));
+    }
+
+    @Test
     public void canReadAnchoredPictures() throws IOException {
         assertCanReadEmbeddedImage(image ->
             anchoredImageXml(embeddedBlipXml(image.relationshipId), image.altText));
@@ -572,19 +612,23 @@ public class BodyXmlTests {
 
     private void assertCanReadEmbeddedImage(Function<EmbeddedImage, XmlElement> generateXml) throws IOException {
         XmlElement element = generateXml.apply(new EmbeddedImage(IMAGE_RELATIONSHIP_ID, "It's a hat"));
-        Relationships relationships = new Relationships(map(
-            IMAGE_RELATIONSHIP_ID, new Relationship("media/hat.png")));
-        DocxFile file = InMemoryDocxFile.fromStrings(map("word/media/hat.png", IMAGE_BYTES));
-
-        Image image = (Image) readSuccess(
-            bodyReader(relationships, file),
-            element);
+        Image image = readEmbeddedImage(element);
         assertThat(image, allOf(
             hasProperty("altText", deepEquals(Optional.of("It's a hat"))),
             hasProperty("contentType", deepEquals(Optional.of("image/png")))));
         assertThat(
             toString(image.open()),
             equalTo(IMAGE_BYTES));
+    }
+
+    private Image readEmbeddedImage(XmlElement element) {
+        Relationships relationships = new Relationships(map(
+            IMAGE_RELATIONSHIP_ID, new Relationship("media/hat.png")));
+        DocxFile file = InMemoryDocxFile.fromStrings(map("word/media/hat.png", IMAGE_BYTES));
+
+        return (Image) readSuccess(
+            BodyXmlReaderMakers.bodyReader(relationships, file),
+            element);
     }
 
     private static String toString(InputStream stream) throws IOException {
@@ -634,18 +678,26 @@ public class BodyXmlTests {
     }
 
     private XmlElement inlineImageXml(XmlElement blip, String description) {
+        return inlineImageXml(blip, Optional.of(description), Optional.empty());
+    }
+
+    private XmlElement inlineImageXml(XmlElement blip, Optional<String> description, Optional<String> title) {
         return element("w:drawing", list(
-            element("wp:inline", imageXml(blip, description))));
+            element("wp:inline", imageXml(blip, description, title))));
     }
 
     private XmlElement anchoredImageXml(XmlElement blip, String description) {
         return element("w:drawing", list(
-            element("wp:anchor", imageXml(blip, description))));
+            element("wp:anchor", imageXml(blip, Optional.of(description), Optional.empty()))));
     }
 
-    private List<XmlNode> imageXml(XmlElement blip, String description) {
+    private List<XmlNode> imageXml(XmlElement blip, Optional<String> description, Optional<String> title) {
+        Map<String, String> properties = new HashMap<>();
+        description.ifPresent(value -> properties.put("descr", value));
+        title.ifPresent(value -> properties.put("title", value));
+
         return list(
-            element("wp:docPr", map("descr", description)),
+            element("wp:docPr", properties),
             element("a:graphic", list(
                 element("a:graphicData", list(
                     element("pic:pic", list(

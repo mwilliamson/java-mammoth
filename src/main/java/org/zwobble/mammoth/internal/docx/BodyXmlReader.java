@@ -388,7 +388,11 @@ public class BodyXmlReader {
     }
 
     private ReadResult readInline(XmlElement element) {
-        Optional<String> altText = element.findChildOrEmpty("wp:docPr").getAttributeOrNone("descr");
+        XmlElementLike properties = element.findChildOrEmpty("wp:docPr");
+        Optional<String> altText = Optionals.first(
+            properties.getAttributeOrNone("descr").filter(description -> !description.trim().isEmpty()),
+            properties.getAttributeOrNone("title")
+        );
         XmlElementList blips = element.findChildren("a:graphic")
             .findChildren("a:graphicData")
             .findChildren("pic:pic")
