@@ -549,6 +549,7 @@ public class BodyXmlTests {
 
 
     private static final String IMAGE_BYTES = "Not an image at all!";
+    private static final String IMAGE_RELATIONSHIP_ID = "rId5";
 
 
     @Test
@@ -570,9 +571,9 @@ public class BodyXmlTests {
     }
 
     private void assertCanReadEmbeddedImage(Function<EmbeddedImage, XmlElement> generateXml) throws IOException {
-        XmlElement element = generateXml.apply(new EmbeddedImage("rId5", "It's a hat"));
+        XmlElement element = generateXml.apply(new EmbeddedImage(IMAGE_RELATIONSHIP_ID, "It's a hat"));
         Relationships relationships = new Relationships(map(
-            "rId5", new Relationship("media/hat.png")));
+            IMAGE_RELATIONSHIP_ID, new Relationship("media/hat.png")));
         DocxFile file = InMemoryDocxFile.fromStrings(map("word/media/hat.png", IMAGE_BYTES));
 
         Image image = (Image) readSuccess(
@@ -602,9 +603,9 @@ public class BodyXmlTests {
 
     @Test
     public void warningIfImageTypeIsUnsupportedByWebBrowsers() {
-        XmlElement element = inlineImageXml(embeddedBlipXml("rId5"), "");
+        XmlElement element = inlineImageXml(embeddedBlipXml(IMAGE_RELATIONSHIP_ID), "");
         Relationships relationships = new Relationships(map(
-            "rId5", new Relationship("media/hat.emf")));
+            IMAGE_RELATIONSHIP_ID, new Relationship("media/hat.emf")));
         DocxFile file = InMemoryDocxFile.fromStrings(map("word/media/hat.emf", IMAGE_BYTES));
         ContentTypes contentTypes = new ContentTypes(map("emf", "image/x-emf"), map());
 
@@ -619,9 +620,9 @@ public class BodyXmlTests {
 
     @Test
     public void canReadLinkedPictures() throws IOException {
-        XmlElement element = inlineImageXml(linkedBlipXml("rId5"), "");
+        XmlElement element = inlineImageXml(linkedBlipXml(IMAGE_RELATIONSHIP_ID), "");
         Relationships relationships = new Relationships(map(
-            "rId5", new Relationship("file:///media/hat.png")));
+            IMAGE_RELATIONSHIP_ID, new Relationship("file:///media/hat.png")));
 
         Image image = (Image) readSuccess(
             bodyReader(relationships, new InMemoryFileReader(map("file:///media/hat.png", IMAGE_BYTES))),
