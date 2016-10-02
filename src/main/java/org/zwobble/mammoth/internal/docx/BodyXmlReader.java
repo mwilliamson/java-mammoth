@@ -381,10 +381,13 @@ public class BodyXmlReader {
     }
 
     private ReadResult readImagedata(XmlElement element) {
-        Optional<String> title = element.getAttributeOrNone("o:title");
-        String relationshipId = element.getAttribute("r:id");
-        String imagePath = relationshipIdToDocxPath(relationshipId);
-        return readImage(imagePath, title, () -> DocxFiles.getInputStream(file, imagePath));
+        return element.getAttributeOrNone("r:id")
+            .map(relationshipId -> {
+                Optional<String> title = element.getAttributeOrNone("o:title");
+                String imagePath = relationshipIdToDocxPath(relationshipId);
+                return readImage(imagePath, title, () -> DocxFiles.getInputStream(file, imagePath));
+            })
+            .orElse(ReadResult.emptyWithWarning("A v:imagedata element without a relationship ID was ignored"));
     }
 
     private ReadResult readInline(XmlElement element) {

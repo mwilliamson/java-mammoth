@@ -560,6 +560,15 @@ public class BodyXmlTests {
     }
 
     @Test
+    public void whenImagedataElementHasNoRelationshipIdThenItIsIgnoredWithError() throws IOException {
+        XmlElement element = element("v:imagedata");
+
+        assertThat(
+            readAll(bodyReader(), element),
+            isInternalResult(equalTo(list()), list("A v:imagedata element without a relationship ID was ignored")));
+    }
+
+    @Test
     public void canReadInlinePictures() throws IOException {
         assertCanReadEmbeddedImage(image ->
             inlineImageXml(embeddedBlipXml(image.relationshipId), image.altText));
