@@ -560,7 +560,7 @@ public class BodyXmlTests {
     }
 
     @Test
-    public void whenImagedataElementHasNoRelationshipIdThenItIsIgnoredWithError() throws IOException {
+    public void whenImagedataElementHasNoRelationshipIdThenItIsIgnoredWithWarning() throws IOException {
         XmlElement element = element("v:imagedata");
 
         assertThat(
