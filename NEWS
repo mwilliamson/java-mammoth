@@ -3,7 +3,10 @@
 * Use alt text title as alt text for images when the alt text description is
   blank or missing.
 
-* Ignore v:imagedata elements without relationship ID with warning.
+* Ignore v:imagedata elements without relationship ID with warning.# 1.2.2
+
+* Ignore bold, italic, underline and strikethrough elements that have a value of
+  false or 0.
 
 # 0.0.4
 

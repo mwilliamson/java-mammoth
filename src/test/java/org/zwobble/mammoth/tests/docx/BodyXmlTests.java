@@ -3,6 +3,8 @@ package org.zwobble.mammoth.tests.docx;
 import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 import org.zwobble.mammoth.internal.documents.*;
 import org.zwobble.mammoth.internal.docx.*;
 import org.zwobble.mammoth.internal.results.InternalResult;
@@ -14,10 +16,7 @@ import org.zwobble.mammoth.tests.DeepReflectionMatcher;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Function;
 
 import static java.util.Arrays.asList;
@@ -252,6 +251,60 @@ public class BodyXmlTests {
         assertThat(
             readSuccess(bodyReader(), element),
             hasProperty("strikethrough", equalTo(true)));
+    }
+
+    @RunWith(Parameterized.class)
+    public static class RunBooleanPropertyTests {
+        @Parameterized.Parameters(name = "propertyName: {0}, tagName: {1}")
+        public static Collection<Object[]> data() {
+            return list(new Object[][] {
+                {"bold", "w:b"}, {"underline", "w:u"}, {"italic", "w:i"}, {"strikethrough", "w:strike"}
+            });
+        }
+
+        private final String propertyName;
+        private final String tagName;
+
+        public RunBooleanPropertyTests(String propertyName, String tagName) {
+            this.propertyName = propertyName;
+            this.tagName = tagName;
+        }
+
+        @Test
+        public void runBooleanPropertyIsFalseIfElementIsPresentAndValIsFalse() {
+            XmlElement element = runXmlWithProperties(element(tagName, map("w:val", "false")));
+
+            assertThat(
+                readSuccess(bodyReader(), element),
+                hasProperty(propertyName, equalTo(false)));
+        }
+
+        @Test
+        public void runBooleanPropertyIsFalseIfElementIsPresentAndValIs0() {
+            XmlElement element = runXmlWithProperties(element(tagName, map("w:val", "0")));
+
+            assertThat(
+                readSuccess(bodyReader(), element),
+                hasProperty(propertyName, equalTo(false)));
+        }
+
+        @Test
+        public void runBooleanPropertyIsFalseIfElementIsPresentAndValIsTrue() {
+            XmlElement element = runXmlWithProperties(element(tagName, map("w:val", "true")));
+
+            assertThat(
+                readSuccess(bodyReader(), element),
+                hasProperty(propertyName, equalTo(true)));
+        }
+
+        @Test
+        public void runBooleanPropertyIsFalseIfElementIsPresentAndValIs1() {
+            XmlElement element = runXmlWithProperties(element(tagName, map("w:val", "1")));
+
+            assertThat(
+                readSuccess(bodyReader(), element),
+                hasProperty(propertyName, equalTo(true)));
+        }
     }
 
     @Test
@@ -827,7 +880,7 @@ public class BodyXmlTests {
         return element("w:r", children);
     }
 
-    private XmlElement runXmlWithProperties(XmlNode... children) {
+    private static XmlElement runXmlWithProperties(XmlNode... children) {
         return element("w:r", list(element("w:rPr", asList(children))));
     }
 

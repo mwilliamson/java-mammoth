@@ -146,19 +146,27 @@ public class BodyXmlReader {
     }
 
     private boolean isBold(XmlElementLike properties) {
-        return properties.hasChild("w:b");
+        return readBooleanElement(properties, "w:b");
     }
 
     private boolean isItalic(XmlElementLike properties) {
-        return properties.hasChild("w:i");
+        return readBooleanElement(properties, "w:i");
     }
 
     private boolean isUnderline(XmlElementLike properties) {
-        return properties.hasChild("w:u");
+        return readBooleanElement(properties, "w:u");
     }
 
     private boolean isStrikethrough(XmlElementLike properties) {
-        return properties.hasChild("w:strike");
+        return readBooleanElement(properties, "w:strike");
+    }
+
+    private boolean readBooleanElement(XmlElementLike properties, String tagName) {
+        return properties.findChild(tagName)
+            .map(child -> child.getAttributeOrNone("w:val")
+                .map(value -> !value.equals("false") && !value.equals("0"))
+                .orElse(true))
+            .orElse(false);
     }
 
     private VerticalAlignment readVerticalAlignment(XmlElementLike properties) {
