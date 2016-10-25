@@ -13,7 +13,8 @@ public interface DocumentElementVisitor<T> {
     T visit(TableCell tableCell);
 
     T visit(Hyperlink hyperlink);
-    T visit(Bookmark bookmark);
+    T visit(BookmarkStart bookmarkStart);
+    T visit(BookmarkEnd bookmarkEnd);
     T visit(NoteReference noteReference);
     T visit(CommentReference commentReference);
 

@@ -33,6 +33,7 @@ public class BodyXmlReader {
     private final ContentTypes contentTypes;
     private final DocxFile file;
     private final FileReader fileReader;
+    private final Map<String, String> bookmarkIdsToNames;
 
     public BodyXmlReader(
         Styles styles,
@@ -48,6 +49,7 @@ public class BodyXmlReader {
         this.contentTypes = contentTypes;
         this.file = file;
         this.fileReader = fileReader;
+        this.bookmarkIdsToNames = new HashMap<>();
     }
 
     public ReadResult readElement(XmlElement element) {
@@ -74,7 +76,9 @@ public class BodyXmlReader {
             case "w:hyperlink":
                 return readHyperlink(element);
             case "w:bookmarkStart":
-                return readBookmark(element);
+                return readBookmarkStart(element);
+            case "w:bookmarkEnd":
+                return readBookmarkEnd(element);
             case "w:footnoteReference":
                 return readNoteReference(NoteType.FOOTNOTE, element);
             case "w:endnoteReference":
@@ -107,7 +111,6 @@ public class BodyXmlReader {
             case "office-word:wrap":
             case "v:shadow":
             case "v:shapetype":
-            case "w:bookmarkEnd":
             case "w:sectPr":
             case "w:proofErr":
             case "w:lastRenderedPageBreak":
@@ -365,12 +368,24 @@ public class BodyXmlReader {
         }
     }
 
-    private ReadResult readBookmark(XmlElement element) {
+    private ReadResult readBookmarkStart(XmlElement element) {
         String name = element.getAttribute("w:name");
+        String id = element.getAttribute("w:id");
+        bookmarkIdsToNames.put(id, name);
         if (name.equals("_GoBack")) {
             return ReadResult.EMPTY_SUCCESS;
         } else {
-            return success(new Bookmark(name));
+            return success(new BookmarkStart(name));
+        }
+    }
+
+    private ReadResult readBookmarkEnd(XmlElement element) {
+        String id = element.getAttribute("w:id");
+        String name = bookmarkIdsToNames.get(id);
+        if (name == null || name.equals("_GoBack")) {
+            return ReadResult.EMPTY_SUCCESS;
+        } else {
+            return success(new BookmarkEnd(name));
         }
     }
 

@@ -272,10 +272,17 @@ public class DocumentToHtmlTests {
     }
 
     @Test
-    public void bookmarksAreConvertedToAnchorsWithIds() {
+    public void bookmarkStartsAreConvertedToAnchorsWithIds() {
         assertThat(
-            convertToHtml(new Bookmark("start")),
-            deepEquals(list(Html.element("a", map("id", "doc-42-start"), list(Html.FORCE_WRITE)))));
+                convertToHtml(new BookmarkStart("bookmark")),
+                deepEquals(list(Html.element("a", map("id", "doc-42-bookmarkStart-bookmark"), list(Html.FORCE_WRITE)))));
+    }
+
+    @Test
+    public void bookmarkEndsAreConvertedToAnchorsWithIds() {
+        assertThat(
+                convertToHtml(new BookmarkEnd("bookmark")),
+                deepEquals(list(Html.element("a", map("id", "doc-42-bookmarkEnd-bookmark"), list(Html.FORCE_WRITE)))));
     }
 
     @Test
