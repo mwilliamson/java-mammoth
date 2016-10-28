@@ -8,6 +8,8 @@ import org.junit.runners.Parameterized;
 import org.zwobble.mammoth.internal.documents.*;
 import org.zwobble.mammoth.internal.docx.*;
 import org.zwobble.mammoth.internal.results.InternalResult;
+import org.zwobble.mammoth.internal.util.Lists;
+import org.zwobble.mammoth.internal.util.Maps;
 import org.zwobble.mammoth.internal.xml.XmlElement;
 import org.zwobble.mammoth.internal.xml.XmlNode;
 import org.zwobble.mammoth.internal.xml.XmlNodes;
@@ -536,7 +538,7 @@ public class BodyXmlTests {
 
     @Test
     public void goBackBookmarkIsIgnored() {
-        XmlElement element = element("w:bookmarkStart", map("w:name", "_GoBack"));
+        XmlElement element = element("w:bookmarkStart", map("w:name", "_GoBack", "w:id", "7"));
         assertThat(
             readAll(bodyReader(), element),
             isInternalResult(equalTo(list()), list()));
@@ -544,10 +546,23 @@ public class BodyXmlTests {
 
     @Test
     public void bookmarkStartIsReadIfNameIsNotGoBack() {
-        XmlElement element = element("w:bookmarkStart", map("w:name", "start"));
+        XmlElement element = element("w:bookmarkStart", map("w:name", "start", "w:id", "3"));
         assertThat(
             readSuccess(bodyReader(), element),
-            deepEquals(new Bookmark("start")));
+            deepEquals(new BookmarkStart("start")));
+    }
+
+    @Test
+    public void readsAPairOfBookmarkStartAndEnd() {
+        XmlElement startElement = element("w:bookmarkStart", map("w:name", "start", "w:id", "3"));
+        XmlElement endElement = element("w:bookmarkEnd", map("w:id", "3"));
+        XmlElement parent = new XmlElement("w:p", Maps.map(), Lists.list(startElement, endElement));
+        assertThat(
+                readSuccess(bodyReader(), parent),
+                deepEquals(new Paragraph(
+                        Optional.empty(),
+                        Optional.empty(),
+                        Lists.list(new BookmarkStart("start"), new BookmarkEnd("start")))));
     }
 
     @Test
@@ -811,7 +826,6 @@ public class BodyXmlTests {
         assertIsIgnored("office-word:wrap");
         assertIsIgnored("v:shadow");
         assertIsIgnored("v:shapetype");
-        assertIsIgnored("w:bookmarkEnd");
         assertIsIgnored("w:sectPr");
         assertIsIgnored("w:proofErr");
         assertIsIgnored("w:lastRenderedPageBreak");

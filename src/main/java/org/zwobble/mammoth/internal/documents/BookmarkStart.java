@@ -1,9 +1,9 @@
 package org.zwobble.mammoth.internal.documents;
 
-public class Bookmark implements DocumentElement {
+public class BookmarkStart implements DocumentElement {
     private final String name;
 
-    public Bookmark(String name) {
+    public BookmarkStart(String name) {
         this.name = name;
     }
 

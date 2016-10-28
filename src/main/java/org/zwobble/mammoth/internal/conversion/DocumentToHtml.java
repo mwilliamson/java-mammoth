@@ -230,10 +230,15 @@ public class DocumentToHtml {
             }
 
             @Override
-            public List<HtmlNode> visit(Bookmark bookmark) {
-                return list(Html.element("a", map("id", generateId(bookmark.getName())), list(Html.FORCE_WRITE)));
+            public List<HtmlNode> visit(BookmarkStart bookmarkStart) {
+                return list(Html.element("a", map("id", generateId("bookmarkStart-" + bookmarkStart.getName())), list(Html.FORCE_WRITE)));
             }
 
+            @Override
+            public List<HtmlNode> visit(BookmarkEnd bookmarkEnd) {
+                return list(Html.element("a", map("id", generateId("bookmarkEnd-" + bookmarkEnd.getName())), list(Html.FORCE_WRITE)));
+            }
+            
             @Override
             public List<HtmlNode> visit(NoteReference noteReference) {
                 noteReferences.add(noteReference);
