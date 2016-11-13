@@ -15,6 +15,18 @@ public class StyleMap {
         return new StyleMapBuilder();
     }
 
+    public static StyleMap merge(StyleMap high, StyleMap low) {
+        // TODO: add appropriate tests
+        return new StyleMap(
+            Optionals.first(high.bold, low.bold),
+            Optionals.first(high.italic, low.italic),
+            Optionals.first(high.underline, low.underline),
+            Optionals.first(high.strikethrough, low.strikethrough),
+            Optionals.first(high.commentReference, low.commentReference),
+            Lists.eagerConcat(high.paragraphStyles, low.paragraphStyles),
+            Lists.eagerConcat(high.runStyles, low.runStyles));
+    }
+
     public static final StyleMap EMPTY = new StyleMapBuilder().build();
 
     private final Optional<HtmlPath> bold;
@@ -45,14 +57,7 @@ public class StyleMap {
 
     public StyleMap update(StyleMap styleMap) {
         // TODO: add appropriate tests
-        return new StyleMap(
-            Optionals.first(styleMap.bold, bold),
-            Optionals.first(styleMap.italic, italic),
-            Optionals.first(styleMap.underline, underline),
-            Optionals.first(styleMap.strikethrough, strikethrough),
-            Optionals.first(styleMap.commentReference, commentReference),
-            Lists.eagerConcat(styleMap.paragraphStyles, paragraphStyles),
-            Lists.eagerConcat(styleMap.runStyles, runStyles));
+        return merge(styleMap, this);
     }
 
     public Optional<HtmlPath> getBold() {

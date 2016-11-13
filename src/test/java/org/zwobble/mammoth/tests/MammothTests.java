@@ -227,6 +227,14 @@ public class MammothTests {
     }
 
     @Test
+    public void embeddedStyleMapIsUsedIfPresent() throws IOException {
+        assertThat(
+            convertToHtml("embedded-style-map.docx"),
+            isSuccess("<h1>Walking on imported air</h1>")
+        );
+    }
+
+    @Test
     public void canExtractRawTextFromFile() throws IOException {
         assertThat(
             new DocumentConverter().extractRawText(TestData.file("simple-list.docx")),

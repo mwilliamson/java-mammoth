@@ -7,10 +7,13 @@ import org.zwobble.mammoth.internal.documents.HasChildren;
 import org.zwobble.mammoth.internal.documents.Paragraph;
 import org.zwobble.mammoth.internal.documents.Text;
 import org.zwobble.mammoth.internal.docx.DocxFile;
+import org.zwobble.mammoth.internal.docx.EmbeddedStyleMap;
 import org.zwobble.mammoth.internal.docx.InMemoryDocxFile;
 import org.zwobble.mammoth.internal.docx.ZippedDocxFile;
 import org.zwobble.mammoth.internal.html.Html;
 import org.zwobble.mammoth.internal.results.InternalResult;
+import org.zwobble.mammoth.internal.styles.StyleMap;
+import org.zwobble.mammoth.internal.styles.parsing.StyleMapParser;
 import org.zwobble.mammoth.internal.util.PassThroughException;
 
 import java.io.File;
@@ -46,11 +49,18 @@ public class InternalDocumentConverter {
     }
 
     private InternalResult<String> convertToHtml(Optional<Path> path, DocxFile zipFile) {
+        Optional<StyleMap> styleMap = readEmbeddedStyleMap(zipFile).map(StyleMapParser::parse);
+        DocumentToHtmlOptions conversionOptions = styleMap.map(options::addEmbeddedStyleMap).orElse(options);
+
         return readDocument(path, zipFile)
-            .flatMap(nodes -> DocumentToHtml.convertToHtml(nodes, options))
+            .flatMap(nodes -> DocumentToHtml.convertToHtml(nodes, conversionOptions))
             .map(Html::stripEmpty)
             .map(Html::collapse)
             .map(Html::write);
+    }
+
+    private Optional<String> readEmbeddedStyleMap(DocxFile zipFile) {
+        return PassThroughException.wrap(() -> EmbeddedStyleMap.readStyleMap(zipFile));
     }
 
     public InternalResult<String> extractRawText(InputStream stream) throws IOException {

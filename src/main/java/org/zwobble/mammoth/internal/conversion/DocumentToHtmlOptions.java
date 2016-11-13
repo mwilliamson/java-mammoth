@@ -32,11 +32,19 @@ public class DocumentToHtmlOptions {
     }
 
     public DocumentToHtmlOptions addStyleMap(StyleMap styleMap) {
-        return new DocumentToHtmlOptions(idPrefix, preserveEmptyParagraphs, this.styleMap.update(styleMap), disableDefaultStyleMap);
+        return withStyleMap(this.styleMap.update(styleMap));
     }
 
     public DocumentToHtmlOptions disableDefaultStyleMap() {
         return new DocumentToHtmlOptions(idPrefix, preserveEmptyParagraphs, styleMap, true);
+    }
+
+    public DocumentToHtmlOptions addEmbeddedStyleMap(StyleMap embeddedStyleMap) {
+        return withStyleMap(StyleMap.merge(styleMap, embeddedStyleMap));
+    }
+
+    private DocumentToHtmlOptions withStyleMap(StyleMap styleMap) {
+        return new DocumentToHtmlOptions(idPrefix, preserveEmptyParagraphs, styleMap, disableDefaultStyleMap);
     }
 
     public String idPrefix() {
@@ -50,4 +58,6 @@ public class DocumentToHtmlOptions {
     public StyleMap styleMap() {
         return disableDefaultStyleMap ? styleMap : DefaultStyles.DEFAULT_STYLE_MAP.update(styleMap);
     }
+
+
 }
