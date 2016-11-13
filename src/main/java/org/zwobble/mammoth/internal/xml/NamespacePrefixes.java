@@ -12,10 +12,15 @@ public class NamespacePrefixes {
     }
 
     public static class Builder {
-        private final Map<String, String> uriToPrefix = new HashMap<>();
+        private final Map<String, NamespacePrefix> uriToPrefix = new HashMap<>();
 
         public Builder put(String prefix, String uri) {
-            uriToPrefix.put(uri, prefix);
+            uriToPrefix.put(uri, new NamespacePrefix(Optional.of(prefix), uri));
+            return this;
+        }
+
+        public Builder defaultPrefix(String uri) {
+            uriToPrefix.put(uri, new NamespacePrefix(Optional.empty(), uri));
             return this;
         }
         
@@ -24,13 +29,13 @@ public class NamespacePrefixes {
         }
     }
 
-    private final Map<String, String> uriToPrefix;
+    private final Map<String, NamespacePrefix> uriToPrefix;
 
-    public NamespacePrefixes(Map<String, String> uriToPrefix) {
+    public NamespacePrefixes(Map<String, NamespacePrefix> uriToPrefix) {
         this.uriToPrefix = uriToPrefix;
     }
 
-    public Optional<String> prefixForUri(String uri) {
+    public Optional<NamespacePrefix> lookupUri(String uri) {
         return lookup(uriToPrefix, uri);
     }
 }

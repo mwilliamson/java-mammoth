@@ -21,7 +21,7 @@ import static org.zwobble.mammoth.internal.util.Maps.map;
 
 public class XmlParserTests {
     private final XmlParser parser = new XmlParser(new NamespacePrefixes(map()));
-    
+
     @Test
     public void canParseSelfClosingElement() {
         assertThat(
@@ -31,21 +31,21 @@ public class XmlParserTests {
             parser.parseString("<values/>"),
             isElement("values"));
     }
-    
+
     @Test
     public void canParseEmptyElementWithSeparateClosingTag() {
         assertThat(
             parser.parseString("<body></body>"),
             isElement("body"));
     }
-    
+
     @Test
     public void canParseAttributesOfTag() {
         assertThat(
             parser.parseString("<body name='bob'></body>"),
             isElement("body", map("name", "bob")));
     }
-    
+
     @Test
     public void canParseElementWithDescendantElements() {
         assertThat(
@@ -63,21 +63,21 @@ public class XmlParserTests {
             isElement("body", map(), list(
                 isTextNode("Hello!"))));
     }
-    
+
     @Test
     public void unmappedNamespaceUrisInElementNamesAreIncludedInBracesAsPrefix() {
         assertThat(
             parser.parseString("<w:body xmlns:w='word'/>"),
             isElement("{word}body"));
     }
-    
+
     @Test
     public void unmappedNamespaceUrisInAttributeNamesAreIncludedInBracesAsPrefix() {
         assertThat(
             parser.parseString("<body xmlns:w='word' w:name='bob'></body>"),
             isElement("body", map("{word}name", "bob")));
     }
-    
+
     @Test
     public void mappedNamespaceUrisInElementNamesArePrefixedToLocalNameWithColon() {
         XmlParser parser = new XmlParser(NamespacePrefixes.builder().put("x", "word").build());
@@ -85,7 +85,7 @@ public class XmlParserTests {
             parser.parseString("<w:body xmlns:w='word'/>"),
             isElement("x:body"));
     }
-    
+
     @Test
     public void mappedNamespaceUrisInAttributeNamesArePrefixedToLocalNameWithColon() {
         XmlParser parser = new XmlParser(NamespacePrefixes.builder().put("x", "word").build());
@@ -93,7 +93,16 @@ public class XmlParserTests {
             parser.parseString("<body xmlns:w='word' w:name='bob'/>"),
             isElement("body", map("x:name", "bob")));
     }
-    
+
+    @Test
+    public void elementsWithDefaultNamespaceHaveNoPrefix() {
+        XmlParser parser = new XmlParser(NamespacePrefixes.builder().defaultPrefix("word").build());
+        assertThat(
+            parser.parseString("<w:body xmlns:w='word'/>"),
+            isElement("body")
+        );
+    }
+
     @Test
     public void canParseInputStream() {
         assertThat(

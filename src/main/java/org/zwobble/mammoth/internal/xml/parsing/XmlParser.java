@@ -53,8 +53,8 @@ public class XmlParser {
             if (isNullOrEmpty(name.getUri())) {
                 return name.getLocalName();                
             } else {
-                return namespaces.prefixForUri(name.getUri())
-                    .map(prefix -> prefix + ":" + name.getLocalName())
+                return namespaces.lookupUri(name.getUri())
+                    .map(namespace -> namespace.getPrefix().map(prefix -> prefix + ":").orElse("") + name.getLocalName())
                     .orElseGet(() -> "{" + name.getUri() + "}" + name.getLocalName());
             }
             
