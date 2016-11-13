@@ -1,4 +1,4 @@
-package org.zwobble.mammoth.internal.docx;
+package org.zwobble.mammoth.internal.archives;
 
 import org.zwobble.mammoth.internal.util.PassThroughException;
 import org.zwobble.mammoth.internal.util.Streams;

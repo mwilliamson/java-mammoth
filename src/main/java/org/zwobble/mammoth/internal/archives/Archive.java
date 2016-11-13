@@ -1,4 +1,4 @@
-package org.zwobble.mammoth.internal.docx;
+package org.zwobble.mammoth.internal.archives;
 
 import java.io.Closeable;
 import java.io.IOException;

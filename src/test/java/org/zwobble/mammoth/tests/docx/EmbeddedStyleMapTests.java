@@ -1,6 +1,9 @@
 package org.zwobble.mammoth.tests.docx;
 
 import org.junit.Test;
+import org.zwobble.mammoth.internal.archives.Archives;
+import org.zwobble.mammoth.internal.archives.InMemoryArchive;
+import org.zwobble.mammoth.internal.archives.MutableArchive;
 import org.zwobble.mammoth.internal.docx.*;
 import org.zwobble.mammoth.internal.util.Streams;
 

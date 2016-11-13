@@ -5,6 +5,8 @@ import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import org.zwobble.mammoth.internal.archives.Archive;
+import org.zwobble.mammoth.internal.archives.InMemoryArchive;
 import org.zwobble.mammoth.internal.documents.*;
 import org.zwobble.mammoth.internal.docx.*;
 import org.zwobble.mammoth.internal.results.InternalResult;

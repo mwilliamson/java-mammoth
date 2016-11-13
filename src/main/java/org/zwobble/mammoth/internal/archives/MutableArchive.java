@@ -1,4 +1,6 @@
-package org.zwobble.mammoth.internal.docx;
+package org.zwobble.mammoth.internal.archives;
+
+import org.zwobble.mammoth.internal.archives.Archive;
 
 public interface MutableArchive extends Archive {
 

@@ -1,5 +1,6 @@
 package org.zwobble.mammoth.tests.docx;
 
+import org.zwobble.mammoth.internal.archives.Archive;
 import org.zwobble.mammoth.internal.docx.*;
 import org.zwobble.mammoth.tests.Arguments;
 

@@ -4,7 +4,7 @@ import org.junit.Test;
 import org.zwobble.mammoth.DocumentConverter;
 import org.zwobble.mammoth.Result;
 import org.zwobble.mammoth.internal.docx.EmbeddedStyleMap;
-import org.zwobble.mammoth.internal.docx.InMemoryArchive;
+import org.zwobble.mammoth.internal.archives.InMemoryArchive;
 import org.zwobble.mammoth.internal.styles.parsing.ParseException;
 
 import java.io.*;

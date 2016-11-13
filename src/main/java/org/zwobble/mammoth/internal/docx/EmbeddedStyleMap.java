@@ -1,5 +1,7 @@
 package org.zwobble.mammoth.internal.docx;
 
+import org.zwobble.mammoth.internal.archives.Archive;
+import org.zwobble.mammoth.internal.archives.MutableArchive;
 import org.zwobble.mammoth.internal.util.Streams;
 
 import java.io.*;

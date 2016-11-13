@@ -1,5 +1,7 @@
 package org.zwobble.mammoth.internal.docx;
 
+import org.zwobble.mammoth.internal.archives.Archive;
+import org.zwobble.mammoth.internal.archives.Archives;
 import org.zwobble.mammoth.internal.documents.*;
 import org.zwobble.mammoth.internal.results.InternalResult;
 import org.zwobble.mammoth.internal.util.Casts;

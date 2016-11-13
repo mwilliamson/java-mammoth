@@ -1,5 +1,6 @@
 package org.zwobble.mammoth.internal.docx;
 
+import org.zwobble.mammoth.internal.archives.Archive;
 import org.zwobble.mammoth.internal.documents.Comment;
 import org.zwobble.mammoth.internal.documents.Document;
 import org.zwobble.mammoth.internal.documents.Notes;
