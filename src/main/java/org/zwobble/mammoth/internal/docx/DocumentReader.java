@@ -21,7 +21,7 @@ public class DocumentReader {
         BodyXmlReader forName(String name);
     }
 
-    public static InternalResult<Document> readDocument(Optional<Path> path, DocxFile zipFile) {
+    public static InternalResult<Document> readDocument(Optional<Path> path, Archive zipFile) {
         Styles styles = readStyles(zipFile);
         Numbering numbering = readNumbering(zipFile);
         ContentTypes contentTypes = readContentTypes(zipFile);
@@ -39,13 +39,13 @@ public class DocumentReader {
             });
     }
 
-    private static InternalResult<List<Comment>> readComments(DocxFile file, BodyReaders bodyReaders) {
+    private static InternalResult<List<Comment>> readComments(Archive file, BodyReaders bodyReaders) {
         return tryParseOfficeXml(file, "word/comments.xml")
             .map(new CommentXmlReader(bodyReaders.forName("comments"))::readElement)
             .orElse(InternalResult.success(list()));
     }
 
-    private static InternalResult<Notes> readNotes(DocxFile file, BodyReaders bodyReaders) {
+    private static InternalResult<Notes> readNotes(Archive file, BodyReaders bodyReaders) {
         return InternalResult.map(
             tryParseOfficeXml(file, "word/footnotes.xml")
                 .map(NotesXmlReader.footnote(bodyReaders.forName("footnotes"))::readElement)
@@ -56,36 +56,36 @@ public class DocumentReader {
             Lists::eagerConcat).map(Notes::new);
     }
 
-    private static Styles readStyles(DocxFile file) {
+    private static Styles readStyles(Archive file) {
         return tryParseOfficeXml(file, "word/styles.xml")
             .map(StylesXml::readStylesXmlElement)
             .orElse(Styles.EMPTY);
     }
 
-    private static Numbering readNumbering(DocxFile file) {
+    private static Numbering readNumbering(Archive file) {
         return tryParseOfficeXml(file, "word/numbering.xml")
             .map(NumberingXml::readNumberingXmlElement)
             .orElse(Numbering.EMPTY);
     }
 
-    private static ContentTypes readContentTypes(DocxFile file) {
+    private static ContentTypes readContentTypes(Archive file) {
         return tryParseOfficeXml(file, "[Content_Types].xml")
             .map(ContentTypesXml::readContentTypesXmlElement)
             .orElse(ContentTypes.DEFAULT);
     }
 
-    private static Relationships readRelationships(DocxFile zipFile, String name) {
+    private static Relationships readRelationships(Archive zipFile, String name) {
         return tryParseOfficeXml(zipFile, "word/_rels/" + name + ".xml.rels")
             .map(RelationshipsXml::readRelationshipsXmlElement)
             .orElse(Relationships.EMPTY);
     }
 
-    private static Optional<XmlElement> tryParseOfficeXml(DocxFile zipFile, String name) {
+    private static Optional<XmlElement> tryParseOfficeXml(Archive zipFile, String name) {
         return PassThroughException.wrap(() ->
             zipFile.tryGetInputStream(name).map(OfficeXml::parseXml));
     }
 
-    private static XmlElement parseOfficeXml(DocxFile zipFile, String name) {
+    private static XmlElement parseOfficeXml(Archive zipFile, String name) {
         return tryParseOfficeXml(zipFile, name)
             .orElseThrow(() -> new PassThroughException(new IOException("Missing entry in file: " + name)));
     }

@@ -7,14 +7,14 @@ import java.util.Optional;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-public class ZippedDocxFile implements DocxFile {
+public class ZippedArchive implements Archive {
     private final ZipFile zipFile;
 
-    public ZippedDocxFile(ZipFile zipFile) {
+    public ZippedArchive(ZipFile zipFile) {
         this.zipFile = zipFile;
     }
 
-    public ZippedDocxFile(File file) throws IOException {
+    public ZippedArchive(File file) throws IOException {
         this(new ZipFile(file));
     }
 

@@ -14,24 +14,24 @@ import static org.zwobble.mammoth.internal.util.Maps.eagerMapValues;
 import static org.zwobble.mammoth.internal.util.Maps.lookup;
 import static org.zwobble.mammoth.internal.util.Streams.toByteArray;
 
-public class InMemoryDocxFile implements DocxFile {
-    public static DocxFile fromStream(InputStream stream) throws IOException {
+public class InMemoryArchive implements Archive {
+    public static Archive fromStream(InputStream stream) throws IOException {
         ZipInputStream zipStream = new ZipInputStream(stream);
         Map<String, byte[]> entries = new HashMap<>();
         ZipEntry entry;
         while ((entry = zipStream.getNextEntry()) != null) {
             entries.put(entry.getName(), toByteArray(zipStream));
         }
-        return new InMemoryDocxFile(entries);
+        return new InMemoryArchive(entries);
     }
 
-    public static DocxFile fromStrings(Map<String, String> entries) {
-        return new InMemoryDocxFile(eagerMapValues(entries, value -> value.getBytes(StandardCharsets.UTF_8)));
+    public static Archive fromStrings(Map<String, String> entries) {
+        return new InMemoryArchive(eagerMapValues(entries, value -> value.getBytes(StandardCharsets.UTF_8)));
     }
 
     private final Map<String, byte[]> entries;
 
-    public InMemoryDocxFile(Map<String, byte[]> entries) {
+    public InMemoryArchive(Map<String, byte[]> entries) {
         this.entries = entries;
     }
 

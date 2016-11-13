@@ -5,6 +5,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Optional;
 
-public interface DocxFile extends Closeable {
+public interface Archive extends Closeable {
     Optional<InputStream> tryGetInputStream(String name) throws IOException;
 }

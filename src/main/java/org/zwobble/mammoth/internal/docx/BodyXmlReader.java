@@ -31,7 +31,7 @@ public class BodyXmlReader {
     private final Numbering numbering;
     private final Relationships relationships;
     private final ContentTypes contentTypes;
-    private final DocxFile file;
+    private final Archive file;
     private final FileReader fileReader;
 
     public BodyXmlReader(
@@ -39,7 +39,7 @@ public class BodyXmlReader {
         Numbering numbering,
         Relationships relationships,
         ContentTypes contentTypes,
-        DocxFile file,
+        Archive file,
         FileReader fileReader)
     {
         this.styles = styles;

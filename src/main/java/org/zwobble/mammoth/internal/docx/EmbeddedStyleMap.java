@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 public class EmbeddedStyleMap {
     private static final String PATH = "mammoth/style-map";
 
-    public static Optional<String> readStyleMap(DocxFile file) throws IOException {
+    public static Optional<String> readStyleMap(Archive file) throws IOException {
         return file.tryGetInputStream(PATH)
             .map(inputStream -> readInputStream(inputStream));
     }

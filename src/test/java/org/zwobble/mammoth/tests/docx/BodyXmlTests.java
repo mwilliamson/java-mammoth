@@ -686,7 +686,7 @@ public class BodyXmlTests {
     private Image readEmbeddedImage(XmlElement element) {
         Relationships relationships = new Relationships(map(
             IMAGE_RELATIONSHIP_ID, new Relationship("media/hat.png")));
-        DocxFile file = InMemoryDocxFile.fromStrings(map("word/media/hat.png", IMAGE_BYTES));
+        Archive file = InMemoryArchive.fromStrings(map("word/media/hat.png", IMAGE_BYTES));
 
         return (Image) readSuccess(
             BodyXmlReaderMakers.bodyReader(relationships, file),
@@ -712,7 +712,7 @@ public class BodyXmlTests {
         XmlElement element = inlineImageXml(embeddedBlipXml(IMAGE_RELATIONSHIP_ID), "");
         Relationships relationships = new Relationships(map(
             IMAGE_RELATIONSHIP_ID, new Relationship("media/hat.emf")));
-        DocxFile file = InMemoryDocxFile.fromStrings(map("word/media/hat.emf", IMAGE_BYTES));
+        Archive file = InMemoryArchive.fromStrings(map("word/media/hat.emf", IMAGE_BYTES));
         ContentTypes contentTypes = new ContentTypes(map("emf", "image/x-emf"), map());
 
         InternalResult<?> result = read(

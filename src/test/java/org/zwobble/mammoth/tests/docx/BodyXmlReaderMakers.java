@@ -15,7 +15,7 @@ public class BodyXmlReaderMakers {
             arguments.get(Numbering.class, Numbering.EMPTY),
             arguments.get(Relationships.class, Relationships.EMPTY),
             arguments.get(ContentTypes.class, ContentTypes.DEFAULT),
-            arguments.get(DocxFile.class, new DocxFile() {
+            arguments.get(Archive.class, new Archive() {
                 @Override
                 public Optional<InputStream> tryGetInputStream(String name) throws IOException {
                     throw new UnsupportedOperationException();

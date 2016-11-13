@@ -6,10 +6,10 @@ import org.zwobble.mammoth.internal.documents.DocumentElement;
 import org.zwobble.mammoth.internal.documents.HasChildren;
 import org.zwobble.mammoth.internal.documents.Paragraph;
 import org.zwobble.mammoth.internal.documents.Text;
-import org.zwobble.mammoth.internal.docx.DocxFile;
+import org.zwobble.mammoth.internal.docx.Archive;
 import org.zwobble.mammoth.internal.docx.EmbeddedStyleMap;
-import org.zwobble.mammoth.internal.docx.InMemoryDocxFile;
-import org.zwobble.mammoth.internal.docx.ZippedDocxFile;
+import org.zwobble.mammoth.internal.docx.InMemoryArchive;
+import org.zwobble.mammoth.internal.docx.ZippedArchive;
 import org.zwobble.mammoth.internal.html.Html;
 import org.zwobble.mammoth.internal.results.InternalResult;
 import org.zwobble.mammoth.internal.styles.StyleMap;
@@ -48,7 +48,7 @@ public class InternalDocumentConverter {
                 convertToHtml(Optional.of(file.toPath()), zipFile)));
     }
 
-    private InternalResult<String> convertToHtml(Optional<Path> path, DocxFile zipFile) {
+    private InternalResult<String> convertToHtml(Optional<Path> path, Archive zipFile) {
         Optional<StyleMap> styleMap = readEmbeddedStyleMap(zipFile).map(StyleMapParser::parse);
         DocumentToHtmlOptions conversionOptions = styleMap.map(options::addEmbeddedStyleMap).orElse(options);
 
@@ -59,7 +59,7 @@ public class InternalDocumentConverter {
             .map(Html::write);
     }
 
-    private Optional<String> readEmbeddedStyleMap(DocxFile zipFile) {
+    private Optional<String> readEmbeddedStyleMap(Archive zipFile) {
         return PassThroughException.wrap(() -> EmbeddedStyleMap.readStyleMap(zipFile));
     }
 
@@ -75,19 +75,19 @@ public class InternalDocumentConverter {
                 extractRawText(Optional.of(file.toPath()), zipFile)));
     }
 
-    private InternalResult<String> extractRawText(Optional<Path> path, DocxFile zipFile) {
+    private InternalResult<String> extractRawText(Optional<Path> path, Archive zipFile) {
         return readDocument(path, zipFile)
             .map(InternalDocumentConverter::extractRawTextOfChildren);
     }
 
-    private static <T> T withDocxFile(File file, Function<DocxFile, T> function) throws IOException {
-        try (DocxFile zipFile = new ZippedDocxFile(file)) {
+    private static <T> T withDocxFile(File file, Function<Archive, T> function) throws IOException {
+        try (Archive zipFile = new ZippedArchive(file)) {
             return function.apply(zipFile);
         }
     }
 
-    private static <T> T withDocxFile(InputStream stream, Function<DocxFile, T> function) throws IOException {
-        try (DocxFile zipFile = InMemoryDocxFile.fromStream(stream)) {
+    private static <T> T withDocxFile(InputStream stream, Function<Archive, T> function) throws IOException {
+        try (Archive zipFile = InMemoryArchive.fromStream(stream)) {
             return function.apply(zipFile);
         }
     }
