@@ -393,7 +393,7 @@ public class BodyXmlReader {
             .map(relationshipId -> {
                 Optional<String> title = element.getAttributeOrNone("o:title");
                 String imagePath = relationshipIdToDocxPath(relationshipId);
-                return readImage(imagePath, title, () -> DocxFiles.getInputStream(file, imagePath));
+                return readImage(imagePath, title, () -> Archives.getInputStream(file, imagePath));
             })
             .orElse(ReadResult.emptyWithWarning("A v:imagedata element without a relationship ID was ignored"));
     }
@@ -421,7 +421,7 @@ public class BodyXmlReader {
         Optional<String> linkRelationshipId = blip.getAttributeOrNone("r:link");
         if (embedRelationshipId.isPresent()) {
             String imagePath = relationshipIdToDocxPath(embedRelationshipId.get());
-            return readImage(imagePath, altText, () -> DocxFiles.getInputStream(file, imagePath));
+            return readImage(imagePath, altText, () -> Archives.getInputStream(file, imagePath));
         } else if (linkRelationshipId.isPresent()) {
             String imagePath = relationships.findRelationshipById(linkRelationshipId.get()).getTarget();
             return readImage(imagePath, altText, () -> fileReader.getInputStream(imagePath));
