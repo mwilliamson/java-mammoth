@@ -1,7 +1,5 @@
 package org.zwobble.mammoth.internal.archives;
 
-import org.zwobble.mammoth.internal.archives.Archive;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;

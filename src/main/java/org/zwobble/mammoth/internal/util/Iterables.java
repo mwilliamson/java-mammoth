@@ -138,4 +138,15 @@ public class Iterables {
     public static <T> Stream<T> stream(Iterable<T> iterable) {
         return StreamSupport.stream(iterable.spliterator(), false);
     }
+
+    public static <T> int findIndex(Iterable<T> iterable, Predicate<T> predicate) {
+        int index = 0;
+        for (T element : iterable) {
+            if (predicate.test(element)) {
+                return index;
+            }
+            index++;
+        }
+        return -1;
+    }
 }
