@@ -3,10 +3,11 @@ package org.zwobble.mammoth.tests;
 import org.junit.Test;
 import org.zwobble.mammoth.DocumentConverter;
 import org.zwobble.mammoth.Result;
+import org.zwobble.mammoth.internal.docx.EmbeddedStyleMap;
+import org.zwobble.mammoth.internal.docx.InMemoryArchive;
 import org.zwobble.mammoth.internal.styles.parsing.ParseException;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.function.Function;
@@ -230,6 +231,17 @@ public class MammothTests {
     public void embeddedStyleMapIsUsedIfPresent() throws IOException {
         assertThat(
             convertToHtml("embedded-style-map.docx"),
+            isSuccess("<h1>Walking on imported air</h1>")
+        );
+    }
+
+    @Test
+    public void embeddedStyleMapCanBeWrittenAndThenRead() throws IOException {
+        InMemoryArchive archive = InMemoryArchive.fromStream(new FileInputStream(TestData.file("single-paragraph.docx")));
+        EmbeddedStyleMap.embedStyleMap(archive, "p => h1");
+
+        assertThat(
+            new DocumentConverter().convertToHtml(new ByteArrayInputStream(archive.toByteArray())),
             isSuccess("<h1>Walking on imported air</h1>")
         );
     }

@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public class Archives {
-    static InputStream getInputStream(Archive file, String name) throws IOException {
+    public static InputStream getInputStream(Archive file, String name) throws IOException {
         return file.tryGetInputStream(name)
             .orElseThrow(() -> new IOException("Missing entry in file: " + name));
     }

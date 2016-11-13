@@ -1,9 +1,7 @@
 package org.zwobble.mammoth.internal.util;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
+import java.util.stream.Collectors;
 
 public class Streams {
     private Streams() {}
@@ -23,5 +21,11 @@ public class Streams {
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         copy(stream, output);
         return output.toByteArray();
+    }
+
+    public static String toString(InputStream stream) {
+        return new BufferedReader(new InputStreamReader(stream))
+            .lines()
+            .collect(Collectors.joining("\n"));
     }
 }

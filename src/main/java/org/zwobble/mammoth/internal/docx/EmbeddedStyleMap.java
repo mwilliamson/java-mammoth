@@ -1,23 +1,18 @@
 package org.zwobble.mammoth.internal.docx;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import org.zwobble.mammoth.internal.util.Streams;
+
+import java.io.*;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 public class EmbeddedStyleMap {
     private static final String PATH = "mammoth/style-map";
 
     public static Optional<String> readStyleMap(Archive file) throws IOException {
-        return file.tryGetInputStream(PATH)
-            .map(inputStream -> readInputStream(inputStream));
+        return file.tryGetInputStream(PATH).map(Streams::toString);
     }
 
-    private static String readInputStream(InputStream inputStream) {
-        return new BufferedReader(new InputStreamReader(inputStream))
-            .lines()
-            .collect(Collectors.joining("\n"));
+    public static void embedStyleMap(MutableArchive archive, String styleMap) {
+        archive.writeEntry(PATH, styleMap);
     }
 }
