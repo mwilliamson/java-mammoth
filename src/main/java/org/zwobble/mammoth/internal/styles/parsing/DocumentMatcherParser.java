@@ -61,9 +61,9 @@ public class DocumentMatcherParser {
             tokens.skip();
             tokens.skip(TokenType.IDENTIFIER, "style-name");
             tokens.skip(TokenType.EQUALS);
-            String value = tokens.nextValue(TokenType.STRING);
+            String value = TokenParser.parseString(tokens);
             tokens.skip(TokenType.CLOSE_SQUARE_BRACKET);
-            return Optional.of(value.substring(1, value.length() - 1));
+            return Optional.of(value);
         } else {
             return Optional.empty();
         }
