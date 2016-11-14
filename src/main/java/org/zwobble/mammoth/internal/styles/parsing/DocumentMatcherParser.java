@@ -49,9 +49,8 @@ public class DocumentMatcherParser {
     }
 
     private static Optional<String> parseStyleId(TokenIterator<TokenType> tokens) {
-        if (tokens.peekTokenType() == TokenType.DOT) {
-            tokens.skip();
-            return Optional.of(tokens.nextValue(TokenType.IDENTIFIER));
+        if (tokens.peekTokenType() == TokenType.CLASS_NAME) {
+            return Optional.of(TokenParser.parseClassName(tokens));
         } else {
             return Optional.empty();
         }

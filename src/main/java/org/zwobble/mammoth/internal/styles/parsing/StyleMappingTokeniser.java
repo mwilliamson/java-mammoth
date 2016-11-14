@@ -11,7 +11,7 @@ public class StyleMappingTokeniser {
         RegexTokeniser<TokenType> tokeniser = new RegexTokeniser<>(
             list(
                 RegexTokeniser.rule(TokenType.IDENTIFIER, "([a-zA-Z][a-zA-Z0-9\\-]*)"),
-                RegexTokeniser.rule(TokenType.DOT, "\\."),
+                RegexTokeniser.rule(TokenType.CLASS_NAME, "(\\.(?:[a-zA-Z0-9\\-]|\\\\.)+)"),
                 RegexTokeniser.rule(TokenType.COLON, ":"),
                 RegexTokeniser.rule(TokenType.GREATER_THAN, ">"),
                 RegexTokeniser.rule(TokenType.WHITESPACE, "\\s+"),

@@ -3,7 +3,7 @@ package org.zwobble.mammoth.internal.styles.parsing;
 public enum TokenType {
     WHITESPACE,
     IDENTIFIER,
-    DOT,
+    CLASS_NAME,
     COLON,
     GREATER_THAN,
     ARROW,

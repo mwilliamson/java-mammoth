@@ -51,8 +51,8 @@ public class StyleMappingTokeniserTests {
     }
 
     @Test
-    public void dotsAreTokenised() {
-        assertTokens("..", isToken(TokenType.DOT, "."), isToken(TokenType.DOT, "."));
+    public void classesAreTokenised() {
+        assertTokens(".overture", isToken(TokenType.CLASS_NAME, ".overture"));
     }
 
     @Test

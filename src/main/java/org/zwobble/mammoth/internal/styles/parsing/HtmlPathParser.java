@@ -59,9 +59,8 @@ public class HtmlPathParser {
 
     private static List<String> parseClassNames(TokenIterator<TokenType> tokens) {
         List<String> classNames = new ArrayList<>();
-        while (tokens.peekTokenType() == TokenType.DOT) {
-            tokens.skip();
-            classNames.add(tokens.nextValue(TokenType.IDENTIFIER));
+        while (tokens.peekTokenType() == TokenType.CLASS_NAME) {
+            classNames.add(TokenParser.parseClassName(tokens));
         }
         return classNames;
     }
