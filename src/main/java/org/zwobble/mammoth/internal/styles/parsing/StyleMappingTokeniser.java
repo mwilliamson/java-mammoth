@@ -29,9 +29,9 @@ public class StyleMappingTokeniser {
             index = seekEndOfToken(line, startIndex + 1, tokenType);
             if (tokenType == TokenType.STRING && index == line.length() + 1) {
                 tokenType = TokenType.UNTERMINATED_STRING;
-                index -= 1;
             }
         }
+        index = Math.min(index, line.length());
         return new Token(startIndex, tokenType, line.substring(startIndex, index));
     }
 
