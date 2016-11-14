@@ -1,11 +1,11 @@
 package org.zwobble.mammoth.internal.styles.parsing;
 
-public class Token {
+public class Token<T> {
     private final int characterIndex;
-    private final TokenType tokenType;
+    private final T tokenType;
     private final String value;
 
-    public Token(int characterIndex, TokenType tokenType, String value) {
+    public Token(int characterIndex, T tokenType, String value) {
         this.characterIndex = characterIndex;
         this.tokenType = tokenType;
         this.value = value;
@@ -15,7 +15,7 @@ public class Token {
         return characterIndex;
     }
 
-    public TokenType getTokenType() {
+    public T getTokenType() {
         return tokenType;
     }
 

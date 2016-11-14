@@ -2,25 +2,25 @@ package org.zwobble.mammoth.internal.styles.parsing;
 
 import java.util.List;
 
-public class TokenIterator {
-    private final List<Token> tokens;
+public class TokenIterator<T> {
+    private final List<Token<T>> tokens;
     private int index;
 
-    public TokenIterator(List<Token> tokens) {
+    public TokenIterator(List<Token<T>> tokens) {
         this.tokens = tokens;
         this.index = 0;
     }
 
-    public TokenType peekTokenType() {
+    public T peekTokenType() {
         return tokens.get(index).getTokenType();
     }
 
-    public TokenType peekTokenType(int count) {
+    public T peekTokenType(int count) {
         return tokens.get(index + count).getTokenType();
     }
 
-    public Token next(TokenType type) {
-        Token token = tokens.get(index);
+    public Token<T> next(T type) {
+        Token<T> token = tokens.get(index);
         if (token.getTokenType() == type) {
             index += 1;
             return token;
@@ -29,7 +29,7 @@ public class TokenIterator {
         }
     }
 
-    public String nextValue(TokenType type) {
+    public String nextValue(T type) {
         return next(type).getValue();
     }
 
@@ -37,7 +37,7 @@ public class TokenIterator {
         index += 1;
     }
 
-    public void skip(TokenType tokenType) {
+    public void skip(T tokenType) {
         Token token = tokens.get(index);
         if (token.getTokenType() != tokenType) {
             throw unexpectedTokenType(tokenType, token);
@@ -45,8 +45,8 @@ public class TokenIterator {
         index += 1;
     }
 
-    public void skip(TokenType tokenType, String tokenValue) {
-        Token token = tokens.get(index);
+    public void skip(T tokenType, String tokenValue) {
+        Token<T> token = tokens.get(index);
         if (token.getTokenType() != tokenType) {
             throw unexpectedTokenType(tokenType, token);
         }
@@ -57,7 +57,7 @@ public class TokenIterator {
         index += 1;
     }
 
-    private LineParseException unexpectedTokenType(TokenType expected, Token actual) {
+    private LineParseException unexpectedTokenType(T expected, Token<T> actual) {
         return new LineParseException(actual, "expected token of type " + expected + " but was of type " + actual.getTokenType());
     }
 }

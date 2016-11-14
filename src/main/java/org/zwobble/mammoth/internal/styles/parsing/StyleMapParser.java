@@ -41,7 +41,7 @@ public class StyleMapParser {
     }
 
     private static Consumer<StyleMapBuilder> parseStyleMapping(String line) {
-        TokenIterator tokens = new TokenIterator(StyleMappingTokeniser.tokenise(line));
+        TokenIterator<TokenType> tokens = new TokenIterator<>(StyleMappingTokeniser.tokenise(line));
 
         BiConsumer<StyleMapBuilder, HtmlPath> documentMatcher = DocumentMatcherParser.parse(tokens);
 
@@ -55,7 +55,7 @@ public class StyleMapParser {
         return styleMap -> documentMatcher.accept(styleMap, htmlPath);
     }
 
-    private static HtmlPath parseHtmlPath(TokenIterator tokens) {
+    private static HtmlPath parseHtmlPath(TokenIterator<TokenType> tokens) {
         if (tokens.peekTokenType() == TokenType.EOF) {
             return HtmlPath.EMPTY;
         } else {

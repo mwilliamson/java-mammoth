@@ -11,7 +11,7 @@ import java.util.Map;
 import static org.zwobble.mammoth.internal.util.Maps.map;
 
 public class HtmlPathParser {
-    public static HtmlPath parse(TokenIterator tokens) {
+    public static HtmlPath parse(TokenIterator<TokenType> tokens) {
         if (tokens.peekTokenType() == TokenType.BANG) {
             tokens.skip(TokenType.BANG);
             return HtmlPath.IGNORE;
@@ -20,7 +20,7 @@ public class HtmlPathParser {
         }
     }
 
-    private static HtmlPath parseHtmlPathElements(TokenIterator tokens) {
+    private static HtmlPath parseHtmlPathElements(TokenIterator<TokenType> tokens) {
         List<HtmlPathElement> elements = new ArrayList<>();
 
         if (tokens.peekTokenType() == TokenType.IDENTIFIER) {
@@ -37,7 +37,7 @@ public class HtmlPathParser {
         return new HtmlPathElements(elements);
     }
 
-    private static HtmlPathElement parseElement(TokenIterator tokens) {
+    private static HtmlPathElement parseElement(TokenIterator<TokenType> tokens) {
         List<String> tagNames = parseTagNames(tokens);
         List<String> classNames = parseClassNames(tokens);
         Map<String, String> attributes = classNames.isEmpty()
@@ -47,7 +47,7 @@ public class HtmlPathParser {
         return new HtmlPathElement(tagNames, attributes, !isFresh);
     }
 
-    private static List<String> parseTagNames(TokenIterator tokens) {
+    private static List<String> parseTagNames(TokenIterator<TokenType> tokens) {
         List<String> tagNames = new ArrayList<>();
         tagNames.add(tokens.nextValue(TokenType.IDENTIFIER));
         while (tokens.peekTokenType() == TokenType.CHOICE) {
@@ -57,7 +57,7 @@ public class HtmlPathParser {
         return tagNames;
     }
 
-    private static List<String> parseClassNames(TokenIterator tokens) {
+    private static List<String> parseClassNames(TokenIterator<TokenType> tokens) {
         List<String> classNames = new ArrayList<>();
         while (tokens.peekTokenType() == TokenType.DOT) {
             tokens.skip();
@@ -66,7 +66,7 @@ public class HtmlPathParser {
         return classNames;
     }
 
-    private static boolean parseIsFresh(TokenIterator tokens) {
+    private static boolean parseIsFresh(TokenIterator<TokenType> tokens) {
         if (tokens.peekTokenType() == TokenType.COLON) {
             tokens.skip();
             tokens.skip(TokenType.IDENTIFIER, "fresh");

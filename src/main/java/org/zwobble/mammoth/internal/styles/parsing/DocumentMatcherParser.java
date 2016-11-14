@@ -11,8 +11,8 @@ import java.util.Optional;
 import java.util.function.BiConsumer;
 
 public class DocumentMatcherParser {
-    public static BiConsumer<StyleMapBuilder, HtmlPath> parse(TokenIterator tokens) {
-        Token identifier = tokens.next(TokenType.IDENTIFIER);
+    public static BiConsumer<StyleMapBuilder, HtmlPath> parse(TokenIterator<TokenType> tokens) {
+        Token<TokenType> identifier = tokens.next(TokenType.IDENTIFIER);
         switch (identifier.getValue()) {
             case "p":
                 ParagraphMatcher paragraph = parseParagraphMatcher(tokens);
@@ -35,20 +35,20 @@ public class DocumentMatcherParser {
         }
     }
 
-    public static ParagraphMatcher parseParagraphMatcher(TokenIterator tokens) {
+    public static ParagraphMatcher parseParagraphMatcher(TokenIterator<TokenType> tokens) {
         Optional<String> styleId = parseStyleId(tokens);
         Optional<String> styleName = parseStyleName(tokens);
         Optional<NumberingLevel> numbering = parseNumbering(tokens);
         return new ParagraphMatcher(styleId, styleName, numbering);
     }
 
-    public static RunMatcher parseRunMatcher(TokenIterator tokens) {
+    public static RunMatcher parseRunMatcher(TokenIterator<TokenType> tokens) {
         Optional<String> styleId = parseStyleId(tokens);
         Optional<String> styleName = parseStyleName(tokens);
         return new RunMatcher(styleId, styleName);
     }
 
-    private static Optional<String> parseStyleId(TokenIterator tokens) {
+    private static Optional<String> parseStyleId(TokenIterator<TokenType> tokens) {
         if (tokens.peekTokenType() == TokenType.DOT) {
             tokens.skip();
             return Optional.of(tokens.nextValue(TokenType.IDENTIFIER));
@@ -57,7 +57,7 @@ public class DocumentMatcherParser {
         }
     }
 
-    private static Optional<String> parseStyleName(TokenIterator tokens) {
+    private static Optional<String> parseStyleName(TokenIterator<TokenType> tokens) {
         if (tokens.peekTokenType() == TokenType.OPEN_SQUARE_BRACKET) {
             tokens.skip();
             tokens.skip(TokenType.IDENTIFIER, "style-name");
@@ -70,7 +70,7 @@ public class DocumentMatcherParser {
         }
     }
 
-    private static Optional<NumberingLevel> parseNumbering(TokenIterator tokens) {
+    private static Optional<NumberingLevel> parseNumbering(TokenIterator<TokenType> tokens) {
         if (tokens.peekTokenType() == TokenType.COLON) {
             tokens.skip();
             boolean isOrdered = parseListType(tokens);
@@ -83,8 +83,8 @@ public class DocumentMatcherParser {
         }
     }
 
-    private static boolean parseListType(TokenIterator tokens) {
-        Token listType = tokens.next(TokenType.IDENTIFIER);
+    private static boolean parseListType(TokenIterator<TokenType> tokens) {
+        Token<TokenType> listType = tokens.next(TokenType.IDENTIFIER);
         switch (listType.getValue()) {
             case "ordered-list":
                 return true;
