@@ -7,6 +7,6 @@ public class TokenParser {
 
     public static String parseString(TokenIterator<TokenType> tokens) {
         String value = tokens.nextValue(TokenType.STRING);
-        return value.substring(1, value.length() - 1);
+        return EscapeSequences.decode(value.substring(1, value.length() - 1));
     }
 }
