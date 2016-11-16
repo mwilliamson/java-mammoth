@@ -36,6 +36,11 @@ public class StyleMappingTokeniserTests {
     }
 
     @Test
+    public void escapeSequencesInIdentifiersAreTokenised() {
+        assertTokens("\\:", isToken(TokenType.IDENTIFIER, "\\:"));
+    }
+
+    @Test
     public void integersAreTokenised() {
         assertTokens("123", isToken(TokenType.INTEGER, "123"));
     }
@@ -56,8 +61,8 @@ public class StyleMappingTokeniserTests {
     }
 
     @Test
-    public void classesAreTokenised() {
-        assertTokens(".overture", isToken(TokenType.CLASS_NAME, ".overture"));
+    public void dotsAreTokenised() {
+        assertTokens(".", isToken(TokenType.SYMBOL, "."));
     }
 
     @Test

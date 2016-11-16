@@ -8,6 +8,7 @@ import org.zwobble.mammoth.internal.styles.HtmlPathElements;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static org.zwobble.mammoth.internal.util.Maps.map;
 
@@ -59,8 +60,9 @@ public class HtmlPathParser {
 
     private static List<String> parseClassNames(TokenIterator<TokenType> tokens) {
         List<String> classNames = new ArrayList<>();
-        while (tokens.peekTokenType() == TokenType.CLASS_NAME) {
-            classNames.add(TokenParser.parseClassName(tokens));
+        Optional<String> className;
+        while ((className = TokenParser.parseClassName(tokens)).isPresent()) {
+            classNames.add(className.get());
         }
         return classNames;
     }

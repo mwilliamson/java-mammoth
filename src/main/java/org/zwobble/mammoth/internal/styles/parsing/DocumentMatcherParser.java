@@ -49,11 +49,7 @@ public class DocumentMatcherParser {
     }
 
     private static Optional<String> parseStyleId(TokenIterator<TokenType> tokens) {
-        if (tokens.peekTokenType() == TokenType.CLASS_NAME) {
-            return Optional.of(TokenParser.parseClassName(tokens));
-        } else {
-            return Optional.empty();
-        }
+        return TokenParser.parseClassName(tokens);
     }
 
     private static Optional<String> parseStyleName(TokenIterator<TokenType> tokens) {
