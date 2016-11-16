@@ -16,7 +16,11 @@ public class TokenIterator<T> {
     }
 
     public T peekTokenType(int count) {
-        return tokens.get(index + count).getTokenType();
+        return peekToken(count).getTokenType();
+    }
+
+    public Token<T> peekToken(int count) {
+        return tokens.get(index + count);
     }
 
     public Token<T> next(T type) {
@@ -59,5 +63,21 @@ public class TokenIterator<T> {
 
     private LineParseException unexpectedTokenType(T expected, Token<T> actual) {
         return new LineParseException(actual, "expected token of type " + expected + " but was of type " + actual.getTokenType());
+    }
+
+    public boolean tryParse(Action action) {
+        int originalIndex = index;
+        try {
+            action.run();
+            return true;
+        }
+        catch (LineParseException exception) {
+            index = originalIndex;
+            return false;
+        }
+    }
+
+    public interface Action {
+        void run();
     }
 }

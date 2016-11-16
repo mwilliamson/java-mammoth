@@ -44,7 +44,8 @@ public class HtmlPathParser {
             ? map()
             : map("class", String.join(" ", classNames));
         boolean isFresh = parseIsFresh(tokens);
-        return new HtmlPathElement(tagNames, attributes, !isFresh);
+        String separator = parseSeparator(tokens);
+        return new HtmlPathElement(tagNames, attributes, !isFresh, separator);
     }
 
     private static List<String> parseTagNames(TokenIterator<TokenType> tokens) {
@@ -66,12 +67,24 @@ public class HtmlPathParser {
     }
 
     private static boolean parseIsFresh(TokenIterator<TokenType> tokens) {
-        if (tokens.peekTokenType() == TokenType.COLON) {
-            tokens.skip();
+        return tokens.tryParse(() -> {
+            tokens.skip(TokenType.COLON);
             tokens.skip(TokenType.IDENTIFIER, "fresh");
-            return true;
+        });
+    }
+
+    private static String parseSeparator(TokenIterator<TokenType> tokens) {
+        boolean isSeparator = tokens.tryParse(() -> {
+            tokens.skip(TokenType.COLON);
+            tokens.skip(TokenType.IDENTIFIER, "separator");
+        });
+        if (isSeparator) {
+            tokens.skip(TokenType.OPEN_PAREN);
+            String value = TokenParser.parseString(tokens);
+            tokens.skip(TokenType.CLOSE_PAREN);
+            return value;
         } else {
-            return false;
+            return "";
         }
     }
 }

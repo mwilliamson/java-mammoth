@@ -67,6 +67,14 @@ public class HtmlPathParsingTests {
     }
 
     @Test
+    public void canReadSeparatorForElements() {
+        assertThat(
+            parseHtmlPath("p:separator('x')"),
+            deepEquals(HtmlPath.elements(HtmlPathElementBuilder.tagName("p").collapsible(true).separator("x").build()))
+        );
+    }
+
+    @Test
     public void canReadIgnoreElement() {
         assertThat(
             parseHtmlPath("!"),

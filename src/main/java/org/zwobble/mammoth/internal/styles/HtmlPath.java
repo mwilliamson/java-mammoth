@@ -23,7 +23,7 @@ public interface HtmlPath {
     }
 
     static HtmlPath element(String tagName, Map<String, String> attributes) {
-        return new HtmlPathElements(list(new HtmlPathElement(list(tagName), attributes, false)));
+        return new HtmlPathElements(list(new HtmlPathElement(list(tagName), attributes, false, "")));
     }
 
     static HtmlPath collapsibleElement(String tagName) {
@@ -39,7 +39,7 @@ public interface HtmlPath {
     }
 
     static HtmlPath collapsibleElement(List<String> tagNames, Map<String, String> attributes) {
-        return new HtmlPathElements(list(new HtmlPathElement(tagNames, attributes, true)));
+        return new HtmlPathElements(list(new HtmlPathElement(tagNames, attributes, true, "")));
     }
 
     Supplier<List<HtmlNode>> wrap(Supplier<List<HtmlNode>> generateNodes);
