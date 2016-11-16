@@ -2,7 +2,6 @@ package org.zwobble.mammoth.tests.styles.parsing;
 
 import org.junit.Test;
 import org.zwobble.mammoth.internal.styles.HtmlPath;
-import org.zwobble.mammoth.internal.styles.HtmlPathElement;
 import org.zwobble.mammoth.internal.styles.parsing.HtmlPathParser;
 import org.zwobble.mammoth.internal.styles.parsing.StyleMappingTokeniser;
 import org.zwobble.mammoth.internal.styles.parsing.TokenIterator;
@@ -42,7 +41,10 @@ public class HtmlPathParsingTests {
     public void canReadNestedElements() {
         assertThat(
             parseHtmlPath("ul > li"),
-            deepEquals(HtmlPath.elements(HtmlPathElement.collapsible("ul"), HtmlPathElement.collapsible("li"))));
+            deepEquals(HtmlPath.elements(
+                HtmlPathElementBuilder.collapsible("ul").build(),
+                HtmlPathElementBuilder.collapsible("li").build()
+            )));
     }
 
     @Test
@@ -70,7 +72,7 @@ public class HtmlPathParsingTests {
     public void canReadSeparatorForElements() {
         assertThat(
             parseHtmlPath("p:separator('x')"),
-            deepEquals(HtmlPath.elements(HtmlPathElementBuilder.tagName("p").collapsible(true).separator("x").build()))
+            deepEquals(HtmlPath.elements(HtmlPathElementBuilder.collapsible("p").separator("x").build()))
         );
     }
 

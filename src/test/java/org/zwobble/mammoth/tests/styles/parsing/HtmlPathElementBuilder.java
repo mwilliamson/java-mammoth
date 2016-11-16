@@ -1,13 +1,14 @@
 package org.zwobble.mammoth.tests.styles.parsing;
 
+import org.zwobble.mammoth.internal.html.HtmlTag;
 import org.zwobble.mammoth.internal.styles.HtmlPathElement;
 
 import static org.zwobble.mammoth.internal.util.Lists.list;
 import static org.zwobble.mammoth.internal.util.Maps.map;
 
 public class HtmlPathElementBuilder {
-    public static HtmlPathElementBuilder tagName(String tagName) {
-        return new HtmlPathElementBuilder(tagName, false, "");
+    public static HtmlPathElementBuilder collapsible(String tagName) {
+        return new HtmlPathElementBuilder(tagName, true, "");
     }
 
     private final String tagName;
@@ -20,15 +21,11 @@ public class HtmlPathElementBuilder {
         this.separator = separator;
     }
 
-    public HtmlPathElementBuilder collapsible(boolean isCollapsible) {
-        return new HtmlPathElementBuilder(tagName, isCollapsible, separator);
-    }
-
     public HtmlPathElementBuilder separator(String separator) {
         return new HtmlPathElementBuilder(tagName, isCollapsible, separator);
     }
 
     public HtmlPathElement build() {
-        return new HtmlPathElement(list(tagName), map(), isCollapsible, separator);
+        return new HtmlPathElement(new HtmlTag(list(tagName), map(), isCollapsible, separator));
     }
 }

@@ -1,5 +1,6 @@
 package org.zwobble.mammoth.internal.styles.parsing;
 
+import org.zwobble.mammoth.internal.html.HtmlTag;
 import org.zwobble.mammoth.internal.styles.HtmlPath;
 import org.zwobble.mammoth.internal.styles.HtmlPathElement;
 import org.zwobble.mammoth.internal.styles.HtmlPathElements;
@@ -45,7 +46,7 @@ public class HtmlPathParser {
             : map("class", String.join(" ", classNames));
         boolean isFresh = parseIsFresh(tokens);
         String separator = parseSeparator(tokens);
-        return new HtmlPathElement(tagNames, attributes, !isFresh, separator);
+        return new HtmlPathElement(new HtmlTag(tagNames, attributes, !isFresh, separator));
     }
 
     private static List<String> parseTagNames(TokenIterator<TokenType> tokens) {

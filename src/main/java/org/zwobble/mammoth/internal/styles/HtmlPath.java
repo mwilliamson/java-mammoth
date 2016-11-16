@@ -1,6 +1,7 @@
 package org.zwobble.mammoth.internal.styles;
 
 import org.zwobble.mammoth.internal.html.HtmlNode;
+import org.zwobble.mammoth.internal.html.HtmlTag;
 
 import java.util.List;
 import java.util.Map;
@@ -23,7 +24,8 @@ public interface HtmlPath {
     }
 
     static HtmlPath element(String tagName, Map<String, String> attributes) {
-        return new HtmlPathElements(list(new HtmlPathElement(list(tagName), attributes, false, "")));
+        HtmlTag tag = new HtmlTag(list(tagName), attributes, false, "");
+        return new HtmlPathElements(list(new HtmlPathElement(tag)));
     }
 
     static HtmlPath collapsibleElement(String tagName) {
@@ -39,7 +41,8 @@ public interface HtmlPath {
     }
 
     static HtmlPath collapsibleElement(List<String> tagNames, Map<String, String> attributes) {
-        return new HtmlPathElements(list(new HtmlPathElement(tagNames, attributes, true, "")));
+        HtmlTag tag = new HtmlTag(tagNames, attributes, true, "");
+        return new HtmlPathElements(list(new HtmlPathElement(tag)));
     }
 
     Supplier<List<HtmlNode>> wrap(Supplier<List<HtmlNode>> generateNodes);

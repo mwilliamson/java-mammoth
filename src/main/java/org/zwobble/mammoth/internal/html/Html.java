@@ -38,7 +38,7 @@ public class Html {
     }
 
     public static HtmlNode element(String tagName, Map<String, String> attributes, List<HtmlNode> children) {
-        return new HtmlElement(list(tagName), attributes, children, false);
+        return new HtmlElement(new HtmlTag(list(tagName), attributes, false, ""), children);
     }
 
     public static HtmlNode collapsibleElement(String tagName) {
@@ -58,7 +58,7 @@ public class Html {
     }
 
     public static HtmlNode collapsibleElement(List<String> tagNames, Map<String, String> attributes, List<HtmlNode> children) {
-        return new HtmlElement(tagNames, attributes, children, true);
+        return new HtmlElement(new HtmlTag(tagNames, attributes, true, ""), children);
     }
 
     public static HtmlNode selfClosingElement(String tagName) {
@@ -81,11 +81,7 @@ public class Html {
                 if (children.isEmpty()) {
                     return list();
                 } else {
-                    return list(new HtmlElement(
-                        element.getTagNames(),
-                        element.getAttributes(),
-                        children,
-                        element.isCollapsible()));
+                    return list(new HtmlElement(element.getTag(), children));
                 }
             }
 
@@ -132,10 +128,9 @@ public class Html {
             @Override
             public HtmlNode visit(HtmlElement element) {
                 return new HtmlElement(
-                    element.getTagNames(),
-                    element.getAttributes(),
-                    collapse(element.getChildren()),
-                    element.isCollapsible());
+                    element.getTag(),
+                    collapse(element.getChildren())
+                );
             }
 
             @Override
