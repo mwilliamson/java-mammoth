@@ -5,11 +5,9 @@ import org.zwobble.mammoth.internal.html.HtmlNode;
 import org.zwobble.mammoth.internal.html.HtmlTag;
 
 import java.util.List;
-import java.util.Map;
 import java.util.function.Supplier;
 
 import static org.zwobble.mammoth.internal.util.Lists.list;
-import static org.zwobble.mammoth.internal.util.Maps.map;
 
 public class HtmlPathElement {
     private final HtmlTag tag;

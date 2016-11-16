@@ -2,6 +2,7 @@ package org.zwobble.mammoth.tests.html;
 
 import org.junit.Test;
 import org.zwobble.mammoth.internal.html.Html;
+import org.zwobble.mammoth.tests.styles.parsing.HtmlElementBuilder;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.zwobble.mammoth.tests.DeepReflectionMatcher.deepEquals;
@@ -94,5 +95,23 @@ public class HtmlCollapseTests {
             deepEquals(list(
                 Html.collapsibleElement(list("ul", "ol")),
                 Html.collapsibleElement("ol"))));
+    }
+
+    @Test
+    public void whenSeparatorIsPresentThenSeparatorIsPrependedToCollapsedElement() {
+        assertThat(
+            Html.collapse(list(
+                HtmlElementBuilder.fresh("pre").element(list(Html.text("Hello"))),
+                HtmlElementBuilder.collapsible("pre").separator("\n").element(list(Html.text(" the"), Html.text("re")))
+            )),
+            deepEquals(list(
+                HtmlElementBuilder.fresh("pre").element(list(
+                    Html.text("Hello"),
+                    Html.text("\n"),
+                    Html.text(" the"),
+                    Html.text("re")
+                ))
+            ))
+        );
     }
 }

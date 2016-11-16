@@ -36,6 +36,10 @@ public class HtmlElement implements HtmlNode {
         return tag.isCollapsible();
     }
 
+    public String getSeparator() {
+        return tag.getSeparator();
+    }
+
     @Override
     public void accept(Visitor visitor) {
         visitor.visit(this);

@@ -156,6 +156,10 @@ public class Html {
             tryCast(HtmlElement.class, node),
             (last, next) -> {
                 if (next.isCollapsible() && isMatch(last, next)) {
+                    String separator = next.getSeparator();
+                    if (!separator.isEmpty()) {
+                        last.getChildren().add(Html.text(separator));
+                    }
                     for (HtmlNode child : next.getChildren()) {
                         collapsingAdd(last.getChildren(), child);
                     }

@@ -42,8 +42,8 @@ public class HtmlPathParsingTests {
         assertThat(
             parseHtmlPath("ul > li"),
             deepEquals(HtmlPath.elements(
-                HtmlPathElementBuilder.collapsible("ul").build(),
-                HtmlPathElementBuilder.collapsible("li").build()
+                HtmlElementBuilder.collapsible("ul").pathElement(),
+                HtmlElementBuilder.collapsible("li").pathElement()
             )));
     }
 
@@ -72,7 +72,7 @@ public class HtmlPathParsingTests {
     public void canReadSeparatorForElements() {
         assertThat(
             parseHtmlPath("p:separator('x')"),
-            deepEquals(HtmlPath.elements(HtmlPathElementBuilder.collapsible("p").separator("x").build()))
+            deepEquals(HtmlPath.elements(HtmlElementBuilder.collapsible("p").separator("x").pathElement()))
         );
     }
 
