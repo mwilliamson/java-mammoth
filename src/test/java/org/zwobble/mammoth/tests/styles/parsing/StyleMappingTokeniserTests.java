@@ -16,6 +16,11 @@ import static org.zwobble.mammoth.internal.util.Lists.list;
 
 public class StyleMappingTokeniserTests {
     @Test
+    public void unknownTokensAreTokenised() {
+        assertTokens("~", isToken(TokenType.UNKNOWN, "~"));
+    }
+
+    @Test
     public void emptyStringIsTokenisedToEndOfFileToken() {
         assertTokens("");
     }

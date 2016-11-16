@@ -23,8 +23,9 @@ public class RegexTokeniser<T> {
 
     private final List<TokenRule<T>> rules;
 
-    public RegexTokeniser(List<TokenRule<T>> rules) {
-        this.rules = rules;
+    public RegexTokeniser(T unknown, List<TokenRule<T>> rules) {
+        this.rules = new ArrayList<>(rules);
+        this.rules.add(rule(unknown, "."));
     }
 
     public List<Token<T>> tokenise(String value) {
@@ -42,6 +43,7 @@ public class RegexTokeniser<T> {
                 }
             }
             if (!matched) {
+                // Should be impossible
                 throw new RuntimeException("Remaining: " + remaining);
             }
         }

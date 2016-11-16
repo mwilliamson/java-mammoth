@@ -9,6 +9,7 @@ public class StyleMappingTokeniser {
         String stringPrefix = "'((?:\\.|[^'])*)";
 
         RegexTokeniser<TokenType> tokeniser = new RegexTokeniser<>(
+            TokenType.UNKNOWN,
             list(
                 RegexTokeniser.rule(TokenType.IDENTIFIER, "([a-zA-Z][a-zA-Z0-9\\-]*)"),
                 RegexTokeniser.rule(TokenType.CLASS_NAME, "(\\.(?:[a-zA-Z0-9\\-]|\\\\.)+)"),
