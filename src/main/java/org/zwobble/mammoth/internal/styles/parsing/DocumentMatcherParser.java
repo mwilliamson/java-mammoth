@@ -57,12 +57,11 @@ public class DocumentMatcherParser {
     }
 
     private static Optional<String> parseStyleName(TokenIterator<TokenType> tokens) {
-        if (tokens.peekTokenType() == TokenType.OPEN_SQUARE_BRACKET) {
-            tokens.skip();
+        if (tokens.trySkip(TokenType.SYMBOL, "[")) {
             tokens.skip(TokenType.IDENTIFIER, "style-name");
-            tokens.skip(TokenType.EQUALS);
+            tokens.skip(TokenType.SYMBOL, "=");
             String value = TokenParser.parseString(tokens);
-            tokens.skip(TokenType.CLOSE_SQUARE_BRACKET);
+            tokens.skip(TokenType.SYMBOL, "]");
             return Optional.of(value);
         } else {
             return Optional.empty();
@@ -70,12 +69,11 @@ public class DocumentMatcherParser {
     }
 
     private static Optional<NumberingLevel> parseNumbering(TokenIterator<TokenType> tokens) {
-        if (tokens.peekTokenType() == TokenType.COLON) {
-            tokens.skip();
+        if (tokens.trySkip(TokenType.SYMBOL, ":")) {
             boolean isOrdered = parseListType(tokens);
-            tokens.skip(TokenType.OPEN_PAREN);
+            tokens.skip(TokenType.SYMBOL, "(");
             String level = new BigInteger(tokens.nextValue(TokenType.INTEGER)).subtract(BigInteger.ONE).toString();
-            tokens.skip(TokenType.CLOSE_PAREN);
+            tokens.skip(TokenType.SYMBOL, ")");
             return Optional.of(new NumberingLevel(level, isOrdered));
         } else {
             return Optional.empty();

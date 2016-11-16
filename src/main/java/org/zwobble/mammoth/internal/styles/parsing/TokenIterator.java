@@ -11,16 +11,31 @@ public class TokenIterator<T> {
         this.index = 0;
     }
 
+    public boolean isNext(int offset, T tokenType, String value) {
+        int tokenIndex = index + offset;
+        if (tokenIndex < tokens.size()) {
+            Token<T> token = tokens.get(tokenIndex);
+            return token.getTokenType().equals(tokenType) && token.getValue().equals(value);
+        } else {
+            return false;
+        }
+    }
+
+    public boolean isNext(T tokenType, String value) {
+        return isNext(0, tokenType, value);
+    }
+
+    public boolean trySkip(T tokenType, String value) {
+        if (isNext(tokenType, value)) {
+            skip();
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     public T peekTokenType() {
         return tokens.get(index).getTokenType();
-    }
-
-    public T peekTokenType(int count) {
-        return peekToken(count).getTokenType();
-    }
-
-    public Token<T> peekToken(int count) {
-        return tokens.get(index + count);
     }
 
     public Token<T> next(T type) {

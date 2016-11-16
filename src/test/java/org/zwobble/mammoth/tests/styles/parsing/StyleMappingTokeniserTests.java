@@ -52,7 +52,7 @@ public class StyleMappingTokeniserTests {
 
     @Test
     public void arrowsAreTokenised() {
-        assertTokens("=>=>", isToken(TokenType.ARROW, "=>"), isToken(TokenType.ARROW, "=>"));
+        assertTokens("=>=>", isToken(TokenType.SYMBOL, "=>"), isToken(TokenType.SYMBOL, "=>"));
     }
 
     @Test
@@ -62,42 +62,42 @@ public class StyleMappingTokeniserTests {
 
     @Test
     public void colonsAreTokenised() {
-        assertTokens("::", isToken(TokenType.COLON, ":"), isToken(TokenType.COLON, ":"));
+        assertTokens("::", isToken(TokenType.SYMBOL, ":"), isToken(TokenType.SYMBOL, ":"));
     }
 
     @Test
     public void greaterThansAreTokenised() {
-        assertTokens(">>", isToken(TokenType.GREATER_THAN, ">"), isToken(TokenType.GREATER_THAN, ">"));
+        assertTokens(">>", isToken(TokenType.SYMBOL, ">"), isToken(TokenType.SYMBOL, ">"));
     }
 
     @Test
     public void equalsAreTokenised() {
-        assertTokens("==", isToken(TokenType.EQUALS, "="), isToken(TokenType.EQUALS, "="));
+        assertTokens("==", isToken(TokenType.SYMBOL, "="), isToken(TokenType.SYMBOL, "="));
     }
 
     @Test
     public void openParensAreTokenised() {
-        assertTokens("((", isToken(TokenType.OPEN_PAREN, "("), isToken(TokenType.OPEN_PAREN, "("));
+        assertTokens("((", isToken(TokenType.SYMBOL, "("), isToken(TokenType.SYMBOL, "("));
     }
 
     @Test
     public void closeParensAreTokenised() {
-        assertTokens("))", isToken(TokenType.CLOSE_PAREN, ")"), isToken(TokenType.CLOSE_PAREN, ")"));
+        assertTokens("))", isToken(TokenType.SYMBOL, ")"), isToken(TokenType.SYMBOL, ")"));
     }
 
     @Test
     public void openSquareBracketsAreTokenised() {
-        assertTokens("[[", isToken(TokenType.OPEN_SQUARE_BRACKET, "["), isToken(TokenType.OPEN_SQUARE_BRACKET, "["));
+        assertTokens("[[", isToken(TokenType.SYMBOL, "["), isToken(TokenType.SYMBOL, "["));
     }
 
     @Test
     public void closeSquareBracketsAreTokenised() {
-        assertTokens("]]", isToken(TokenType.CLOSE_SQUARE_BRACKET, "]"), isToken(TokenType.CLOSE_SQUARE_BRACKET, "]"));
+        assertTokens("]]", isToken(TokenType.SYMBOL, "]"), isToken(TokenType.SYMBOL, "]"));
     }
 
     @Test
     public void choicesAreTokenised() {
-        assertTokens("||", isToken(TokenType.CHOICE, "|"), isToken(TokenType.CHOICE, "|"));
+        assertTokens("||", isToken(TokenType.SYMBOL, "|"), isToken(TokenType.SYMBOL, "|"));
     }
 
     @Test

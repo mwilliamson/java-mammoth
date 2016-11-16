@@ -213,7 +213,7 @@ public class MammothTests {
         assertThat(
             exception.getMessage(),
             equalTo(
-                "error reading style map at line 2, character 14: expected token of type STRING but was of type CLOSE_SQUARE_BRACKET\n\n" +
+                "error reading style map at line 2, character 14: expected token of type STRING but was of type SYMBOL\n\n" +
                 "p[style-name=] =>\n" +
                 "             ^"));
     }

@@ -46,7 +46,7 @@ public class StyleMapParser {
         BiConsumer<StyleMapBuilder, HtmlPath> documentMatcher = DocumentMatcherParser.parse(tokens);
 
         tokens.skip(TokenType.WHITESPACE);
-        tokens.skip(TokenType.ARROW);
+        tokens.skip(TokenType.SYMBOL, "=>");
 
         HtmlPath htmlPath = parseHtmlPath(tokens);
 

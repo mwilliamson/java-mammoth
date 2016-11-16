@@ -13,8 +13,7 @@ import static org.zwobble.mammoth.internal.util.Maps.map;
 
 public class HtmlPathParser {
     public static HtmlPath parse(TokenIterator<TokenType> tokens) {
-        if (tokens.peekTokenType() == TokenType.BANG) {
-            tokens.skip(TokenType.BANG);
+        if (tokens.trySkip(TokenType.SYMBOL, "!")) {
             return HtmlPath.IGNORE;
         } else {
             return parseHtmlPathElements(tokens);
@@ -27,9 +26,9 @@ public class HtmlPathParser {
         if (tokens.peekTokenType() == TokenType.IDENTIFIER) {
             HtmlPathElement element = parseElement(tokens);
             elements.add(element);
-            while (tokens.peekTokenType() == TokenType.WHITESPACE && tokens.peekTokenType(1) == TokenType.GREATER_THAN) {
+            while (tokens.peekTokenType() == TokenType.WHITESPACE && tokens.isNext(1, TokenType.SYMBOL, ">")) {
                 tokens.skip(TokenType.WHITESPACE);
-                tokens.skip(TokenType.GREATER_THAN);
+                tokens.skip(TokenType.SYMBOL, ">");
                 tokens.skip(TokenType.WHITESPACE);
                 elements.add(parseElement(tokens));
             }
@@ -52,8 +51,7 @@ public class HtmlPathParser {
     private static List<String> parseTagNames(TokenIterator<TokenType> tokens) {
         List<String> tagNames = new ArrayList<>();
         tagNames.add(tokens.nextValue(TokenType.IDENTIFIER));
-        while (tokens.peekTokenType() == TokenType.CHOICE) {
-            tokens.skip();
+        while (tokens.trySkip(TokenType.SYMBOL, "|")) {
             tagNames.add(tokens.nextValue(TokenType.IDENTIFIER));
         }
         return tagNames;
@@ -69,20 +67,20 @@ public class HtmlPathParser {
 
     private static boolean parseIsFresh(TokenIterator<TokenType> tokens) {
         return tokens.tryParse(() -> {
-            tokens.skip(TokenType.COLON);
+            tokens.skip(TokenType.SYMBOL, ":");
             tokens.skip(TokenType.IDENTIFIER, "fresh");
         });
     }
 
     private static String parseSeparator(TokenIterator<TokenType> tokens) {
         boolean isSeparator = tokens.tryParse(() -> {
-            tokens.skip(TokenType.COLON);
+            tokens.skip(TokenType.SYMBOL, ":");
             tokens.skip(TokenType.IDENTIFIER, "separator");
         });
         if (isSeparator) {
-            tokens.skip(TokenType.OPEN_PAREN);
+            tokens.skip(TokenType.SYMBOL, "(");
             String value = TokenParser.parseString(tokens);
-            tokens.skip(TokenType.CLOSE_PAREN);
+            tokens.skip(TokenType.SYMBOL, ")");
             return value;
         } else {
             return "";
