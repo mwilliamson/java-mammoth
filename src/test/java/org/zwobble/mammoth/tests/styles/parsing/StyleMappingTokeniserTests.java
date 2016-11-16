@@ -106,6 +106,11 @@ public class StyleMappingTokeniserTests {
     }
 
     @Test
+    public void bangsAreTokenised() {
+        assertTokens("!!", isToken(TokenType.SYMBOL, "!"), isToken(TokenType.SYMBOL, "!"));
+    }
+
+    @Test
     public void canTokeniseMultipleTokens() {
         assertTokens("The Magic Position",
             isToken(TokenType.IDENTIFIER, "The"),
