@@ -252,6 +252,14 @@ public class MammothTests {
     }
 
     @Test
+    public void embeddedStyleMapsCanBeDisabled() throws IOException {
+        assertThat(
+            convertToHtml("embedded-style-map.docx", options -> options.disableEmbeddedStyleMap()),
+            isSuccess("<p>Walking on imported air</p>")
+        );
+    }
+
+    @Test
     public void embeddedStyleMapCanBeWrittenAndThenRead() throws IOException {
         InMemoryArchive archive = InMemoryArchive.fromStream(new FileInputStream(TestData.file("single-paragraph.docx")));
         EmbeddedStyleMap.embedStyleMap(archive, "p => h1");

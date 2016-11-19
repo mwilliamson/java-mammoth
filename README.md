@@ -227,6 +227,10 @@ Methods:
   any added style maps are combined with the default style map.
   Call this to stop using the default style map altogether.
 
+* `DocumentConverter disableEmbeddedStyleMap()`: by default,
+  if the document contains an embedded style map, then it is combined with the default style map.
+  Call this to ignore any embedded style maps.
+
 * `DocumentConverter preserveEmptyParagraphs()`: by default, empty paragraphs are ignored.
   Call this to preserve empty paragraphs in the output.
 

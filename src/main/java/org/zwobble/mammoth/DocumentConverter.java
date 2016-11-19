@@ -52,6 +52,14 @@ public class DocumentConverter {
     }
 
     /**
+     * By default, if the document contains an embedded style map, then it is combined with the default style map.
+     * Call this to ignore any embedded style maps.
+     */
+    public DocumentConverter disableEmbeddedStyleMap() {
+        return new DocumentConverter(options.disableEmbeddedStyleMap());
+    }
+
+    /**
      * Converts {@code stream} into an HTML string.
      * Note that using this method instead of {@link #convertToHtml(File file)}
      * means that relative paths to other files, such as images, cannot be resolved.

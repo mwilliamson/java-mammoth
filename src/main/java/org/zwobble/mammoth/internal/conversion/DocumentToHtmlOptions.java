@@ -5,26 +5,37 @@ import org.zwobble.mammoth.internal.styles.StyleMap;
 import org.zwobble.mammoth.internal.styles.parsing.StyleMapParser;
 
 public class DocumentToHtmlOptions {
-    public static final DocumentToHtmlOptions DEFAULT = new DocumentToHtmlOptions("", false, StyleMap.EMPTY, false);
+    public static final DocumentToHtmlOptions DEFAULT = new DocumentToHtmlOptions("", false, StyleMap.EMPTY, StyleMap.EMPTY, false, false);
 
     private final String idPrefix;
     private final boolean preserveEmptyParagraphs;
     private final StyleMap styleMap;
+    private final StyleMap embeddedStyleMap;
     private final boolean disableDefaultStyleMap;
+    private final boolean disableEmbeddedStyleMap;
 
-    public DocumentToHtmlOptions(String idPrefix, boolean preserveEmptyParagraphs, StyleMap styleMap, boolean disableDefaultStyleMap) {
+    public DocumentToHtmlOptions(
+        String idPrefix,
+        boolean preserveEmptyParagraphs,
+        StyleMap styleMap,
+        StyleMap embeddedStyleMap,
+        boolean disableDefaultStyleMap,
+        boolean disableEmbeddedStyleMap
+    ) {
         this.idPrefix = idPrefix;
         this.preserveEmptyParagraphs = preserveEmptyParagraphs;
         this.styleMap = styleMap;
+        this.embeddedStyleMap = embeddedStyleMap;
         this.disableDefaultStyleMap = disableDefaultStyleMap;
+        this.disableEmbeddedStyleMap = disableEmbeddedStyleMap;
     }
 
     public DocumentToHtmlOptions idPrefix(String prefix) {
-        return new DocumentToHtmlOptions(prefix, preserveEmptyParagraphs, styleMap, disableDefaultStyleMap);
+        return new DocumentToHtmlOptions(prefix, preserveEmptyParagraphs, styleMap, embeddedStyleMap, disableDefaultStyleMap, disableEmbeddedStyleMap);
     }
 
     public DocumentToHtmlOptions preserveEmptyParagraphs() {
-        return new DocumentToHtmlOptions(idPrefix, true, styleMap, disableDefaultStyleMap);
+        return new DocumentToHtmlOptions(idPrefix, true, styleMap, embeddedStyleMap, disableDefaultStyleMap, disableEmbeddedStyleMap);
     }
 
     public DocumentToHtmlOptions addStyleMap(String styleMap) {
@@ -32,19 +43,19 @@ public class DocumentToHtmlOptions {
     }
 
     public DocumentToHtmlOptions addStyleMap(StyleMap styleMap) {
-        return withStyleMap(this.styleMap.update(styleMap));
+        return new DocumentToHtmlOptions(idPrefix, preserveEmptyParagraphs, this.styleMap.update(styleMap), embeddedStyleMap, disableDefaultStyleMap, disableEmbeddedStyleMap);
     }
 
     public DocumentToHtmlOptions disableDefaultStyleMap() {
-        return new DocumentToHtmlOptions(idPrefix, preserveEmptyParagraphs, styleMap, true);
+        return new DocumentToHtmlOptions(idPrefix, preserveEmptyParagraphs, styleMap, embeddedStyleMap, true, disableEmbeddedStyleMap);
+    }
+
+    public DocumentToHtmlOptions disableEmbeddedStyleMap() {
+        return new DocumentToHtmlOptions(idPrefix, preserveEmptyParagraphs, styleMap, embeddedStyleMap, disableDefaultStyleMap, true);
     }
 
     public DocumentToHtmlOptions addEmbeddedStyleMap(StyleMap embeddedStyleMap) {
-        return withStyleMap(StyleMap.merge(styleMap, embeddedStyleMap));
-    }
-
-    private DocumentToHtmlOptions withStyleMap(StyleMap styleMap) {
-        return new DocumentToHtmlOptions(idPrefix, preserveEmptyParagraphs, styleMap, disableDefaultStyleMap);
+        return new DocumentToHtmlOptions(idPrefix, preserveEmptyParagraphs, styleMap, embeddedStyleMap, disableDefaultStyleMap, disableEmbeddedStyleMap);
     }
 
     public String idPrefix() {
@@ -56,8 +67,14 @@ public class DocumentToHtmlOptions {
     }
 
     public StyleMap styleMap() {
-        return disableDefaultStyleMap ? styleMap : DefaultStyles.DEFAULT_STYLE_MAP.update(styleMap);
+        StyleMap styleMap = StyleMap.EMPTY;
+        if (!disableDefaultStyleMap) {
+            styleMap = styleMap.update(DefaultStyles.DEFAULT_STYLE_MAP);
+        }
+        if (!disableEmbeddedStyleMap) {
+            styleMap = styleMap.update(embeddedStyleMap);
+        }
+        styleMap = styleMap.update(this.styleMap);
+        return styleMap;
     }
-
-
 }
