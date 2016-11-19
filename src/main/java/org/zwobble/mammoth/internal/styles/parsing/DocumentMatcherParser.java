@@ -52,12 +52,21 @@ public class DocumentMatcherParser {
     private static Optional<StringMatcher> parseStyleName(TokenIterator<TokenType> tokens) {
         if (tokens.trySkip(TokenType.SYMBOL, "[")) {
             tokens.skip(TokenType.IDENTIFIER, "style-name");
-            tokens.skip(TokenType.SYMBOL, "=");
-            String value = TokenParser.parseString(tokens);
+            StringMatcher stringMatcher = parseStringMatcher(tokens);
             tokens.skip(TokenType.SYMBOL, "]");
-            return Optional.of(new EqualToStringMatcher(value));
+            return Optional.of(stringMatcher);
         } else {
             return Optional.empty();
+        }
+    }
+
+    private static StringMatcher parseStringMatcher(TokenIterator<TokenType> tokens) {
+        if (tokens.trySkip(TokenType.SYMBOL, "=")) {
+            return new EqualToStringMatcher(TokenParser.parseString(tokens));
+        } else if (tokens.trySkip(TokenType.SYMBOL, "^=")) {
+            return new StartsWithStringMatcher(TokenParser.parseString(tokens));
+        } else {
+            throw new LineParseException(tokens.next(), "Expected string matcher but got token " + tokens.next().getValue());
         }
     }
 

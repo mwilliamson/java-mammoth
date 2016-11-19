@@ -38,6 +38,10 @@ public class TokenIterator<T> {
         return tokens.get(index).getTokenType();
     }
 
+    public Token<T> next() {
+        return tokens.get(index++);
+    }
+
     public Token<T> next(T type) {
         Token<T> token = tokens.get(index);
         if (token.getTokenType() == type) {

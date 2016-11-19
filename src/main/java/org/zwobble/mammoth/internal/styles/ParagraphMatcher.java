@@ -13,7 +13,11 @@ public class ParagraphMatcher implements DocumentElementMatcher<Paragraph> {
     }
 
     public static ParagraphMatcher styleName(String styleName) {
-        return new ParagraphMatcher(Optional.empty(), Optional.of(new EqualToStringMatcher(styleName)), Optional.empty());
+        return styleName(new EqualToStringMatcher(styleName));
+    }
+
+    public static ParagraphMatcher styleName(StringMatcher styleName) {
+        return new ParagraphMatcher(Optional.empty(), Optional.of(styleName), Optional.empty());
     }
 
     public static ParagraphMatcher orderedList(String level) {

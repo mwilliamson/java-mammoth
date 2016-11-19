@@ -81,6 +81,11 @@ public class StyleMappingTokeniserTests {
     }
 
     @Test
+    public void startsWithSymbolsAreTokenised() {
+        assertTokens("^=^=", isToken(TokenType.SYMBOL, "^="), isToken(TokenType.SYMBOL, "^="));
+    }
+
+    @Test
     public void openParensAreTokenised() {
         assertTokens("((", isToken(TokenType.SYMBOL, "("), isToken(TokenType.SYMBOL, "("));
     }

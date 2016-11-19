@@ -1,8 +1,10 @@
 package org.zwobble.mammoth.tests.styles.parsing;
 
 import org.junit.Test;
+import org.zwobble.mammoth.internal.styles.EqualToStringMatcher;
 import org.zwobble.mammoth.internal.styles.ParagraphMatcher;
 import org.zwobble.mammoth.internal.styles.RunMatcher;
+import org.zwobble.mammoth.internal.styles.StartsWithStringMatcher;
 import org.zwobble.mammoth.internal.styles.parsing.DocumentMatcherParser;
 import org.zwobble.mammoth.internal.styles.parsing.StyleMappingTokeniser;
 import org.zwobble.mammoth.internal.styles.parsing.TokenIterator;
@@ -27,10 +29,19 @@ public class DocumentMatcherParsingTests {
     }
 
     @Test
-    public void readsParagraphWithStyleName() {
+    public void readsParagraphWithExactStyleName() {
         assertThat(
             parseParagraphMatcher("p[style-name='Heading 1']"),
-            deepEquals(ParagraphMatcher.styleName("Heading 1")));
+            deepEquals(ParagraphMatcher.styleName(new EqualToStringMatcher("Heading 1")))
+        );
+    }
+
+    @Test
+    public void readsParagraphWithStyleNamePrefix() {
+        assertThat(
+            parseParagraphMatcher("p[style-name^='Heading']"),
+            deepEquals(ParagraphMatcher.styleName(new StartsWithStringMatcher("Heading")))
+        );
     }
 
     @Test
