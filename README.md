@@ -411,6 +411,6 @@ are currently missing:
 
 * Custom image handlers
 * CLI
-* Embedded style map support
+* Writing embedded style maps
 * Markdown support
 * Document transforms
