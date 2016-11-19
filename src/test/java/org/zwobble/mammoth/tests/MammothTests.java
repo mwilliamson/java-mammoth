@@ -236,6 +236,22 @@ public class MammothTests {
     }
 
     @Test
+    public void explicitStyleMapTakesPrecendenceOverEmbeddedStyleMap() throws IOException {
+        assertThat(
+            convertToHtml("embedded-style-map.docx", options -> options.addStyleMap("p => p")),
+            isSuccess("<p>Walking on imported air</p>")
+        );
+    }
+
+    @Test
+    public void explicitStyleMapIsCombinedWithEmbeddedStyleMap() throws IOException {
+        assertThat(
+            convertToHtml("embedded-style-map.docx", options -> options.addStyleMap("r => strong")),
+            isSuccess("<h1><strong>Walking on imported air</strong></h1>")
+        );
+    }
+
+    @Test
     public void embeddedStyleMapCanBeWrittenAndThenRead() throws IOException {
         InMemoryArchive archive = InMemoryArchive.fromStream(new FileInputStream(TestData.file("single-paragraph.docx")));
         EmbeddedStyleMap.embedStyleMap(archive, "p => h1");
