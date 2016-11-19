@@ -12,13 +12,13 @@ public class RunMatcher implements DocumentElementMatcher<Run> {
     }
 
     public static RunMatcher styleName(String styleName) {
-        return new RunMatcher(Optional.empty(), Optional.of(styleName));
+        return new RunMatcher(Optional.empty(), Optional.of(new EqualToStringMatcher(styleName)));
     }
 
     private final Optional<String> styleId;
-    private final Optional<String> styleName;
+    private final Optional<StringMatcher> styleName;
 
-    public RunMatcher(Optional<String> styleId, Optional<String> styleName) {
+    public RunMatcher(Optional<String> styleId, Optional<StringMatcher> styleName) {
         this.styleId = styleId;
         this.styleName = styleName;
     }

@@ -13,7 +13,7 @@ public class ParagraphMatcher implements DocumentElementMatcher<Paragraph> {
     }
 
     public static ParagraphMatcher styleName(String styleName) {
-        return new ParagraphMatcher(Optional.empty(), Optional.of(styleName), Optional.empty());
+        return new ParagraphMatcher(Optional.empty(), Optional.of(new EqualToStringMatcher(styleName)), Optional.empty());
     }
 
     public static ParagraphMatcher orderedList(String level) {
@@ -25,10 +25,10 @@ public class ParagraphMatcher implements DocumentElementMatcher<Paragraph> {
     }
 
     private final Optional<String> styleId;
-    private final Optional<String> styleName;
+    private final Optional<StringMatcher> styleName;
     private final Optional<NumberingLevel> numbering;
 
-    public ParagraphMatcher(Optional<String> styleId, Optional<String> styleName, Optional<NumberingLevel> numbering) {
+    public ParagraphMatcher(Optional<String> styleId, Optional<StringMatcher> styleName, Optional<NumberingLevel> numbering) {
         this.styleId = styleId;
         this.styleName = styleName;
         this.numbering = numbering;

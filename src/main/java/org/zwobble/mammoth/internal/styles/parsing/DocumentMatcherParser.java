@@ -1,10 +1,7 @@
 package org.zwobble.mammoth.internal.styles.parsing;
 
 import org.zwobble.mammoth.internal.documents.NumberingLevel;
-import org.zwobble.mammoth.internal.styles.HtmlPath;
-import org.zwobble.mammoth.internal.styles.ParagraphMatcher;
-import org.zwobble.mammoth.internal.styles.RunMatcher;
-import org.zwobble.mammoth.internal.styles.StyleMapBuilder;
+import org.zwobble.mammoth.internal.styles.*;
 
 import java.math.BigInteger;
 import java.util.Optional;
@@ -37,14 +34,14 @@ public class DocumentMatcherParser {
 
     public static ParagraphMatcher parseParagraphMatcher(TokenIterator<TokenType> tokens) {
         Optional<String> styleId = parseStyleId(tokens);
-        Optional<String> styleName = parseStyleName(tokens);
+        Optional<StringMatcher> styleName = parseStyleName(tokens);
         Optional<NumberingLevel> numbering = parseNumbering(tokens);
         return new ParagraphMatcher(styleId, styleName, numbering);
     }
 
     public static RunMatcher parseRunMatcher(TokenIterator<TokenType> tokens) {
         Optional<String> styleId = parseStyleId(tokens);
-        Optional<String> styleName = parseStyleName(tokens);
+        Optional<StringMatcher> styleName = parseStyleName(tokens);
         return new RunMatcher(styleId, styleName);
     }
 
@@ -52,13 +49,13 @@ public class DocumentMatcherParser {
         return TokenParser.parseClassName(tokens);
     }
 
-    private static Optional<String> parseStyleName(TokenIterator<TokenType> tokens) {
+    private static Optional<StringMatcher> parseStyleName(TokenIterator<TokenType> tokens) {
         if (tokens.trySkip(TokenType.SYMBOL, "[")) {
             tokens.skip(TokenType.IDENTIFIER, "style-name");
             tokens.skip(TokenType.SYMBOL, "=");
             String value = TokenParser.parseString(tokens);
             tokens.skip(TokenType.SYMBOL, "]");
-            return Optional.of(value);
+            return Optional.of(new EqualToStringMatcher(value));
         } else {
             return Optional.empty();
         }
