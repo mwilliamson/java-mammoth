@@ -6,7 +6,7 @@ import static org.zwobble.mammoth.internal.util.Lists.list;
 
 public class StyleMappingTokeniser {
     public static List<Token<TokenType>> tokenise(String line) {
-        String stringPrefix = "'((?:\\.|[^'])*)";
+        String stringPrefix = "'((?:\\\\.|[^'])*)";
         String identifierCharacter = "(?:[a-zA-Z\\-_]|\\\\.)";
 
         RegexTokeniser<TokenType> tokeniser = new RegexTokeniser<>(

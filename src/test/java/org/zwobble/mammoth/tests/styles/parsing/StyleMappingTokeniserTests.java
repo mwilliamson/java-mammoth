@@ -51,6 +51,11 @@ public class StyleMappingTokeniserTests {
     }
 
     @Test
+    public void escapeSequencesInStringsAreTokenised() {
+        assertTokens("'Tristan\\''", isToken(TokenType.STRING, "'Tristan\\''"));
+    }
+
+    @Test
     public void unterminatedStringsAreTokenised() {
         assertTokens("'Tristan", isToken(TokenType.UNTERMINATED_STRING, "'Tristan"));
     }
