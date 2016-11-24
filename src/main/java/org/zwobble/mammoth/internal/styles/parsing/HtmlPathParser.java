@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static org.zwobble.mammoth.internal.styles.parsing.TokenParser.parseIdentifier;
 import static org.zwobble.mammoth.internal.util.Maps.map;
 
 public class HtmlPathParser {
@@ -51,9 +52,9 @@ public class HtmlPathParser {
 
     private static List<String> parseTagNames(TokenIterator<TokenType> tokens) {
         List<String> tagNames = new ArrayList<>();
-        tagNames.add(tokens.nextValue(TokenType.IDENTIFIER));
+        tagNames.add(parseIdentifier(tokens));
         while (tokens.trySkip(TokenType.SYMBOL, "|")) {
-            tagNames.add(tokens.nextValue(TokenType.IDENTIFIER));
+            tagNames.add(parseIdentifier(tokens));
         }
         return tagNames;
     }
