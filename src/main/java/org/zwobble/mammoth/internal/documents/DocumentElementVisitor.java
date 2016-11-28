@@ -6,7 +6,7 @@ public interface DocumentElementVisitor<T> {
     T visit(Text text);
 
     T visit(Tab tab);
-    T visit(LineBreak lineBreak);
+    T visit(Break lineBreak);
 
     T visit(Table table);
     T visit(TableRow tableRow);

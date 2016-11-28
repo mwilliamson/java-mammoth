@@ -197,8 +197,16 @@ public class DocumentToHtmlTests {
     @Test
     public void lineBreakIsConvertedToBreakElement() {
         assertThat(
-            convertToHtml(LineBreak.LINE_BREAK),
+            convertToHtml(Break.LINE_BREAK),
             deepEquals(list(Html.selfClosingElement("br"))));
+    }
+
+    @Test
+    public void breaksThatAreNotLineBreaksAreIgnored() {
+        assertThat(
+            convertToHtml(Break.PAGE_BREAK),
+            deepEquals(list())
+        );
     }
 
     @Test

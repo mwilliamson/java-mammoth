@@ -348,21 +348,31 @@ public class BodyXmlTests {
     }
 
     @Test
-    public void brIsReadAsLineBreak() {
+    public void brWithoutExplicitTypeIsReadAsLineBreak() {
         XmlElement element = element("w:br");
 
         assertThat(
             readSuccess(bodyReader(), element),
-            equalTo(LineBreak.LINE_BREAK));
+            equalTo(Break.LINE_BREAK));
+    }
+
+    @Test
+    public void brWithPageTypeIsReadAsPageBreak() {
+        XmlElement element = element("w:br", map("w:type", "page"));
+
+        assertThat(
+            readSuccess(bodyReader(), element),
+            equalTo(Break.PAGE_BREAK)
+        );
     }
 
     @Test
     public void warningOnBreaksThatArentLineBreaks() {
-        XmlElement element = element("w:br", map("w:type", "page"));
+        XmlElement element = element("w:br", map("w:type", "column"));
 
         assertThat(
             readAll(bodyReader(), element),
-            isInternalResult(equalTo(list()), list("Unsupported break type: page")));
+            isInternalResult(equalTo(list()), list("Unsupported break type: column")));
     }
 
     @Test

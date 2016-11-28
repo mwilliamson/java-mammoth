@@ -243,7 +243,9 @@ public class BodyXmlReader {
     private ReadResult readBreak(XmlElement element) {
         String breakType = element.getAttributeOrNone("w:type").orElse("");
         if (breakType.equals("")) {
-            return success(LineBreak.LINE_BREAK);
+            return success(Break.LINE_BREAK);
+        } else if (breakType.equals("page")) {
+            return success(Break.PAGE_BREAK);
         } else {
             return ReadResult.emptyWithWarning("Unsupported break type: " + breakType);
         }

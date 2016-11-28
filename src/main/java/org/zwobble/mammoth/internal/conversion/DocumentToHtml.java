@@ -186,8 +186,12 @@ public class DocumentToHtml {
             }
 
             @Override
-            public List<HtmlNode> visit(LineBreak lineBreak) {
-                return list(Html.selfClosingElement("br"));
+            public List<HtmlNode> visit(Break breakElement) {
+                if (breakElement.getType() == Break.Type.LINE) {
+                    return list(Html.selfClosingElement("br"));
+                } else {
+                    return list();
+                }
             }
 
             @Override
