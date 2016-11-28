@@ -75,6 +75,15 @@ public class StyleMapParserTests {
     }
 
     @Test
+    public void canMapColumnBreaks() {
+        StyleMap styleMap = StyleMapParser.parse("br[type='column'] => div");
+        StyleMap expectedStyleMap = StyleMap.builder()
+            .mapBreak(BreakMatcher.COLUMN_BREAK, HtmlPath.collapsibleElement("div"))
+            .build();
+        assertThat(styleMap, deepEquals(expectedStyleMap));
+    }
+
+    @Test
     public void blankLinesAreIgnored() {
         StyleMap styleMap = StyleMapParser.parse("\n\n  \n\np =>\n\r\n");
         assertThat(styleMap, deepEquals(StyleMap.builder().mapParagraph(ParagraphMatcher.ANY, HtmlPath.EMPTY).build()));

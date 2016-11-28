@@ -109,6 +109,8 @@ public class DocumentMatcherParser {
                 return BreakMatcher.LINE_BREAK;
             case "page":
                 return BreakMatcher.PAGE_BREAK;
+            case "column":
+                return BreakMatcher.COLUMN_BREAK;
             default:
                 throw new LineParseException(stringToken, "Unrecognised break type: " + typeName);
         }
