@@ -61,6 +61,11 @@ public class StyleMapBuilder {
         return this;
     }
 
+    public StyleMapBuilder mapBreak(BreakMatcher matcher, HtmlPath path) {
+        breakStyles.add(new StyleMapping<>(matcher, path));
+        return this;
+    }
+
     public StyleMap build() {
         return new StyleMap(bold, italic, underline, strikethrough, commentReference, paragraphStyles, runStyles, breakStyles);
     }

@@ -96,4 +96,9 @@ public class StyleMap {
         return tryFind(runStyles, styleMapping -> styleMapping.matches(run))
             .map(StyleMapping::getHtmlPath);
     }
+
+    public Optional<HtmlPath> getBreakHtmlPath(Break breakElement) {
+        return tryFind(breakStyles, styleMapping -> styleMapping.matches(breakElement))
+            .map(StyleMapping::getHtmlPath);
+    }
 }

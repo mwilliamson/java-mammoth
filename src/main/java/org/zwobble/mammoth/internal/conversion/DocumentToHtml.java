@@ -187,11 +187,15 @@ public class DocumentToHtml {
 
             @Override
             public List<HtmlNode> visit(Break breakElement) {
-                if (breakElement.getType() == Break.Type.LINE) {
-                    return list(Html.element("br"));
-                } else {
-                    return list();
-                }
+                HtmlPath mapping = styleMap.getBreakHtmlPath(breakElement)
+                    .orElseGet(() -> {
+                        if (breakElement.getType() == Break.Type.LINE) {
+                            return HtmlPath.element("br");
+                        } else {
+                            return HtmlPath.EMPTY;
+                        }
+                    });
+                return mapping.wrap(() -> list()).get();
             }
 
             @Override

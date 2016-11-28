@@ -210,6 +210,17 @@ public class DocumentToHtmlTests {
     }
 
     @Test
+    public void breaksCanBeMappedUsingStyleMappings() {
+        assertThat(
+            convertToHtml(
+                Break.PAGE_BREAK,
+                StyleMap.builder().mapBreak(BreakMatcher.PAGE_BREAK, HtmlPath.element("div")).build()
+            ),
+            deepEquals(list(Html.element("div")))
+        );
+    }
+
+    @Test
     public void tableIsConvertedToHtmlTable() {
         assertThat(
             convertToHtml(new Table(list(
