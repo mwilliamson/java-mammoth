@@ -1,5 +1,6 @@
 package org.zwobble.mammoth.internal.styles;
 
+import org.zwobble.mammoth.internal.documents.Break;
 import org.zwobble.mammoth.internal.documents.Paragraph;
 import org.zwobble.mammoth.internal.documents.Run;
 import org.zwobble.mammoth.internal.util.Lists;
@@ -24,7 +25,9 @@ public class StyleMap {
             Optionals.first(high.strikethrough, low.strikethrough),
             Optionals.first(high.commentReference, low.commentReference),
             Lists.eagerConcat(high.paragraphStyles, low.paragraphStyles),
-            Lists.eagerConcat(high.runStyles, low.runStyles));
+            Lists.eagerConcat(high.runStyles, low.runStyles),
+            Lists.eagerConcat(high.breakStyles, low.breakStyles)
+        );
     }
 
     public static final StyleMap EMPTY = new StyleMapBuilder().build();
@@ -36,6 +39,7 @@ public class StyleMap {
     private final Optional<HtmlPath> commentReference;
     private final List<StyleMapping<Paragraph>> paragraphStyles;
     private final List<StyleMapping<Run>> runStyles;
+    private final List<StyleMapping<Break>> breakStyles;
 
     public StyleMap(
         Optional<HtmlPath> bold,
@@ -44,7 +48,9 @@ public class StyleMap {
         Optional<HtmlPath> strikethrough,
         Optional<HtmlPath> commentReference,
         List<StyleMapping<Paragraph>> paragraphStyles,
-        List<StyleMapping<Run>> runStyles)
+        List<StyleMapping<Run>> runStyles,
+        List<StyleMapping<Break>> breakStyles
+    )
     {
         this.bold = bold;
         this.italic = italic;
@@ -53,6 +59,7 @@ public class StyleMap {
         this.commentReference = commentReference;
         this.paragraphStyles = paragraphStyles;
         this.runStyles = runStyles;
+        this.breakStyles = breakStyles;
     }
 
     public StyleMap update(StyleMap styleMap) {

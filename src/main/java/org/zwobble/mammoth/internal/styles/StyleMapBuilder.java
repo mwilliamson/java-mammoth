@@ -1,5 +1,6 @@
 package org.zwobble.mammoth.internal.styles;
 
+import org.zwobble.mammoth.internal.documents.Break;
 import org.zwobble.mammoth.internal.documents.Paragraph;
 import org.zwobble.mammoth.internal.documents.Run;
 
@@ -15,6 +16,7 @@ public class StyleMapBuilder {
     private Optional<HtmlPath> commentReference;
     private final List<StyleMapping<Paragraph>> paragraphStyles = new ArrayList<>();
     private final List<StyleMapping<Run>> runStyles = new ArrayList<>();
+    private final List<StyleMapping<Break>> breakStyles = new ArrayList<>();
 
     public StyleMapBuilder() {
         this.bold = Optional.empty();
@@ -60,6 +62,6 @@ public class StyleMapBuilder {
     }
 
     public StyleMap build() {
-        return new StyleMap(bold, italic, underline, strikethrough, commentReference, paragraphStyles, runStyles);
+        return new StyleMap(bold, italic, underline, strikethrough, commentReference, paragraphStyles, runStyles, breakStyles);
     }
 }
