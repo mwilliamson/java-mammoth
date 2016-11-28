@@ -242,12 +242,15 @@ public class BodyXmlReader {
 
     private ReadResult readBreak(XmlElement element) {
         String breakType = element.getAttributeOrNone("w:type").orElse("textWrapping");
-        if (breakType.equals("textWrapping")) {
-            return success(Break.LINE_BREAK);
-        } else if (breakType.equals("page")) {
-            return success(Break.PAGE_BREAK);
-        } else {
-            return ReadResult.emptyWithWarning("Unsupported break type: " + breakType);
+        switch (breakType) {
+            case "textWrapping":
+                return success(Break.LINE_BREAK);
+            case "page":
+                return success(Break.PAGE_BREAK);
+            case "column":
+                return success(Break.COLUMN_BREAK);
+            default:
+                return ReadResult.emptyWithWarning("Unsupported break type: " + breakType);
         }
     }
 

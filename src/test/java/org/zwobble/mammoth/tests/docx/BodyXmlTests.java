@@ -377,12 +377,22 @@ public class BodyXmlTests {
     }
 
     @Test
-    public void warningOnBreaksThatArentLineBreaks() {
+    public void brWithColumnTypeIsReadAsColumnBreak() {
         XmlElement element = element("w:br", map("w:type", "column"));
 
         assertThat(
+            readSuccess(bodyReader(), element),
+            equalTo(Break.COLUMN_BREAK)
+        );
+    }
+
+    @Test
+    public void warningOnBreaksThatArentRecognised() {
+        XmlElement element = element("w:br", map("w:type", "unknownBreakType"));
+
+        assertThat(
             readAll(bodyReader(), element),
-            isInternalResult(equalTo(list()), list("Unsupported break type: column")));
+            isInternalResult(equalTo(list()), list("Unsupported break type: unknownBreakType")));
     }
 
     @Test
