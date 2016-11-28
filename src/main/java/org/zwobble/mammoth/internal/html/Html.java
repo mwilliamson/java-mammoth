@@ -164,7 +164,7 @@ public class Html {
         return element.getChildren().isEmpty() && isVoidTag(element.getTagName());
     }
 
-    private static final Set<String> VOID_TAG_NAMES = set("img", "br");
+    private static final Set<String> VOID_TAG_NAMES = set("img", "br", "hr");
 
     private static boolean isVoidTag(String tagName) {
         return VOID_TAG_NAMES.contains(tagName);
