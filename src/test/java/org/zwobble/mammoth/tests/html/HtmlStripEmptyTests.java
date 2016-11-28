@@ -56,10 +56,10 @@ public class HtmlStripEmptyTests {
     }
 
     @Test
-    public void selfClosingElementsAreNeverEmpty() {
+    public void voidElementsAreNeverEmpty() {
         assertThat(
-            Html.stripEmpty(list(Html.selfClosingElement("br"))),
-            deepEquals(list(Html.selfClosingElement("br"))));
+            Html.stripEmpty(list(Html.element("br"))),
+            deepEquals(list(Html.element("br"))));
     }
 
     @Test

@@ -198,7 +198,7 @@ public class DocumentToHtmlTests {
     public void lineBreakIsConvertedToBreakElement() {
         assertThat(
             convertToHtml(Break.LINE_BREAK),
-            deepEquals(list(Html.selfClosingElement("br"))));
+            deepEquals(list(Html.element("br"))));
     }
 
     @Test
@@ -385,7 +385,7 @@ public class DocumentToHtmlTests {
             () -> new ByteArrayInputStream(new byte[]{97, 98, 99}));
         assertThat(
             convertToHtml(image),
-            deepEquals(list(Html.selfClosingElement("img", map("src", "data:image/png;base64,YWJj")))));
+            deepEquals(list(Html.element("img", map("src", "data:image/png;base64,YWJj")))));
     }
 
     @Test

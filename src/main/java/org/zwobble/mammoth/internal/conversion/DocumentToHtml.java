@@ -188,7 +188,7 @@ public class DocumentToHtml {
             @Override
             public List<HtmlNode> visit(Break breakElement) {
                 if (breakElement.getType() == Break.Type.LINE) {
-                    return list(Html.selfClosingElement("br"));
+                    return list(Html.element("br"));
                 } else {
                     return list();
                 }
@@ -282,7 +282,7 @@ public class DocumentToHtml {
 
                             image.getAltText().ifPresent(altText -> attributes.put("alt", altText));
 
-                            return list(Html.selfClosingElement("img", attributes));
+                            return list(Html.element("img", attributes));
                         } catch (IOException exception) {
                             warnings.add(exception.getMessage());
                             return Lists.<HtmlNode>list();

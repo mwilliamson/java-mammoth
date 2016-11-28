@@ -31,17 +31,18 @@ public class HtmlWriteTests {
     }
 
     @Test
-    public void canWriteSelfClosingElement() {
+    public void voidElementsWithoutChildrenAreWrittenAsSelfClosing() {
         assertEquals(
             "<br />",
-            write(Html.selfClosingElement("br")));
+            write(Html.element("br"))
+        );
     }
 
     @Test
     public void canWriteSelfClosingElementWithAttributes() {
         assertEquals(
             "<img class=\"external\" src=\"http://example.com\" />",
-            write(Html.selfClosingElement("img", map("class", "external", "src", "http://example.com"))));
+            write(Html.element("img", map("class", "external", "src", "http://example.com"))));
     }
 
     @Test

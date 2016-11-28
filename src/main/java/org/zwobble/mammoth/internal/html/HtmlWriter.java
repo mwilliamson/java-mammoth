@@ -2,6 +2,7 @@ package org.zwobble.mammoth.internal.html;
 
 import java.util.Map;
 
+import static org.zwobble.mammoth.internal.html.Html.isVoidElement;
 import static org.zwobble.mammoth.internal.util.Lists.orderedBy;
 
 public class HtmlWriter {
@@ -13,21 +14,18 @@ public class HtmlWriter {
 
                 HtmlWriter.generateAttributes(element.getAttributes(), builder);
 
-                builder.append(">");
+                if (isVoidElement(element)) {
+                    builder.append(" />");
+                } else {
+                    builder.append(">");
 
-                element.getChildren().forEach(child -> write(child, builder));
+                    element.getChildren().forEach(child -> write(child, builder));
 
-                builder
-                    .append("</")
-                    .append(element.getTagName())
-                    .append(">");
-            }
-
-            @Override
-            public void visit(HtmlSelfClosingElement element) {
-                builder.append("<").append(element.getTagName());
-                HtmlWriter.generateAttributes(element.getAttributes(), builder);
-                builder.append(" />");
+                    builder
+                        .append("</")
+                        .append(element.getTagName())
+                        .append(">");
+                }
             }
 
             @Override
