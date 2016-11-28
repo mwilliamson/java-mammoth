@@ -357,6 +357,16 @@ public class BodyXmlTests {
     }
 
     @Test
+    public void brWithTextWrappingTypeIsReadAsLineBreak() {
+        XmlElement element = element("w:br", map("w:type", "textWrapping"));
+
+        assertThat(
+            readSuccess(bodyReader(), element),
+            equalTo(Break.LINE_BREAK)
+        );
+    }
+
+    @Test
     public void brWithPageTypeIsReadAsPageBreak() {
         XmlElement element = element("w:br", map("w:type", "page"));
 

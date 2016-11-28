@@ -241,8 +241,8 @@ public class BodyXmlReader {
     }
 
     private ReadResult readBreak(XmlElement element) {
-        String breakType = element.getAttributeOrNone("w:type").orElse("");
-        if (breakType.equals("")) {
+        String breakType = element.getAttributeOrNone("w:type").orElse("textWrapping");
+        if (breakType.equals("textWrapping")) {
             return success(Break.LINE_BREAK);
         } else if (breakType.equals("page")) {
             return success(Break.PAGE_BREAK);
