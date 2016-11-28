@@ -1,10 +1,7 @@
 package org.zwobble.mammoth.tests.styles.parsing;
 
 import org.junit.Test;
-import org.zwobble.mammoth.internal.styles.HtmlPath;
-import org.zwobble.mammoth.internal.styles.ParagraphMatcher;
-import org.zwobble.mammoth.internal.styles.RunMatcher;
-import org.zwobble.mammoth.internal.styles.StyleMap;
+import org.zwobble.mammoth.internal.styles.*;
 import org.zwobble.mammoth.internal.styles.parsing.StyleMapParser;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -57,6 +54,24 @@ public class StyleMapParserTests {
     public void canMapCommentReference() {
         StyleMap styleMap = StyleMapParser.parse("comment-reference =>");
         assertThat(styleMap, deepEquals(StyleMap.builder().commentReference(HtmlPath.EMPTY).build()));
+    }
+
+    @Test
+    public void canMapLineBreaks() {
+        StyleMap styleMap = StyleMapParser.parse("br[type='line'] => div");
+        StyleMap expectedStyleMap = StyleMap.builder()
+            .mapBreak(BreakMatcher.LINE_BREAK, HtmlPath.collapsibleElement("div"))
+            .build();
+        assertThat(styleMap, deepEquals(expectedStyleMap));
+    }
+
+    @Test
+    public void canMapPageBreaks() {
+        StyleMap styleMap = StyleMapParser.parse("br[type='page'] => div");
+        StyleMap expectedStyleMap = StyleMap.builder()
+            .mapBreak(BreakMatcher.PAGE_BREAK, HtmlPath.collapsibleElement("div"))
+            .build();
+        assertThat(styleMap, deepEquals(expectedStyleMap));
     }
 
     @Test

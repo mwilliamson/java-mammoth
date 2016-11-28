@@ -27,6 +27,9 @@ public class DocumentMatcherParser {
                 return StyleMapBuilder::strikethrough;
             case "comment-reference":
                 return StyleMapBuilder::commentReference;
+            case "br":
+                BreakMatcher breakMatcher = parseBreakMatcher(tokens);
+                return (builder, path) -> builder.mapBreak(breakMatcher, path);
             default:
                 throw new LineParseException(identifier, "Unrecognised document element: " + identifier);
         }
@@ -91,6 +94,23 @@ public class DocumentMatcherParser {
                 return false;
             default:
                 throw new LineParseException(listType, "Unrecognised list type: " + listType);
+        }
+    }
+
+    private static BreakMatcher parseBreakMatcher(TokenIterator<TokenType> tokens) {
+        tokens.skip(TokenType.SYMBOL, "[");
+        tokens.skip(TokenType.IDENTIFIER, "type");
+        tokens.skip(TokenType.SYMBOL, "=");
+        Token<TokenType> stringToken = tokens.next(TokenType.STRING);
+        tokens.skip(TokenType.SYMBOL, "]");
+        String typeName = TokenParser.parseStringToken(stringToken);
+        switch (typeName) {
+            case "line":
+                return BreakMatcher.LINE_BREAK;
+            case "page":
+                return BreakMatcher.PAGE_BREAK;
+            default:
+                throw new LineParseException(stringToken, "Unrecognised break type: " + typeName);
         }
     }
 }

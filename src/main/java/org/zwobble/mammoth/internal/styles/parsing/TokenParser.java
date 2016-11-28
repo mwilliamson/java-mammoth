@@ -16,7 +16,11 @@ public class TokenParser {
     }
 
     public static String parseString(TokenIterator<TokenType> tokens) {
-        String value = tokens.nextValue(TokenType.STRING);
+        return parseStringToken(tokens.next(TokenType.STRING));
+    }
+
+    static String parseStringToken(Token<TokenType> token) {
+        String value = token.getValue();
         return EscapeSequences.decode(value.substring(1, value.length() - 1));
     }
 }
