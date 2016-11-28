@@ -214,9 +214,9 @@ public class DocumentToHtmlTests {
         assertThat(
             convertToHtml(
                 Break.PAGE_BREAK,
-                StyleMap.builder().mapBreak(BreakMatcher.PAGE_BREAK, HtmlPath.element("div")).build()
+                StyleMap.builder().mapBreak(BreakMatcher.PAGE_BREAK, HtmlPath.element("hr")).build()
             ),
-            deepEquals(list(Html.element("div")))
+            deepEquals(list(Html.element("hr")))
         );
     }
 
