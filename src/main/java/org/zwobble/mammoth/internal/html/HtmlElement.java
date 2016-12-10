@@ -2,6 +2,9 @@ package org.zwobble.mammoth.internal.html;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
+import static org.zwobble.mammoth.internal.util.Sets.set;
 
 public class HtmlElement implements HtmlNode {
     private final HtmlTag tag;
@@ -38,6 +41,16 @@ public class HtmlElement implements HtmlNode {
 
     public String getSeparator() {
         return tag.getSeparator();
+    }
+
+    public boolean isVoid() {
+        return children.isEmpty() && isVoidTag(getTagName());
+    }
+
+    private static final Set<String> VOID_TAG_NAMES = set("img", "br", "hr");
+
+    private static boolean isVoidTag(String tagName) {
+        return VOID_TAG_NAMES.contains(tagName);
     }
 
     @Override

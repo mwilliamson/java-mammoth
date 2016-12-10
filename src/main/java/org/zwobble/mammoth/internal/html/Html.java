@@ -6,13 +6,11 @@ import org.zwobble.mammoth.internal.util.Optionals;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import static org.zwobble.mammoth.internal.util.Casts.tryCast;
 import static org.zwobble.mammoth.internal.util.Lists.list;
 import static org.zwobble.mammoth.internal.util.Lists.tryGetLast;
 import static org.zwobble.mammoth.internal.util.Maps.map;
-import static org.zwobble.mammoth.internal.util.Sets.set;
 
 public class Html {
     public static final HtmlNode FORCE_WRITE = HtmlForceWrite.FORCE_WRITE;
@@ -72,7 +70,7 @@ public class Html {
             @Override
             public List<HtmlNode> visit(HtmlElement element) {
                 List<HtmlNode> children = stripEmpty(element.getChildren());
-                if (children.isEmpty() && !isVoidElement(element)) {
+                if (children.isEmpty() && !element.isVoid()) {
                     return list();
                 } else {
                     return list(new HtmlElement(element.getTag(), children));
@@ -158,15 +156,5 @@ public class Html {
     private static boolean isMatch(HtmlElement first, HtmlElement second) {
         return second.getTagNames().contains(first.getTagName()) &&
             first.getAttributes().equals(second.getAttributes());
-    }
-
-    static boolean isVoidElement(HtmlElement element) {
-        return element.getChildren().isEmpty() && isVoidTag(element.getTagName());
-    }
-
-    private static final Set<String> VOID_TAG_NAMES = set("img", "br", "hr");
-
-    private static boolean isVoidTag(String tagName) {
-        return VOID_TAG_NAMES.contains(tagName);
     }
 }
