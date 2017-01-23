@@ -18,12 +18,12 @@ import java.util.function.Function;
 
 import static org.zwobble.mammoth.internal.docx.ReadResult.EMPTY_SUCCESS;
 import static org.zwobble.mammoth.internal.docx.ReadResult.success;
+import static org.zwobble.mammoth.internal.docx.Uris.uriToZipEntryName;
 import static org.zwobble.mammoth.internal.util.Iterables.lazyFilter;
 import static org.zwobble.mammoth.internal.util.Lists.list;
 import static org.zwobble.mammoth.internal.util.Maps.entry;
 import static org.zwobble.mammoth.internal.util.Maps.lookup;
 import static org.zwobble.mammoth.internal.util.Sets.set;
-import static org.zwobble.mammoth.internal.util.Strings.trimLeft;
 
 public class BodyXmlReader {
     private static final Set<String> IMAGE_TYPES_SUPPORTED_BY_BROWSERS = set(
@@ -456,7 +456,7 @@ public class BodyXmlReader {
 
     private String relationshipIdToDocxPath(String relationshipId) {
         Relationship relationship = relationships.findRelationshipById(relationshipId);
-        return "word/" + trimLeft(relationship.getTarget(), '/');
+        return uriToZipEntryName("word", relationship.getTarget());
     }
 
     private Optional<String> readVal(XmlElementLike element, String name) {

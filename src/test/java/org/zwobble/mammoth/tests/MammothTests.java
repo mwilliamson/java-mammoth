@@ -69,9 +69,16 @@ public class MammothTests {
     }
 
     @Test
-    public void inlineImagesAreIncludedInOutput() throws IOException {
+    public void inlineImagesReferencedByPathRelativeToPartAreIncludedInOutput() throws IOException {
         assertThat(
             convertToHtml("tiny-picture.docx"),
+            isSuccess("<p><img src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAIAAAACUFjqAAAAAXNSR0IArs4c6QAAAAlwSFlzAAAOvgAADr4B6kKxwAAAABNJREFUKFNj/M+ADzDhlWUYqdIAQSwBE8U+X40AAAAASUVORK5CYII=\" /></p>"));
+    }
+
+    @Test
+    public void inlineImagesReferencedByPathRelativeToBaseAreIncludedInOutput() throws IOException {
+        assertThat(
+            convertToHtml("tiny-picture-target-base-relative.docx"),
             isSuccess("<p><img src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAIAAAACUFjqAAAAAXNSR0IArs4c6QAAAAlwSFlzAAAOvgAADr4B6kKxwAAAABNJREFUKFNj/M+ADzDhlWUYqdIAQSwBE8U+X40AAAAASUVORK5CYII=\" /></p>"));
     }
 

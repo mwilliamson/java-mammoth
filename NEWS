@@ -8,6 +8,9 @@
 * Ignore bold, italic, underline and strikethrough elements that have a value of
   false or 0.
 
+* Handle absolute paths within zip files. This should fix an issue where some
+  images within a document couldn't be found.
+
 # 0.0.4
 
 * Add support for comments.
