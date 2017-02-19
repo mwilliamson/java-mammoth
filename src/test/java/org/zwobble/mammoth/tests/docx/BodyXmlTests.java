@@ -148,7 +148,7 @@ public class BodyXmlTests {
     }
 
     public static class ComplexFieldsTests {
-        private static final String URI ="http://example.com";
+        private static final String URI = "http://example.com";
         private static final XmlElement BEGIN_COMPLEX_FIELD = element("w:r", list(
             element("w:fldChar", map("w:fldCharType", "begin"))
         ));
