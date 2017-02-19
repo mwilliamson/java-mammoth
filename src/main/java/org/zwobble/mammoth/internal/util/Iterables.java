@@ -54,6 +54,20 @@ public class Iterables {
         }
     }
 
+    public static <T> Optional<T> tryGetLast(Iterable<? extends T> iterable) {
+        Iterator<? extends T> iterator = iterable.iterator();
+        if (!iterator.hasNext()) {
+            return Optional.empty();
+        }
+
+        while (true) {
+            T last = iterator.next();
+            if (!iterator.hasNext()) {
+                return Optional.of(last);
+            }
+        }
+    }
+
     public static <T, R> Iterable<R> lazyFlatMap(Iterable<T> iterable, Function<T, Iterable<R>> function) {
         return lazyFlatten(lazyMap(iterable, function));
     }

@@ -15,11 +15,14 @@ import org.zwobble.mammoth.internal.xml.XmlNode;
 
 import java.util.*;
 import java.util.function.Function;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static org.zwobble.mammoth.internal.docx.ReadResult.EMPTY_SUCCESS;
 import static org.zwobble.mammoth.internal.docx.ReadResult.success;
 import static org.zwobble.mammoth.internal.docx.Uris.uriToZipEntryName;
 import static org.zwobble.mammoth.internal.util.Iterables.lazyFilter;
+import static org.zwobble.mammoth.internal.util.Iterables.tryGetLast;
 import static org.zwobble.mammoth.internal.util.Lists.list;
 import static org.zwobble.mammoth.internal.util.Maps.entry;
 import static org.zwobble.mammoth.internal.util.Maps.lookup;
@@ -35,6 +38,24 @@ public class BodyXmlReader {
     private final ContentTypes contentTypes;
     private final Archive file;
     private final FileReader fileReader;
+    private final StringBuilder currentInstrText;
+    private final Queue<ComplexField> complexFields;
+
+    private interface ComplexField {
+        ComplexField UNKNOWN = new ComplexField() {};
+
+        static ComplexField hyperlink(String href) {
+            return new HyperlinkComplexField(href);
+        }
+    }
+
+    private static class HyperlinkComplexField implements ComplexField {
+        private final String href;
+
+        private HyperlinkComplexField(String href) {
+            this.href = href;
+        }
+    }
 
     public BodyXmlReader(
         Styles styles,
@@ -42,7 +63,8 @@ public class BodyXmlReader {
         Relationships relationships,
         ContentTypes contentTypes,
         Archive file,
-        FileReader fileReader)
+        FileReader fileReader
+    )
     {
         this.styles = styles;
         this.numbering = numbering;
@@ -50,6 +72,9 @@ public class BodyXmlReader {
         this.contentTypes = contentTypes;
         this.file = file;
         this.fileReader = fileReader;
+        // TODO: don't expose statefulness to callers
+        this.currentInstrText = new StringBuilder();
+        this.complexFields = Collections.asLifoQueue(new ArrayDeque<>());
     }
 
     public ReadResult readElement(XmlElement element) {
@@ -60,6 +85,11 @@ public class BodyXmlReader {
                 return readRun(element);
             case "w:p":
                 return readParagraph(element);
+
+            case "w:fldChar":
+                return readFieldChar(element);
+            case "w:instrText":
+                return readInstrText(element);
 
             case "w:tab":
                 return success(Tab.TAB);
@@ -137,14 +167,28 @@ public class BodyXmlReader {
         return ReadResult.map(
             readRunStyle(properties),
             readElements(element.getChildren()),
-            (style, children) -> new Run(
-                isBold(properties),
-                isItalic(properties),
-                isUnderline(properties),
-                isStrikethrough(properties),
-                readVerticalAlignment(properties),
-                style,
-                children));
+            (style, children) -> {
+                Optional<String> hyperlinkHref = currentHyperlinkHref();
+                if (hyperlinkHref.isPresent()) {
+                    children = list(Hyperlink.href(hyperlinkHref.get(), children));
+                }
+
+                return new Run(
+                    isBold(properties),
+                    isItalic(properties),
+                    isUnderline(properties),
+                    isStrikethrough(properties),
+                    readVerticalAlignment(properties),
+                    style,
+                    children
+                );
+            }
+        );
+    }
+
+    private Optional<String> currentHyperlinkHref() {
+        return tryGetLast(lazyFilter(this.complexFields, HyperlinkComplexField.class))
+            .map(field -> field.href);
     }
 
     private boolean isBold(XmlElementLike properties) {
@@ -199,6 +243,37 @@ public class BodyXmlReader {
             readParagraphStyle(properties),
             readElements(element.getChildren()),
             (style, children) -> new Paragraph(style, numbering, children)).appendExtra();
+    }
+
+    private ReadResult readFieldChar(XmlElement element) {
+        String type = element.getAttributeOrNone("w:fldCharType").orElse("");
+        if (type.equals("begin")) {
+            currentInstrText.setLength(0);
+        } else if (type.equals("end")) {
+            complexFields.remove();
+        } else if (type.equals("separate")) {
+            String instrText = currentInstrText.toString();
+            ComplexField complexField = parseHyperlinkFieldCode(instrText)
+                .map(href -> ComplexField.hyperlink(href))
+                .orElse(ComplexField.UNKNOWN);
+            complexFields.add(complexField);
+        }
+        return ReadResult.EMPTY_SUCCESS;
+    }
+
+    private ReadResult readInstrText(XmlElement element) {
+        currentInstrText.append(element.innerText());
+        return ReadResult.EMPTY_SUCCESS;
+    }
+
+    private Optional<String> parseHyperlinkFieldCode(String instrText) {
+        Pattern pattern = Pattern.compile("\\s*HYPERLINK \"(.*)\"");
+        Matcher matcher = pattern.matcher(instrText);
+        if (matcher.lookingAt()) {
+            return Optional.of(matcher.group(1));
+        } else {
+            return Optional.empty();
+        }
     }
 
     private InternalResult<Optional<Style>> readParagraphStyle(XmlElementLike properties) {

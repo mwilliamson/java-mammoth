@@ -147,6 +147,48 @@ public class BodyXmlTests {
             hasNumbering(Optional.empty()));
     }
 
+    public static class ComplexFieldsTests {
+        private static final String URI ="http://example.com";
+        private static final XmlElement BEGIN_COMPLEX_FIELD = element("w:r", list(
+            element("w:fldChar", map("w:fldCharType", "begin"))
+        ));
+        private static final XmlElement SEPARATE_COMPLEX_FIELD = element("w:r", list(
+            element("w:fldChar", map("w:fldCharType", "separate"))
+        ));
+        private static final XmlElement END_COMPLEX_FIELD = element("w:r", list(
+            element("w:fldChar", map("w:fldCharType", "end"))
+        ));
+        private static final XmlElement HYPERLINK_INSTRTEXT = element("w:instrText", list(
+            XmlNodes.text(" HYPERLINK \"" + URI + '"')
+        ));
+
+        @Test
+        public void runsInAComplexFieldForHyperlinksAreReadAsHyperlinks() {
+            XmlElement hyperlinkRunXml = runXml("this is a hyperlink");
+            XmlElement element = paragraphXml(list(
+                BEGIN_COMPLEX_FIELD,
+                HYPERLINK_INSTRTEXT,
+                SEPARATE_COMPLEX_FIELD,
+                hyperlinkRunXml,
+                END_COMPLEX_FIELD
+            ));
+            DocumentElement paragraph = readSuccess(bodyReader(), element);
+
+            assertThat(paragraph, isParagraph(paragraph(withChildren(
+                run(),
+                run(withChildren(
+                    Hyperlink.href(URI, list())
+                )),
+                run(withChildren(
+                    Hyperlink.href(URI, list(
+                        text("this is a hyperlink")
+                    ))
+                )),
+                run()
+            ))));
+        }
+    }
+
     @Test
     public void runHasNoStyleIfItHasNoProperties() {
         XmlElement element = runXml(list());
@@ -904,11 +946,15 @@ public class BodyXmlTests {
         return paragraphXml(list());
     }
 
-    private XmlElement paragraphXml(List<XmlNode> children) {
+    private static XmlElement paragraphXml(List<XmlNode> children) {
         return element("w:p", children);
     }
 
-    private XmlElement runXml(List<XmlNode> children) {
+    private static XmlElement runXml(String text) {
+        return runXml(list(textXml(text)));
+    }
+
+    private static XmlElement runXml(List<XmlNode> children) {
         return element("w:r", children);
     }
 
@@ -916,15 +962,15 @@ public class BodyXmlTests {
         return element("w:r", list(element("w:rPr", asList(children))));
     }
 
-    private XmlElement textXml(String value) {
+    private static XmlElement textXml(String value) {
         return element("w:t", list(XmlNodes.text(value)));
     }
 
-    private Matcher<DocumentElement> isParagraph(Paragraph expected) {
+    private static Matcher<DocumentElement> isParagraph(Paragraph expected) {
         return new DeepReflectionMatcher<>(expected);
     }
 
-    private Matcher<DocumentElement> isRun(Run expected) {
+    private static Matcher<DocumentElement> isRun(Run expected) {
         return new DeepReflectionMatcher<>(expected);
     }
 
@@ -944,7 +990,7 @@ public class BodyXmlTests {
         return hasProperty("numbering", deepEquals(expected));
     }
 
-    private Text text(String value) {
+    private static Text text(String value) {
         return new Text(value);
     }
 }
