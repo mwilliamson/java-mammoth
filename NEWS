@@ -11,6 +11,8 @@
 * Handle absolute paths within zip files. This should fix an issue where some
   images within a document couldn't be found.
 
+* Handle hyperlinks created with complex fields.
+
 # 0.0.4
 
 * Add support for comments.
