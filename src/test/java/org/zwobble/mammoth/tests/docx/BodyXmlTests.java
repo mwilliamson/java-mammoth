@@ -13,7 +13,6 @@ import org.zwobble.mammoth.internal.results.InternalResult;
 import org.zwobble.mammoth.internal.xml.XmlElement;
 import org.zwobble.mammoth.internal.xml.XmlNode;
 import org.zwobble.mammoth.internal.xml.XmlNodes;
-import org.zwobble.mammoth.tests.DeepReflectionMatcher;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -34,6 +33,7 @@ import static org.zwobble.mammoth.tests.DeepReflectionMatcher.deepEquals;
 import static org.zwobble.mammoth.tests.ResultMatchers.*;
 import static org.zwobble.mammoth.tests.documents.DocumentElementMakers.*;
 import static org.zwobble.mammoth.tests.docx.BodyXmlReaderMakers.bodyReader;
+import static org.zwobble.mammoth.tests.docx.DocumentMatchers.*;
 import static org.zwobble.mammoth.tests.docx.OfficeXmlBuilders.*;
 
 public class BodyXmlTests {
@@ -145,6 +145,168 @@ public class BodyXmlTests {
         assertThat(
             readSuccess(bodyReader(numbering), element),
             hasNumbering(Optional.empty()));
+    }
+
+    public static class ComplexFieldsTests {
+        private static final String URI ="http://example.com";
+        private static final XmlElement BEGIN_COMPLEX_FIELD = element("w:r", list(
+            element("w:fldChar", map("w:fldCharType", "begin"))
+        ));
+        private static final XmlElement SEPARATE_COMPLEX_FIELD = element("w:r", list(
+            element("w:fldChar", map("w:fldCharType", "separate"))
+        ));
+        private static final XmlElement END_COMPLEX_FIELD = element("w:r", list(
+            element("w:fldChar", map("w:fldCharType", "end"))
+        ));
+        private static final XmlElement HYPERLINK_INSTRTEXT = element("w:instrText", list(
+            XmlNodes.text(" HYPERLINK \"" + URI + '"')
+        ));
+        private static Matcher<DocumentElement> isEmptyHyperlinkedRun() {
+            return isHyperlinkedRun(hasChildren());
+        }
+        @SafeVarargs
+        private static Matcher<DocumentElement> isHyperlinkedRun(Matcher<? super Hyperlink>... matchers) {
+            return isRun(hasChildren(
+                allOf(
+                    isHyperlink(hasHref(URI)),
+                    isHyperlink(matchers)
+                )
+            ));
+        }
+
+        @Test
+        public void runsInAComplexFieldForHyperlinksAreReadAsHyperlinks() {
+            XmlElement hyperlinkRunXml = runXml("this is a hyperlink");
+            XmlElement element = paragraphXml(list(
+                BEGIN_COMPLEX_FIELD,
+                HYPERLINK_INSTRTEXT,
+                SEPARATE_COMPLEX_FIELD,
+                hyperlinkRunXml,
+                END_COMPLEX_FIELD
+            ));
+            DocumentElement paragraph = readSuccess(bodyReader(), element);
+
+            assertThat(paragraph, isParagraph(hasChildren(
+                isEmptyRun(),
+                isEmptyHyperlinkedRun(),
+                isHyperlinkedRun(hasChildren(
+                    isTextElement("this is a hyperlink")
+                )),
+                isEmptyRun()
+            )));
+        }
+
+        @Test
+        public void runsAfterAComplexFieldForHyperlinksAreNotReadAsHyperlinks() {
+            XmlElement afterEndXml = runXml("this will not be a hyperlink");
+            XmlElement element = paragraphXml(list(
+                BEGIN_COMPLEX_FIELD,
+                HYPERLINK_INSTRTEXT,
+                SEPARATE_COMPLEX_FIELD,
+                END_COMPLEX_FIELD,
+                afterEndXml
+            ));
+            DocumentElement paragraph = readSuccess(bodyReader(), element);
+
+            assertThat(paragraph, isParagraph(hasChildren(
+                isEmptyRun(),
+                isEmptyHyperlinkedRun(),
+                isEmptyRun(),
+                isRun(hasChildren(
+                    isTextElement("this will not be a hyperlink")
+                ))
+            )));
+        }
+
+        @Test
+        public void canHandleSplitInstrTextElements() {
+            XmlElement hyperlinkRunXml = runXml("this is a hyperlink");
+            XmlElement element = paragraphXml(list(
+                BEGIN_COMPLEX_FIELD,
+                element("w:instrText", list(
+                    XmlNodes.text(" HYPE")
+                )),
+                element("w:instrText", list(
+                    XmlNodes.text("RLINK \"" + URI + '"')
+                )),
+                SEPARATE_COMPLEX_FIELD,
+                hyperlinkRunXml,
+                END_COMPLEX_FIELD
+            ));
+            DocumentElement paragraph = readSuccess(bodyReader(), element);
+
+            assertThat(paragraph, isParagraph(hasChildren(
+                isEmptyRun(),
+                isEmptyHyperlinkedRun(),
+                isHyperlinkedRun(hasChildren(
+                    isTextElement("this is a hyperlink")
+                )),
+                isEmptyRun()
+            )));
+        }
+
+        @Test
+        public void hyperlinkIsNotEndedByEndOfNestedComplexField() {
+            XmlElement authorInstrText = element("w:instrText", list(
+                XmlNodes.text(" AUTHOR \"John Doe\"")
+            ));
+            XmlElement hyperlinkRunXml = runXml("this is a hyperlink");
+            XmlElement element = paragraphXml(list(
+                BEGIN_COMPLEX_FIELD,
+                HYPERLINK_INSTRTEXT,
+                SEPARATE_COMPLEX_FIELD,
+                BEGIN_COMPLEX_FIELD,
+                authorInstrText,
+                SEPARATE_COMPLEX_FIELD,
+                END_COMPLEX_FIELD,
+                hyperlinkRunXml,
+                END_COMPLEX_FIELD
+            ));
+            DocumentElement paragraph = readSuccess(bodyReader(), element);
+
+            assertThat(paragraph, isParagraph(hasChildren(
+                isEmptyRun(),
+                isEmptyHyperlinkedRun(),
+                isEmptyHyperlinkedRun(),
+                isEmptyHyperlinkedRun(),
+                isEmptyHyperlinkedRun(),
+                isHyperlinkedRun(hasChildren(
+                    isTextElement("this is a hyperlink")
+                )),
+                isEmptyRun()
+            )));
+        }
+
+        @Test
+        public void complexFieldNestedWithinAHyperlinkComplexFieldIsWrappedWithTheHyperlink() {
+            XmlElement authorInstrText = element("w:instrText", list(
+                XmlNodes.text(" AUTHOR \"John Doe\"")
+            ));
+            XmlElement element = paragraphXml(list(
+                BEGIN_COMPLEX_FIELD,
+                HYPERLINK_INSTRTEXT,
+                SEPARATE_COMPLEX_FIELD,
+                BEGIN_COMPLEX_FIELD,
+                authorInstrText,
+                SEPARATE_COMPLEX_FIELD,
+                runXml("John Doe"),
+                END_COMPLEX_FIELD,
+                END_COMPLEX_FIELD
+            ));
+            DocumentElement paragraph = readSuccess(bodyReader(), element);
+
+            assertThat(paragraph, isParagraph(hasChildren(
+                isEmptyRun(),
+                isEmptyHyperlinkedRun(),
+                isEmptyHyperlinkedRun(),
+                isEmptyHyperlinkedRun(),
+                isHyperlinkedRun(hasChildren(
+                    isTextElement("John Doe")
+                )),
+                isEmptyHyperlinkedRun(),
+                isEmptyRun()
+            )));
+        }
     }
 
     @Test
@@ -904,11 +1066,15 @@ public class BodyXmlTests {
         return paragraphXml(list());
     }
 
-    private XmlElement paragraphXml(List<XmlNode> children) {
+    private static XmlElement paragraphXml(List<XmlNode> children) {
         return element("w:p", children);
     }
 
-    private XmlElement runXml(List<XmlNode> children) {
+    private static XmlElement runXml(String text) {
+        return runXml(list(textXml(text)));
+    }
+
+    private static XmlElement runXml(List<XmlNode> children) {
         return element("w:r", children);
     }
 
@@ -916,20 +1082,8 @@ public class BodyXmlTests {
         return element("w:r", list(element("w:rPr", asList(children))));
     }
 
-    private XmlElement textXml(String value) {
+    private static XmlElement textXml(String value) {
         return element("w:t", list(XmlNodes.text(value)));
-    }
-
-    private Matcher<DocumentElement> isParagraph(Paragraph expected) {
-        return new DeepReflectionMatcher<>(expected);
-    }
-
-    private Matcher<DocumentElement> isRun(Run expected) {
-        return new DeepReflectionMatcher<>(expected);
-    }
-
-    private Matcher<DocumentElement> isTextElement(String value) {
-        return new DeepReflectionMatcher<>(new Text(value));
     }
 
     private Matcher<? super DocumentElement> hasStyle(Optional<Style> expected) {
@@ -944,7 +1098,7 @@ public class BodyXmlTests {
         return hasProperty("numbering", deepEquals(expected));
     }
 
-    private Text text(String value) {
+    private static Text text(String value) {
         return new Text(value);
     }
 }
