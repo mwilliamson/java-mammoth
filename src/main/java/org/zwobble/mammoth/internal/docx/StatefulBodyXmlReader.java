@@ -39,7 +39,7 @@ class StatefulBodyXmlReader {
     private final Archive file;
     private final FileReader fileReader;
     private final StringBuilder currentInstrText;
-    private final Queue<ComplexField> complexFields;
+    private final Queue<ComplexField> complexFieldStack;
 
     private interface ComplexField {
         ComplexField UNKNOWN = new ComplexField() {};
@@ -73,7 +73,7 @@ class StatefulBodyXmlReader {
         this.file = file;
         this.fileReader = fileReader;
         this.currentInstrText = new StringBuilder();
-        this.complexFields = Collections.asLifoQueue(new ArrayDeque<>());
+        this.complexFieldStack = Collections.asLifoQueue(new ArrayDeque<>());
     }
 
     ReadResult readElement(XmlElement element) {
@@ -186,7 +186,7 @@ class StatefulBodyXmlReader {
     }
 
     private Optional<String> currentHyperlinkHref() {
-        return tryGetLast(lazyFilter(this.complexFields, HyperlinkComplexField.class))
+        return tryGetLast(lazyFilter(this.complexFieldStack, HyperlinkComplexField.class))
             .map(field -> field.href);
     }
 
@@ -249,13 +249,13 @@ class StatefulBodyXmlReader {
         if (type.equals("begin")) {
             currentInstrText.setLength(0);
         } else if (type.equals("end")) {
-            complexFields.remove();
+            complexFieldStack.remove();
         } else if (type.equals("separate")) {
             String instrText = currentInstrText.toString();
             ComplexField complexField = parseHyperlinkFieldCode(instrText)
                 .map(href -> ComplexField.hyperlink(href))
                 .orElse(ComplexField.UNKNOWN);
-            complexFields.add(complexField);
+            complexFieldStack.add(complexField);
         }
         return ReadResult.EMPTY_SUCCESS;
     }
