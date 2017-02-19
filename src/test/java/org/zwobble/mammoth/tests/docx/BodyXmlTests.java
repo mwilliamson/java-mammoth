@@ -13,7 +13,6 @@ import org.zwobble.mammoth.internal.results.InternalResult;
 import org.zwobble.mammoth.internal.xml.XmlElement;
 import org.zwobble.mammoth.internal.xml.XmlNode;
 import org.zwobble.mammoth.internal.xml.XmlNodes;
-import org.zwobble.mammoth.tests.DeepReflectionMatcher;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -34,6 +33,7 @@ import static org.zwobble.mammoth.tests.DeepReflectionMatcher.deepEquals;
 import static org.zwobble.mammoth.tests.ResultMatchers.*;
 import static org.zwobble.mammoth.tests.documents.DocumentElementMakers.*;
 import static org.zwobble.mammoth.tests.docx.BodyXmlReaderMakers.bodyReader;
+import static org.zwobble.mammoth.tests.docx.DocumentMatchers.*;
 import static org.zwobble.mammoth.tests.docx.OfficeXmlBuilders.*;
 
 public class BodyXmlTests {
@@ -161,6 +161,18 @@ public class BodyXmlTests {
         private static final XmlElement HYPERLINK_INSTRTEXT = element("w:instrText", list(
             XmlNodes.text(" HYPERLINK \"" + URI + '"')
         ));
+        private static Matcher<DocumentElement> isEmptyHyperlinkedRun() {
+            return isHyperlinkedRun(hasChildren());
+        }
+        @SafeVarargs
+        private static Matcher<DocumentElement> isHyperlinkedRun(Matcher<? super Hyperlink>... matchers) {
+            return isRun(hasChildren(
+                allOf(
+                    isHyperlink(hasHref(URI)),
+                    isHyperlink(matchers)
+                )
+            ));
+        }
 
         @Test
         public void runsInAComplexFieldForHyperlinksAreReadAsHyperlinks() {
@@ -174,18 +186,126 @@ public class BodyXmlTests {
             ));
             DocumentElement paragraph = readSuccess(bodyReader(), element);
 
-            assertThat(paragraph, isParagraph(paragraph(withChildren(
-                run(),
-                run(withChildren(
-                    Hyperlink.href(URI, list())
+            assertThat(paragraph, isParagraph(hasChildren(
+                isEmptyRun(),
+                isEmptyHyperlinkedRun(),
+                isHyperlinkedRun(hasChildren(
+                    isTextElement("this is a hyperlink")
                 )),
-                run(withChildren(
-                    Hyperlink.href(URI, list(
-                        text("this is a hyperlink")
-                    ))
+                isEmptyRun()
+            )));
+        }
+
+        @Test
+        public void runsAfterAComplexFieldForHyperlinksAreNotReadAsHyperlinks() {
+            XmlElement afterEndXml = runXml("this will not be a hyperlink");
+            XmlElement element = paragraphXml(list(
+                BEGIN_COMPLEX_FIELD,
+                HYPERLINK_INSTRTEXT,
+                SEPARATE_COMPLEX_FIELD,
+                END_COMPLEX_FIELD,
+                afterEndXml
+            ));
+            DocumentElement paragraph = readSuccess(bodyReader(), element);
+
+            assertThat(paragraph, isParagraph(hasChildren(
+                isEmptyRun(),
+                isEmptyHyperlinkedRun(),
+                isEmptyRun(),
+                isRun(hasChildren(
+                    isTextElement("this will not be a hyperlink")
+                ))
+            )));
+        }
+
+        @Test
+        public void canHandleSplitInstrTextElements() {
+            XmlElement hyperlinkRunXml = runXml("this is a hyperlink");
+            XmlElement element = paragraphXml(list(
+                BEGIN_COMPLEX_FIELD,
+                element("w:instrText", list(
+                    XmlNodes.text(" HYPE")
                 )),
-                run()
-            ))));
+                element("w:instrText", list(
+                    XmlNodes.text("RLINK \"" + URI + '"')
+                )),
+                SEPARATE_COMPLEX_FIELD,
+                hyperlinkRunXml,
+                END_COMPLEX_FIELD
+            ));
+            DocumentElement paragraph = readSuccess(bodyReader(), element);
+
+            assertThat(paragraph, isParagraph(hasChildren(
+                isEmptyRun(),
+                isEmptyHyperlinkedRun(),
+                isHyperlinkedRun(hasChildren(
+                    isTextElement("this is a hyperlink")
+                )),
+                isEmptyRun()
+            )));
+        }
+
+        @Test
+        public void hyperlinkIsNotEndedByEndOfNestedComplexField() {
+            XmlElement authorInstrText = element("w:instrText", list(
+                XmlNodes.text(" AUTHOR \"John Doe\"")
+            ));
+            XmlElement hyperlinkRunXml = runXml("this is a hyperlink");
+            XmlElement element = paragraphXml(list(
+                BEGIN_COMPLEX_FIELD,
+                HYPERLINK_INSTRTEXT,
+                SEPARATE_COMPLEX_FIELD,
+                BEGIN_COMPLEX_FIELD,
+                authorInstrText,
+                SEPARATE_COMPLEX_FIELD,
+                END_COMPLEX_FIELD,
+                hyperlinkRunXml,
+                END_COMPLEX_FIELD
+            ));
+            DocumentElement paragraph = readSuccess(bodyReader(), element);
+
+            assertThat(paragraph, isParagraph(hasChildren(
+                isEmptyRun(),
+                isEmptyHyperlinkedRun(),
+                isEmptyHyperlinkedRun(),
+                isEmptyHyperlinkedRun(),
+                isEmptyHyperlinkedRun(),
+                isHyperlinkedRun(hasChildren(
+                    isTextElement("this is a hyperlink")
+                )),
+                isEmptyRun()
+            )));
+        }
+
+        @Test
+        public void complexFieldNestedWithinAHyperlinkComplexFieldIsWrappedWithTheHyperlink() {
+            XmlElement authorInstrText = element("w:instrText", list(
+                XmlNodes.text(" AUTHOR \"John Doe\"")
+            ));
+            XmlElement element = paragraphXml(list(
+                BEGIN_COMPLEX_FIELD,
+                HYPERLINK_INSTRTEXT,
+                SEPARATE_COMPLEX_FIELD,
+                BEGIN_COMPLEX_FIELD,
+                authorInstrText,
+                SEPARATE_COMPLEX_FIELD,
+                runXml("John Doe"),
+                END_COMPLEX_FIELD,
+                END_COMPLEX_FIELD
+            ));
+            DocumentElement paragraph = readSuccess(bodyReader(), element);
+
+            assertThat(paragraph, isParagraph(hasChildren(
+                isEmptyRun(),
+                isEmptyHyperlinkedRun(),
+                isEmptyHyperlinkedRun(),
+                isEmptyHyperlinkedRun(),
+                isHyperlinkedRun(hasChildren(
+                    isTextElement("John Doe")
+                )),
+                isEmptyHyperlinkedRun(),
+                isEmptyRun()
+            )));
         }
     }
 
@@ -964,18 +1084,6 @@ public class BodyXmlTests {
 
     private static XmlElement textXml(String value) {
         return element("w:t", list(XmlNodes.text(value)));
-    }
-
-    private static Matcher<DocumentElement> isParagraph(Paragraph expected) {
-        return new DeepReflectionMatcher<>(expected);
-    }
-
-    private static Matcher<DocumentElement> isRun(Run expected) {
-        return new DeepReflectionMatcher<>(expected);
-    }
-
-    private Matcher<DocumentElement> isTextElement(String value) {
-        return new DeepReflectionMatcher<>(new Text(value));
     }
 
     private Matcher<? super DocumentElement> hasStyle(Optional<Style> expected) {
