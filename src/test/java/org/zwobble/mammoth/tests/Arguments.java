@@ -7,6 +7,8 @@ import java.util.Iterator;
 import static java.util.Arrays.asList;
 
 public class Arguments {
+    // TODO: make sure all arguments are used
+
     private final Object[] arguments;
 
     public Arguments(Object[] arguments) {
