@@ -45,7 +45,7 @@ public class RegexTokeniser<T> {
             Optional<Integer> groupIndex = tryFind(intRange(0, this.rules.size()), index -> matcher.group(index + 1) != null);
             if (groupIndex.isPresent()) {
                 T tokenType = this.rules.get(groupIndex.get());
-                tokens.add(new Token(matcher.regionStart(), tokenType, matcher.group()));
+                tokens.add(new Token<>(matcher.regionStart(), tokenType, matcher.group()));
                 matcher.region(matcher.end(), value.length());
             } else {
                 // Should be impossible
