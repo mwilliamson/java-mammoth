@@ -39,7 +39,9 @@ public class TokenIterator<T> {
     }
 
     public Token<T> next() {
-        return tokens.get(index++);
+        Token<T> token = tokens.get(index);
+        index += 1;
+        return token;
     }
 
     public Token<T> next(T type) {
