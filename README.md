@@ -229,12 +229,12 @@ Methods:
   to other files, such as images, cannot be resolved.
 
 * `Result<String> extractRawText(File file)`:
-  Extract the raw text of the document.
+  extract the raw text of the document.
   This will ignore all formatting in the document.
   Each paragraph is followed by two newlines.
 
 * `Result<String> extractRawText(InputStream stream)`:
-  Extract the raw text of the document.
+  extract the raw text of the document.
   This will ignore all formatting in the document.
   Each paragraph is followed by two newlines.
 
@@ -260,7 +260,7 @@ Methods:
   Defaults to the empty string.
 
 * `DocumentConverter imageConverter(ImageConverter.ImgElement imageConverter)`:
-  By default, images are converted to `<img>` elements with the source included inline in the `src` attribute.
+  by default, images are converted to `<img>` elements with the source included inline in the `src` attribute.
   Call this to change how images are converted.
 
 #### `Result<T>`
