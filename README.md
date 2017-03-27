@@ -43,13 +43,13 @@ The following features are currently supported:
 
 ## Installation
 
-Available on [Maven Central](http://search.maven.org/#artifactdetails|org.zwobble.mammoth|mammoth|0.0.4|jar).
+Available on [Maven Central](http://search.maven.org/#artifactdetails|org.zwobble.mammoth|mammoth|1.3.0|jar).
 
 ```xml
 <dependency>
   <groupId>org.zwobble.mammoth</groupId>
   <artifactId>mammoth</artifactId>
-  <version>0.0.4</version>
+  <version>1.3.0</version>
 </dependency>
 ```
 
