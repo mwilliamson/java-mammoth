@@ -29,6 +29,8 @@
 
 * Handle hyperlinks created with complex fields.
 
+* Support custom image converters.
+
 # 0.0.4
 
 * Add support for comments.

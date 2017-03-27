@@ -1,5 +1,6 @@
 package org.zwobble.mammoth;
 
+import org.zwobble.mammoth.images.ImageConverter;
 import org.zwobble.mammoth.internal.InternalDocumentConverter;
 import org.zwobble.mammoth.internal.conversion.DocumentToHtmlOptions;
 
@@ -57,6 +58,14 @@ public class DocumentConverter {
      */
     public DocumentConverter disableEmbeddedStyleMap() {
         return new DocumentConverter(options.disableEmbeddedStyleMap());
+    }
+
+    /**
+     * By default, images are converted to {@code <img>} elements with the source included inline in the {@code src} attribute.
+     * Call this to change how images are converted.
+     */
+    public DocumentConverter imageConverter(ImageConverter.ImgElement imageConverter) {
+        return new DocumentConverter(options.imageConverter(imageConverter));
     }
 
     /**

@@ -1,16 +1,17 @@
 package org.zwobble.mammoth.internal.conversion;
 
+import org.zwobble.mammoth.images.ImageConverter;
 import org.zwobble.mammoth.internal.documents.*;
 import org.zwobble.mammoth.internal.html.Html;
 import org.zwobble.mammoth.internal.html.HtmlNode;
 import org.zwobble.mammoth.internal.results.InternalResult;
 import org.zwobble.mammoth.internal.styles.HtmlPath;
 import org.zwobble.mammoth.internal.styles.StyleMap;
-import org.zwobble.mammoth.internal.util.Base64Encoding;
 import org.zwobble.mammoth.internal.util.Lists;
 import org.zwobble.mammoth.internal.util.Maps;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 import java.util.function.Supplier;
 
@@ -53,6 +54,7 @@ public class DocumentToHtml {
     private final String idPrefix;
     private final boolean preserveEmptyParagraphs;
     private final StyleMap styleMap;
+    private final ImageConverter.ImgElement imageConverter;
     private final Map<String, Comment> comments;
     private final List<NoteReference> noteReferences = new ArrayList<>();
     private final List<ReferencedComment> referencedComments = new ArrayList<>();
@@ -62,6 +64,7 @@ public class DocumentToHtml {
         this.idPrefix = options.idPrefix();
         this.preserveEmptyParagraphs = options.shouldPreserveEmptyParagraphs();
         this.styleMap = options.styleMap();
+        this.imageConverter = options.imageConverter();
         this.comments = Maps.toMapWithKey(comments, Comment::getCommentId);
     }
 
@@ -278,14 +281,23 @@ public class DocumentToHtml {
                 return image.getContentType()
                     .map(contentType -> {
                         try {
-                            Map<String, String> attributes = new HashMap<>();
+                            Map<String, String> attributes = new HashMap<>(imageConverter.convert(new org.zwobble.mammoth.images.Image() {
+                                @Override
+                                public Optional<String> getAltText() {
+                                    return image.getAltText();
+                                }
 
-                            String base64 = Base64Encoding.streamToBase64(image::open);
-                            String src = "data:" + contentType + ";base64," + base64;
-                            attributes.put("src", src);
+                                @Override
+                                public String getContentType() {
+                                    return contentType;
+                                }
 
+                                @Override
+                                public InputStream getInputStream() throws IOException {
+                                    return image.open();
+                                }
+                            }));
                             image.getAltText().ifPresent(altText -> attributes.put("alt", altText));
-
                             return list(Html.element("img", attributes));
                         } catch (IOException exception) {
                             warnings.add(exception.getMessage());

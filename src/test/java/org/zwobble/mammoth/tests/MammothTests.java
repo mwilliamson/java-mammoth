@@ -3,11 +3,16 @@ package org.zwobble.mammoth.tests;
 import org.junit.Test;
 import org.zwobble.mammoth.DocumentConverter;
 import org.zwobble.mammoth.Result;
-import org.zwobble.mammoth.internal.docx.EmbeddedStyleMap;
+import org.zwobble.mammoth.images.ImageConverter;
 import org.zwobble.mammoth.internal.archives.InMemoryArchive;
+import org.zwobble.mammoth.internal.docx.EmbeddedStyleMap;
 import org.zwobble.mammoth.internal.styles.parsing.ParseException;
+import org.zwobble.mammoth.internal.util.Base64Encoding;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.function.Function;
@@ -15,6 +20,7 @@ import java.util.function.Function;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 import static org.zwobble.mammoth.internal.util.Lists.list;
+import static org.zwobble.mammoth.internal.util.Maps.map;
 import static org.zwobble.mammoth.tests.ResultMatchers.isResult;
 import static org.zwobble.mammoth.tests.ResultMatchers.isSuccess;
 import static org.zwobble.mammoth.tests.util.MammothAsserts.assertThrows;
@@ -129,6 +135,19 @@ public class MammothTests {
         } finally {
             tempDirectory.toFile().delete();
         }
+    }
+
+    @Test
+    public void imageConversionCanBeCustomised() throws IOException {
+        ImageConverter.ImgElement imageConverter = image -> {
+            String base64 = Base64Encoding.streamToBase64(image::getInputStream);
+            String src = base64.substring(0, 2) + "," + image.getContentType();
+            return map("src", src);
+        };
+        assertThat(
+            convertToHtml("tiny-picture.docx", converter -> converter.imageConverter(imageConverter)),
+            isSuccess("<p><img src=\"iV,image/png\" /></p>")
+        );
     }
 
     @Test

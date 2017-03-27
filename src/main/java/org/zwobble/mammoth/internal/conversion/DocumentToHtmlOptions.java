@@ -1,11 +1,28 @@
 package org.zwobble.mammoth.internal.conversion;
 
+import org.zwobble.mammoth.images.ImageConverter;
 import org.zwobble.mammoth.internal.styles.DefaultStyles;
 import org.zwobble.mammoth.internal.styles.StyleMap;
 import org.zwobble.mammoth.internal.styles.parsing.StyleMapParser;
+import org.zwobble.mammoth.internal.util.Base64Encoding;
+
+import static org.zwobble.mammoth.internal.util.Maps.map;
 
 public class DocumentToHtmlOptions {
-    public static final DocumentToHtmlOptions DEFAULT = new DocumentToHtmlOptions("", false, StyleMap.EMPTY, StyleMap.EMPTY, false, false);
+    public static final DocumentToHtmlOptions DEFAULT = new DocumentToHtmlOptions(
+        "",
+        false,
+        StyleMap.EMPTY,
+        StyleMap.EMPTY,
+        false,
+        false,
+        image -> {
+            String base64 = Base64Encoding.streamToBase64(image::getInputStream);
+            String src = "data:" + image.getContentType() + ";base64," + base64;
+            return map("src", src);
+        }
+
+    );
 
     private final String idPrefix;
     private final boolean preserveEmptyParagraphs;
@@ -13,6 +30,7 @@ public class DocumentToHtmlOptions {
     private final StyleMap embeddedStyleMap;
     private final boolean disableDefaultStyleMap;
     private final boolean disableEmbeddedStyleMap;
+    private final ImageConverter.ImgElement imageConverter;
 
     public DocumentToHtmlOptions(
         String idPrefix,
@@ -20,7 +38,8 @@ public class DocumentToHtmlOptions {
         StyleMap styleMap,
         StyleMap embeddedStyleMap,
         boolean disableDefaultStyleMap,
-        boolean disableEmbeddedStyleMap
+        boolean disableEmbeddedStyleMap,
+        ImageConverter.ImgElement imageConverter
     ) {
         this.idPrefix = idPrefix;
         this.preserveEmptyParagraphs = preserveEmptyParagraphs;
@@ -28,14 +47,15 @@ public class DocumentToHtmlOptions {
         this.embeddedStyleMap = embeddedStyleMap;
         this.disableDefaultStyleMap = disableDefaultStyleMap;
         this.disableEmbeddedStyleMap = disableEmbeddedStyleMap;
+        this.imageConverter = imageConverter;
     }
 
     public DocumentToHtmlOptions idPrefix(String prefix) {
-        return new DocumentToHtmlOptions(prefix, preserveEmptyParagraphs, styleMap, embeddedStyleMap, disableDefaultStyleMap, disableEmbeddedStyleMap);
+        return new DocumentToHtmlOptions(prefix, preserveEmptyParagraphs, styleMap, embeddedStyleMap, disableDefaultStyleMap, disableEmbeddedStyleMap, imageConverter);
     }
 
     public DocumentToHtmlOptions preserveEmptyParagraphs() {
-        return new DocumentToHtmlOptions(idPrefix, true, styleMap, embeddedStyleMap, disableDefaultStyleMap, disableEmbeddedStyleMap);
+        return new DocumentToHtmlOptions(idPrefix, true, styleMap, embeddedStyleMap, disableDefaultStyleMap, disableEmbeddedStyleMap, imageConverter);
     }
 
     public DocumentToHtmlOptions addStyleMap(String styleMap) {
@@ -43,19 +63,23 @@ public class DocumentToHtmlOptions {
     }
 
     public DocumentToHtmlOptions addStyleMap(StyleMap styleMap) {
-        return new DocumentToHtmlOptions(idPrefix, preserveEmptyParagraphs, this.styleMap.update(styleMap), embeddedStyleMap, disableDefaultStyleMap, disableEmbeddedStyleMap);
+        return new DocumentToHtmlOptions(idPrefix, preserveEmptyParagraphs, this.styleMap.update(styleMap), embeddedStyleMap, disableDefaultStyleMap, disableEmbeddedStyleMap, imageConverter);
     }
 
     public DocumentToHtmlOptions disableDefaultStyleMap() {
-        return new DocumentToHtmlOptions(idPrefix, preserveEmptyParagraphs, styleMap, embeddedStyleMap, true, disableEmbeddedStyleMap);
+        return new DocumentToHtmlOptions(idPrefix, preserveEmptyParagraphs, styleMap, embeddedStyleMap, true, disableEmbeddedStyleMap, imageConverter);
     }
 
     public DocumentToHtmlOptions disableEmbeddedStyleMap() {
-        return new DocumentToHtmlOptions(idPrefix, preserveEmptyParagraphs, styleMap, embeddedStyleMap, disableDefaultStyleMap, true);
+        return new DocumentToHtmlOptions(idPrefix, preserveEmptyParagraphs, styleMap, embeddedStyleMap, disableDefaultStyleMap, true, imageConverter);
     }
 
     public DocumentToHtmlOptions addEmbeddedStyleMap(StyleMap embeddedStyleMap) {
-        return new DocumentToHtmlOptions(idPrefix, preserveEmptyParagraphs, styleMap, embeddedStyleMap, disableDefaultStyleMap, disableEmbeddedStyleMap);
+        return new DocumentToHtmlOptions(idPrefix, preserveEmptyParagraphs, styleMap, embeddedStyleMap, disableDefaultStyleMap, disableEmbeddedStyleMap, imageConverter);
+    }
+
+    public DocumentToHtmlOptions imageConverter(ImageConverter.ImgElement imageConverter) {
+        return new DocumentToHtmlOptions(idPrefix, preserveEmptyParagraphs, styleMap, embeddedStyleMap, disableDefaultStyleMap, disableEmbeddedStyleMap, imageConverter);
     }
 
     public String idPrefix() {
@@ -76,5 +100,9 @@ public class DocumentToHtmlOptions {
         }
         styleMap = styleMap.update(this.styleMap);
         return styleMap;
+    }
+
+    public ImageConverter.ImgElement imageConverter() {
+        return imageConverter;
     }
 }

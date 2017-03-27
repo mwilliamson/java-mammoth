@@ -136,6 +136,26 @@ DocumentConverter converter = new DocumentConverter()
     .disableDefaultStyleMap();
 ```
 
+#### Custom image handlers
+
+By default, images are converted to `<img>` elements with the source included inline in the `src` attribute.
+This behaviour can be changed by calling `imageConverter()` with an [image converter](#image-converters) .
+
+For instance, the following would replicate the default behaviour:
+
+```java
+DocumentConverter converter = new DocumentConverter()
+    .imageConverter(image -> {
+        String base64 = streamToBase64(image::getInputStream);
+        String src = "data:" + image.getContentType() + ";base64," + base64;
+        Map<String, String> attributes = new HashMap<>();
+        attributes.put("src", src);
+        return attributes;
+    });
+```
+
+where `streamToBase64` is a function that reads an input stream and encodes it as a Base64 string.
+
 #### Bold
 
 By default, bold text is wrapped in `<strong>` tags.
@@ -239,6 +259,10 @@ Methods:
   such as those used by bookmarks, footnotes and endnotes.
   Defaults to the empty string.
 
+* `DocumentConverter imageConverter(ImageConverter.ImgElement imageConverter)`:
+  By default, images are converted to `<img>` elements with the source included inline in the `src` attribute.
+  Call this to change how images are converted.
+
 #### `Result<T>`
 
 Represents the result of a conversion. Methods:
@@ -246,6 +270,40 @@ Represents the result of a conversion. Methods:
 * `T getValue()`: the generated text.
 
 * `Set<String> getWarnings()`: any warnings generated during the conversion.
+
+#### Image converters
+
+An image converter can be created by implementing `ImageConverter.ImgElement`.
+This creates an `<img>` element for each image in the original docx.
+The interface has a single method, `Map<String, String> convert(Image image)`.
+The `image` argument is the image element being converted,
+and has the following methods:
+
+* `InputStream getInputStream()`: open the image file.
+
+* `String getContentType()`: the content type of the image, such as `image/png`.
+
+* `Optional<String> getAltText()`: the alt text of the image, if any.
+
+`convert()` should return a `Map` of attributes for the `<img>` element.
+At a minimum, this should include the `src` attribute.
+If any alt text is found for the image,
+this will be automatically added to the element's attributes.
+
+For instance, the following replicates the default image conversion:
+
+```java
+DocumentConverter converter = new DocumentConverter()
+    .imageConverter(image -> {
+        String base64 = streamToBase64(image::getInputStream);
+        String src = "data:" + image.getContentType() + ";base64," + base64;
+        Map<String, String> attributes = new HashMap<>();
+        attributes.put("src", src);
+        return attributes;
+    });
+```
+
+where `streamToBase64` is a function that reads an input stream and encodes it as a Base64 string.
 
 ## Writing style maps
 
@@ -441,7 +499,6 @@ You can nest elements to any depth.
 Compared to the JavaScript and Python implementations, the following features
 are currently missing:
 
-* Custom image handlers
 * CLI
 * Writing embedded style maps
 * Markdown support
