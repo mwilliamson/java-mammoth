@@ -6,6 +6,7 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static java.util.Objects.isNull;
 import static org.zwobble.mammoth.internal.util.Iterables.*;
 import static org.zwobble.mammoth.internal.util.Lists.eagerMap;
 
@@ -42,7 +43,7 @@ public class RegexTokeniser<T> {
         Matcher matcher = pattern.matcher(value);
         List<Token<T>> tokens = new ArrayList<>();
         while (matcher.lookingAt()) {
-            Optional<Integer> groupIndex = tryFind(intRange(0, this.rules.size()), index -> matcher.group(index + 1) != null);
+            Optional<Integer> groupIndex = tryFind(intRange(0, this.rules.size()), index -> !isNull(matcher.group(index + 1)));
             if (groupIndex.isPresent()) {
                 T tokenType = this.rules.get(groupIndex.get());
                 tokens.add(new Token<>(matcher.regionStart(), tokenType, matcher.group()));
