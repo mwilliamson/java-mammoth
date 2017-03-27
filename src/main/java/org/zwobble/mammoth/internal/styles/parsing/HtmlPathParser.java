@@ -61,11 +61,14 @@ public class HtmlPathParser {
 
     private static List<String> parseClassNames(TokenIterator<TokenType> tokens) {
         List<String> classNames = new ArrayList<>();
-        Optional<String> className;
-        while ((className = TokenParser.parseClassName(tokens)).isPresent()) {
-            classNames.add(className.get());
+        while (true) {
+            Optional<String> className = TokenParser.parseClassName(tokens);
+            if (className.isPresent()) {
+                classNames.add(className.get());
+            } else {
+                return classNames;
+            }
         }
-        return classNames;
     }
 
     private static boolean parseIsFresh(TokenIterator<TokenType> tokens) {
