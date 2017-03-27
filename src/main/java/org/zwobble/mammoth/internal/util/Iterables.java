@@ -2,6 +2,7 @@ package org.zwobble.mammoth.internal.util;
 
 import java.util.Iterator;
 import java.util.Optional;
+import java.util.OptionalInt;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -153,14 +154,14 @@ public class Iterables {
         return StreamSupport.stream(iterable.spliterator(), false);
     }
 
-    public static <T> int findIndex(Iterable<T> iterable, Predicate<T> predicate) {
+    public static <T> OptionalInt findIndex(Iterable<T> iterable, Predicate<T> predicate) {
         int index = 0;
         for (T element : iterable) {
             if (predicate.test(element)) {
-                return index;
+                return OptionalInt.of(index);
             }
             index++;
         }
-        return -1;
+        return OptionalInt.empty();
     }
 }

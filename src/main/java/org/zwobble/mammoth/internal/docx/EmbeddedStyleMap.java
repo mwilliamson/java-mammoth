@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.OptionalInt;
 
 import static org.zwobble.mammoth.internal.util.Casts.tryCast;
 import static org.zwobble.mammoth.internal.util.Iterables.findIndex;
@@ -64,7 +65,7 @@ public class EmbeddedStyleMap {
     }
 
     private static XmlElement updateOrAddElement(XmlElement parent, XmlElement element, String identifyingAttribute) {
-        int index = findIndex(parent.getChildren(), child ->
+        OptionalInt index = findIndex(parent.getChildren(), child ->
             tryCast(XmlElement.class, child)
                 .map(childElement ->
                     childElement.getName().equals(element.getName()) &&
@@ -74,10 +75,10 @@ public class EmbeddedStyleMap {
         );
         List<XmlNode> children = new ArrayList<>(parent.getChildren());
 
-        if (index == -1) {
-            children.add(element);
+        if (index.isPresent()) {
+            children.set(index.getAsInt(), element);
         } else {
-            children.set(index, element);
+            children.add(element);
         }
         return new XmlElement(parent.getName(), parent.getAttributes(), children);
     }
