@@ -164,4 +164,25 @@ public class Iterables {
         }
         return OptionalInt.empty();
     }
+
+    public static Iterable<Integer> intRange(int start, int end) {
+        return new Iterable<Integer>() {
+            @Override
+            public Iterator<Integer> iterator() {
+                return new Iterator<Integer>() {
+                    private int next = start;
+
+                    @Override
+                    public boolean hasNext() {
+                        return next < end;
+                    }
+
+                    @Override
+                    public Integer next() {
+                        return next++;
+                    }
+                };
+            }
+        };
+    }
 }
