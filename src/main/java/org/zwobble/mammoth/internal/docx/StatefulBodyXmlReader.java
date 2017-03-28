@@ -4,10 +4,7 @@ import org.zwobble.mammoth.internal.archives.Archive;
 import org.zwobble.mammoth.internal.archives.Archives;
 import org.zwobble.mammoth.internal.documents.*;
 import org.zwobble.mammoth.internal.results.InternalResult;
-import org.zwobble.mammoth.internal.util.Casts;
-import org.zwobble.mammoth.internal.util.InputStreamSupplier;
-import org.zwobble.mammoth.internal.util.Lists;
-import org.zwobble.mammoth.internal.util.Optionals;
+import org.zwobble.mammoth.internal.util.*;
 import org.zwobble.mammoth.internal.xml.XmlElement;
 import org.zwobble.mammoth.internal.xml.XmlElementLike;
 import org.zwobble.mammoth.internal.xml.XmlElementList;
@@ -73,7 +70,7 @@ class StatefulBodyXmlReader {
         this.file = file;
         this.fileReader = fileReader;
         this.currentInstrText = new StringBuilder();
-        this.complexFieldStack = Collections.asLifoQueue(new ArrayDeque<>());
+        this.complexFieldStack = Queues.arrayQueue();
     }
 
     ReadResult readElement(XmlElement element) {
