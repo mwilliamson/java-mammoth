@@ -7,6 +7,8 @@ import java.math.BigInteger;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 
+import static org.zwobble.mammoth.internal.styles.parsing.LineParseException.lineParseException;
+
 public class DocumentMatcherParser {
     public static BiConsumer<StyleMapBuilder, HtmlPath> parse(TokenIterator<TokenType> tokens) {
         Token<TokenType> identifier = tokens.next(TokenType.IDENTIFIER);
@@ -31,7 +33,7 @@ public class DocumentMatcherParser {
                 BreakMatcher breakMatcher = parseBreakMatcher(tokens);
                 return (builder, path) -> builder.mapBreak(breakMatcher, path);
             default:
-                throw new LineParseException(identifier, "Unrecognised document element: " + identifier);
+                throw lineParseException(identifier, "Unrecognised document element: " + identifier);
         }
     }
 
@@ -69,7 +71,7 @@ public class DocumentMatcherParser {
         } else if (tokens.trySkip(TokenType.SYMBOL, "^=")) {
             return new StartsWithStringMatcher(TokenParser.parseString(tokens));
         } else {
-            throw new LineParseException(tokens.next(), "Expected string matcher but got token " + tokens.next().getValue());
+            throw lineParseException(tokens.next(), "Expected string matcher but got token " + tokens.next().getValue());
         }
     }
 
@@ -93,7 +95,7 @@ public class DocumentMatcherParser {
             case "unordered-list":
                 return false;
             default:
-                throw new LineParseException(listType, "Unrecognised list type: " + listType);
+                throw lineParseException(listType, "Unrecognised list type: " + listType);
         }
     }
 
@@ -112,7 +114,7 @@ public class DocumentMatcherParser {
             case "column":
                 return BreakMatcher.COLUMN_BREAK;
             default:
-                throw new LineParseException(stringToken, "Unrecognised break type: " + typeName);
+                throw lineParseException(stringToken, "Unrecognised break type: " + typeName);
         }
     }
 }

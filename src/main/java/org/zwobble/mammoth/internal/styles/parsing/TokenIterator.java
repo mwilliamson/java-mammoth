@@ -2,6 +2,8 @@ package org.zwobble.mammoth.internal.styles.parsing;
 
 import java.util.List;
 
+import static org.zwobble.mammoth.internal.styles.parsing.LineParseException.lineParseException;
+
 public class TokenIterator<T> {
     private final List<Token<T>> tokens;
     private int index;
@@ -77,13 +79,13 @@ public class TokenIterator<T> {
         }
         String actualValue = token.getValue();
         if (!actualValue.equals(tokenValue)) {
-            throw new LineParseException(token, "expected " + tokenType + " token with value " + tokenValue + " but value was " + actualValue);
+            throw lineParseException(token, "expected " + tokenType + " token with value " + tokenValue + " but value was " + actualValue);
         }
         index += 1;
     }
 
     private LineParseException unexpectedTokenType(T expected, Token<T> actual) {
-        return new LineParseException(actual, "expected token of type " + expected + " but was of type " + actual.getTokenType());
+        return lineParseException(actual, "expected token of type " + expected + " but was of type " + actual.getTokenType());
     }
 
     public boolean tryParse(Action action) {
