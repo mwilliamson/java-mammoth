@@ -65,7 +65,7 @@ public class TokenIterator<T> {
     }
 
     public void skip(T tokenType) {
-        Token token = tokens.get(index);
+        Token<T> token = tokens.get(index);
         if (token.getTokenType() != tokenType) {
             throw unexpectedTokenType(tokenType, token);
         }
