@@ -48,7 +48,7 @@ public class TokenIterator<T> {
 
     public Token<T> next(T type) {
         Token<T> token = tokens.get(index);
-        if (token.getTokenType() == type) {
+        if (token.getTokenType().equals(type)) {
             index += 1;
             return token;
         } else {
@@ -66,7 +66,7 @@ public class TokenIterator<T> {
 
     public void skip(T tokenType) {
         Token<T> token = tokens.get(index);
-        if (token.getTokenType() != tokenType) {
+        if (!token.getTokenType().equals(tokenType)) {
             throw unexpectedTokenType(tokenType, token);
         }
         index += 1;
@@ -74,7 +74,7 @@ public class TokenIterator<T> {
 
     public void skip(T tokenType, String tokenValue) {
         Token<T> token = tokens.get(index);
-        if (token.getTokenType() != tokenType) {
+        if (!token.getTokenType().equals(tokenType)) {
             throw unexpectedTokenType(tokenType, token);
         }
         String actualValue = token.getValue();
