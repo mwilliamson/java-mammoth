@@ -7,7 +7,7 @@ import java.util.Queue;
 public class Queues {
     private Queues() {}
 
-    public static <T> Queue<T> arrayQueue() {
+    public static <T> Queue<T> stack() {
         return Collections.asLifoQueue(new ArrayDeque<>());
     }
 }

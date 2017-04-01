@@ -70,7 +70,7 @@ class StatefulBodyXmlReader {
         this.file = file;
         this.fileReader = fileReader;
         this.currentInstrText = new StringBuilder();
-        this.complexFieldStack = Queues.arrayQueue();
+        this.complexFieldStack = Queues.stack();
     }
 
     ReadResult readElement(XmlElement element) {
