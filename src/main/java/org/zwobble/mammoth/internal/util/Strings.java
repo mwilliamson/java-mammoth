@@ -12,4 +12,8 @@ public class Strings {
     public static boolean isNullOrEmpty(String value) {
         return value == null || value.isEmpty();
     }
+
+    public static boolean startsWithIgnoreCase(String value, String prefix) {
+        return value.regionMatches(true, 0, prefix, 0, prefix.length());
+    }
 }
