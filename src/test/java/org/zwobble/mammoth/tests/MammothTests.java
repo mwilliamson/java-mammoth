@@ -262,7 +262,7 @@ public class MammothTests {
     }
 
     @Test
-    public void explicitStyleMapTakesPrecendenceOverEmbeddedStyleMap() throws IOException {
+    public void explicitStyleMapTakesPrecedenceOverEmbeddedStyleMap() throws IOException {
         assertThat(
             convertToHtml("embedded-style-map.docx", options -> options.addStyleMap("p => p")),
             isSuccess("<p>Walking on imported air</p>")
