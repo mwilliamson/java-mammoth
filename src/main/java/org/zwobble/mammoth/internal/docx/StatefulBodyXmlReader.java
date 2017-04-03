@@ -124,6 +124,7 @@ class StatefulBodyXmlReader {
                 return readSdt(element);
 
             case "w:ins":
+            case "w:object":
             case "w:smartTag":
             case "w:drawing":
             case "v:roundrect":

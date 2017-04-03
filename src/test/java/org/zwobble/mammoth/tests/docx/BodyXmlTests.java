@@ -984,6 +984,7 @@ public class BodyXmlTests {
     @Test
     public void appropriateElementsHaveTheirChildrenReadNormally() {
         assertChildrenAreReadNormally("w:ins");
+        assertChildrenAreReadNormally("w:object");
         assertChildrenAreReadNormally("w:smartTag");
         assertChildrenAreReadNormally("w:drawing");
         assertChildrenAreReadNormally("v:roundrect");
