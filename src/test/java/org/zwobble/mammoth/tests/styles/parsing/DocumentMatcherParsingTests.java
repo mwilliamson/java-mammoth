@@ -79,13 +79,13 @@ public class DocumentMatcherParsingTests {
     }
 
     private ParagraphMatcher parseParagraphMatcher(String input) {
-        TokenIterator tokens = new TokenIterator(StyleMappingTokeniser.tokenise(input));
+        TokenIterator tokens = StyleMappingTokeniser.tokenise(input);
         tokens.skip(TokenType.IDENTIFIER, "p");
         return DocumentMatcherParser.parseParagraphMatcher(tokens);
     }
 
     private RunMatcher parseRunMatcher(String input) {
-        TokenIterator tokens = new TokenIterator(StyleMappingTokeniser.tokenise(input));
+        TokenIterator tokens = StyleMappingTokeniser.tokenise(input);
         tokens.skip(TokenType.IDENTIFIER, "r");
         return DocumentMatcherParser.parseRunMatcher(tokens);
     }

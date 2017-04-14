@@ -6,13 +6,9 @@ import org.zwobble.mammoth.internal.styles.parsing.StyleMappingTokeniser;
 import org.zwobble.mammoth.internal.styles.parsing.Token;
 import org.zwobble.mammoth.internal.styles.parsing.TokenType;
 
-import java.util.List;
-
-import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.zwobble.mammoth.internal.util.Lists.eagerConcat;
-import static org.zwobble.mammoth.internal.util.Lists.list;
+import static org.zwobble.mammoth.tests.Matchers.isSameSequence;
 
 public class StyleMappingTokeniserTests {
     @Test
@@ -21,7 +17,7 @@ public class StyleMappingTokeniserTests {
     }
 
     @Test
-    public void emptyStringIsTokenisedToEndOfFileToken() {
+    public void emptyStringIsTokenisedToNoTokens() {
         assertTokens("");
     }
 
@@ -132,9 +128,8 @@ public class StyleMappingTokeniserTests {
     }
 
     @SafeVarargs
-    private final void assertTokens(String input, Matcher<Token>... token) {
-        List<Matcher<? super Token>> tokens = eagerConcat(asList(token), list(isToken(TokenType.EOF, "")));
-        assertThat(StyleMappingTokeniser.tokenise(input), contains(tokens));
+    private final void assertTokens(String input, Matcher<Token>... tokens) {
+        assertThat(StyleMappingTokeniser.tokeniseToList(input), isSameSequence(tokens));
     }
 
     private Matcher<Token> isToken(TokenType tokenType, String value) {

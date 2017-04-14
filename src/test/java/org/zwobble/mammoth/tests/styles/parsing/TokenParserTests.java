@@ -17,7 +17,7 @@ public class TokenParserTests {
         Optional<String> value = TokenParser.parseClassName(new TokenIterator<>(list(
             new Token<>(0, TokenType.SYMBOL, "."),
             new Token<>(1, TokenType.IDENTIFIER, "\\:")
-        )));
+        ), new Token<>(2, TokenType.EOF, "")));
         assertEquals(Optional.of(":"), value);
     }
 
@@ -25,7 +25,7 @@ public class TokenParserTests {
     public void escapeSequencesInStringAreDecoded() {
         String value = TokenParser.parseString(new TokenIterator<>(list(
             new Token<>(0, TokenType.STRING, "'\\n'")
-        )));
+        ), new Token<>(1, TokenType.EOF, "")));
         assertEquals("\n", value);
     }
 }

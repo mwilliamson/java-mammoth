@@ -5,7 +5,14 @@ import java.util.List;
 import static org.zwobble.mammoth.internal.util.Lists.list;
 
 public class StyleMappingTokeniser {
-    public static List<Token<TokenType>> tokenise(String line) {
+    public static TokenIterator<TokenType> tokenise(String line) {
+        return new TokenIterator<>(
+            tokeniseToList(line),
+            new Token<>(line.length(), TokenType.EOF, "")
+        );
+    }
+
+    public static List<Token<TokenType>> tokeniseToList(String line) {
         String stringPrefix = "'(?:(?:\\\\.|[^'])*)";
         String identifierCharacter = "(?:[a-zA-Z\\-_]|\\\\.)";
 
@@ -20,8 +27,6 @@ public class StyleMappingTokeniser {
                 RegexTokeniser.rule(TokenType.INTEGER, "[0-9]+")
             )
         );
-        List<Token<TokenType>> tokens = tokeniser.tokenise(line);
-        tokens.add(new Token<>(line.length(), TokenType.EOF, ""));
-        return tokens;
+        return tokeniser.tokenise(line);
     }
 }

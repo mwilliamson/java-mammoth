@@ -41,7 +41,7 @@ public class StyleMapParser {
     }
 
     private static Consumer<StyleMapBuilder> parseStyleMapping(String line) {
-        TokenIterator<TokenType> tokens = new TokenIterator<>(StyleMappingTokeniser.tokenise(line));
+        TokenIterator<TokenType> tokens = StyleMappingTokeniser.tokenise(line);
 
         BiConsumer<StyleMapBuilder, HtmlPath> documentMatcher = DocumentMatcherParser.parse(tokens);
 

@@ -4,7 +4,6 @@ import org.junit.Test;
 import org.zwobble.mammoth.internal.styles.HtmlPath;
 import org.zwobble.mammoth.internal.styles.parsing.HtmlPathParser;
 import org.zwobble.mammoth.internal.styles.parsing.StyleMappingTokeniser;
-import org.zwobble.mammoth.internal.styles.parsing.TokenIterator;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.zwobble.mammoth.internal.util.Lists.list;
@@ -85,6 +84,6 @@ public class HtmlPathParsingTests {
     }
 
     private HtmlPath parseHtmlPath(String input) {
-        return HtmlPathParser.parse(new TokenIterator(StyleMappingTokeniser.tokenise(input)));
+        return HtmlPathParser.parse(StyleMappingTokeniser.tokenise(input));
     }
 }

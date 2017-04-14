@@ -6,21 +6,19 @@ import static org.zwobble.mammoth.internal.styles.parsing.LineParseException.lin
 
 public class TokenIterator<T> {
     private final List<Token<T>> tokens;
+    private final Token<T> end;
     private int index;
 
-    public TokenIterator(List<Token<T>> tokens) {
+    public TokenIterator(List<Token<T>> tokens, Token<T> end) {
         this.tokens = tokens;
+        this.end = end;
         this.index = 0;
     }
 
     public boolean isNext(int offset, T tokenType, String value) {
         int tokenIndex = index + offset;
-        if (tokenIndex < tokens.size()) {
-            Token<T> token = tokens.get(tokenIndex);
-            return token.getTokenType().equals(tokenType) && token.getValue().equals(value);
-        } else {
-            return false;
-        }
+        Token<T> token = getToken(tokenIndex);
+        return token.getTokenType().equals(tokenType) && token.getValue().equals(value);
     }
 
     public boolean isNext(T tokenType, String value) {
@@ -37,17 +35,17 @@ public class TokenIterator<T> {
     }
 
     public T peekTokenType() {
-        return tokens.get(index).getTokenType();
+        return getToken(index).getTokenType();
     }
 
     public Token<T> next() {
-        Token<T> token = tokens.get(index);
+        Token<T> token = getToken(index);
         index += 1;
         return token;
     }
 
     public Token<T> next(T type) {
-        Token<T> token = tokens.get(index);
+        Token<T> token = getToken(index);
         if (token.getTokenType().equals(type)) {
             index += 1;
             return token;
@@ -65,7 +63,7 @@ public class TokenIterator<T> {
     }
 
     public void skip(T tokenType) {
-        Token<T> token = tokens.get(index);
+        Token<T> token = getToken(index);
         if (!token.getTokenType().equals(tokenType)) {
             throw unexpectedTokenType(tokenType, token);
         }
@@ -73,7 +71,7 @@ public class TokenIterator<T> {
     }
 
     public void skip(T tokenType, String tokenValue) {
-        Token<T> token = tokens.get(index);
+        Token<T> token = getToken(index);
         if (!token.getTokenType().equals(tokenType)) {
             throw unexpectedTokenType(tokenType, token);
         }
@@ -97,6 +95,14 @@ public class TokenIterator<T> {
         catch (LineParseException exception) {
             index = originalIndex;
             return false;
+        }
+    }
+
+    private Token<T> getToken(int index) {
+        if (index < tokens.size()) {
+            return tokens.get(index);
+        } else {
+            return end;
         }
     }
 
