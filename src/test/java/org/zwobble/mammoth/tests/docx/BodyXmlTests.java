@@ -307,6 +307,32 @@ public class BodyXmlTests {
                 isEmptyRun()
             )));
         }
+
+        @Test
+        public void fieldWithoutSeparateFldCharIsIgnored() {
+            XmlElement hyperlinkRunXml = runXml("this is a hyperlink");
+            XmlElement element = paragraphXml(list(
+                BEGIN_COMPLEX_FIELD,
+                HYPERLINK_INSTRTEXT,
+                SEPARATE_COMPLEX_FIELD,
+                BEGIN_COMPLEX_FIELD,
+                END_COMPLEX_FIELD,
+                hyperlinkRunXml,
+                END_COMPLEX_FIELD
+            ));
+            DocumentElement paragraph = readSuccess(bodyReader(), element);
+
+            assertThat(paragraph, isParagraph(hasChildren(
+                isEmptyRun(),
+                isEmptyHyperlinkedRun(),
+                isEmptyHyperlinkedRun(),
+                isEmptyHyperlinkedRun(),
+                isHyperlinkedRun(hasChildren(
+                    isTextElement("this is a hyperlink")
+                )),
+                isEmptyRun()
+            )));
+        }
     }
 
     @Test

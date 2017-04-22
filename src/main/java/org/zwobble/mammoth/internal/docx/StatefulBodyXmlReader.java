@@ -245,6 +245,7 @@ class StatefulBodyXmlReader {
     private ReadResult readFieldChar(XmlElement element) {
         String type = element.getAttributeOrNone("w:fldCharType").orElse("");
         if (type.equals("begin")) {
+            complexFieldStack.add(ComplexField.UNKNOWN);
             currentInstrText.setLength(0);
         } else if (type.equals("end")) {
             complexFieldStack.remove();
@@ -253,6 +254,7 @@ class StatefulBodyXmlReader {
             ComplexField complexField = parseHyperlinkFieldCode(instrText)
                 .map(href -> ComplexField.hyperlink(href))
                 .orElse(ComplexField.UNKNOWN);
+            complexFieldStack.remove();
             complexFieldStack.add(complexField);
         }
         return ReadResult.EMPTY_SUCCESS;

@@ -2,6 +2,8 @@
 
 * Read children of w:object elements.
 
+* Handle complex fields that do not have a "separate" fldChar.
+
 # 1.3.0
 
 * Use alt text title as alt text for images when the alt text description is
