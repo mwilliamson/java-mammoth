@@ -729,7 +729,7 @@ public class BodyXmlTests {
     }
 
     @Test
-    public void hyperlinkIsReadIfItHasARelationshipId() {
+    public void hyperlinkIsReadAsExternalHyperlinkIfItHasARelationshipId() {
         Relationships relationships = new Relationships(
             map("r42", new Relationship("http://example.com")));
         XmlElement element = element("w:hyperlink", map("r:id", "r42"), list(runXml(list())));
@@ -739,7 +739,29 @@ public class BodyXmlTests {
     }
 
     @Test
-    public void hyperlinkIsReadIfItHasAnAnchorAttribute() {
+    public void hyperlinkIsReadAsExternalHyperlinkIfItHasARelationshipIdAndAnAnchor() {
+        Relationships relationships = new Relationships(
+            map("r42", new Relationship("http://example.com/"))
+        );
+        XmlElement element = element("w:hyperlink", map("r:id", "r42", "w:anchor", "fragment"), list(runXml(list())));
+        assertThat(
+            readSuccess(bodyReader(relationships), element),
+            deepEquals(Hyperlink.href("http://example.com/#fragment", list(run(withChildren())))));
+    }
+
+    @Test
+    public void hyperlinkExistingFragmentIsReplacedWhenAnchorIsSetOnExternalLink() {
+        Relationships relationships = new Relationships(
+            map("r42", new Relationship("http://example.com/#previous"))
+        );
+        XmlElement element = element("w:hyperlink", map("r:id", "r42", "w:anchor", "fragment"), list(runXml(list())));
+        assertThat(
+            readSuccess(bodyReader(relationships), element),
+            deepEquals(Hyperlink.href("http://example.com/#fragment", list(run(withChildren())))));
+    }
+
+    @Test
+    public void hyperlinkIsReadAsInternalHyperlinkIfItHasAnAnchorAttribute() {
         XmlElement element = element("w:hyperlink", map("w:anchor", "start"), list(runXml(list())));
         assertThat(
             readSuccess(bodyReader(), element),

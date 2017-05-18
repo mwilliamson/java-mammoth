@@ -436,8 +436,10 @@ class StatefulBodyXmlReader {
         Optional<String> anchor = element.getAttributeOrNone("w:anchor");
         ReadResult childrenResult = readElements(element.getChildren());
         if (relationshipId.isPresent()) {
-            return childrenResult.map(children -> Hyperlink.href(
-                relationships.findRelationshipById(relationshipId.get()).getTarget(), children));
+            String targetHref = relationships.findRelationshipById(relationshipId.get()).getTarget();
+            String href = anchor.map(fragment -> Uris.replaceFragment(targetHref, anchor.get()))
+                .orElse(targetHref);
+            return childrenResult.map(children -> Hyperlink.href(href, children));
         } else if (anchor.isPresent()) {
             return childrenResult.map(children -> Hyperlink.anchor(
                 anchor.get(), children));

@@ -11,4 +11,12 @@ public class Uris {
             return base + "/" + uri;
         }
     }
+
+    public static String replaceFragment(String uri, String fragment) {
+        int hashIndex = uri.indexOf("#");
+        if (hashIndex != -1) {
+            uri = uri.substring(0, hashIndex);
+        }
+        return uri + "#" + fragment;
+    }
 }
