@@ -108,6 +108,10 @@ public class DocumentElementMakers {
         return run(withChildren(new Text(text)));
     }
 
+    public static TableRow tableRow(List<DocumentElement> cells) {
+        return new TableRow(cells, false);
+    }
+
     public static TableCell tableCell(Object... args) {
         Arguments arguments = new Arguments(args);
         return new TableCell(

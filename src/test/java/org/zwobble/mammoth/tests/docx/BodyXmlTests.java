@@ -593,12 +593,32 @@ public class BodyXmlTests {
         assertThat(
             readSuccess(bodyReader(), element),
             deepEquals(new Table(list(
-                new TableRow(list(
+                tableRow(list(
                     new TableCell(1, 1, list(
                         paragraph()
                     ))
                 ))
             )))
+        );
+    }
+
+    @Test
+    public void tblHeaderMarksTableRowAsHeader() {
+        XmlElement element = element("w:tbl", list(
+            element("w:tr", list(
+                element("w:trPr", list(
+                    element("w:tblHeader")
+                ))
+            )),
+            element("w:tr")
+        ));
+
+        assertThat(
+            readSuccess(bodyReader(), element),
+            isTable(hasChildren(
+                isRow(isHeader(true)),
+                isRow(isHeader(false))
+            ))
         );
     }
 
@@ -615,7 +635,7 @@ public class BodyXmlTests {
         assertThat(
             readSuccess(bodyReader(), element),
             deepEquals(new Table(list(
-                new TableRow(list(
+                tableRow(list(
                     new TableCell(1, 2, list(
                         paragraph()
                     ))
@@ -637,11 +657,11 @@ public class BodyXmlTests {
         assertThat(
             readSuccess(bodyReader(), element),
             deepEquals(new Table(list(
-                new TableRow(list(new TableCell(1, 1, list()))),
-                new TableRow(list(new TableCell(3, 1, list()))),
-                new TableRow(list()),
-                new TableRow(list()),
-                new TableRow(list(new TableCell(1, 1, list())))
+                tableRow(list(new TableCell(1, 1, list()))),
+                tableRow(list(new TableCell(3, 1, list()))),
+                tableRow(list()),
+                tableRow(list()),
+                tableRow(list(new TableCell(1, 1, list())))
             )))
         );
     }
@@ -656,8 +676,8 @@ public class BodyXmlTests {
         assertThat(
             readSuccess(bodyReader(), element),
             deepEquals(new Table(list(
-                new TableRow(list(new TableCell(2, 1, list()))),
-                new TableRow(list())
+                tableRow(list(new TableCell(2, 1, list()))),
+                tableRow(list())
             )))
         );
     }
@@ -674,10 +694,10 @@ public class BodyXmlTests {
         assertThat(
             readSuccess(bodyReader(), element),
             deepEquals(new Table(list(
-                new TableRow(list(new TableCell(1, 1, list()), new TableCell(1, 1, list()), new TableCell(3, 1, list()))),
-                new TableRow(list(new TableCell(1, 2, list()))),
-                new TableRow(list(new TableCell(1, 1, list()), new TableCell(1, 1, list()))),
-                new TableRow(list(new TableCell(1, 1, list()), new TableCell(1, 1, list()), new TableCell(1, 1, list())))
+                tableRow(list(new TableCell(1, 1, list()), new TableCell(1, 1, list()), new TableCell(3, 1, list()))),
+                tableRow(list(new TableCell(1, 2, list()))),
+                tableRow(list(new TableCell(1, 1, list()), new TableCell(1, 1, list()))),
+                tableRow(list(new TableCell(1, 1, list()), new TableCell(1, 1, list()), new TableCell(1, 1, list())))
             )))
         );
     }
@@ -692,8 +712,8 @@ public class BodyXmlTests {
         assertThat(
             readSuccess(bodyReader(), element),
             deepEquals(new Table(list(
-                new TableRow(list(new TableCell(1, 2, list()), new TableCell(1, 1, list()))),
-                new TableRow(list(new TableCell(1, 1, list()), new TableCell(1, 1, list())))
+                tableRow(list(new TableCell(1, 2, list()), new TableCell(1, 1, list()))),
+                tableRow(list(new TableCell(1, 1, list()), new TableCell(1, 1, list())))
             )))
         );
     }
@@ -722,7 +742,7 @@ public class BodyXmlTests {
         assertThat(
             read(bodyReader(), element),
             isInternalResult(
-                deepEquals(new Table(list(new TableRow(list(paragraph()))))),
+                deepEquals(new Table(list(tableRow(list(paragraph()))))),
                 list("unexpected non-cell element in table row, cell merging may be incorrect")
             )
         );

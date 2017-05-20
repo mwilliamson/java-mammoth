@@ -46,6 +46,20 @@ public class DocumentMatchers {
         return cast(Run.class, allOf(matchers));
     }
 
+    @SafeVarargs
+    static Matcher<DocumentElement> isTable(Matcher<? super Table>... matchers) {
+        return cast(Table.class, allOf(matchers));
+    }
+
+    @SafeVarargs
+    static Matcher<DocumentElement> isRow(Matcher<? super TableRow>... matchers) {
+        return cast(TableRow.class, allOf(matchers));
+    }
+
+    static Matcher<TableRow> isHeader(boolean isHeader) {
+        return hasProperty("header", equalTo(isHeader));
+    }
+
     private static <T, U> Matcher<U> cast(Class<T> clazz, Matcher<? super T> downcastMatcher) {
         return new TypeSafeDiagnosingMatcher<U>() {
             @Override

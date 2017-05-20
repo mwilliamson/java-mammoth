@@ -224,10 +224,10 @@ public class DocumentToHtmlTests {
     public void tableIsConvertedToHtmlTable() {
         assertThat(
             convertToHtml(new Table(list(
-                new TableRow(list(
+                tableRow(list(
                     tableCell(withChildren(paragraphWithText("Top left"))),
                     tableCell(withChildren(paragraphWithText("Top right"))))),
-                new TableRow(list(
+                tableRow(list(
                     tableCell(withChildren(paragraphWithText("Bottom left"))),
                     tableCell(withChildren(paragraphWithText("Bottom right")))))))),
 
@@ -244,7 +244,7 @@ public class DocumentToHtmlTests {
     public void tableCellsAreWrittenWithColspanIfNotEqualToOne() {
         assertThat(
             convertToHtml(new Table(list(
-                new TableRow(list(
+                tableRow(list(
                     tableCell(
                         withChildren(paragraphWithText("Top left")),
                         withColspan(2)
@@ -264,7 +264,7 @@ public class DocumentToHtmlTests {
     public void tableCellsAreWrittenWithRowspanIfNotEqualToOne() {
         assertThat(
             convertToHtml(new Table(list(
-                new TableRow(list(
+                tableRow(list(
                     tableCell(withRowspan(2))
                 ))
             ))),

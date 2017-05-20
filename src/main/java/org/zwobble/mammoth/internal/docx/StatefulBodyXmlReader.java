@@ -95,7 +95,7 @@ class StatefulBodyXmlReader {
             case "w:tbl":
                 return readTable(element);
             case "w:tr":
-                return readElements(element.getChildren()).map(TableRow::new);
+                return readTableRow(element);
             case "w:tc":
                 return readTableCell(element);
 
@@ -150,6 +150,7 @@ class StatefulBodyXmlReader {
             case "w:rPr":
             case "w:tblPr":
             case "w:tblGrid":
+            case "w:trPr":
             case "w:tcPr":
                 return EMPTY_SUCCESS;
 
@@ -378,7 +379,7 @@ class StatefulBodyXmlReader {
                 }
             }
 
-            return new TableRow(mergedCells);
+            return new TableRow(mergedCells, row.isHeader());
         }));
     }
 
@@ -396,6 +397,13 @@ class StatefulBodyXmlReader {
             }
         }
         return Optional.empty();
+    }
+
+    private ReadResult readTableRow(XmlElement element) {
+        XmlElementLike properties = element.findChildOrEmpty("w:trPr");
+        boolean isHeader = properties.hasChild("w:tblHeader");
+        return readElements(element.getChildren())
+            .map(children -> new TableRow(children, isHeader));
     }
 
     private ReadResult readTableCell(XmlElement element) {
