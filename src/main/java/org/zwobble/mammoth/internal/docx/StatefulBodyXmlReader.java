@@ -434,8 +434,8 @@ class StatefulBodyXmlReader {
         }
 
         @Override
-        public <T> T accept(DocumentElementVisitor<T> visitor) {
-            return visitor.visit(new TableCell(1, colspan, children));
+        public <T, U> T accept(DocumentElementVisitor<T, U> visitor, U context) {
+            return visitor.visit(new TableCell(1, colspan, children), context);
         }
     }
 

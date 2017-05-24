@@ -1,7 +1,9 @@
 package org.zwobble.mammoth.internal.util;
 
 import java.util.Optional;
+import java.util.OptionalInt;
 import java.util.function.BiFunction;
+import java.util.function.IntFunction;
 
 public class Optionals {
     public static <T> Optional<T> first(Optional<T> first, Optional<T> second) {
@@ -31,6 +33,17 @@ public class Optionals {
     {
         if (first.isPresent() && second.isPresent()) {
             return Optional.of(function.apply(first.get(), second.get()));
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    public static <R> Optional<R> map(
+        OptionalInt first,
+        IntFunction<R> function)
+    {
+        if (first.isPresent()) {
+            return Optional.of(function.apply(first.getAsInt()));
         } else {
             return Optional.empty();
         }

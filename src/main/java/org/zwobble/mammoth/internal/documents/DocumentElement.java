@@ -1,5 +1,5 @@
 package org.zwobble.mammoth.internal.documents;
 
 public interface DocumentElement {
-    <T> T accept(DocumentElementVisitor<T> visitor);
+    <T, U> T accept(DocumentElementVisitor<T, U> visitor, U context);
 }

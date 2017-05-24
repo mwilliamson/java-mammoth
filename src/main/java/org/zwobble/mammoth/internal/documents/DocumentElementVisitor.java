@@ -1,22 +1,22 @@
 package org.zwobble.mammoth.internal.documents;
 
-public interface DocumentElementVisitor<T> {
-    T visit(Paragraph paragraph);
-    T visit(Run run);
-    T visit(Text text);
+public interface DocumentElementVisitor<T, U> {
+    T visit(Paragraph paragraph, U context);
+    T visit(Run run, U context);
+    T visit(Text text, U context);
 
-    T visit(Tab tab);
-    T visit(Break lineBreak);
+    T visit(Tab tab, U context);
+    T visit(Break lineBreak, U context);
 
-    T visit(Table table);
-    T visit(TableRow tableRow);
-    T visit(TableCell tableCell);
+    T visit(Table table, U context);
+    T visit(TableRow tableRow, U context);
+    T visit(TableCell tableCell, U context);
 
-    T visit(Hyperlink hyperlink);
-    T visit(Bookmark bookmark);
-    T visit(NoteReference noteReference);
-    T visit(CommentReference commentReference);
+    T visit(Hyperlink hyperlink, U context);
+    T visit(Bookmark bookmark, U context);
+    T visit(NoteReference noteReference, U context);
+    T visit(CommentReference commentReference, U context);
 
-    T visit(Image image);
+    T visit(Image image, U context);
 
 }

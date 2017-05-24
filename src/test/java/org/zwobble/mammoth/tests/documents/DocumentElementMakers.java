@@ -21,6 +21,7 @@ public class DocumentElementMakers {
     private static final ArgumentKey<Boolean> STRIKETHROUGH = new ArgumentKey<>("strikethrough");
     private static final ArgumentKey<VerticalAlignment> VERTICAL_ALIGNMENT = new ArgumentKey<>("verticalAlignment");
     private static final ArgumentKey<List<DocumentElement>> CHILDREN = new ArgumentKey<>("children");
+    private static final ArgumentKey<Boolean> IS_HEADER = new ArgumentKey<>("isHeader");
     private static final ArgumentKey<Integer> COLSPAN = new ArgumentKey<>("colspan");
     private static final ArgumentKey<Integer> ROWSPAN = new ArgumentKey<>("rowspan");
     private static final ArgumentKey<List<Comment>> COMMENTS = new ArgumentKey<>("comments");
@@ -55,6 +56,10 @@ public class DocumentElementMakers {
 
     public static Argument<List<DocumentElement>> withChildren(DocumentElement... children) {
         return arg(CHILDREN, asList(children));
+    }
+
+    public static Argument<Boolean> withIsHeader(boolean isHeader) {
+        return arg(IS_HEADER, isHeader);
     }
 
     public static Argument<Integer> withRowspan(Integer rowspan) {
@@ -108,8 +113,9 @@ public class DocumentElementMakers {
         return run(withChildren(new Text(text)));
     }
 
-    public static TableRow tableRow(List<DocumentElement> cells) {
-        return new TableRow(cells, false);
+    public static TableRow tableRow(List<DocumentElement> cells, Object... args) {
+        Arguments arguments = new Arguments(args);
+        return new TableRow(cells, arguments.get(IS_HEADER, false));
     }
 
     public static TableCell tableCell(Object... args) {

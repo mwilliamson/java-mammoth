@@ -241,6 +241,42 @@ public class DocumentToHtmlTests {
     }
 
     @Test
+    public void headerRowsAreWrappedInThead() {
+        assertThat(
+            convertToHtml(new Table(list(
+                tableRow(list(tableCell()), withIsHeader(true)),
+                tableRow(list(tableCell()), withIsHeader(true)),
+                tableRow(list(tableCell()), withIsHeader(false))
+            ))),
+
+            deepEquals(list(Html.element("table", list(
+                Html.element("thead", list(
+                    Html.element("tr", list(Html.element("th", list(Html.FORCE_WRITE)))),
+                    Html.element("tr", list(Html.element("th", list(Html.FORCE_WRITE))))
+                )),
+                Html.element("tbody", list(
+                    Html.element("tr", list(Html.element("td", list(Html.FORCE_WRITE))))
+                ))
+            ))))
+        );
+    }
+
+    @Test
+    public void tbodyIsOmittedIfAllRowsAreHeaders() {
+        assertThat(
+            Html.stripEmpty(convertToHtml(new Table(list(
+                tableRow(list(tableCell()), withIsHeader(true))
+            )))),
+
+            deepEquals(list(Html.element("table", list(
+                Html.element("thead", list(
+                    Html.element("tr", list(Html.element("th", list(Html.FORCE_WRITE))))
+                ))
+            ))))
+        );
+    }
+
+    @Test
     public void tableCellsAreWrittenWithColspanIfNotEqualToOne() {
         assertThat(
             convertToHtml(new Table(list(

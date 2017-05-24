@@ -17,8 +17,8 @@ public class TableRow implements DocumentElement, HasChildren {
     }
 
     @Override
-    public <T> T accept(DocumentElementVisitor<T> visitor) {
-        return visitor.visit(this);
+    public <T, U> T accept(DocumentElementVisitor<T, U> visitor, U context) {
+        return visitor.visit(this, context);
     }
 
     public boolean isHeader() {

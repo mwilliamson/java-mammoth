@@ -15,6 +15,8 @@ import java.io.InputStream;
 import java.util.*;
 import java.util.function.Supplier;
 
+import static org.zwobble.mammoth.internal.util.Casts.tryCast;
+import static org.zwobble.mammoth.internal.util.Iterables.findIndex;
 import static org.zwobble.mammoth.internal.util.Lists.*;
 import static org.zwobble.mammoth.internal.util.Maps.lookup;
 import static org.zwobble.mammoth.internal.util.Maps.map;
@@ -23,7 +25,7 @@ public class DocumentToHtml {
     public static InternalResult<List<HtmlNode>> convertToHtml(Document document, DocumentToHtmlOptions options) {
         DocumentToHtml documentConverter = new DocumentToHtml(options, document.getComments());
         return new InternalResult<>(
-            documentConverter.convertToHtml(document),
+            documentConverter.convertToHtml(document, new Context()),
             documentConverter.warnings);
     }
 
@@ -37,7 +39,7 @@ public class DocumentToHtml {
     public static InternalResult<List<HtmlNode>> convertToHtml(DocumentElement element, DocumentToHtmlOptions options) {
         DocumentToHtml documentConverter = new DocumentToHtml(options, list());
         return new InternalResult<>(
-            documentConverter.convertToHtml(element),
+            documentConverter.convertToHtml(element, new Context()),
             documentConverter.warnings);
     }
 
@@ -60,6 +62,22 @@ public class DocumentToHtml {
     private final List<ReferencedComment> referencedComments = new ArrayList<>();
     private final Set<String> warnings = new HashSet<>();
 
+    private static class Context {
+        private final boolean isHeader;
+
+        Context() {
+            this(false);
+        }
+
+        Context(boolean isHeader) {
+            this.isHeader = isHeader;
+        }
+
+        Context isHeader(boolean isHeader) {
+            return new Context(isHeader);
+        }
+    }
+
     private DocumentToHtml(DocumentToHtmlOptions options, List<Comment> comments) {
         this.idPrefix = options.idPrefix();
         this.preserveEmptyParagraphs = options.shouldPreserveEmptyParagraphs();
@@ -68,26 +86,26 @@ public class DocumentToHtml {
         this.comments = Maps.toMapWithKey(comments, Comment::getCommentId);
     }
 
-    private List<HtmlNode> convertToHtml(Document document) {
-        List<HtmlNode> mainBody = convertChildrenToHtml(document);
+    private List<HtmlNode> convertToHtml(Document document, Context context) {
+        List<HtmlNode> mainBody = convertChildrenToHtml(document, context);
         // TODO: can you have note references inside a note?
         List<Note> notes = findNotes(document, noteReferences);
 
         List<HtmlNode> noteNodes = notes.isEmpty()
             ? list()
-            : list(Html.element("ol", eagerMap(notes, this::convertToHtml)));
+            : list(Html.element("ol", eagerMap(notes, note -> convertToHtml(note, context))));
 
         List<HtmlNode> commentNodes = referencedComments.isEmpty()
             ? list()
-            : list(Html.element("dl", eagerFlatMap(referencedComments, this::convertToHtml)));
+            : list(Html.element("dl", eagerFlatMap(referencedComments, comment -> convertToHtml(comment, context))));
 
         return eagerConcat(mainBody, noteNodes, commentNodes);
     }
 
-    private HtmlNode convertToHtml(Note note) {
+    private HtmlNode convertToHtml(Note note, Context context) {
         String id = generateNoteHtmlId(note.getNoteType(), note.getId());
         String referenceId = generateNoteRefHtmlId(note.getNoteType(), note.getId());
-        List<HtmlNode> noteBody = convertToHtml(note.getBody());
+        List<HtmlNode> noteBody = convertToHtml(note.getBody(), context);
         // TODO: we probably want this to collapse more eagerly than other collapsible elements
         // -- for instance, any paragraph will probably do, regardless of attributes. (Possible other elements will do too.)
         HtmlNode backLink = Html.collapsibleElement("p", list(
@@ -96,10 +114,10 @@ public class DocumentToHtml {
         return Html.element("li", map("id", id), eagerConcat(noteBody, list(backLink)));
     }
 
-    private List<HtmlNode> convertToHtml(ReferencedComment referencedComment) {
+    private List<HtmlNode> convertToHtml(ReferencedComment referencedComment, Context context) {
         // TODO: remove duplication with notes
         String commentId = referencedComment.comment.getCommentId();
-        List<HtmlNode> body = convertToHtml(referencedComment.comment.getBody());
+        List<HtmlNode> body = convertToHtml(referencedComment.comment.getBody(), context);
         // TODO: we probably want this to collapse more eagerly than other collapsible elements
         // -- for instance, any paragraph will probably do, regardless of attributes. (Possible other elements will do too.)
         HtmlNode backLink = Html.collapsibleElement("p", list(
@@ -115,22 +133,23 @@ public class DocumentToHtml {
                 eagerConcat(body, list(backLink))));
     }
 
-    private List<HtmlNode> convertToHtml(List<DocumentElement> elements) {
+    private List<HtmlNode> convertToHtml(List<DocumentElement> elements, Context context) {
         return eagerFlatMap(
             elements,
-            this::convertToHtml);
+            element -> convertToHtml(element, context)
+        );
     }
 
-    private List<HtmlNode> convertChildrenToHtml(HasChildren element) {
-        return convertToHtml(element.getChildren());
+    private List<HtmlNode> convertChildrenToHtml(HasChildren element, Context context) {
+        return convertToHtml(element.getChildren(), context);
     }
 
-    private List<HtmlNode> convertToHtml(DocumentElement element) {
-        return element.accept(new DocumentElementVisitor<List<HtmlNode>>() {
+    private List<HtmlNode> convertToHtml(DocumentElement element, Context context) {
+        return element.accept(new DocumentElementVisitor<List<HtmlNode>, Context>() {
             @Override
-            public List<HtmlNode> visit(Paragraph paragraph) {
+            public List<HtmlNode> visit(Paragraph paragraph, Context context) {
                 Supplier<List<HtmlNode>> children = () -> {
-                    List<HtmlNode> content = convertChildrenToHtml(paragraph);
+                    List<HtmlNode> content = convertChildrenToHtml(paragraph, context);
                     return preserveEmptyParagraphs ? cons(Html.FORCE_WRITE, content) : content;
                 };
                 HtmlPath mapping = styleMap.getParagraphHtmlPath(paragraph)
@@ -144,8 +163,8 @@ public class DocumentToHtml {
             }
 
             @Override
-            public List<HtmlNode> visit(Run run) {
-                Supplier<List<HtmlNode>> nodes = () -> convertChildrenToHtml(run);
+            public List<HtmlNode> visit(Run run, Context context) {
+                Supplier<List<HtmlNode>> nodes = () -> convertChildrenToHtml(run, context);
                 if (run.isStrikethrough()) {
                     nodes = styleMap.getStrikethrough().orElse(HtmlPath.collapsibleElement("s")).wrap(nodes);
                 }
@@ -175,7 +194,7 @@ public class DocumentToHtml {
             }
 
             @Override
-            public List<HtmlNode> visit(Text text) {
+            public List<HtmlNode> visit(Text text, Context context) {
                 if (text.getValue().isEmpty()) {
                     return list();
                 } else {
@@ -184,12 +203,12 @@ public class DocumentToHtml {
             }
 
             @Override
-            public List<HtmlNode> visit(Tab tab) {
+            public List<HtmlNode> visit(Tab tab, Context context) {
                 return list(Html.text("\t"));
             }
 
             @Override
-            public List<HtmlNode> visit(Break breakElement) {
+            public List<HtmlNode> visit(Break breakElement, Context context) {
                 HtmlPath mapping = styleMap.getBreakHtmlPath(breakElement)
                     .orElseGet(() -> {
                         if (breakElement.getType() == Break.Type.LINE) {
@@ -202,17 +221,46 @@ public class DocumentToHtml {
             }
 
             @Override
-            public List<HtmlNode> visit(Table table) {
-                return list(Html.element("table", convertChildrenToHtml(table)));
+            public List<HtmlNode> visit(Table table, Context context) {
+                List<HtmlNode> children = generateTableChildren(table, context);
+                return list(Html.element("table", children));
+            }
+
+            private List<HtmlNode> generateTableChildren(Table table, Context context) {
+                int bodyIndex = findIndex(table.getChildren(), child -> !isHeader(child))
+                    .orElse(table.getChildren().size());
+                if (bodyIndex == 0) {
+                    return convertToHtml(table.getChildren(), context.isHeader(false));
+                } else {
+                    List<HtmlNode> headRows = convertToHtml(
+                        table.getChildren().subList(0, bodyIndex),
+                        context.isHeader(true)
+                    );
+                    List<HtmlNode> bodyRows = convertToHtml(
+                        table.getChildren().subList(bodyIndex, table.getChildren().size()),
+                        context.isHeader(false)
+                    );
+                    return list(
+                        Html.element("thead", headRows),
+                        Html.element("tbody", bodyRows)
+                    );
+                }
+            }
+
+            private boolean isHeader(DocumentElement child) {
+                return tryCast(TableRow.class, child)
+                    .map(TableRow::isHeader)
+                    .orElse(false);
             }
 
             @Override
-            public List<HtmlNode> visit(TableRow tableRow) {
-                return list(Html.element("tr", convertChildrenToHtml(tableRow)));
+            public List<HtmlNode> visit(TableRow tableRow, Context context) {
+                return list(Html.element("tr", convertChildrenToHtml(tableRow, context)));
             }
 
             @Override
-            public List<HtmlNode> visit(TableCell tableCell) {
+            public List<HtmlNode> visit(TableCell tableCell, Context context) {
+                String tagName = context.isHeader ? "th" : "td";
                 Map<String, String> attributes = new HashMap<>();
                 if (tableCell.getColspan() != 1) {
                     attributes.put("colspan", Integer.toString(tableCell.getColspan()));
@@ -220,14 +268,14 @@ public class DocumentToHtml {
                 if (tableCell.getRowspan() != 1) {
                     attributes.put("rowspan", Integer.toString(tableCell.getRowspan()));
                 }
-                return list(Html.element("td", attributes,
-                    Lists.cons(Html.FORCE_WRITE, convertChildrenToHtml(tableCell))));
+                return list(Html.element(tagName, attributes,
+                    Lists.cons(Html.FORCE_WRITE, convertChildrenToHtml(tableCell, context))));
             }
 
             @Override
-            public List<HtmlNode> visit(Hyperlink hyperlink) {
+            public List<HtmlNode> visit(Hyperlink hyperlink, Context context) {
                 Map<String, String> attributes = map("href", generateHref(hyperlink));
-                return list(Html.collapsibleElement("a", attributes, convertChildrenToHtml(hyperlink)));
+                return list(Html.collapsibleElement("a", attributes, convertChildrenToHtml(hyperlink, context)));
             }
 
             private String generateHref(Hyperlink hyperlink) {
@@ -241,12 +289,12 @@ public class DocumentToHtml {
             }
 
             @Override
-            public List<HtmlNode> visit(Bookmark bookmark) {
+            public List<HtmlNode> visit(Bookmark bookmark, Context context) {
                 return list(Html.element("a", map("id", generateId(bookmark.getName())), list(Html.FORCE_WRITE)));
             }
 
             @Override
-            public List<HtmlNode> visit(NoteReference noteReference) {
+            public List<HtmlNode> visit(NoteReference noteReference, Context context) {
                 noteReferences.add(noteReference);
                 String noteAnchor = generateNoteHtmlId(noteReference.getNoteType(), noteReference.getNoteId());
                 String noteReferenceAnchor = generateNoteRefHtmlId(noteReference.getNoteType(), noteReference.getNoteId());
@@ -256,7 +304,7 @@ public class DocumentToHtml {
             }
 
             @Override
-            public List<HtmlNode> visit(CommentReference commentReference) {
+            public List<HtmlNode> visit(CommentReference commentReference, Context context) {
                 return styleMap.getCommentReference().orElse(HtmlPath.IGNORE).wrap(() -> {
                     String commentId = commentReference.getCommentId();
                     Comment comment = lookup(comments, commentId)
@@ -275,7 +323,7 @@ public class DocumentToHtml {
             }
 
             @Override
-            public List<HtmlNode> visit(Image image) {
+            public List<HtmlNode> visit(Image image, Context context) {
                 // TODO: custom image handlers
                 // TODO: handle empty content type
                 return image.getContentType()
@@ -306,7 +354,7 @@ public class DocumentToHtml {
                     })
                     .orElse(list());
             }
-        });
+        }, context);
     }
 
     private String generateNoteHtmlId(NoteType noteType, String noteId) {
