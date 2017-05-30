@@ -91,7 +91,7 @@ public class DocumentMatchers {
         return hasProperty("href", equalTo(Optional.of(href)));
     }
 
-    static Matcher<Hyperlink> hasBlankHref() {
+    static Matcher<Hyperlink> hasNoHref() {
         return hasProperty("href", equalTo(Optional.empty()));
     }
 
@@ -99,11 +99,15 @@ public class DocumentMatchers {
         return hasProperty("anchor", equalTo(Optional.of(anchor)));
     }
 
-    static Matcher<Hyperlink> hasBlankAnchor() {
+    static Matcher<Hyperlink> hasNoAnchor() {
         return hasProperty("anchor", equalTo(Optional.empty()));
     }
 
     static Matcher<Hyperlink> hasTargetFrame(String targetFrame) {
         return hasProperty("targetFrame", equalTo(Optional.of(targetFrame)));
+    }
+
+    static Matcher<Hyperlink> hasNoTargetFrame() {
+        return hasProperty("targetFrame", equalTo(Optional.empty()));
     }
 }

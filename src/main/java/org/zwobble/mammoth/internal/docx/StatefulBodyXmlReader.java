@@ -442,7 +442,8 @@ class StatefulBodyXmlReader {
     private ReadResult readHyperlink(XmlElement element) {
         Optional<String> relationshipId = element.getAttributeOrNone("r:id");
         Optional<String> anchor = element.getAttributeOrNone("w:anchor");
-        Optional<String> targetFrame = element.getAttributeOrNone("w:tgtFrame");
+        Optional<String> targetFrame = element.getAttributeOrNone("w:tgtFrame")
+            .filter(value -> !value.isEmpty());
         ReadResult childrenResult = readElements(element.getChildren());
 
         if (relationshipId.isPresent()) {

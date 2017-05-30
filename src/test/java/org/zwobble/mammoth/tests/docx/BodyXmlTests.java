@@ -757,7 +757,7 @@ public class BodyXmlTests {
             readSuccess(bodyReader(relationships), element),
             isHyperlink(
                 hasHref("http://example.com"),
-                hasBlankAnchor(),
+                hasNoAnchor(),
                 hasChildren(isRun(hasChildren()))
             )
         );
@@ -794,7 +794,7 @@ public class BodyXmlTests {
             readSuccess(bodyReader(), element),
             isHyperlink(
                 hasAnchor("start"),
-                hasBlankHref()
+                hasNoHref()
             )
         );
     }
@@ -816,6 +816,18 @@ public class BodyXmlTests {
         assertThat(
             readSuccess(bodyReader(), element),
             isHyperlink(hasTargetFrame("_blank"))
+        );
+    }
+
+    @Test
+    public void hyperlinkEmptyTargetFrameIsIgnored() {
+        XmlElement element = element("w:hyperlink", map(
+            "w:anchor", "start",
+            "w:tgtFrame", ""
+        ));
+        assertThat(
+            readSuccess(bodyReader(), element),
+            isHyperlink(hasNoTargetFrame())
         );
     }
 
