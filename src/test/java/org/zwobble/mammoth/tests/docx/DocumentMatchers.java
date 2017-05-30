@@ -90,4 +90,20 @@ public class DocumentMatchers {
     static Matcher<Hyperlink> hasHref(String href) {
         return hasProperty("href", equalTo(Optional.of(href)));
     }
+
+    static Matcher<Hyperlink> hasBlankHref() {
+        return hasProperty("href", equalTo(Optional.empty()));
+    }
+
+    static Matcher<Hyperlink> hasAnchor(String anchor) {
+        return hasProperty("anchor", equalTo(Optional.of(anchor)));
+    }
+
+    static Matcher<Hyperlink> hasBlankAnchor() {
+        return hasProperty("anchor", equalTo(Optional.empty()));
+    }
+
+    static Matcher<Hyperlink> hasTargetFrame(String targetFrame) {
+        return hasProperty("targetFrame", equalTo(Optional.of(targetFrame)));
+    }
 }

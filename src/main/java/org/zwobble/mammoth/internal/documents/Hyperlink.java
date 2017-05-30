@@ -4,21 +4,23 @@ import java.util.List;
 import java.util.Optional;
 
 public class Hyperlink implements DocumentElement, HasChildren {
-    public static Hyperlink href(String href, List<DocumentElement> children) {
-        return new Hyperlink(Optional.of(href), Optional.empty(), children);
+    public static Hyperlink href(String href, Optional<String> targetFrame, List<DocumentElement> children) {
+        return new Hyperlink(Optional.of(href), Optional.empty(), targetFrame, children);
     }
 
-    public static Hyperlink anchor(String anchor, List<DocumentElement> children) {
-        return new Hyperlink(Optional.empty(), Optional.of(anchor), children);
+    public static Hyperlink anchor(String anchor, Optional<String> targetFrame, List<DocumentElement> children) {
+        return new Hyperlink(Optional.empty(), Optional.of(anchor), targetFrame, children);
     }
 
     private final Optional<String> href;
     private final Optional<String> anchor;
+    private final Optional<String> targetFrame;
     private final List<DocumentElement> children;
 
-    private Hyperlink(Optional<String> href, Optional<String> anchor, List<DocumentElement> children) {
+    public Hyperlink(Optional<String> href, Optional<String> anchor, Optional<String> targetFrame, List<DocumentElement> children) {
         this.href = href;
         this.anchor = anchor;
+        this.targetFrame = targetFrame;
         this.children = children;
     }
 
@@ -28,6 +30,10 @@ public class Hyperlink implements DocumentElement, HasChildren {
 
     public Optional<String> getAnchor() {
         return anchor;
+    }
+
+    public Optional<String> getTargetFrame() {
+        return targetFrame;
     }
 
     @Override

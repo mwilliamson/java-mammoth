@@ -25,6 +25,9 @@ public class DocumentElementMakers {
     private static final ArgumentKey<Integer> COLSPAN = new ArgumentKey<>("colspan");
     private static final ArgumentKey<Integer> ROWSPAN = new ArgumentKey<>("rowspan");
     private static final ArgumentKey<List<Comment>> COMMENTS = new ArgumentKey<>("comments");
+    private static final ArgumentKey<Optional<String>> HREF = new ArgumentKey<>("href");
+    private static final ArgumentKey<Optional<String>> ANCHOR = new ArgumentKey<>("anchor");
+    private static final ArgumentKey<Optional<String>> TARGET_FRAME = new ArgumentKey<>("targetFrame");
 
     public static Argument<Optional<Style>> withStyle(Style style) {
         return arg(STYLE, Optional.of(style));
@@ -129,5 +132,27 @@ public class DocumentElementMakers {
 
     public static Comment comment(String commentId, List<DocumentElement> body) {
         return new Comment(commentId, body, Optional.empty(), Optional.empty());
+    }
+
+    public static Hyperlink hyperlink(Object... args) {
+        Arguments arguments = new Arguments(args);
+        return new Hyperlink(
+            arguments.get(HREF, Optional.empty()),
+            arguments.get(ANCHOR, Optional.empty()),
+            arguments.get(TARGET_FRAME, Optional.empty()),
+            arguments.get(CHILDREN, list())
+        );
+    }
+
+    public static Argument<Optional<String>> withHref(String href) {
+        return arg(HREF, Optional.of(href));
+    }
+
+    public static Argument<Optional<String>> withAnchor(String anchor) {
+        return arg(ANCHOR, Optional.of(anchor));
+    }
+
+    public static Argument<Optional<String>> withTargetFrame(String targetFrame) {
+        return arg(TARGET_FRAME, Optional.of(targetFrame));
     }
 }

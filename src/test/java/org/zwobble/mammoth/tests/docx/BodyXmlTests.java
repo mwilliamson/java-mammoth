@@ -755,7 +755,12 @@ public class BodyXmlTests {
         XmlElement element = element("w:hyperlink", map("r:id", "r42"), list(runXml(list())));
         assertThat(
             readSuccess(bodyReader(relationships), element),
-            deepEquals(Hyperlink.href("http://example.com", list(run(withChildren())))));
+            isHyperlink(
+                hasHref("http://example.com"),
+                hasBlankAnchor(),
+                hasChildren(isRun(hasChildren()))
+            )
+        );
     }
 
     @Test
@@ -766,7 +771,8 @@ public class BodyXmlTests {
         XmlElement element = element("w:hyperlink", map("r:id", "r42", "w:anchor", "fragment"), list(runXml(list())));
         assertThat(
             readSuccess(bodyReader(relationships), element),
-            deepEquals(Hyperlink.href("http://example.com/#fragment", list(run(withChildren())))));
+            isHyperlink(hasHref("http://example.com/#fragment"))
+        );
     }
 
     @Test
@@ -777,7 +783,8 @@ public class BodyXmlTests {
         XmlElement element = element("w:hyperlink", map("r:id", "r42", "w:anchor", "fragment"), list(runXml(list())));
         assertThat(
             readSuccess(bodyReader(relationships), element),
-            deepEquals(Hyperlink.href("http://example.com/#fragment", list(run(withChildren())))));
+            isHyperlink(hasHref("http://example.com/#fragment"))
+        );
     }
 
     @Test
@@ -785,7 +792,11 @@ public class BodyXmlTests {
         XmlElement element = element("w:hyperlink", map("w:anchor", "start"), list(runXml(list())));
         assertThat(
             readSuccess(bodyReader(), element),
-            deepEquals(Hyperlink.anchor("start", list(run(withChildren())))));
+            isHyperlink(
+                hasAnchor("start"),
+                hasBlankHref()
+            )
+        );
     }
 
     @Test
@@ -794,6 +805,18 @@ public class BodyXmlTests {
         assertThat(
             readSuccess(bodyReader(), element),
             deepEquals(run(withChildren())));
+    }
+
+    @Test
+    public void hyperlinkTargetFrameIsRead() {
+        XmlElement element = element("w:hyperlink", map(
+            "w:anchor", "start",
+            "w:tgtFrame", "_blank"
+        ));
+        assertThat(
+            readSuccess(bodyReader(), element),
+            isHyperlink(hasTargetFrame("_blank"))
+        );
     }
 
     @Test
