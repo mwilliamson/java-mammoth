@@ -18,6 +18,7 @@ import java.util.function.Supplier;
 import static org.zwobble.mammoth.internal.util.Casts.tryCast;
 import static org.zwobble.mammoth.internal.util.Iterables.findIndex;
 import static org.zwobble.mammoth.internal.util.Lists.*;
+import static org.zwobble.mammoth.internal.util.Maps.mutableMap;
 import static org.zwobble.mammoth.internal.util.Maps.lookup;
 import static org.zwobble.mammoth.internal.util.Maps.map;
 
@@ -274,7 +275,11 @@ public class DocumentToHtml {
 
             @Override
             public List<HtmlNode> visit(Hyperlink hyperlink, Context context) {
-                Map<String, String> attributes = map("href", generateHref(hyperlink));
+                Map<String, String> attributes = mutableMap("href", generateHref(hyperlink));
+                hyperlink.getTargetFrame().ifPresent(targetFrame ->
+                    attributes.put("target", targetFrame)
+                );
+
                 return list(Html.collapsibleElement("a", attributes, convertChildrenToHtml(hyperlink, context)));
             }
 

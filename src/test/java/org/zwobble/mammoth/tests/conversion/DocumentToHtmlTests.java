@@ -333,6 +333,17 @@ public class DocumentToHtmlTests {
     }
 
     @Test
+    public void hyperlinkTargetFrameIsUsedAsAnchorTarget() {
+        assertThat(
+            convertToHtml(hyperlink(
+                withAnchor("start"),
+                withTargetFrame("_blank"),
+                withChildren(new Text("Hello"))
+            )),
+            deepEquals(list(Html.collapsibleElement("a", map("href", "#doc-42-start", "target", "_blank"), list(Html.text("Hello"))))));
+    }
+
+    @Test
     public void bookmarksAreConvertedToAnchorsWithIds() {
         assertThat(
             convertToHtml(new Bookmark("start")),

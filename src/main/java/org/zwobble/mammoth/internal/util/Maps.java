@@ -27,6 +27,12 @@ public class Maps {
         return map;
     }
 
+    public static <K, V> Map<K, V> mutableMap(K key1, V value1) {
+        Map<K, V> map = new HashMap<>();
+        map.put(key1, value1);
+        return map;
+    }
+
     public static <K, V> Map.Entry<K, V> entry(K key, V value) {
         return new AbstractMap.SimpleImmutableEntry<K, V>(key, value);
     }
