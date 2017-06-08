@@ -6,6 +6,8 @@
 
 * Detect header rows in tables and convert to thead > tr > th.
 
+* Read w:noBreakHyphen elements as non-breaking hyphen characters.
+
 # 1.3.1
 
 * Read children of w:object elements.

@@ -89,6 +89,8 @@ class StatefulBodyXmlReader {
 
             case "w:tab":
                 return success(Tab.TAB);
+            case "w:noBreakHyphen":
+                return success(new Text("\u2011"));
             case "w:br":
                 return readBreak(element);
 

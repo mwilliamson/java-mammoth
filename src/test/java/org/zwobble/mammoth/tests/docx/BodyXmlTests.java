@@ -536,6 +536,16 @@ public class BodyXmlTests {
     }
 
     @Test
+    public void noBreakHyphenElementIsReadAsNonBreakingHyphenCharacter() {
+        XmlElement element = element("w:noBreakHyphen");
+
+        assertThat(
+            readSuccess(bodyReader(), element),
+            isTextElement("\u2011")
+        );
+    }
+
+    @Test
     public void brWithoutExplicitTypeIsReadAsLineBreak() {
         XmlElement element = element("w:br");
 
