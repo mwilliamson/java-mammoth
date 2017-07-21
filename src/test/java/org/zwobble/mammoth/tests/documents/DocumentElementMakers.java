@@ -19,6 +19,7 @@ public class DocumentElementMakers {
     private static final ArgumentKey<Boolean> ITALIC = new ArgumentKey<>("italic");
     private static final ArgumentKey<Boolean> UNDERLINE = new ArgumentKey<>("underline");
     private static final ArgumentKey<Boolean> STRIKETHROUGH = new ArgumentKey<>("strikethrough");
+    private static final ArgumentKey<Boolean> SMALL_CAPS = new ArgumentKey<>("smallCaps");
     private static final ArgumentKey<VerticalAlignment> VERTICAL_ALIGNMENT = new ArgumentKey<>("verticalAlignment");
     private static final ArgumentKey<List<DocumentElement>> CHILDREN = new ArgumentKey<>("children");
     private static final ArgumentKey<Boolean> IS_HEADER = new ArgumentKey<>("isHeader");
@@ -51,6 +52,10 @@ public class DocumentElementMakers {
 
     public static Argument<Boolean> withStrikethrough(boolean strikethrough) {
         return arg(STRIKETHROUGH, strikethrough);
+    }
+
+    public static Argument<Boolean> withSmallCaps(boolean smallCaps) {
+        return arg(SMALL_CAPS, smallCaps);
     }
 
     public static Argument<VerticalAlignment> withVerticalAlignment(VerticalAlignment verticalAlignment) {
@@ -106,6 +111,7 @@ public class DocumentElementMakers {
             arguments.get(ITALIC, false),
             arguments.get(UNDERLINE, false),
             arguments.get(STRIKETHROUGH, false),
+            arguments.get(SMALL_CAPS, false),
             arguments.get(VERTICAL_ALIGNMENT, VerticalAlignment.BASELINE),
             arguments.get(STYLE, Optional.empty()),
             arguments.get(CHILDREN, list())

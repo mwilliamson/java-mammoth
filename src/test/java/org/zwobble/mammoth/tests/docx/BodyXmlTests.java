@@ -443,12 +443,34 @@ public class BodyXmlTests {
             hasProperty("strikethrough", equalTo(true)));
     }
 
+    @Test
+    public void runIsNotSmallCapsIfSmallCapsElementIsNotPresent() {
+        XmlElement element = runXmlWithProperties();
+
+        assertThat(
+            readSuccess(bodyReader(), element),
+            hasProperty("smallCaps", equalTo(false)));
+    }
+
+    @Test
+    public void runIsSmallCapsIfSmallCapsElementIsPresent() {
+        XmlElement element = runXmlWithProperties(element("w:smallCaps"));
+
+        assertThat(
+            readSuccess(bodyReader(), element),
+            hasProperty("smallCaps", equalTo(true)));
+    }
+
     @RunWith(Parameterized.class)
     public static class RunBooleanPropertyTests {
         @Parameterized.Parameters(name = "propertyName: {0}, tagName: {1}")
         public static Collection<Object[]> data() {
             return list(new Object[][] {
-                {"bold", "w:b"}, {"underline", "w:u"}, {"italic", "w:i"}, {"strikethrough", "w:strike"}
+                {"bold", "w:b"},
+                {"underline", "w:u"},
+                {"italic", "w:i"},
+                {"strikethrough", "w:strike"},
+                {"smallCaps", "w:smallCaps"}
             });
         }
 

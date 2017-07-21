@@ -51,6 +51,12 @@ public class StyleMapParserTests {
     }
 
     @Test
+    public void canMapSmallCaps() {
+        StyleMap styleMap = StyleMapParser.parse("small-caps => span");
+        assertThat(styleMap, deepEquals(StyleMap.builder().smallCaps(HtmlPath.collapsibleElement("span")).build()));
+    }
+
+    @Test
     public void canMapCommentReference() {
         StyleMap styleMap = StyleMapParser.parse("comment-reference =>");
         assertThat(styleMap, deepEquals(StyleMap.builder().commentReference(HtmlPath.EMPTY).build()));

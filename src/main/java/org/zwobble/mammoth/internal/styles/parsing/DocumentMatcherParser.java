@@ -27,6 +27,8 @@ public class DocumentMatcherParser {
                 return StyleMapBuilder::underline;
             case "strike":
                 return StyleMapBuilder::strikethrough;
+            case "small-caps":
+                return StyleMapBuilder::smallCaps;
             case "comment-reference":
                 return StyleMapBuilder::commentReference;
             case "br":

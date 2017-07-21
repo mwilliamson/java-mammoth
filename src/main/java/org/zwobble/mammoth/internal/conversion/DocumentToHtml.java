@@ -166,6 +166,9 @@ public class DocumentToHtml {
             @Override
             public List<HtmlNode> visit(Run run, Context context) {
                 Supplier<List<HtmlNode>> nodes = () -> convertChildrenToHtml(run, context);
+                if (run.isSmallCaps()) {
+                    nodes = styleMap.getSmallCaps().orElse(HtmlPath.EMPTY).wrap(nodes);
+                }
                 if (run.isStrikethrough()) {
                     nodes = styleMap.getStrikethrough().orElse(HtmlPath.collapsibleElement("s")).wrap(nodes);
                 }

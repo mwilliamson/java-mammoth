@@ -11,6 +11,7 @@ import java.util.Optional;
 public class StyleMapBuilder {
     private Optional<HtmlPath> underline;
     private Optional<HtmlPath> strikethrough;
+    private Optional<HtmlPath> smallCaps;
     private Optional<HtmlPath> bold;
     private Optional<HtmlPath> italic;
     private Optional<HtmlPath> commentReference;
@@ -22,6 +23,7 @@ public class StyleMapBuilder {
         this.bold = Optional.empty();
         this.underline = Optional.empty();
         this.strikethrough = Optional.empty();
+        this.smallCaps = Optional.empty();
         this.italic = Optional.empty();
         this.commentReference = Optional.empty();
     }
@@ -46,6 +48,11 @@ public class StyleMapBuilder {
         return this;
     }
 
+    public StyleMapBuilder smallCaps(HtmlPath path) {
+        this.smallCaps = Optional.of(path);
+        return this;
+    }
+
     public StyleMapBuilder commentReference(HtmlPath path) {
         this.commentReference = Optional.of(path);
         return this;
@@ -67,6 +74,16 @@ public class StyleMapBuilder {
     }
 
     public StyleMap build() {
-        return new StyleMap(bold, italic, underline, strikethrough, commentReference, paragraphStyles, runStyles, breakStyles);
+        return new StyleMap(
+            bold,
+            italic,
+            underline,
+            strikethrough,
+            smallCaps,
+            commentReference,
+            paragraphStyles,
+            runStyles,
+            breakStyles
+        );
     }
 }

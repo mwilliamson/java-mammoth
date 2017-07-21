@@ -23,6 +23,7 @@ public class StyleMap {
             Optionals.first(high.italic, low.italic),
             Optionals.first(high.underline, low.underline),
             Optionals.first(high.strikethrough, low.strikethrough),
+            Optionals.first(high.smallCaps, low.smallCaps),
             Optionals.first(high.commentReference, low.commentReference),
             Lists.eagerConcat(high.paragraphStyles, low.paragraphStyles),
             Lists.eagerConcat(high.runStyles, low.runStyles),
@@ -36,6 +37,7 @@ public class StyleMap {
     private final Optional<HtmlPath> italic;
     private final Optional<HtmlPath> underline;
     private final Optional<HtmlPath> strikethrough;
+    private final Optional<HtmlPath> smallCaps;
     private final Optional<HtmlPath> commentReference;
     private final List<StyleMapping<Paragraph>> paragraphStyles;
     private final List<StyleMapping<Run>> runStyles;
@@ -46,6 +48,7 @@ public class StyleMap {
         Optional<HtmlPath> italic,
         Optional<HtmlPath> underline,
         Optional<HtmlPath> strikethrough,
+        Optional<HtmlPath> smallCaps,
         Optional<HtmlPath> commentReference,
         List<StyleMapping<Paragraph>> paragraphStyles,
         List<StyleMapping<Run>> runStyles,
@@ -56,6 +59,7 @@ public class StyleMap {
         this.italic = italic;
         this.underline = underline;
         this.strikethrough = strikethrough;
+        this.smallCaps = smallCaps;
         this.commentReference = commentReference;
         this.paragraphStyles = paragraphStyles;
         this.runStyles = runStyles;
@@ -81,6 +85,10 @@ public class StyleMap {
 
     public Optional<HtmlPath> getStrikethrough() {
         return strikethrough;
+    }
+
+    public Optional<HtmlPath> getSmallCaps() {
+        return smallCaps;
     }
 
     public Optional<HtmlPath> getCommentReference() {

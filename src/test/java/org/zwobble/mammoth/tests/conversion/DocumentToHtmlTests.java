@@ -174,6 +174,23 @@ public class DocumentToHtmlTests {
     }
 
     @Test
+    public void smallCapsIsIgnoredByDefault() {
+        assertThat(
+            convertToHtml(run(withSmallCaps(true), withChildren(new Text("Hello")))),
+            deepEquals(list(Html.text("Hello"))));
+    }
+
+    @Test
+    public void smallCapsCanBeMappedUsingStyleMapping() {
+        assertThat(
+            convertToHtml(
+                run(withSmallCaps(true), withChildren(new Text("Hello"))),
+                StyleMap.builder().smallCaps(HtmlPath.element("span")).build()),
+
+            deepEquals(list(Html.element("span", list(Html.text("Hello"))))));
+    }
+
+    @Test
     public void superscriptRunsAreWrappedInSuperscriptTags() {
         assertThat(
             convertToHtml(run(withVerticalAlignment(SUPERSCRIPT), withChildren(new Text("Hello")))),
