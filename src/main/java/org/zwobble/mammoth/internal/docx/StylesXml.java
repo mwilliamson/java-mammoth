@@ -16,7 +16,9 @@ public class StylesXml {
         XmlElementList styleElements = element.findChildren("w:style");
         return new Styles(
             readStyles(styleElements, "paragraph"),
-            readStyles(styleElements, "character"));
+            readStyles(styleElements, "character"),
+            readStyles(styleElements, "table")
+        );
     }
 
     private static Map<String, Style> readStyles(XmlElementList styleElements, String styleType) {

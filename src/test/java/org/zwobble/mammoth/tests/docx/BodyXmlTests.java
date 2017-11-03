@@ -76,7 +76,9 @@ public class BodyXmlTests {
         Style style = new Style("Heading1", Optional.of("Heading 1"));
         Styles styles = new Styles(
             map("Heading1", style),
-            map());
+            map(),
+            map()
+        );
         assertThat(
             readSuccess(bodyReader(styles), element),
             hasStyle(Optional.of(style)));
@@ -352,7 +354,9 @@ public class BodyXmlTests {
         Style style = new Style("Heading1Char", Optional.of("Heading 1 Char"));
         Styles styles = new Styles(
             map(),
-            map("Heading1Char", style));
+            map("Heading1Char", style),
+            map()
+        );
         assertThat(
             readSuccess(bodyReader(styles), element),
             hasStyle(Optional.of(style)));

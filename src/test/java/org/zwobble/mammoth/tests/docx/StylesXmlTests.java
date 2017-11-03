@@ -45,6 +45,17 @@ public class StylesXmlTests {
     }
 
     @Test
+    public void tableStyleCanBeFoundById() {
+        XmlElement element = element("w:styles", list(
+            element("w:style", map("w:type", "table", "w:styleId", "TableNormal"), list(
+                nameElement("Normal Table")))));
+
+        Styles styles = readStylesXmlElement(element);
+
+        assertEquals(Optional.of("Normal Table"), styles.findTableStyleById("TableNormal").get().getName());
+    }
+
+    @Test
     public void paragraphAndCharacterStylesAreDistinct() {
         XmlElement element = element("w:styles", list(
             element("w:style", map("w:type", "paragraph", "w:styleId", "Heading1"), list(
