@@ -240,7 +240,7 @@ public class DocumentToHtmlTests {
     @Test
     public void tableIsConvertedToHtmlTable() {
         assertThat(
-            convertToHtml(new Table(list(
+            convertToHtml(table(list(
                 tableRow(list(
                     tableCell(withChildren(paragraphWithText("Top left"))),
                     tableCell(withChildren(paragraphWithText("Top right"))))),
@@ -260,7 +260,7 @@ public class DocumentToHtmlTests {
     @Test
     public void headerRowsAreWrappedInThead() {
         assertThat(
-            convertToHtml(new Table(list(
+            convertToHtml(table(list(
                 tableRow(list(tableCell()), withIsHeader(true)),
                 tableRow(list(tableCell()), withIsHeader(true)),
                 tableRow(list(tableCell()), withIsHeader(false))
@@ -281,7 +281,7 @@ public class DocumentToHtmlTests {
     @Test
     public void tbodyIsOmittedIfAllRowsAreHeaders() {
         assertThat(
-            Html.stripEmpty(convertToHtml(new Table(list(
+            Html.stripEmpty(convertToHtml(table(list(
                 tableRow(list(tableCell()), withIsHeader(true))
             )))),
 
@@ -296,7 +296,7 @@ public class DocumentToHtmlTests {
     @Test
     public void tableCellsAreWrittenWithColspanIfNotEqualToOne() {
         assertThat(
-            convertToHtml(new Table(list(
+            convertToHtml(table(list(
                 tableRow(list(
                     tableCell(
                         withChildren(paragraphWithText("Top left")),
@@ -316,7 +316,7 @@ public class DocumentToHtmlTests {
     @Test
     public void tableCellsAreWrittenWithRowspanIfNotEqualToOne() {
         assertThat(
-            convertToHtml(new Table(list(
+            convertToHtml(table(list(
                 tableRow(list(
                     tableCell(withRowspan(2))
                 ))

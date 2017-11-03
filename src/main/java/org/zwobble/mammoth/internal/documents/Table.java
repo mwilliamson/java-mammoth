@@ -1,12 +1,19 @@
 package org.zwobble.mammoth.internal.documents;
 
 import java.util.List;
+import java.util.Optional;
 
 public class Table implements DocumentElement, HasChildren {
+    private final Optional<Style> style;
     private final List<DocumentElement> children;
 
-    public Table(List<DocumentElement> children) {
+    public Table(Optional<Style> style, List<DocumentElement> children) {
+        this.style = style;
         this.children = children;
+    }
+
+    public Optional<Style> getStyle() {
+        return style;
     }
 
     @Override

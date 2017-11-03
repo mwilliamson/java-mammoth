@@ -628,13 +628,59 @@ public class BodyXmlTests {
 
         assertThat(
             readSuccess(bodyReader(), element),
-            deepEquals(new Table(list(
-                tableRow(list(
+            isTable(hasChildren(
+                deepEquals(tableRow(list(
                     new TableCell(1, 1, list(
                         paragraph()
                     ))
-                ))
-            )))
+                )))
+            ))
+        );
+    }
+
+    @Test
+    public void tableHasNoStyleIfItHasNoProperties() {
+        XmlElement element = element("w:tbl");
+        assertThat(
+            readSuccess(bodyReader(), element),
+            hasStyle(Optional.empty())
+        );
+    }
+
+    @Test
+    public void whenTableHasStyleIdInStylesThenStyleNameIsReadFromStyles() {
+        XmlElement element = element("w:tbl", list(
+            element("w:tblPr", list(
+                element("w:tblStyle", map("w:val", "TableNormal"))
+            ))
+        ));
+
+        Style style = new Style("TableNormal", Optional.of("Normal Table"));
+        Styles styles = new Styles(
+            map(),
+            map(),
+            map("TableNormal", style)
+        );
+        assertThat(
+            readSuccess(bodyReader(styles), element),
+            hasStyle(Optional.of(style))
+        );
+    }
+
+    @Test
+    public void warningIsEmittedWhenTableStyleCannotBeFound() {
+        XmlElement element = element("w:tbl", list(
+            element("w:tblPr", list(
+                element("w:tblStyle", map("w:val", "TableNormal"))
+            ))
+        ));
+
+        assertThat(
+            read(bodyReader(), element),
+            isInternalResult(
+                hasStyle(Optional.of(new Style("TableNormal", Optional.empty()))),
+                list("Table style with ID TableNormal was referenced but not defined in the document")
+            )
         );
     }
 
@@ -670,7 +716,7 @@ public class BodyXmlTests {
 
         assertThat(
             readSuccess(bodyReader(), element),
-            deepEquals(new Table(list(
+            deepEquals(table(list(
                 tableRow(list(
                     new TableCell(1, 2, list(
                         paragraph()
@@ -692,7 +738,7 @@ public class BodyXmlTests {
 
         assertThat(
             readSuccess(bodyReader(), element),
-            deepEquals(new Table(list(
+            deepEquals(table(list(
                 tableRow(list(new TableCell(1, 1, list()))),
                 tableRow(list(new TableCell(3, 1, list()))),
                 tableRow(list()),
@@ -711,7 +757,7 @@ public class BodyXmlTests {
 
         assertThat(
             readSuccess(bodyReader(), element),
-            deepEquals(new Table(list(
+            deepEquals(table(list(
                 tableRow(list(new TableCell(2, 1, list()))),
                 tableRow(list())
             )))
@@ -729,7 +775,7 @@ public class BodyXmlTests {
 
         assertThat(
             readSuccess(bodyReader(), element),
-            deepEquals(new Table(list(
+            deepEquals(table(list(
                 tableRow(list(new TableCell(1, 1, list()), new TableCell(1, 1, list()), new TableCell(3, 1, list()))),
                 tableRow(list(new TableCell(1, 2, list()))),
                 tableRow(list(new TableCell(1, 1, list()), new TableCell(1, 1, list()))),
@@ -747,7 +793,7 @@ public class BodyXmlTests {
 
         assertThat(
             readSuccess(bodyReader(), element),
-            deepEquals(new Table(list(
+            deepEquals(table(list(
                 tableRow(list(new TableCell(1, 2, list()), new TableCell(1, 1, list()))),
                 tableRow(list(new TableCell(1, 1, list()), new TableCell(1, 1, list())))
             )))
@@ -763,7 +809,7 @@ public class BodyXmlTests {
         assertThat(
             read(bodyReader(), element),
             isInternalResult(
-                deepEquals(new Table(list(paragraph()))),
+                deepEquals(table(list(paragraph()))),
                 list("unexpected non-row element in table, cell merging may be incorrect")
             )
         );
@@ -778,7 +824,7 @@ public class BodyXmlTests {
         assertThat(
             read(bodyReader(), element),
             isInternalResult(
-                deepEquals(new Table(list(tableRow(list(paragraph()))))),
+                deepEquals(table(list(tableRow(list(paragraph()))))),
                 list("unexpected non-cell element in table row, cell merging may be incorrect")
             )
         );

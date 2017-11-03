@@ -122,6 +122,10 @@ public class DocumentElementMakers {
         return run(withChildren(new Text(text)));
     }
 
+    public static Table table(List<DocumentElement> rows) {
+        return new Table(Optional.empty(), rows);
+    }
+
     public static TableRow tableRow(List<DocumentElement> cells, Object... args) {
         Arguments arguments = new Arguments(args);
         return new TableRow(cells, arguments.get(IS_HEADER, false));

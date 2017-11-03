@@ -338,9 +338,18 @@ class StatefulBodyXmlReader {
     }
 
     private ReadResult readTable(XmlElement element) {
-        return readElements(element.getChildren())
-            .flatMap(this::calculateRowspans)
-            .map(Table::new);
+        XmlElementLike properties = element.findChildOrEmpty("w:tblPr");
+        return ReadResult.map(
+            readTableStyle(properties),
+            readElements(element.getChildren())
+                .flatMap(this::calculateRowspans),
+
+            Table::new
+        );
+    }
+
+    private InternalResult<Optional<Style>> readTableStyle(XmlElementLike properties) {
+        return readStyle(properties, "w:tblStyle", "Table", styles::findTableStyleById);
     }
 
     private ReadResult calculateRowspans(List<DocumentElement> rows) {
