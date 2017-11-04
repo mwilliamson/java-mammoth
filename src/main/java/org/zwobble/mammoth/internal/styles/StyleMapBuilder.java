@@ -3,6 +3,7 @@ package org.zwobble.mammoth.internal.styles;
 import org.zwobble.mammoth.internal.documents.Break;
 import org.zwobble.mammoth.internal.documents.Paragraph;
 import org.zwobble.mammoth.internal.documents.Run;
+import org.zwobble.mammoth.internal.documents.Table;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +18,7 @@ public class StyleMapBuilder {
     private Optional<HtmlPath> commentReference;
     private final List<StyleMapping<Paragraph>> paragraphStyles = new ArrayList<>();
     private final List<StyleMapping<Run>> runStyles = new ArrayList<>();
+    private final List<StyleMapping<Table>> tableStyles = new ArrayList<>();
     private final List<StyleMapping<Break>> breakStyles = new ArrayList<>();
 
     public StyleMapBuilder() {
@@ -68,6 +70,11 @@ public class StyleMapBuilder {
         return this;
     }
 
+    public StyleMapBuilder mapTable(TableMatcher matcher, HtmlPath path) {
+        tableStyles.add(new StyleMapping<>(matcher, path));
+        return this;
+    }
+
     public StyleMapBuilder mapBreak(BreakMatcher matcher, HtmlPath path) {
         breakStyles.add(new StyleMapping<>(matcher, path));
         return this;
@@ -83,6 +90,7 @@ public class StyleMapBuilder {
             commentReference,
             paragraphStyles,
             runStyles,
+            tableStyles,
             breakStyles
         );
     }

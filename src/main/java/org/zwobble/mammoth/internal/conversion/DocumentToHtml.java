@@ -226,8 +226,9 @@ public class DocumentToHtml {
 
             @Override
             public List<HtmlNode> visit(Table table, Context context) {
-                List<HtmlNode> children = generateTableChildren(table, context);
-                return list(Html.element("table", children));
+                HtmlPath mapping = styleMap.getTableHtmlPath(table)
+                    .orElse(HtmlPath.element("table"));
+                return mapping.wrap(() -> generateTableChildren(table, context)).get();
             }
 
             private List<HtmlNode> generateTableChildren(Table table, Context context) {

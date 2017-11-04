@@ -258,6 +258,23 @@ public class DocumentToHtmlTests {
     }
 
     @Test
+    public void tableStyleMappingsCanBeUsedToMapTables() {
+        assertThat(
+            convertToHtml(
+                table(list(), withStyle(new Style("TableNormal", Optional.of("Normal Table")))),
+                StyleMap.builder()
+                    .mapTable(
+                        TableMatcher.styleName("Normal Table"),
+                        HtmlPath.element("table", map("class", "normal-table"))
+                    )
+                    .build()
+            ),
+
+            deepEquals(list(Html.element("table", map("class", "normal-table"))))
+        );
+    }
+
+    @Test
     public void headerRowsAreWrappedInThead() {
         assertThat(
             convertToHtml(table(list(

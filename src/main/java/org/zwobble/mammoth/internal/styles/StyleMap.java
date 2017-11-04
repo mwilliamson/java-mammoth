@@ -3,6 +3,7 @@ package org.zwobble.mammoth.internal.styles;
 import org.zwobble.mammoth.internal.documents.Break;
 import org.zwobble.mammoth.internal.documents.Paragraph;
 import org.zwobble.mammoth.internal.documents.Run;
+import org.zwobble.mammoth.internal.documents.Table;
 import org.zwobble.mammoth.internal.util.Lists;
 import org.zwobble.mammoth.internal.util.Optionals;
 
@@ -27,6 +28,7 @@ public class StyleMap {
             Optionals.first(high.commentReference, low.commentReference),
             Lists.eagerConcat(high.paragraphStyles, low.paragraphStyles),
             Lists.eagerConcat(high.runStyles, low.runStyles),
+            Lists.eagerConcat(high.tableStyles, low.tableStyles),
             Lists.eagerConcat(high.breakStyles, low.breakStyles)
         );
     }
@@ -41,6 +43,7 @@ public class StyleMap {
     private final Optional<HtmlPath> commentReference;
     private final List<StyleMapping<Paragraph>> paragraphStyles;
     private final List<StyleMapping<Run>> runStyles;
+    private final List<StyleMapping<Table>> tableStyles;
     private final List<StyleMapping<Break>> breakStyles;
 
     public StyleMap(
@@ -52,6 +55,7 @@ public class StyleMap {
         Optional<HtmlPath> commentReference,
         List<StyleMapping<Paragraph>> paragraphStyles,
         List<StyleMapping<Run>> runStyles,
+        List<StyleMapping<Table>> tableStyles,
         List<StyleMapping<Break>> breakStyles
     )
     {
@@ -63,6 +67,7 @@ public class StyleMap {
         this.commentReference = commentReference;
         this.paragraphStyles = paragraphStyles;
         this.runStyles = runStyles;
+        this.tableStyles = tableStyles;
         this.breakStyles = breakStyles;
     }
 
@@ -102,6 +107,11 @@ public class StyleMap {
 
     public Optional<HtmlPath> getRunHtmlPath(Run run) {
         return tryFind(runStyles, styleMapping -> styleMapping.matches(run))
+            .map(StyleMapping::getHtmlPath);
+    }
+
+    public Optional<HtmlPath> getTableHtmlPath(Table table) {
+        return tryFind(tableStyles, styleMapping -> styleMapping.matches(table))
             .map(StyleMapping::getHtmlPath);
     }
 

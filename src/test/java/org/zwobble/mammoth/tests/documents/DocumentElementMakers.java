@@ -122,8 +122,9 @@ public class DocumentElementMakers {
         return run(withChildren(new Text(text)));
     }
 
-    public static Table table(List<DocumentElement> rows) {
-        return new Table(Optional.empty(), rows);
+    public static Table table(List<DocumentElement> rows, Object... args) {
+        Arguments arguments = new Arguments(args);
+        return new Table(arguments.get(STYLE, Optional.empty()), rows);
     }
 
     public static TableRow tableRow(List<DocumentElement> cells, Object... args) {
