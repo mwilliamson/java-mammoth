@@ -57,8 +57,9 @@ public class DocumentMatcherParsingTests {
             parseParagraphMatcher("p:unordered-list(2)"),
             deepEquals(ParagraphMatcher.unorderedList("1")));
     }
+
     @Test
-    public void readsRunParagraph() {
+    public void readsPlainRun() {
         assertThat(
             parseRunMatcher("r"),
             deepEquals(RunMatcher.ANY));
