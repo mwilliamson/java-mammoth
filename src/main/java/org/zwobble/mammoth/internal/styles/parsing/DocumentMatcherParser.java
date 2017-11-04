@@ -52,6 +52,12 @@ public class DocumentMatcherParser {
         return new RunMatcher(styleId, styleName);
     }
 
+    public static TableMatcher parseTableMatcher(TokenIterator<TokenType> tokens) {
+        Optional<String> styleId = parseStyleId(tokens);
+        Optional<StringMatcher> styleName = parseStyleName(tokens);
+        return new TableMatcher(styleId, styleName);
+    }
+
     private static Optional<String> parseStyleId(TokenIterator<TokenType> tokens) {
         return TokenParser.parseClassName(tokens);
     }

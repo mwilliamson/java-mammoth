@@ -1,10 +1,7 @@
 package org.zwobble.mammoth.tests.styles.parsing;
 
 import org.junit.Test;
-import org.zwobble.mammoth.internal.styles.EqualToStringMatcher;
-import org.zwobble.mammoth.internal.styles.ParagraphMatcher;
-import org.zwobble.mammoth.internal.styles.RunMatcher;
-import org.zwobble.mammoth.internal.styles.StartsWithStringMatcher;
+import org.zwobble.mammoth.internal.styles.*;
 import org.zwobble.mammoth.internal.styles.parsing.DocumentMatcherParser;
 import org.zwobble.mammoth.internal.styles.parsing.StyleMappingTokeniser;
 import org.zwobble.mammoth.internal.styles.parsing.TokenIterator;
@@ -79,15 +76,42 @@ public class DocumentMatcherParsingTests {
             deepEquals(RunMatcher.styleName("Heading 1 Char")));
     }
 
+    @Test
+    public void readsPlainTable() {
+        assertThat(
+            parseTableMatcher("table"),
+            deepEquals(TableMatcher.ANY));
+    }
+
+    @Test
+    public void readsTableWithStyleId() {
+        assertThat(
+            parseTableMatcher("table.TableNormal"),
+            deepEquals(TableMatcher.styleId("TableNormal")));
+    }
+
+    @Test
+    public void readsTableWithStyleName() {
+        assertThat(
+            parseTableMatcher("table[style-name='Normal Table']"),
+            deepEquals(TableMatcher.styleName("Normal Table")));
+    }
+
     private ParagraphMatcher parseParagraphMatcher(String input) {
-        TokenIterator tokens = StyleMappingTokeniser.tokenise(input);
+        TokenIterator<TokenType> tokens = StyleMappingTokeniser.tokenise(input);
         tokens.skip(TokenType.IDENTIFIER, "p");
         return DocumentMatcherParser.parseParagraphMatcher(tokens);
     }
 
     private RunMatcher parseRunMatcher(String input) {
-        TokenIterator tokens = StyleMappingTokeniser.tokenise(input);
+        TokenIterator<TokenType> tokens = StyleMappingTokeniser.tokenise(input);
         tokens.skip(TokenType.IDENTIFIER, "r");
         return DocumentMatcherParser.parseRunMatcher(tokens);
+    }
+
+    private TableMatcher parseTableMatcher(String input) {
+        TokenIterator<TokenType> tokens = StyleMappingTokeniser.tokenise(input);
+        tokens.skip(TokenType.IDENTIFIER, "table");
+        return DocumentMatcherParser.parseTableMatcher(tokens);
     }
 }
