@@ -1,5 +1,6 @@
 package org.zwobble.mammoth.tests.styles.parsing;
 
+import org.hamcrest.Matcher;
 import org.junit.Test;
 import org.zwobble.mammoth.internal.styles.*;
 import org.zwobble.mammoth.internal.styles.parsing.DocumentMatcherParser;
@@ -14,104 +15,108 @@ public class DocumentMatcherParsingTests {
     @Test
     public void readsPlainParagraph() {
         assertThat(
-            parseParagraphMatcher("p"),
-            deepEquals(ParagraphMatcher.ANY));
+            parseDocumentMatcher("p"),
+            hasParagraphMatcher(ParagraphMatcher.ANY)
+        );
     }
 
     @Test
     public void readsParagraphWithStyleId() {
         assertThat(
-            parseParagraphMatcher("p.Heading1"),
-            deepEquals(ParagraphMatcher.styleId("Heading1")));
+            parseDocumentMatcher("p.Heading1"),
+            hasParagraphMatcher(ParagraphMatcher.styleId("Heading1")));
     }
 
     @Test
     public void readsParagraphWithExactStyleName() {
         assertThat(
-            parseParagraphMatcher("p[style-name='Heading 1']"),
-            deepEquals(ParagraphMatcher.styleName(new EqualToStringMatcher("Heading 1")))
+            parseDocumentMatcher("p[style-name='Heading 1']"),
+            hasParagraphMatcher(ParagraphMatcher.styleName(new EqualToStringMatcher("Heading 1")))
         );
     }
 
     @Test
     public void readsParagraphWithStyleNamePrefix() {
         assertThat(
-            parseParagraphMatcher("p[style-name^='Heading']"),
-            deepEquals(ParagraphMatcher.styleName(new StartsWithStringMatcher("Heading")))
+            parseDocumentMatcher("p[style-name^='Heading']"),
+            hasParagraphMatcher(ParagraphMatcher.styleName(new StartsWithStringMatcher("Heading")))
         );
     }
 
     @Test
     public void readsParagraphOrderedList() {
         assertThat(
-            parseParagraphMatcher("p:ordered-list(2)"),
-            deepEquals(ParagraphMatcher.orderedList("1")));
+            parseDocumentMatcher("p:ordered-list(2)"),
+            hasParagraphMatcher(ParagraphMatcher.orderedList("1")));
     }
 
     @Test
     public void readsParagraphUnorderedList() {
         assertThat(
-            parseParagraphMatcher("p:unordered-list(2)"),
-            deepEquals(ParagraphMatcher.unorderedList("1")));
+            parseDocumentMatcher("p:unordered-list(2)"),
+            hasParagraphMatcher(ParagraphMatcher.unorderedList("1")));
     }
 
     @Test
     public void readsPlainRun() {
         assertThat(
-            parseRunMatcher("r"),
-            deepEquals(RunMatcher.ANY));
+            parseDocumentMatcher("r"),
+            hasRunMatcher(RunMatcher.ANY));
     }
 
     @Test
     public void readsRunWithStyleId() {
         assertThat(
-            parseRunMatcher("r.Heading1Char"),
-            deepEquals(RunMatcher.styleId("Heading1Char")));
+            parseDocumentMatcher("r.Heading1Char"),
+            hasRunMatcher(RunMatcher.styleId("Heading1Char")));
     }
 
     @Test
     public void readsRunWithStyleName() {
         assertThat(
-            parseRunMatcher("r[style-name='Heading 1 Char']"),
-            deepEquals(RunMatcher.styleName("Heading 1 Char")));
+            parseDocumentMatcher("r[style-name='Heading 1 Char']"),
+            hasRunMatcher(RunMatcher.styleName("Heading 1 Char")));
     }
 
     @Test
     public void readsPlainTable() {
         assertThat(
-            parseTableMatcher("table"),
-            deepEquals(TableMatcher.ANY));
+            parseDocumentMatcher("table"),
+            hasTableMatcher(TableMatcher.ANY));
     }
 
     @Test
     public void readsTableWithStyleId() {
         assertThat(
-            parseTableMatcher("table.TableNormal"),
-            deepEquals(TableMatcher.styleId("TableNormal")));
+            parseDocumentMatcher("table.TableNormal"),
+            hasTableMatcher(TableMatcher.styleId("TableNormal")));
     }
 
     @Test
     public void readsTableWithStyleName() {
         assertThat(
-            parseTableMatcher("table[style-name='Normal Table']"),
-            deepEquals(TableMatcher.styleName("Normal Table")));
+            parseDocumentMatcher("table[style-name='Normal Table']"),
+            hasTableMatcher(TableMatcher.styleName("Normal Table")));
     }
 
-    private ParagraphMatcher parseParagraphMatcher(String input) {
+    private static final HtmlPath HTML_PATH = HtmlPath.element("placeholder");
+
+    private StyleMap parseDocumentMatcher(String input) {
         TokenIterator<TokenType> tokens = StyleMappingTokeniser.tokenise(input);
-        tokens.skip(TokenType.IDENTIFIER, "p");
-        return DocumentMatcherParser.parseParagraphMatcher(tokens);
+        StyleMapBuilder builder = new StyleMapBuilder();
+        DocumentMatcherParser.parse(tokens).accept(builder, HTML_PATH);
+        return builder.build();
     }
 
-    private RunMatcher parseRunMatcher(String input) {
-        TokenIterator<TokenType> tokens = StyleMappingTokeniser.tokenise(input);
-        tokens.skip(TokenType.IDENTIFIER, "r");
-        return DocumentMatcherParser.parseRunMatcher(tokens);
+    private Matcher<StyleMap> hasParagraphMatcher(ParagraphMatcher matcher) {
+        return deepEquals(new StyleMapBuilder().mapParagraph(matcher, HTML_PATH).build());
     }
 
-    private TableMatcher parseTableMatcher(String input) {
-        TokenIterator<TokenType> tokens = StyleMappingTokeniser.tokenise(input);
-        tokens.skip(TokenType.IDENTIFIER, "table");
-        return DocumentMatcherParser.parseTableMatcher(tokens);
+    private Matcher<StyleMap> hasRunMatcher(RunMatcher matcher) {
+        return deepEquals(new StyleMapBuilder().mapRun(matcher, HTML_PATH).build());
+    }
+
+    private Matcher<StyleMap> hasTableMatcher(TableMatcher matcher) {
+        return deepEquals(new StyleMapBuilder().mapTable(matcher, HTML_PATH).build());
     }
 }

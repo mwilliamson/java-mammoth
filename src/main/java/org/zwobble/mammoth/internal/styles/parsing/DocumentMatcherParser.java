@@ -19,6 +19,9 @@ public class DocumentMatcherParser {
             case "r":
                 RunMatcher run = parseRunMatcher(tokens);
                 return (builder, path) -> builder.mapRun(run, path);
+            case "table":
+                TableMatcher table = parseTableMatcher(tokens);
+                return (builder, path) -> builder.mapTable(table, path);
             case "b":
                 return StyleMapBuilder::bold;
             case "i":
@@ -39,20 +42,20 @@ public class DocumentMatcherParser {
         }
     }
 
-    public static ParagraphMatcher parseParagraphMatcher(TokenIterator<TokenType> tokens) {
+    private static ParagraphMatcher parseParagraphMatcher(TokenIterator<TokenType> tokens) {
         Optional<String> styleId = parseStyleId(tokens);
         Optional<StringMatcher> styleName = parseStyleName(tokens);
         Optional<NumberingLevel> numbering = parseNumbering(tokens);
         return new ParagraphMatcher(styleId, styleName, numbering);
     }
 
-    public static RunMatcher parseRunMatcher(TokenIterator<TokenType> tokens) {
+    private static RunMatcher parseRunMatcher(TokenIterator<TokenType> tokens) {
         Optional<String> styleId = parseStyleId(tokens);
         Optional<StringMatcher> styleName = parseStyleName(tokens);
         return new RunMatcher(styleId, styleName);
     }
 
-    public static TableMatcher parseTableMatcher(TokenIterator<TokenType> tokens) {
+    private static TableMatcher parseTableMatcher(TokenIterator<TokenType> tokens) {
         Optional<String> styleId = parseStyleId(tokens);
         Optional<StringMatcher> styleName = parseStyleName(tokens);
         return new TableMatcher(styleId, styleName);
