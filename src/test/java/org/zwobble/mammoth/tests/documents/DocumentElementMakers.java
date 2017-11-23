@@ -96,6 +96,12 @@ public class DocumentElementMakers {
         return new Paragraph(
             arguments.get(STYLE, Optional.empty()),
             arguments.get(NUMBERING, Optional.empty()),
+            new ParagraphIndent(
+                Optional.empty(),
+                Optional.empty(),
+                Optional.empty(),
+                Optional.empty()
+            ),
             arguments.get(CHILDREN, list())
         );
     }

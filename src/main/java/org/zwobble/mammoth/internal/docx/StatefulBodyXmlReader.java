@@ -245,10 +245,11 @@ class StatefulBodyXmlReader {
     private ReadResult readParagraph(XmlElement element) {
         XmlElementLike properties = element.findChildOrEmpty("w:pPr");
         Optional<NumberingLevel> numbering = readNumbering(properties);
+        ParagraphIndent indent = readParagraphIndent(properties);
         return ReadResult.map(
             readParagraphStyle(properties),
             readElements(element.getChildren()),
-            (style, children) -> new Paragraph(style, numbering, children)).appendExtra();
+            (style, children) -> new Paragraph(style, numbering, indent, children)).appendExtra();
     }
 
     private ReadResult readFieldChar(XmlElement element) {
@@ -321,6 +322,22 @@ class StatefulBodyXmlReader {
             readVal(numberingProperties, "w:numId"),
             readVal(numberingProperties, "w:ilvl"),
             numbering::findLevel);
+    }
+
+    private ParagraphIndent readParagraphIndent(XmlElementLike properties) {
+        XmlElementLike indent = properties.findChildOrEmpty("w:ind");
+        return new ParagraphIndent(
+            Optionals.first(
+                indent.getAttributeOrNone("w:start"),
+                indent.getAttributeOrNone("w:left")
+            ),
+            Optionals.first(
+                indent.getAttributeOrNone("w:end"),
+                indent.getAttributeOrNone("w:right")
+            ),
+            indent.getAttributeOrNone("w:firstLine"),
+            indent.getAttributeOrNone("w:hanging")
+        );
     }
 
     private ReadResult readBreak(XmlElement element) {

@@ -101,6 +101,85 @@ public class BodyXmlTests {
                 list("Paragraph style with ID Heading1 was referenced but not defined in the document")));
     }
 
+    @Nested
+    public class ParagraphIndentTests {
+        @Test
+        public void whenWStartIsSetThenStartIndentIsReadFromWStart() {
+            XmlElement paragraphXml = paragraphWithIndent(map("w:start", "720", "w:left", "40"));
+            assertThat(
+                readSuccess(bodyReader(), paragraphXml),
+                hasIndent(hasIndentStart(Optional.of("720")))
+            );
+        }
+
+        @Test
+        public void whenWStartIsNotSetThenStartIndentIsReadFromWLeft() {
+            XmlElement paragraphXml = paragraphWithIndent(map("w:left", "720"));
+            assertThat(
+                readSuccess(bodyReader(), paragraphXml),
+                hasIndent(hasIndentStart(Optional.of("720")))
+            );
+        }
+
+        @Test
+        public void whenWEndIsSetThenEndIndentIsReadFromWEnd() {
+            XmlElement paragraphXml = paragraphWithIndent(map("w:end", "720", "w:right", "40"));
+            assertThat(
+                readSuccess(bodyReader(), paragraphXml),
+                hasIndent(hasIndentEnd(Optional.of("720")))
+            );
+        }
+
+        @Test
+        public void whenWEndIsNotSetThenEndIndentIsReadFromWRight() {
+            XmlElement paragraphXml = paragraphWithIndent(map("w:right", "720"));
+            assertThat(
+                readSuccess(bodyReader(), paragraphXml),
+                hasIndent(hasIndentEnd(Optional.of("720")))
+            );
+        }
+
+        @Test
+        public void paragraphHasIndentFirstLineReadFromParagraphPropertiesIfPresent() {
+            XmlElement paragraphXml = paragraphWithIndent(map("w:firstLine", "720"));
+            assertThat(
+                readSuccess(bodyReader(), paragraphXml),
+                hasIndent(hasIndentFirstLine(Optional.of("720")))
+            );
+        }
+
+        @Test
+        public void paragraphHasIndentHangingReadFromParagraphPropertiesIfPresent() {
+            XmlElement paragraphXml = paragraphWithIndent(map("w:hanging", "720"));
+            assertThat(
+                readSuccess(bodyReader(), paragraphXml),
+                hasIndent(hasIndentHanging(Optional.of("720")))
+            );
+        }
+
+        @Test
+        public void whenIndentAttributesArentSetThenIndentsAreNotSet() {
+            XmlElement paragraphXml = paragraphWithIndent(map());
+            assertThat(
+                readSuccess(bodyReader(), paragraphXml),
+                hasIndent(allOf(
+                    hasIndentStart(Optional.empty()),
+                    hasIndentEnd(Optional.empty()),
+                    hasIndentFirstLine(Optional.empty()),
+                    hasIndentHanging(Optional.empty())
+                ))
+            );
+        }
+
+        private XmlElement paragraphWithIndent(Map<String, String> attributes) {
+            return paragraphXml(list(
+                element("w:pPr", list(
+                    element("w:ind", attributes)
+                ))
+            ));
+        }
+    }
+
     @Test
     public void paragraphHasNoNumberingIfItHasNoNumberingProperties() {
         XmlElement element = paragraphXml();
@@ -1317,6 +1396,26 @@ public class BodyXmlTests {
 
     private Matcher<? super DocumentElement> hasNumbering(Optional<NumberingLevel> expected) {
         return hasProperty("numbering", deepEquals(expected));
+    }
+
+    private Matcher<? super DocumentElement> hasIndent(Matcher<ParagraphIndent> expected) {
+        return hasProperty("indent", expected);
+    }
+
+    private Matcher<ParagraphIndent> hasIndentStart(Optional<String> value) {
+        return hasProperty("start", equalTo(value));
+    }
+
+    private Matcher<ParagraphIndent> hasIndentEnd(Optional<String> value) {
+        return hasProperty("end", equalTo(value));
+    }
+
+    private Matcher<ParagraphIndent> hasIndentFirstLine(Optional<String> value) {
+        return hasProperty("firstLine", equalTo(value));
+    }
+
+    private Matcher<ParagraphIndent> hasIndentHanging(Optional<String> value) {
+        return hasProperty("hanging", equalTo(value));
     }
 
     private static Text text(String value) {

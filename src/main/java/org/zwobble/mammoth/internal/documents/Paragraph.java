@@ -6,11 +6,18 @@ import java.util.Optional;
 public class Paragraph implements DocumentElement, HasChildren {
     private final Optional<Style> style;
     private final Optional<NumberingLevel> numbering;
+    private final ParagraphIndent indent;
     private final List<DocumentElement> children;
 
-    public Paragraph(Optional<Style> style, Optional<NumberingLevel> numbering, List<DocumentElement> children) {
+    public Paragraph(
+        Optional<Style> style,
+        Optional<NumberingLevel> numbering,
+        ParagraphIndent indent,
+        List<DocumentElement> children
+    ) {
         this.style = style;
         this.numbering = numbering;
+        this.indent = indent;
         this.children = children;
     }
 
@@ -20,6 +27,10 @@ public class Paragraph implements DocumentElement, HasChildren {
 
     public Optional<NumberingLevel> getNumbering() {
         return numbering;
+    }
+
+    public ParagraphIndent getIndent() {
+        return indent;
     }
 
     public List<DocumentElement> getChildren() {
