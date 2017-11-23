@@ -1,7 +1,7 @@
 package org.zwobble.mammoth.tests.conversion;
 
 import org.hamcrest.Matcher;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.zwobble.mammoth.internal.conversion.DocumentToHtml;
 import org.zwobble.mammoth.internal.conversion.DocumentToHtmlOptions;
 import org.zwobble.mammoth.internal.documents.*;

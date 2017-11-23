@@ -1,6 +1,6 @@
 package org.zwobble.mammoth.tests;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.zwobble.mammoth.DocumentConverter;
 import org.zwobble.mammoth.Result;
 import org.zwobble.mammoth.images.ImageConverter;
@@ -17,8 +17,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.function.Function;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertThat;
 import static org.zwobble.mammoth.internal.util.Lists.list;
 import static org.zwobble.mammoth.internal.util.Maps.map;
 import static org.zwobble.mammoth.tests.ResultMatchers.isResult;

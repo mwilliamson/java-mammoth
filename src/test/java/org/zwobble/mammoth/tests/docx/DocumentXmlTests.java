@@ -1,6 +1,6 @@
 package org.zwobble.mammoth.tests.docx;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.zwobble.mammoth.internal.documents.Document;
 import org.zwobble.mammoth.internal.documents.Note;
 import org.zwobble.mammoth.internal.documents.NoteType;

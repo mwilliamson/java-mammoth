@@ -1,6 +1,6 @@
 package org.zwobble.mammoth.tests.styles;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.zwobble.mammoth.internal.documents.Break;
 import org.zwobble.mammoth.internal.styles.BreakMatcher;
 

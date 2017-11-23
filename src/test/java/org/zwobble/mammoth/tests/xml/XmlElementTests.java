@@ -1,10 +1,10 @@
 package org.zwobble.mammoth.tests.xml;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.zwobble.mammoth.internal.xml.XmlElement;
 import org.zwobble.mammoth.internal.xml.XmlNodes;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.zwobble.mammoth.tests.util.MammothAsserts.assertThrows;
 
 public class XmlElementTests {

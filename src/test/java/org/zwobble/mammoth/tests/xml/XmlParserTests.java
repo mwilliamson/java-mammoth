@@ -3,7 +3,7 @@ package org.zwobble.mammoth.tests.xml;
 import org.hamcrest.Matcher;
 import org.hamcrest.collection.IsEmptyIterable;
 import org.hamcrest.collection.IsIterableContainingInOrder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.zwobble.mammoth.internal.xml.NamespacePrefixes;
 import org.zwobble.mammoth.internal.xml.XmlElement;
 import org.zwobble.mammoth.internal.xml.XmlNode;

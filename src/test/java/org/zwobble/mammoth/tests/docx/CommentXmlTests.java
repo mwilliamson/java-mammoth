@@ -1,6 +1,6 @@
 package org.zwobble.mammoth.tests.docx;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.zwobble.mammoth.internal.documents.Comment;
 import org.zwobble.mammoth.internal.docx.CommentXmlReader;
 import org.zwobble.mammoth.internal.results.InternalResult;

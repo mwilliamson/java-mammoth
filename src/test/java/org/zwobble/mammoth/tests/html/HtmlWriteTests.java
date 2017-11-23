@@ -1,10 +1,10 @@
 package org.zwobble.mammoth.tests.html;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.zwobble.mammoth.internal.html.Html;
 import org.zwobble.mammoth.internal.html.HtmlNode;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.zwobble.mammoth.internal.util.Lists.list;
 import static org.zwobble.mammoth.internal.util.Maps.map;
 

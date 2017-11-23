@@ -1,9 +1,9 @@
 package org.zwobble.mammoth.tests.docx;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.zwobble.mammoth.internal.docx.Relationships;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.zwobble.mammoth.internal.util.Maps.map;
 import static org.zwobble.mammoth.tests.util.MammothAsserts.assertThrows;
 

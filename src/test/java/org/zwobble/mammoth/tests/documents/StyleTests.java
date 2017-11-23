@@ -1,11 +1,11 @@
 package org.zwobble.mammoth.tests.documents;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.zwobble.mammoth.internal.documents.Style;
 
 import java.util.Optional;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class StyleTests {
     @Test

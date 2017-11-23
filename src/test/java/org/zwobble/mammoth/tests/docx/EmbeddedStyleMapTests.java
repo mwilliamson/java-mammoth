@@ -1,6 +1,6 @@
 package org.zwobble.mammoth.tests.docx;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.zwobble.mammoth.internal.archives.Archives;
 import org.zwobble.mammoth.internal.archives.InMemoryArchive;
 import org.zwobble.mammoth.internal.archives.MutableArchive;
@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.zwobble.mammoth.internal.util.Lists.list;
 import static org.zwobble.mammoth.internal.util.Maps.map;
 import static org.zwobble.mammoth.tests.DeepReflectionMatcher.deepEquals;

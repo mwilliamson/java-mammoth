@@ -1,7 +1,7 @@
 package org.zwobble.mammoth.tests.styles.parsing;
 
 import org.hamcrest.Matcher;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.zwobble.mammoth.internal.styles.parsing.StyleMappingTokeniser;
 import org.zwobble.mammoth.internal.styles.parsing.Token;
 import org.zwobble.mammoth.internal.styles.parsing.TokenType;

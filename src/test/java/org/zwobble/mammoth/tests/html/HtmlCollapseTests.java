@@ -1,6 +1,6 @@
 package org.zwobble.mammoth.tests.html;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.zwobble.mammoth.internal.html.Html;
 import org.zwobble.mammoth.tests.styles.parsing.HtmlElementBuilder;
 

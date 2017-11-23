@@ -1,12 +1,12 @@
 package org.zwobble.mammoth.tests.docx;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.zwobble.mammoth.internal.docx.ContentTypes;
 import org.zwobble.mammoth.internal.xml.XmlElement;
 
 import java.util.Optional;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.zwobble.mammoth.internal.docx.ContentTypesXml.readContentTypesXmlElement;
 import static org.zwobble.mammoth.internal.util.Lists.list;
 import static org.zwobble.mammoth.internal.util.Maps.map;

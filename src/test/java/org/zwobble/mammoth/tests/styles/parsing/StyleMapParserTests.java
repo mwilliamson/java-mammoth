@@ -1,6 +1,6 @@
 package org.zwobble.mammoth.tests.styles.parsing;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.zwobble.mammoth.internal.styles.*;
 import org.zwobble.mammoth.internal.styles.parsing.StyleMapParser;
 

@@ -2,9 +2,10 @@ package org.zwobble.mammoth.tests.docx;
 
 import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.api.DynamicTest;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestFactory;
 import org.zwobble.mammoth.internal.archives.Archive;
 import org.zwobble.mammoth.internal.archives.InMemoryArchive;
 import org.zwobble.mammoth.internal.documents.*;
@@ -17,7 +18,10 @@ import org.zwobble.mammoth.internal.xml.XmlNodes;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 
 import static java.util.Arrays.asList;
@@ -25,6 +29,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.zwobble.mammoth.internal.documents.NoteReference.endnoteReference;
 import static org.zwobble.mammoth.internal.documents.NoteReference.footnoteReference;
+import static org.zwobble.mammoth.internal.util.Lists.eagerMap;
 import static org.zwobble.mammoth.internal.util.Lists.list;
 import static org.zwobble.mammoth.internal.util.Maps.map;
 import static org.zwobble.mammoth.internal.util.Streams.toByteArray;
@@ -149,25 +154,27 @@ public class BodyXmlTests {
             hasNumbering(Optional.empty()));
     }
 
-    public static class ComplexFieldsTests {
-        private static final String URI = "http://example.com";
-        private static final XmlElement BEGIN_COMPLEX_FIELD = element("w:r", list(
+    @Nested
+    public class ComplexFieldsTests {
+        private final String URI = "http://example.com";
+        private final XmlElement BEGIN_COMPLEX_FIELD = element("w:r", list(
             element("w:fldChar", map("w:fldCharType", "begin"))
         ));
-        private static final XmlElement SEPARATE_COMPLEX_FIELD = element("w:r", list(
+        private final XmlElement SEPARATE_COMPLEX_FIELD = element("w:r", list(
             element("w:fldChar", map("w:fldCharType", "separate"))
         ));
-        private static final XmlElement END_COMPLEX_FIELD = element("w:r", list(
+        private final XmlElement END_COMPLEX_FIELD = element("w:r", list(
             element("w:fldChar", map("w:fldCharType", "end"))
         ));
-        private static final XmlElement HYPERLINK_INSTRTEXT = element("w:instrText", list(
+        private final XmlElement HYPERLINK_INSTRTEXT = element("w:instrText", list(
             XmlNodes.text(" HYPERLINK \"" + URI + '"')
         ));
-        private static Matcher<DocumentElement> isEmptyHyperlinkedRun() {
+        private Matcher<DocumentElement> isEmptyHyperlinkedRun() {
             return isHyperlinkedRun(hasChildren());
         }
+
         @SafeVarargs
-        private static Matcher<DocumentElement> isHyperlinkedRun(Matcher<? super Hyperlink>... matchers) {
+        private final Matcher<DocumentElement> isHyperlinkedRun(Matcher<? super Hyperlink>... matchers) {
             return isRun(hasChildren(
                 allOf(
                     isHyperlink(hasHref(URI)),
@@ -465,61 +472,88 @@ public class BodyXmlTests {
             hasProperty("smallCaps", equalTo(true)));
     }
 
-    @RunWith(Parameterized.class)
-    public static class RunBooleanPropertyTests {
-        @Parameterized.Parameters(name = "propertyName: {0}, tagName: {1}")
-        public static Collection<Object[]> data() {
-            return list(new Object[][] {
-                {"bold", "w:b"},
-                {"underline", "w:u"},
-                {"italic", "w:i"},
-                {"strikethrough", "w:strike"},
-                {"smallCaps", "w:smallCaps"}
-            });
+    @Nested
+    public class RunBooleanPropertyTests {
+        private class TestCase {
+            final String propertyName;
+            final String tagName;
+
+            TestCase(String propertyName, String tagName) {
+                this.propertyName = propertyName;
+                this.tagName = tagName;
+            }
         }
 
-        private final String propertyName;
-        private final String tagName;
+        private final List<TestCase> TEST_CASES = list(
+            new TestCase("bold", "w:b"),
+            new TestCase("underline", "w:u"),
+            new TestCase("italic", "w:i"),
+            new TestCase("strikethrough", "w:strike"),
+            new TestCase("smallCaps", "w:smallCaps")
+        );
 
-        public RunBooleanPropertyTests(String propertyName, String tagName) {
-            this.propertyName = propertyName;
-            this.tagName = tagName;
+        @TestFactory
+        public List<DynamicTest> runBooleanPropertyIsFalseIfElementIsPresentAndValIsFalse() {
+            return eagerMap(TEST_CASES, testCase -> DynamicTest.dynamicTest(
+                testCase.propertyName + " property is false if " + testCase.tagName + " element is present and val is false",
+                () -> {
+                    XmlElement element = runXmlWithProperties(
+                        element(testCase.tagName, map("w:val", "false"))
+                    );
+
+                    assertThat(
+                        readSuccess(bodyReader(), element),
+                        hasProperty(testCase.propertyName, equalTo(false)));
+                })
+            );
         }
 
-        @Test
-        public void runBooleanPropertyIsFalseIfElementIsPresentAndValIsFalse() {
-            XmlElement element = runXmlWithProperties(element(tagName, map("w:val", "false")));
+        @TestFactory
+        public List<DynamicTest> runBooleanPropertyIsFalseIfElementIsPresentAndValIs0() {
+            return eagerMap(TEST_CASES, testCase -> DynamicTest.dynamicTest(
+                testCase.propertyName + " property is false if " + testCase.tagName + " element is present and val is 0",
+                () -> {
+                    XmlElement element = runXmlWithProperties(
+                        element(testCase.tagName, map("w:val", "0"))
+                    );
 
-            assertThat(
-                readSuccess(bodyReader(), element),
-                hasProperty(propertyName, equalTo(false)));
+                    assertThat(
+                        readSuccess(bodyReader(), element),
+                        hasProperty(testCase.propertyName, equalTo(false)));
+                })
+            );
         }
 
-        @Test
-        public void runBooleanPropertyIsFalseIfElementIsPresentAndValIs0() {
-            XmlElement element = runXmlWithProperties(element(tagName, map("w:val", "0")));
+        @TestFactory
+        public List<DynamicTest> runBooleanPropertyIsFalseIfElementIsPresentAndValIsTrue() {
+            return eagerMap(TEST_CASES, testCase -> DynamicTest.dynamicTest(
+                testCase.propertyName + " property is true if " + testCase.tagName + " element is present and val is true",
+                () -> {
+                    XmlElement element = runXmlWithProperties(
+                        element(testCase.tagName, map("w:val", "true"))
+                    );
 
-            assertThat(
-                readSuccess(bodyReader(), element),
-                hasProperty(propertyName, equalTo(false)));
+                    assertThat(
+                        readSuccess(bodyReader(), element),
+                        hasProperty(testCase.propertyName, equalTo(true)));
+                })
+            );
         }
 
-        @Test
-        public void runBooleanPropertyIsFalseIfElementIsPresentAndValIsTrue() {
-            XmlElement element = runXmlWithProperties(element(tagName, map("w:val", "true")));
+        @TestFactory
+        public List<DynamicTest> runBooleanPropertyIsFalseIfElementIsPresentAndValIs1() {
+            return eagerMap(TEST_CASES, testCase -> DynamicTest.dynamicTest(
+                testCase.propertyName + " property is false if " + testCase.tagName + " element is present and val is 1",
+                () -> {
+                    XmlElement element = runXmlWithProperties(
+                        element(testCase.tagName, map("w:val", "1"))
+                    );
 
-            assertThat(
-                readSuccess(bodyReader(), element),
-                hasProperty(propertyName, equalTo(true)));
-        }
-
-        @Test
-        public void runBooleanPropertyIsFalseIfElementIsPresentAndValIs1() {
-            XmlElement element = runXmlWithProperties(element(tagName, map("w:val", "1")));
-
-            assertThat(
-                readSuccess(bodyReader(), element),
-                hasProperty(propertyName, equalTo(true)));
+                    assertThat(
+                        readSuccess(bodyReader(), element),
+                        hasProperty(testCase.propertyName, equalTo(true)));
+                })
+            );
         }
     }
 
