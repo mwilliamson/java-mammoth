@@ -10,10 +10,15 @@ public class Relationships {
     public static final Relationships EMPTY = new Relationships(list());
 
     private final Map<String, String> targetsByRelationshipId;
+    private final Map<String, List<String>> targetsByType;
 
     public Relationships(List<Relationship> relationships) {
         this.targetsByRelationshipId = toMap(relationships, relationship -> entry(
             relationship.getRelationshipId(),
+            relationship.getTarget()
+        ));
+        this.targetsByType = toMultiMap(relationships, relationship -> entry(
+            relationship.getType(),
             relationship.getTarget()
         ));
     }
@@ -21,5 +26,9 @@ public class Relationships {
     public String findTargetByRelationshipId(String relationshipId) {
         return lookup(targetsByRelationshipId, relationshipId)
             .orElseThrow(() -> new RuntimeException("Could not find relationship '" + relationshipId + "'"));
+    }
+
+    public List<String> findTargetsByType(String type) {
+        return lookup(targetsByType, type).orElse(list());
     }
 }

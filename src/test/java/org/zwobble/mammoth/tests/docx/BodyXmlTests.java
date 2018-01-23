@@ -1427,10 +1427,10 @@ public class BodyXmlTests {
     }
 
     private static Relationship hyperlinkRelationship(String relationshipId, String target) {
-        return new Relationship(relationshipId, target);
+        return new Relationship(relationshipId, target, "http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink");
     }
 
     private static Relationship imageRelationship(String relationshipId, String target) {
-        return new Relationship(relationshipId, target);
+        return new Relationship(relationshipId, target, "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image");
     }
 }
