@@ -481,7 +481,7 @@ class StatefulBodyXmlReader {
         ReadResult childrenResult = readElements(element.getChildren());
 
         if (relationshipId.isPresent()) {
-            String targetHref = relationships.findRelationshipById(relationshipId.get()).getTarget();
+            String targetHref = relationships.findTargetByRelationshipId(relationshipId.get());
             String href = anchor.map(fragment -> Uris.replaceFragment(targetHref, anchor.get()))
                 .orElse(targetHref);
             return childrenResult.map(children ->
@@ -554,7 +554,7 @@ class StatefulBodyXmlReader {
             String imagePath = relationshipIdToDocxPath(embedRelationshipId.get());
             return readImage(imagePath, altText, () -> Archives.getInputStream(file, imagePath));
         } else if (linkRelationshipId.isPresent()) {
-            String imagePath = relationships.findRelationshipById(linkRelationshipId.get()).getTarget();
+            String imagePath = relationships.findTargetByRelationshipId(linkRelationshipId.get());
             return readImage(imagePath, altText, () -> fileReader.getInputStream(imagePath));
         } else {
             // TODO: emit warning
@@ -579,8 +579,8 @@ class StatefulBodyXmlReader {
     }
 
     private String relationshipIdToDocxPath(String relationshipId) {
-        Relationship relationship = relationships.findRelationshipById(relationshipId);
-        return uriToZipEntryName("word", relationship.getTarget());
+        String target = relationships.findTargetByRelationshipId(relationshipId);
+        return uriToZipEntryName("word", target);
     }
 
     private Optional<String> readVal(XmlElementLike element, String name) {

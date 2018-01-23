@@ -945,8 +945,9 @@ public class BodyXmlTests {
 
     @Test
     public void hyperlinkIsReadAsExternalHyperlinkIfItHasARelationshipId() {
-        Relationships relationships = new Relationships(
-            map("r42", new Relationship("http://example.com")));
+        Relationships relationships = new Relationships(list(
+            hyperlinkRelationship("r42", "http://example.com")
+        ));
         XmlElement element = element("w:hyperlink", map("r:id", "r42"), list(runXml(list())));
         assertThat(
             readSuccess(bodyReader(relationships), element),
@@ -960,9 +961,9 @@ public class BodyXmlTests {
 
     @Test
     public void hyperlinkIsReadAsExternalHyperlinkIfItHasARelationshipIdAndAnAnchor() {
-        Relationships relationships = new Relationships(
-            map("r42", new Relationship("http://example.com/"))
-        );
+        Relationships relationships = new Relationships(list(
+            hyperlinkRelationship("r42", "http://example.com/")
+        ));
         XmlElement element = element("w:hyperlink", map("r:id", "r42", "w:anchor", "fragment"), list(runXml(list())));
         assertThat(
             readSuccess(bodyReader(relationships), element),
@@ -972,9 +973,9 @@ public class BodyXmlTests {
 
     @Test
     public void hyperlinkExistingFragmentIsReplacedWhenAnchorIsSetOnExternalLink() {
-        Relationships relationships = new Relationships(
-            map("r42", new Relationship("http://example.com/#previous"))
-        );
+        Relationships relationships = new Relationships(list(
+            hyperlinkRelationship("r42", "http://example.com/#previous")
+        ));
         XmlElement element = element("w:hyperlink", map("r:id", "r42", "w:anchor", "fragment"), list(runXml(list())));
         assertThat(
             readSuccess(bodyReader(relationships), element),
@@ -1176,8 +1177,9 @@ public class BodyXmlTests {
     }
 
     private Image readEmbeddedImage(XmlElement element) {
-        Relationships relationships = new Relationships(map(
-            IMAGE_RELATIONSHIP_ID, new Relationship("media/hat.png")));
+        Relationships relationships = new Relationships(list(
+            imageRelationship(IMAGE_RELATIONSHIP_ID, "media/hat.png")
+        ));
         Archive file = InMemoryArchive.fromStrings(map("word/media/hat.png", IMAGE_BYTES));
 
         return (Image) readSuccess(
@@ -1202,8 +1204,9 @@ public class BodyXmlTests {
     @Test
     public void warningIfImageTypeIsUnsupportedByWebBrowsers() {
         XmlElement element = inlineImageXml(embeddedBlipXml(IMAGE_RELATIONSHIP_ID), "");
-        Relationships relationships = new Relationships(map(
-            IMAGE_RELATIONSHIP_ID, new Relationship("media/hat.emf")));
+        Relationships relationships = new Relationships(list(
+            imageRelationship(IMAGE_RELATIONSHIP_ID, "media/hat.emf")
+        ));
         Archive file = InMemoryArchive.fromStrings(map("word/media/hat.emf", IMAGE_BYTES));
         ContentTypes contentTypes = new ContentTypes(map("emf", "image/x-emf"), map());
 
@@ -1219,8 +1222,9 @@ public class BodyXmlTests {
     @Test
     public void canReadLinkedPictures() throws IOException {
         XmlElement element = inlineImageXml(linkedBlipXml(IMAGE_RELATIONSHIP_ID), "");
-        Relationships relationships = new Relationships(map(
-            IMAGE_RELATIONSHIP_ID, new Relationship("file:///media/hat.png")));
+        Relationships relationships = new Relationships(list(
+            imageRelationship(IMAGE_RELATIONSHIP_ID, "file:///media/hat.png")
+        ));
 
         Image image = (Image) readSuccess(
             bodyReader(relationships, new InMemoryFileReader(map("file:///media/hat.png", IMAGE_BYTES))),
@@ -1420,5 +1424,13 @@ public class BodyXmlTests {
 
     private static Text text(String value) {
         return new Text(value);
+    }
+
+    private static Relationship hyperlinkRelationship(String relationshipId, String target) {
+        return new Relationship(relationshipId, target);
+    }
+
+    private static Relationship imageRelationship(String relationshipId, String target) {
+        return new Relationship(relationshipId, target);
     }
 }

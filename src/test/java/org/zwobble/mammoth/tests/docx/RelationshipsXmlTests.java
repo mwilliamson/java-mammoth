@@ -21,6 +21,6 @@ public class RelationshipsXmlTests {
 
         Relationships relationships = readRelationshipsXmlElement(element);
 
-        assertEquals("http://example.com", relationships.findRelationshipById("rId8").getTarget());
+        assertEquals("http://example.com", relationships.findTargetByRelationshipId("rId8"));
     }
 }
