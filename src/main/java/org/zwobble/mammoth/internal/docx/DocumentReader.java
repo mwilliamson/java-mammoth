@@ -60,7 +60,7 @@ public class DocumentReader {
         List<String> validTargets = eagerFilter(targets, archive::exists);
         return tryGetFirst(validTargets)
             .orElseThrow(() -> new PassThroughException(
-                new IOException("Could not find word/document.xml in ZIP file. Are you sure this is a valid .docx file?")
+                new IOException("Could not find main document part. Are you sure this is a valid .docx file?")
             ));
     }
 
