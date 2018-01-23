@@ -13,14 +13,16 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.BiFunction;
 
 import static org.zwobble.mammoth.internal.util.Lists.*;
+import static org.zwobble.mammoth.internal.util.Strings.split;
 import static org.zwobble.mammoth.internal.util.Strings.trimLeft;
 
 public class DocumentReader {
     @FunctionalInterface
-    private interface BodyReaders {
-        BodyXmlReader forName(String name);
+    private interface PartWithBodyReader {
+        <T> T readPart(String name, BiFunction<XmlElement, BodyXmlReader, T> read, Optional<T> defaultValue);
     }
 
     public static InternalResult<Document> readDocument(Optional<Path> path, Archive zipFile) {
@@ -31,17 +33,29 @@ public class DocumentReader {
         Numbering numbering = readNumbering(zipFile);
         ContentTypes contentTypes = readContentTypes(zipFile);
         FileReader fileReader = new PathRelativeFileReader(path);
-        BodyReaders bodyReaders = name -> {
-            Relationships relationships = readRelationshipsFor(zipFile, name);
-            return new BodyXmlReader(styles, numbering, relationships, contentTypes, zipFile, fileReader);
+        PartWithBodyReader partReader = new PartWithBodyReader() {
+            @Override
+            public <T> T readPart(String name, BiFunction<XmlElement, BodyXmlReader, T> readPart, Optional<T> defaultValue) {
+                Relationships relationships = readRelationships(zipFile, findRelationshipsPathFor(name));
+                BodyXmlReader bodyReader = new BodyXmlReader(styles, numbering, relationships, contentTypes, zipFile, fileReader);
+                if (defaultValue.isPresent()) {
+                    return tryParseOfficeXml(zipFile, name)
+                        .map(root -> readPart.apply(root, bodyReader))
+                        .orElse(defaultValue.get());
+                } else {
+                    return readPart.apply(parseOfficeXml(zipFile, name), bodyReader);
+                }
+            }
         };
         return InternalResult.flatMap(
-            readNotes(zipFile, bodyReaders),
-            readComments(zipFile, bodyReaders),
-            (notes, comments) -> {
-                DocumentXmlReader reader = new DocumentXmlReader(bodyReaders.forName("document"), notes, comments);
-                return reader.readElement(parseOfficeXml(zipFile, documentFilename));
-            });
+            readNotes(partReader),
+            readComments(partReader),
+            (notes, comments) -> partReader.readPart(
+                documentFilename,
+                (element, bodyReader) -> new DocumentXmlReader(bodyReader, notes, comments).readElement(element),
+                Optional.empty()
+            )
+        );
     }
 
     private static Relationships readPackageRelationships(Archive archive) {
@@ -64,20 +78,26 @@ public class DocumentReader {
             ));
     }
 
-    private static InternalResult<List<Comment>> readComments(Archive file, BodyReaders bodyReaders) {
-        return tryParseOfficeXml(file, "word/comments.xml")
-            .map(new CommentXmlReader(bodyReaders.forName("comments"))::readElement)
-            .orElse(InternalResult.success(list()));
+    private static InternalResult<List<Comment>> readComments(PartWithBodyReader partReader) {
+        return partReader.readPart(
+            "word/comments.xml",
+            (root, bodyReader) -> new CommentXmlReader(bodyReader).readElement(root),
+            Optional.of(InternalResult.success(list()))
+        );
     }
 
-    private static InternalResult<Notes> readNotes(Archive file, BodyReaders bodyReaders) {
+    private static InternalResult<Notes> readNotes(PartWithBodyReader partReader) {
         return InternalResult.map(
-            tryParseOfficeXml(file, "word/footnotes.xml")
-                .map(NotesXmlReader.footnote(bodyReaders.forName("footnotes"))::readElement)
-                .orElse(InternalResult.success(list())),
-            tryParseOfficeXml(file, "word/endnotes.xml")
-                .map(NotesXmlReader.endnote(bodyReaders.forName("endnotes"))::readElement)
-                .orElse(InternalResult.success(list())),
+            partReader.readPart(
+                "word/footnotes.xml",
+                (root, bodyReader) -> NotesXmlReader.footnote(bodyReader).readElement(root),
+                Optional.of(InternalResult.success(list()))
+            ),
+            partReader.readPart(
+                "word/endnotes.xml",
+                (root, bodyReader) -> NotesXmlReader.endnote(bodyReader).readElement(root),
+                Optional.of(InternalResult.success(list()))
+            ),
             Lists::eagerConcat).map(Notes::new);
     }
 
@@ -99,14 +119,18 @@ public class DocumentReader {
             .orElse(ContentTypes.DEFAULT);
     }
 
-    private static Relationships readRelationshipsFor(Archive zipFile, String name) {
-        return readRelationships(zipFile, "word/_rels/" + name + ".xml.rels");
-    }
-
     private static Relationships readRelationships(Archive zipFile, String name) {
         return tryParseOfficeXml(zipFile, name)
             .map(RelationshipsXml::readRelationshipsXmlElement)
             .orElse(Relationships.EMPTY);
+    }
+
+    private static String findRelationshipsPathFor(String name) {
+        List<String> parts = split(name, "/");
+        return String.join("/", eagerConcat(
+            parts.subList(0, parts.size() - 1),
+            list("_rels/" + parts.get(parts.size() - 1) + ".rels")
+        ));
     }
 
     private static Optional<XmlElement> tryParseOfficeXml(Archive zipFile, String name) {
