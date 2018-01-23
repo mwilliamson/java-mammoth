@@ -23,6 +23,11 @@ public class BodyXmlReaderMakers {
                 }
 
                 @Override
+                public boolean exists(String name) {
+                    throw new UnsupportedOperationException();
+                }
+
+                @Override
                 public void close() throws IOException {
                 }
             }),

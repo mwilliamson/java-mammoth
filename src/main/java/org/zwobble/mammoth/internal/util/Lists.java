@@ -80,6 +80,14 @@ public class Lists {
         return stream(iterable).collect(Collectors.toList());
     }
 
+    public static <T> Optional<T> tryGetFirst(List<T> list) {
+        if (list.isEmpty()) {
+            return Optional.empty();
+        } else {
+            return Optional.of(list.get(0));
+        }
+    }
+
     public static <T> Optional<T> tryGetLast(List<T> list) {
         if (list.isEmpty()) {
             return Optional.empty();

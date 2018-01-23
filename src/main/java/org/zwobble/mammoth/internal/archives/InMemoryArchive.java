@@ -46,6 +46,11 @@ public class InMemoryArchive implements MutableArchive {
     }
 
     @Override
+    public boolean exists(String name) {
+        return entries.containsKey(name);
+    }
+
+    @Override
     public void writeEntry(String path, String content) {
         entries.put(path, content.getBytes(StandardCharsets.UTF_8));
     }

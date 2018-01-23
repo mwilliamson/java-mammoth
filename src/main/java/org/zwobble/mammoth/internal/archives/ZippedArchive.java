@@ -29,6 +29,11 @@ public class ZippedArchive implements Archive {
     }
 
     @Override
+    public boolean exists(String name) {
+        return zipFile.getEntry(name) != null;
+    }
+
+    @Override
     public void close() throws IOException {
         zipFile.close();
     }

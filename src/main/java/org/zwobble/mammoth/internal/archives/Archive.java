@@ -7,4 +7,5 @@ import java.util.Optional;
 
 public interface Archive extends Closeable {
     Optional<InputStream> tryGetInputStream(String name) throws IOException;
+    boolean exists(String name);
 }
