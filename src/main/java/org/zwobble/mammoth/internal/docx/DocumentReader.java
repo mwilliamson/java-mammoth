@@ -26,11 +26,10 @@ public class DocumentReader {
     }
 
     public static InternalResult<Document> readDocument(Optional<Path> path, Archive zipFile) {
-        Relationships packageRelationships = readPackageRelationships(zipFile);
-        String documentFilename = findDocumentFilename(zipFile, packageRelationships);
+        PartPaths partPaths = findPartPaths(zipFile);
 
-        Styles styles = readStyles(zipFile);
-        Numbering numbering = readNumbering(zipFile);
+        Styles styles = readStyles(zipFile, partPaths);
+        Numbering numbering = readNumbering(zipFile, partPaths);
         ContentTypes contentTypes = readContentTypes(zipFile);
         FileReader fileReader = new PathRelativeFileReader(path);
         PartWithBodyReader partReader = new PartWithBodyReader() {
@@ -48,14 +47,52 @@ public class DocumentReader {
             }
         };
         return InternalResult.flatMap(
-            readNotes(partReader),
-            readComments(partReader),
+            readNotes(partReader, partPaths),
+            readComments(partReader, partPaths),
             (notes, comments) -> partReader.readPart(
-                documentFilename,
+                partPaths.getMainDocument(),
                 (element, bodyReader) -> new DocumentXmlReader(bodyReader, notes, comments).readElement(element),
                 Optional.empty()
             )
         );
+    }
+
+    public static class PartPaths {
+        private final String mainDocument;
+
+        public PartPaths(String mainDocument) {
+            this.mainDocument = mainDocument;
+        }
+
+        public String getMainDocument() {
+            return mainDocument;
+        }
+
+        public String getComments() {
+            return "word/comments.xml";
+        }
+
+        public String getEndnotes() {
+            return "word/endnotes.xml";
+        }
+
+        public String getFootnotes() {
+            return "word/footnotes.xml";
+        }
+
+        public String getNumbering() {
+            return "word/numbering.xml";
+        }
+
+        public String getStyles() {
+            return "word/styles.xml";
+        }
+    }
+
+    private static PartPaths findPartPaths(Archive archive) {
+        Relationships packageRelationships = readPackageRelationships(archive);
+        String documentFilename = findDocumentFilename(archive, packageRelationships);
+        return new PartPaths(documentFilename);
     }
 
     private static Relationships readPackageRelationships(Archive archive) {
@@ -78,37 +115,37 @@ public class DocumentReader {
             ));
     }
 
-    private static InternalResult<List<Comment>> readComments(PartWithBodyReader partReader) {
+    private static InternalResult<List<Comment>> readComments(PartWithBodyReader partReader, PartPaths partPaths) {
         return partReader.readPart(
-            "word/comments.xml",
+            partPaths.getComments(),
             (root, bodyReader) -> new CommentXmlReader(bodyReader).readElement(root),
             Optional.of(InternalResult.success(list()))
         );
     }
 
-    private static InternalResult<Notes> readNotes(PartWithBodyReader partReader) {
+    private static InternalResult<Notes> readNotes(PartWithBodyReader partReader, PartPaths partPaths) {
         return InternalResult.map(
             partReader.readPart(
-                "word/footnotes.xml",
+                partPaths.getFootnotes(),
                 (root, bodyReader) -> NotesXmlReader.footnote(bodyReader).readElement(root),
                 Optional.of(InternalResult.success(list()))
             ),
             partReader.readPart(
-                "word/endnotes.xml",
+                partPaths.getEndnotes(),
                 (root, bodyReader) -> NotesXmlReader.endnote(bodyReader).readElement(root),
                 Optional.of(InternalResult.success(list()))
             ),
             Lists::eagerConcat).map(Notes::new);
     }
 
-    private static Styles readStyles(Archive file) {
-        return tryParseOfficeXml(file, "word/styles.xml")
+    private static Styles readStyles(Archive file, PartPaths partPaths) {
+        return tryParseOfficeXml(file, partPaths.getStyles())
             .map(StylesXml::readStylesXmlElement)
             .orElse(Styles.EMPTY);
     }
 
-    private static Numbering readNumbering(Archive file) {
-        return tryParseOfficeXml(file, "word/numbering.xml")
+    private static Numbering readNumbering(Archive file, PartPaths partPaths) {
+        return tryParseOfficeXml(file, partPaths.getNumbering())
             .map(NumberingXml::readNumberingXmlElement)
             .orElse(Numbering.EMPTY);
     }
