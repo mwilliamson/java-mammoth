@@ -1,6 +1,7 @@
 package org.zwobble.mammoth.internal.docx;
 
 import org.zwobble.mammoth.internal.archives.Archive;
+import org.zwobble.mammoth.internal.archives.ZipPaths;
 import org.zwobble.mammoth.internal.documents.Comment;
 import org.zwobble.mammoth.internal.documents.Document;
 import org.zwobble.mammoth.internal.documents.Notes;
@@ -16,7 +17,6 @@ import java.util.Optional;
 import java.util.function.BiFunction;
 
 import static org.zwobble.mammoth.internal.util.Lists.*;
-import static org.zwobble.mammoth.internal.util.Strings.split;
 import static org.zwobble.mammoth.internal.util.Strings.trimLeft;
 
 public class DocumentReader {
@@ -126,11 +126,8 @@ public class DocumentReader {
     }
 
     private static String findRelationshipsPathFor(String name) {
-        List<String> parts = split(name, "/");
-        return String.join("/", eagerConcat(
-            parts.subList(0, parts.size() - 1),
-            list("_rels/" + parts.get(parts.size() - 1) + ".rels")
-        ));
+        ZipPaths.SplitPath parts = ZipPaths.splitPath(name);
+        return ZipPaths.joinPath(parts.getDirname(), "_rels", parts.getBasename() + ".rels");
     }
 
     private static Optional<XmlElement> tryParseOfficeXml(Archive zipFile, String name) {
