@@ -61,10 +61,18 @@ public class DocumentReader {
     public static class PartPaths {
         private final String mainDocument;
         private final String comments;
+        private final String endnotes;
+        private final String footnotes;
+        private final String numbering;
+        private final String styles;
 
-        public PartPaths(String mainDocument, String comments) {
+        public PartPaths(String mainDocument, String comments, String endnotes, String footnotes, String numbering, String styles) {
             this.mainDocument = mainDocument;
             this.comments = comments;
+            this.endnotes = endnotes;
+            this.footnotes = footnotes;
+            this.numbering = numbering;
+            this.styles = styles;
         }
 
         public String getMainDocument() {
@@ -76,19 +84,19 @@ public class DocumentReader {
         }
 
         public String getEndnotes() {
-            return "word/endnotes.xml";
+            return endnotes;
         }
 
         public String getFootnotes() {
-            return "word/footnotes.xml";
+            return footnotes;
         }
 
         public String getNumbering() {
-            return "word/numbering.xml";
+            return numbering;
         }
 
         public String getStyles() {
-            return "word/styles.xml";
+            return styles;
         }
     }
 
@@ -109,7 +117,14 @@ public class DocumentReader {
             "word/" + name + ".xml"
         );
 
-        return new PartPaths(documentFilename, find.apply("comments"));
+        return new PartPaths(
+            documentFilename,
+            find.apply("comments"),
+            find.apply("endnotes"),
+            find.apply("footnotes"),
+            find.apply("numbering"),
+            find.apply("styles")
+        );
     }
 
     private static Relationships readPackageRelationships(Archive archive) {

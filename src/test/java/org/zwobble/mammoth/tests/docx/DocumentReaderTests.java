@@ -1,7 +1,9 @@
 package org.zwobble.mammoth.tests.docx;
 
+import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestFactory;
 import org.zwobble.mammoth.internal.archives.Archive;
 import org.zwobble.mammoth.internal.archives.InMemoryArchive;
 import org.zwobble.mammoth.internal.documents.Document;
@@ -11,10 +13,13 @@ import org.zwobble.mammoth.internal.util.PassThroughException;
 import org.zwobble.mammoth.internal.xml.NamespacePrefixes;
 import org.zwobble.mammoth.internal.xml.XmlWriter;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasProperty;
+import static org.zwobble.mammoth.internal.util.Lists.eagerFlatMap;
 import static org.zwobble.mammoth.internal.util.Lists.list;
 import static org.zwobble.mammoth.internal.util.Maps.map;
 import static org.zwobble.mammoth.internal.xml.XmlNodes.element;
@@ -115,8 +120,23 @@ public class DocumentReaderTests {
             DocumentReader.PartPaths partPaths = DocumentReader.findPartPaths(archive);
             assertThat(partPaths.getMainDocument(), equalTo("word/document.xml"));
         }
-        @Test
-        public void commentsPartIsFoundUsingMainDocumentRelationships() {
+
+        @TestFactory
+        public List<DynamicTest> partsRelatedToMainDocument() {
+            return eagerFlatMap(
+                list("comments", "endnotes", "footnotes", "numbering", "styles"),
+                name -> list(
+                    DynamicTest.dynamicTest(name + " part is found using main document relationships", () -> {
+                        partIsFoundUsingMainDocumentRelationships(name);
+                    }),
+                    DynamicTest.dynamicTest(name + " part is found using main document relationships", () -> {
+                        whenRelationshipForPartCannotBeFoundThenFallbackIsUsed(name);
+                    })
+                )
+            );
+        }
+
+        private void partIsFoundUsingMainDocumentRelationships(String name) {
             InMemoryArchive archive = InMemoryArchive.fromStrings(map(
                 "_rels/.rels", XmlWriter.toString(
                     element("Relationships", list(
@@ -134,7 +154,7 @@ public class DocumentReaderTests {
                         element("Relationship", map(
                             "Id", "rId2",
                             "Target", "target-path.xml",
-                            "Type", "http://schemas.openxmlformats.org/officeDocument/2006/relationships/comments"
+                            "Type", "http://schemas.openxmlformats.org/officeDocument/2006/relationships/" + name
                         ))
                     )),
                     relationshipsNamespaces
@@ -143,11 +163,10 @@ public class DocumentReaderTests {
             ));
 
             DocumentReader.PartPaths partPaths = DocumentReader.findPartPaths(archive);
-            assertThat(partPaths.getComments(), equalTo("word/target-path.xml"));
+            assertThat(partPaths, hasProperty(name, equalTo("word/target-path.xml")));
         }
 
-        @Test
-        public void whenRelationshipsForCommentsCannotBeFoundThenFallbackIsUsed() {
+        private void whenRelationshipForPartCannotBeFoundThenFallbackIsUsed(String name) {
             InMemoryArchive archive = InMemoryArchive.fromStrings(map(
                 "word/document.xml", " ",
                 "_rels/.rels", XmlWriter.toString(
@@ -163,7 +182,7 @@ public class DocumentReaderTests {
             ));
 
             DocumentReader.PartPaths partPaths = DocumentReader.findPartPaths(archive);
-            assertThat(partPaths.getComments(), equalTo("word/comments.xml"));
+            assertThat(partPaths, hasProperty(name, equalTo("word/" + name + ".xml")));
         }
     }
 }
