@@ -1,5 +1,6 @@
 package org.zwobble.mammoth.tests.docx;
 
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.zwobble.mammoth.internal.archives.Archive;
 import org.zwobble.mammoth.internal.archives.InMemoryArchive;
@@ -81,5 +82,40 @@ public class DocumentReaderTests {
             () -> DocumentReader.readDocument(Optional.empty(), archive)
         );
         assertThat(exception.getMessage(), equalTo("java.io.IOException: Could not find main document part. Are you sure this is a valid .docx file?"));
+    }
+
+    @Nested
+    public class PartPathTests {
+        @Test
+        public void mainDocumentPartIsFoundUsingPackageRelationships() {
+            InMemoryArchive archive = InMemoryArchive.fromStrings(map(
+                "word/document2.xml", " ",
+                "_rels/.rels", XmlWriter.toString(
+                    element("Relationships", list(
+                        element("Relationship", map(
+                            "Id", "rId1",
+                            "Target", "/word/document2.xml",
+                            "Type", "http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument"
+                        ))
+                    )),
+                    relationshipsNamespaces
+                )
+            ));
+
+            DocumentReader.PartPaths partPaths = DocumentReader.findPartPaths(archive);
+
+            assertThat(partPaths.getMainDocument(), equalTo("word/document2.xml"));
+        }
+
+        @Test
+        public void whenRelationshipForMainDocumentCannotBeFoundThenFallbackIsUsed() {
+            InMemoryArchive archive = InMemoryArchive.fromStrings(map(
+                "word/document.xml", " "
+            ));
+
+            DocumentReader.PartPaths partPaths = DocumentReader.findPartPaths(archive);
+
+            assertThat(partPaths.getMainDocument(), equalTo("word/document.xml"));
+        }
     }
 }

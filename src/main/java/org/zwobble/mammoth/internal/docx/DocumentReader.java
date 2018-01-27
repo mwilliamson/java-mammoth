@@ -89,7 +89,7 @@ public class DocumentReader {
         }
     }
 
-    private static PartPaths findPartPaths(Archive archive) {
+    public static PartPaths findPartPaths(Archive archive) {
         Relationships packageRelationships = readPackageRelationships(archive);
         String documentFilename = findDocumentFilename(archive, packageRelationships);
         return new PartPaths(documentFilename);
