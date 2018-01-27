@@ -15,6 +15,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 
 import static org.zwobble.mammoth.internal.util.Lists.*;
 import static org.zwobble.mammoth.internal.util.Strings.trimLeft;
@@ -59,9 +60,11 @@ public class DocumentReader {
 
     public static class PartPaths {
         private final String mainDocument;
+        private final String comments;
 
-        public PartPaths(String mainDocument) {
+        public PartPaths(String mainDocument, String comments) {
             this.mainDocument = mainDocument;
+            this.comments = comments;
         }
 
         public String getMainDocument() {
@@ -69,7 +72,7 @@ public class DocumentReader {
         }
 
         public String getComments() {
-            return "word/comments.xml";
+            return comments;
         }
 
         public String getEndnotes() {
@@ -92,7 +95,21 @@ public class DocumentReader {
     public static PartPaths findPartPaths(Archive archive) {
         Relationships packageRelationships = readPackageRelationships(archive);
         String documentFilename = findDocumentFilename(archive, packageRelationships);
-        return new PartPaths(documentFilename);
+
+        Relationships documentRelationships = readRelationships(
+            archive,
+            findRelationshipsPathFor(documentFilename)
+        );
+
+        Function<String, String> find = name -> findPartPath(
+            archive,
+            documentRelationships,
+            "http://schemas.openxmlformats.org/officeDocument/2006/relationships/" + name,
+            ZipPaths.splitPath(documentFilename).getDirname(),
+            "word/" + name + ".xml"
+        );
+
+        return new PartPaths(documentFilename, find.apply("comments"));
     }
 
     private static Relationships readPackageRelationships(Archive archive) {
@@ -101,18 +118,37 @@ public class DocumentReader {
 
     private static String findDocumentFilename(Archive archive, Relationships packageRelationships) {
         String officeDocumentType = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument";
-        List<String> targets = eagerConcat(
-            eagerMap(
-                packageRelationships.findTargetsByType(officeDocumentType),
-                target -> trimLeft(target, '/')
-            ),
-            list("word/document.xml")
+        String mainDocumentPath = findPartPath(
+            archive,
+            packageRelationships,
+            officeDocumentType,
+            "",
+            "word/document.xml"
+        );
+
+        if (archive.exists(mainDocumentPath)) {
+            return mainDocumentPath;
+        } else {
+            throw new PassThroughException(
+                new IOException("Could not find main document part. Are you sure this is a valid .docx file?")
+            );
+        }
+    }
+
+    private static String findPartPath(
+        Archive archive,
+        Relationships relationships,
+        String relationshipType,
+        String basePath,
+        String fallbackPath
+    ) {
+
+        List<String> targets = eagerMap(
+            relationships.findTargetsByType(relationshipType),
+            target -> trimLeft(ZipPaths.joinPath(basePath, target), '/')
         );
         List<String> validTargets = eagerFilter(targets, archive::exists);
-        return tryGetFirst(validTargets)
-            .orElseThrow(() -> new PassThroughException(
-                new IOException("Could not find main document part. Are you sure this is a valid .docx file?")
-            ));
+        return tryGetFirst(validTargets).orElse(fallbackPath);
     }
 
     private static InternalResult<List<Comment>> readComments(PartWithBodyReader partReader, PartPaths partPaths) {

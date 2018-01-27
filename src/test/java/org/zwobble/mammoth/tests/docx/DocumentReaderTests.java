@@ -103,7 +103,6 @@ public class DocumentReaderTests {
             ));
 
             DocumentReader.PartPaths partPaths = DocumentReader.findPartPaths(archive);
-
             assertThat(partPaths.getMainDocument(), equalTo("word/document2.xml"));
         }
 
@@ -114,8 +113,57 @@ public class DocumentReaderTests {
             ));
 
             DocumentReader.PartPaths partPaths = DocumentReader.findPartPaths(archive);
-
             assertThat(partPaths.getMainDocument(), equalTo("word/document.xml"));
+        }
+        @Test
+        public void commentsPartIsFoundUsingMainDocumentRelationships() {
+            InMemoryArchive archive = InMemoryArchive.fromStrings(map(
+                "_rels/.rels", XmlWriter.toString(
+                    element("Relationships", list(
+                        element("Relationship", map(
+                            "Id", "rId1",
+                            "Target", "/word/document.xml",
+                            "Type", "http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument"
+                        ))
+                    )),
+                    relationshipsNamespaces
+                ),
+                "word/document.xml", " ",
+                "word/_rels/document.xml.rels", XmlWriter.toString(
+                    element("Relationships", list(
+                        element("Relationship", map(
+                            "Id", "rId2",
+                            "Target", "target-path.xml",
+                            "Type", "http://schemas.openxmlformats.org/officeDocument/2006/relationships/comments"
+                        ))
+                    )),
+                    relationshipsNamespaces
+                ),
+                "word/target-path.xml", " "
+            ));
+
+            DocumentReader.PartPaths partPaths = DocumentReader.findPartPaths(archive);
+            assertThat(partPaths.getComments(), equalTo("word/target-path.xml"));
+        }
+
+        @Test
+        public void whenRelationshipsForCommentsCannotBeFoundThenFallbackIsUsed() {
+            InMemoryArchive archive = InMemoryArchive.fromStrings(map(
+                "word/document.xml", " ",
+                "_rels/.rels", XmlWriter.toString(
+                    element("Relationships", list(
+                        element("Relationship", map(
+                            "Id", "rId1",
+                            "Target", "/word/document.xml",
+                            "Type", "http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument"
+                        ))
+                    )),
+                    relationshipsNamespaces
+                )
+            ));
+
+            DocumentReader.PartPaths partPaths = DocumentReader.findPartPaths(archive);
+            assertThat(partPaths.getComments(), equalTo("word/comments.xml"));
         }
     }
 }
