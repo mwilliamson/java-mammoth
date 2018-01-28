@@ -26,7 +26,7 @@ public class DocumentToHtml {
     public static InternalResult<List<HtmlNode>> convertToHtml(Document document, DocumentToHtmlOptions options) {
         DocumentToHtml documentConverter = new DocumentToHtml(options, document.getComments());
         return new InternalResult<>(
-            documentConverter.convertToHtml(document, Context.INITIAL),
+            documentConverter.convertToHtml(document, INITIAL_CONTEXT),
             documentConverter.warnings);
     }
 
@@ -40,7 +40,7 @@ public class DocumentToHtml {
     public static InternalResult<List<HtmlNode>> convertToHtml(DocumentElement element, DocumentToHtmlOptions options) {
         DocumentToHtml documentConverter = new DocumentToHtml(options, list());
         return new InternalResult<>(
-            documentConverter.convertToHtml(element, Context.INITIAL),
+            documentConverter.convertToHtml(element, INITIAL_CONTEXT),
             documentConverter.warnings);
     }
 
@@ -63,9 +63,9 @@ public class DocumentToHtml {
     private final List<ReferencedComment> referencedComments = new ArrayList<>();
     private final Set<String> warnings = new HashSet<>();
 
-    private static class Context {
-        private static final Context INITIAL = new Context(false);
+    private static final Context INITIAL_CONTEXT = new Context(false);
 
+    private static class Context {
         private final boolean isHeader;
 
         Context(boolean isHeader) {
