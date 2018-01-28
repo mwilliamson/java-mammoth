@@ -4,6 +4,7 @@ import org.zwobble.mammoth.internal.archives.Archive;
 import org.zwobble.mammoth.internal.archives.ZipPaths;
 import org.zwobble.mammoth.internal.documents.Comment;
 import org.zwobble.mammoth.internal.documents.Document;
+import org.zwobble.mammoth.internal.documents.Note;
 import org.zwobble.mammoth.internal.documents.Notes;
 import org.zwobble.mammoth.internal.results.InternalResult;
 import org.zwobble.mammoth.internal.util.Lists;
@@ -195,12 +196,12 @@ public class DocumentReader {
             partReader.readPart(
                 partPaths.getFootnotes(),
                 (root, bodyReader) -> NotesXmlReader.footnote(bodyReader).readElement(root),
-                Optional.of(InternalResult.success(list()))
+                Optional.of(InternalResult.success(Lists.<Note>list()))
             ),
             partReader.readPart(
                 partPaths.getEndnotes(),
                 (root, bodyReader) -> NotesXmlReader.endnote(bodyReader).readElement(root),
-                Optional.of(InternalResult.success(list()))
+                Optional.of(InternalResult.success(Lists.<Note>list()))
             ),
             Lists::eagerConcat).map(Notes::new);
     }
