@@ -67,7 +67,7 @@ public class DocumentToHtml {
         private final boolean isHeader;
 
         Context() {
-            this(false);
+            this.isHeader = false;
         }
 
         Context(boolean isHeader) {
@@ -145,225 +145,227 @@ public class DocumentToHtml {
         return convertToHtml(element.getChildren(), context);
     }
 
-    private List<HtmlNode> convertToHtml(DocumentElement element, Context context) {
-        return element.accept(new DocumentElementVisitor<List<HtmlNode>, Context>() {
-            @Override
-            public List<HtmlNode> visit(Paragraph paragraph, Context context) {
-                Supplier<List<HtmlNode>> children = () -> {
-                    List<HtmlNode> content = convertChildrenToHtml(paragraph, context);
-                    return preserveEmptyParagraphs ? cons(Html.FORCE_WRITE, content) : content;
-                };
-                HtmlPath mapping = styleMap.getParagraphHtmlPath(paragraph)
-                    .orElseGet(() -> {
-                        if (paragraph.getStyle().isPresent()) {
-                            warnings.add("Unrecognised paragraph style: " + paragraph.getStyle().get().describe());
-                        }
-                        return HtmlPath.element("p");
-                    });
-                return mapping.wrap(children).get();
-            }
+    private class ElementConverterVisitor implements DocumentElementVisitor<List<HtmlNode>, Context> {
+        @Override
+        public List<HtmlNode> visit(Paragraph paragraph, Context context) {
+            Supplier<List<HtmlNode>> children = () -> {
+                List<HtmlNode> content = convertChildrenToHtml(paragraph, context);
+                return preserveEmptyParagraphs ? cons(Html.FORCE_WRITE, content) : content;
+            };
+            HtmlPath mapping = styleMap.getParagraphHtmlPath(paragraph)
+                .orElseGet(() -> {
+                    if (paragraph.getStyle().isPresent()) {
+                        warnings.add("Unrecognised paragraph style: " + paragraph.getStyle().get().describe());
+                    }
+                    return HtmlPath.element("p");
+                });
+            return mapping.wrap(children).get();
+        }
 
-            @Override
-            public List<HtmlNode> visit(Run run, Context context) {
-                Supplier<List<HtmlNode>> nodes = () -> convertChildrenToHtml(run, context);
-                if (run.isSmallCaps()) {
-                    nodes = styleMap.getSmallCaps().orElse(HtmlPath.EMPTY).wrap(nodes);
-                }
-                if (run.isStrikethrough()) {
-                    nodes = styleMap.getStrikethrough().orElse(HtmlPath.collapsibleElement("s")).wrap(nodes);
-                }
-                if (run.isUnderline()) {
-                    nodes = styleMap.getUnderline().orElse(HtmlPath.EMPTY).wrap(nodes);
-                }
-                if (run.getVerticalAlignment() == VerticalAlignment.SUBSCRIPT) {
-                    nodes = HtmlPath.collapsibleElement("sub").wrap(nodes);
-                }
-                if (run.getVerticalAlignment() == VerticalAlignment.SUPERSCRIPT) {
-                    nodes = HtmlPath.collapsibleElement("sup").wrap(nodes);
-                }
-                if (run.isItalic()) {
-                    nodes = styleMap.getItalic().orElse(HtmlPath.collapsibleElement("em")).wrap(nodes);
-                }
-                if (run.isBold()) {
-                    nodes = styleMap.getBold().orElse(HtmlPath.collapsibleElement("strong")).wrap(nodes);
-                }
-                HtmlPath mapping = styleMap.getRunHtmlPath(run)
-                    .orElseGet(() -> {
-                        if (run.getStyle().isPresent()) {
-                            warnings.add("Unrecognised run style: " + run.getStyle().get().describe());
-                        }
+        @Override
+        public List<HtmlNode> visit(Run run, Context context) {
+            Supplier<List<HtmlNode>> nodes = () -> convertChildrenToHtml(run, context);
+            if (run.isSmallCaps()) {
+                nodes = styleMap.getSmallCaps().orElse(HtmlPath.EMPTY).wrap(nodes);
+            }
+            if (run.isStrikethrough()) {
+                nodes = styleMap.getStrikethrough().orElse(HtmlPath.collapsibleElement("s")).wrap(nodes);
+            }
+            if (run.isUnderline()) {
+                nodes = styleMap.getUnderline().orElse(HtmlPath.EMPTY).wrap(nodes);
+            }
+            if (run.getVerticalAlignment() == VerticalAlignment.SUBSCRIPT) {
+                nodes = HtmlPath.collapsibleElement("sub").wrap(nodes);
+            }
+            if (run.getVerticalAlignment() == VerticalAlignment.SUPERSCRIPT) {
+                nodes = HtmlPath.collapsibleElement("sup").wrap(nodes);
+            }
+            if (run.isItalic()) {
+                nodes = styleMap.getItalic().orElse(HtmlPath.collapsibleElement("em")).wrap(nodes);
+            }
+            if (run.isBold()) {
+                nodes = styleMap.getBold().orElse(HtmlPath.collapsibleElement("strong")).wrap(nodes);
+            }
+            HtmlPath mapping = styleMap.getRunHtmlPath(run)
+                .orElseGet(() -> {
+                    if (run.getStyle().isPresent()) {
+                        warnings.add("Unrecognised run style: " + run.getStyle().get().describe());
+                    }
+                    return HtmlPath.EMPTY;
+                });
+            return mapping.wrap(nodes).get();
+        }
+
+        @Override
+        public List<HtmlNode> visit(Text text, Context context) {
+            if (text.getValue().isEmpty()) {
+                return list();
+            } else {
+                return list(Html.text(text.getValue()));
+            }
+        }
+
+        @Override
+        public List<HtmlNode> visit(Tab tab, Context context) {
+            return list(Html.text("\t"));
+        }
+
+        @Override
+        public List<HtmlNode> visit(Break breakElement, Context context) {
+            HtmlPath mapping = styleMap.getBreakHtmlPath(breakElement)
+                .orElseGet(() -> {
+                    if (breakElement.getType() == Break.Type.LINE) {
+                        return HtmlPath.element("br");
+                    } else {
                         return HtmlPath.EMPTY;
-                    });
-                return mapping.wrap(nodes).get();
-            }
+                    }
+                });
+            return mapping.wrap(() -> list()).get();
+        }
 
-            @Override
-            public List<HtmlNode> visit(Text text, Context context) {
-                if (text.getValue().isEmpty()) {
-                    return list();
-                } else {
-                    return list(Html.text(text.getValue()));
-                }
-            }
+        @Override
+        public List<HtmlNode> visit(Table table, Context context) {
+            HtmlPath mapping = styleMap.getTableHtmlPath(table)
+                .orElse(HtmlPath.element("table"));
+            return mapping.wrap(() -> generateTableChildren(table, context)).get();
+        }
 
-            @Override
-            public List<HtmlNode> visit(Tab tab, Context context) {
-                return list(Html.text("\t"));
-            }
-
-            @Override
-            public List<HtmlNode> visit(Break breakElement, Context context) {
-                HtmlPath mapping = styleMap.getBreakHtmlPath(breakElement)
-                    .orElseGet(() -> {
-                        if (breakElement.getType() == Break.Type.LINE) {
-                            return HtmlPath.element("br");
-                        } else {
-                            return HtmlPath.EMPTY;
-                        }
-                    });
-                return mapping.wrap(() -> list()).get();
-            }
-
-            @Override
-            public List<HtmlNode> visit(Table table, Context context) {
-                HtmlPath mapping = styleMap.getTableHtmlPath(table)
-                    .orElse(HtmlPath.element("table"));
-                return mapping.wrap(() -> generateTableChildren(table, context)).get();
-            }
-
-            private List<HtmlNode> generateTableChildren(Table table, Context context) {
-                int bodyIndex = findIndex(table.getChildren(), child -> !isHeader(child))
-                    .orElse(table.getChildren().size());
-                if (bodyIndex == 0) {
-                    return convertToHtml(table.getChildren(), context.isHeader(false));
-                } else {
-                    List<HtmlNode> headRows = convertToHtml(
-                        table.getChildren().subList(0, bodyIndex),
-                        context.isHeader(true)
-                    );
-                    List<HtmlNode> bodyRows = convertToHtml(
-                        table.getChildren().subList(bodyIndex, table.getChildren().size()),
-                        context.isHeader(false)
-                    );
-                    return list(
-                        Html.element("thead", headRows),
-                        Html.element("tbody", bodyRows)
-                    );
-                }
-            }
-
-            private boolean isHeader(DocumentElement child) {
-                return tryCast(TableRow.class, child)
-                    .map(TableRow::isHeader)
-                    .orElse(false);
-            }
-
-            @Override
-            public List<HtmlNode> visit(TableRow tableRow, Context context) {
-                return list(Html.element("tr", convertChildrenToHtml(tableRow, context)));
-            }
-
-            @Override
-            public List<HtmlNode> visit(TableCell tableCell, Context context) {
-                String tagName = context.isHeader ? "th" : "td";
-                Map<String, String> attributes = new HashMap<>();
-                if (tableCell.getColspan() != 1) {
-                    attributes.put("colspan", Integer.toString(tableCell.getColspan()));
-                }
-                if (tableCell.getRowspan() != 1) {
-                    attributes.put("rowspan", Integer.toString(tableCell.getRowspan()));
-                }
-                return list(Html.element(tagName, attributes,
-                    Lists.cons(Html.FORCE_WRITE, convertChildrenToHtml(tableCell, context))));
-            }
-
-            @Override
-            public List<HtmlNode> visit(Hyperlink hyperlink, Context context) {
-                Map<String, String> attributes = mutableMap("href", generateHref(hyperlink));
-                hyperlink.getTargetFrame().ifPresent(targetFrame ->
-                    attributes.put("target", targetFrame)
+        private List<HtmlNode> generateTableChildren(Table table, Context context) {
+            int bodyIndex = findIndex(table.getChildren(), child -> !isHeader(child))
+                .orElse(table.getChildren().size());
+            if (bodyIndex == 0) {
+                return convertToHtml(table.getChildren(), context.isHeader(false));
+            } else {
+                List<HtmlNode> headRows = convertToHtml(
+                    table.getChildren().subList(0, bodyIndex),
+                    context.isHeader(true)
                 );
-
-                return list(Html.collapsibleElement("a", attributes, convertChildrenToHtml(hyperlink, context)));
+                List<HtmlNode> bodyRows = convertToHtml(
+                    table.getChildren().subList(bodyIndex, table.getChildren().size()),
+                    context.isHeader(false)
+                );
+                return list(
+                    Html.element("thead", headRows),
+                    Html.element("tbody", bodyRows)
+                );
             }
+        }
 
-            private String generateHref(Hyperlink hyperlink) {
-                if (hyperlink.getHref().isPresent()) {
-                    return hyperlink.getHref().get();
-                } else if (hyperlink.getAnchor().isPresent()) {
-                    return "#" + generateId(hyperlink.getAnchor().get());
-                } else {
-                    return "";
-                }
+        private boolean isHeader(DocumentElement child) {
+            return tryCast(TableRow.class, child)
+                .map(TableRow::isHeader)
+                .orElse(false);
+        }
+
+        @Override
+        public List<HtmlNode> visit(TableRow tableRow, Context context) {
+            return list(Html.element("tr", convertChildrenToHtml(tableRow, context)));
+        }
+
+        @Override
+        public List<HtmlNode> visit(TableCell tableCell, Context context) {
+            String tagName = context.isHeader ? "th" : "td";
+            Map<String, String> attributes = new HashMap<>();
+            if (tableCell.getColspan() != 1) {
+                attributes.put("colspan", Integer.toString(tableCell.getColspan()));
             }
-
-            @Override
-            public List<HtmlNode> visit(Bookmark bookmark, Context context) {
-                return list(Html.element("a", map("id", generateId(bookmark.getName())), list(Html.FORCE_WRITE)));
+            if (tableCell.getRowspan() != 1) {
+                attributes.put("rowspan", Integer.toString(tableCell.getRowspan()));
             }
+            return list(Html.element(tagName, attributes,
+                Lists.cons(Html.FORCE_WRITE, convertChildrenToHtml(tableCell, context))));
+        }
 
-            @Override
-            public List<HtmlNode> visit(NoteReference noteReference, Context context) {
-                noteReferences.add(noteReference);
-                String noteAnchor = generateNoteHtmlId(noteReference.getNoteType(), noteReference.getNoteId());
-                String noteReferenceAnchor = generateNoteRefHtmlId(noteReference.getNoteType(), noteReference.getNoteId());
-                return list(Html.element("sup", list(
-                    Html.element("a", map("href", "#" + noteAnchor, "id", noteReferenceAnchor), list(
-                        Html.text("[" + noteReferences.size() + "]"))))));
+        @Override
+        public List<HtmlNode> visit(Hyperlink hyperlink, Context context) {
+            Map<String, String> attributes = mutableMap("href", generateHref(hyperlink));
+            hyperlink.getTargetFrame().ifPresent(targetFrame ->
+                attributes.put("target", targetFrame)
+            );
+
+            return list(Html.collapsibleElement("a", attributes, convertChildrenToHtml(hyperlink, context)));
+        }
+
+        private String generateHref(Hyperlink hyperlink) {
+            if (hyperlink.getHref().isPresent()) {
+                return hyperlink.getHref().get();
+            } else if (hyperlink.getAnchor().isPresent()) {
+                return "#" + generateId(hyperlink.getAnchor().get());
+            } else {
+                return "";
             }
+        }
 
-            @Override
-            public List<HtmlNode> visit(CommentReference commentReference, Context context) {
-                return styleMap.getCommentReference().orElse(HtmlPath.IGNORE).wrap(() -> {
-                    String commentId = commentReference.getCommentId();
-                    Comment comment = lookup(comments, commentId)
-                        .orElseThrow(() -> new RuntimeException("Referenced comment could not be found, id: " + commentId));
-                    String label = "[" + comment.getAuthorInitials().orElse("") + (referencedComments.size() + 1) + "]";
-                    referencedComments.add(new ReferencedComment(label, comment));
+        @Override
+        public List<HtmlNode> visit(Bookmark bookmark, Context context) {
+            return list(Html.element("a", map("id", generateId(bookmark.getName())), list(Html.FORCE_WRITE)));
+        }
 
-                    // TODO: Remove duplication with note references
-                    return list(Html.element(
-                        "a",
-                        map(
-                            "href", "#" + generateReferentHtmlId("comment", commentId),
-                            "id", generateReferenceHtmlId("comment", commentId)),
-                        list(Html.text(label))));
-                }).get();
-            }
+        @Override
+        public List<HtmlNode> visit(NoteReference noteReference, Context context) {
+            noteReferences.add(noteReference);
+            String noteAnchor = generateNoteHtmlId(noteReference.getNoteType(), noteReference.getNoteId());
+            String noteReferenceAnchor = generateNoteRefHtmlId(noteReference.getNoteType(), noteReference.getNoteId());
+            return list(Html.element("sup", list(
+                Html.element("a", map("href", "#" + noteAnchor, "id", noteReferenceAnchor), list(
+                    Html.text("[" + noteReferences.size() + "]"))))));
+        }
 
-            @Override
-            public List<HtmlNode> visit(Image image, Context context) {
-                // TODO: custom image handlers
-                // TODO: handle empty content type
-                return image.getContentType()
-                    .map(contentType -> {
-                        try {
-                            Map<String, String> attributes = new HashMap<>(imageConverter.convert(new org.zwobble.mammoth.images.Image() {
-                                @Override
-                                public Optional<String> getAltText() {
-                                    return image.getAltText();
-                                }
+        @Override
+        public List<HtmlNode> visit(CommentReference commentReference, Context context) {
+            return styleMap.getCommentReference().orElse(HtmlPath.IGNORE).wrap(() -> {
+                String commentId = commentReference.getCommentId();
+                Comment comment = lookup(comments, commentId)
+                    .orElseThrow(() -> new RuntimeException("Referenced comment could not be found, id: " + commentId));
+                String label = "[" + comment.getAuthorInitials().orElse("") + (referencedComments.size() + 1) + "]";
+                referencedComments.add(new ReferencedComment(label, comment));
 
-                                @Override
-                                public String getContentType() {
-                                    return contentType;
-                                }
+                // TODO: Remove duplication with note references
+                return list(Html.element(
+                    "a",
+                    map(
+                        "href", "#" + generateReferentHtmlId("comment", commentId),
+                        "id", generateReferenceHtmlId("comment", commentId)),
+                    list(Html.text(label))));
+            }).get();
+        }
 
-                                @Override
-                                public InputStream getInputStream() throws IOException {
-                                    return image.open();
-                                }
-                            }));
-                            image.getAltText().ifPresent(altText -> attributes.put("alt", altText));
-                            return list(Html.element("img", attributes));
-                        } catch (IOException exception) {
-                            warnings.add(exception.getMessage());
-                            return Lists.<HtmlNode>list();
-                        }
-                    })
-                    .orElse(list());
-            }
-        }, context);
+        @Override
+        public List<HtmlNode> visit(Image image, Context context) {
+            // TODO: custom image handlers
+            // TODO: handle empty content type
+            return image.getContentType()
+                .map(contentType -> {
+                    try {
+                        Map<String, String> attributes = new HashMap<>(imageConverter.convert(new org.zwobble.mammoth.images.Image() {
+                            @Override
+                            public Optional<String> getAltText() {
+                                return image.getAltText();
+                            }
+
+                            @Override
+                            public String getContentType() {
+                                return contentType;
+                            }
+
+                            @Override
+                            public InputStream getInputStream() throws IOException {
+                                return image.open();
+                            }
+                        }));
+                        image.getAltText().ifPresent(altText -> attributes.put("alt", altText));
+                        return list(Html.element("img", attributes));
+                    } catch (IOException exception) {
+                        warnings.add(exception.getMessage());
+                        return Lists.<HtmlNode>list();
+                    }
+                })
+                .orElse(list());
+        }
+    }
+
+    private List<HtmlNode> convertToHtml(DocumentElement element, Context context) {
+        return element.accept(new ElementConverterVisitor(), context);
     }
 
     private String generateNoteHtmlId(NoteType noteType, String noteId) {

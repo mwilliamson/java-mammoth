@@ -21,11 +21,6 @@ import static org.zwobble.mammoth.internal.util.Lists.*;
 import static org.zwobble.mammoth.internal.util.Strings.trimLeft;
 
 public class DocumentReader {
-    @FunctionalInterface
-    private interface PartWithBodyReader {
-        <T> T readPart(String name, BiFunction<XmlElement, BodyXmlReader, T> read, Optional<T> defaultValue);
-    }
-
     public static InternalResult<Document> readDocument(Optional<Path> path, Archive zipFile) {
         PartPaths partPaths = findPartPaths(zipFile);
 
@@ -33,20 +28,7 @@ public class DocumentReader {
         Numbering numbering = readNumbering(zipFile, partPaths);
         ContentTypes contentTypes = readContentTypes(zipFile);
         FileReader fileReader = new PathRelativeFileReader(path);
-        PartWithBodyReader partReader = new PartWithBodyReader() {
-            @Override
-            public <T> T readPart(String name, BiFunction<XmlElement, BodyXmlReader, T> readPart, Optional<T> defaultValue) {
-                Relationships relationships = readRelationships(zipFile, findRelationshipsPathFor(name));
-                BodyXmlReader bodyReader = new BodyXmlReader(styles, numbering, relationships, contentTypes, zipFile, fileReader);
-                if (defaultValue.isPresent()) {
-                    return tryParseOfficeXml(zipFile, name)
-                        .map(root -> readPart.apply(root, bodyReader))
-                        .orElse(defaultValue.get());
-                } else {
-                    return readPart.apply(parseOfficeXml(zipFile, name), bodyReader);
-                }
-            }
-        };
+        PartWithBodyReader partReader = new PartWithBodyReader(zipFile, contentTypes, fileReader, numbering, styles);
         return InternalResult.flatMap(
             readNotes(partReader, partPaths),
             readComments(partReader, partPaths),
@@ -56,6 +38,40 @@ public class DocumentReader {
                 Optional.empty()
             )
         );
+    }
+
+    private static class PartWithBodyReader {
+        private final Archive zipFile;
+        private final ContentTypes contentTypes;
+        private final FileReader fileReader;
+        private final Numbering numbering;
+        private final Styles styles;
+
+        public PartWithBodyReader(
+            Archive zipFile,
+            ContentTypes contentTypes,
+            FileReader fileReader,
+            Numbering numbering,
+            Styles styles
+        ) {
+            this.zipFile = zipFile;
+            this.contentTypes = contentTypes;
+            this.fileReader = fileReader;
+            this.numbering = numbering;
+            this.styles = styles;
+        }
+
+        <T> T readPart(String name, BiFunction<XmlElement, BodyXmlReader, T> readPart, Optional<T> defaultValue) {
+            Relationships relationships = readRelationships(zipFile, findRelationshipsPathFor(name));
+            BodyXmlReader bodyReader = new BodyXmlReader(styles, numbering, relationships, contentTypes, zipFile, fileReader);
+            if (defaultValue.isPresent()) {
+                return tryParseOfficeXml(zipFile, name)
+                    .map(root -> readPart.apply(root, bodyReader))
+                    .orElse(defaultValue.get());
+            } else {
+                return readPart.apply(parseOfficeXml(zipFile, name), bodyReader);
+            }
+        }
     }
 
     public static class PartPaths {
