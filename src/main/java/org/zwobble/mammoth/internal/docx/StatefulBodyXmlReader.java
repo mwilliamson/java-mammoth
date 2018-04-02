@@ -130,6 +130,7 @@ class StatefulBodyXmlReader {
             case "w:smartTag":
             case "w:drawing":
             case "v:group":
+            case "v:rect":
             case "v:roundrect":
             case "v:shape":
             case "v:textbox":

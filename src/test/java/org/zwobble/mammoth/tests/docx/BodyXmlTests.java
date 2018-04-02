@@ -1290,6 +1290,7 @@ public class BodyXmlTests {
         assertChildrenAreReadNormally("w:smartTag");
         assertChildrenAreReadNormally("w:drawing");
         assertChildrenAreReadNormally("v:group");
+        assertChildrenAreReadNormally("v:rect");
         assertChildrenAreReadNormally("v:roundrect");
         assertChildrenAreReadNormally("v:shape");
         assertChildrenAreReadNormally("v:textbox");
