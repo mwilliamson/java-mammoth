@@ -27,17 +27,17 @@ public class DefaultStyles {
 
         "r[style-name='Strong'] => strong",
 
-        "p[style-name='footnote text'] => p",
+        "p[style-name='footnote text'] => p:fresh",
         "r[style-name='footnote reference'] =>",
-        "p[style-name='endnote text'] => p",
+        "p[style-name='endnote text'] => p:fresh",
         "r[style-name='endnote reference'] =>",
-        "p[style-name='annotation text'] => p",
+        "p[style-name='annotation text'] => p:fresh",
         "r[style-name='annotation reference'] =>",
 
         // LibreOffice
-        "p[style-name='Footnote'] => p",
+        "p[style-name='Footnote'] => p:fresh",
         "r[style-name='Footnote anchor'] =>",
-        "p[style-name='Endnote'] => p",
+        "p[style-name='Endnote'] => p:fresh",
         "r[style-name='Endnote anchor'] =>",
 
         "p:unordered-list(1) => ul > li:fresh",
