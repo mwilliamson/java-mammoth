@@ -257,7 +257,7 @@ public class DocumentToHtml {
 
         @Override
         public List<HtmlNode> visit(TableRow tableRow, Context context) {
-            return list(Html.element("tr", convertChildrenToHtml(tableRow, context)));
+            return list(Html.element("tr", Lists.cons(Html.FORCE_WRITE, convertChildrenToHtml(tableRow, context))));
         }
 
         @Override

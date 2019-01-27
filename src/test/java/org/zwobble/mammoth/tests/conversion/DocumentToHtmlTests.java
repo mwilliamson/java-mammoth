@@ -250,9 +250,11 @@ public class DocumentToHtmlTests {
 
             deepEquals(list(Html.element("table", list(
                 Html.element("tr", list(
+                    Html.FORCE_WRITE,
                     Html.element("td", list(Html.FORCE_WRITE, Html.element("p", list(Html.text("Top left"))))),
                     Html.element("td", list(Html.FORCE_WRITE, Html.element("p", list(Html.text("Top right"))))))),
                 Html.element("tr", list(
+                    Html.FORCE_WRITE,
                     Html.element("td", list(Html.FORCE_WRITE, Html.element("p", list(Html.text("Bottom left"))))),
                     Html.element("td", list(Html.FORCE_WRITE, Html.element("p", list(Html.text("Bottom right"))))))))))));
     }
@@ -285,11 +287,11 @@ public class DocumentToHtmlTests {
 
             deepEquals(list(Html.element("table", list(
                 Html.element("thead", list(
-                    Html.element("tr", list(Html.element("th", list(Html.FORCE_WRITE)))),
-                    Html.element("tr", list(Html.element("th", list(Html.FORCE_WRITE))))
+                    Html.element("tr", list(Html.FORCE_WRITE, Html.element("th", list(Html.FORCE_WRITE)))),
+                    Html.element("tr", list(Html.FORCE_WRITE, Html.element("th", list(Html.FORCE_WRITE))))
                 )),
                 Html.element("tbody", list(
-                    Html.element("tr", list(Html.element("td", list(Html.FORCE_WRITE))))
+                    Html.element("tr", list(Html.FORCE_WRITE, Html.element("td", list(Html.FORCE_WRITE))))
                 ))
             ))))
         );
@@ -304,7 +306,7 @@ public class DocumentToHtmlTests {
 
             deepEquals(list(Html.element("table", list(
                 Html.element("thead", list(
-                    Html.element("tr", list(Html.element("th", list(Html.FORCE_WRITE))))
+                    Html.element("tr", list(Html.FORCE_WRITE, Html.element("th", list(Html.FORCE_WRITE))))
                 ))
             ))))
         );
@@ -323,6 +325,7 @@ public class DocumentToHtmlTests {
 
             deepEquals(list(Html.element("table", list(
                 Html.element("tr", list(
+                    Html.FORCE_WRITE,
                     Html.element("td", map("colspan", "2"), list(Html.FORCE_WRITE, Html.element("p", list(Html.text("Top left"))))),
                     Html.element("td", list(Html.FORCE_WRITE, Html.element("p", list(Html.text("Top right")))))
                 ))
@@ -340,6 +343,7 @@ public class DocumentToHtmlTests {
             ))),
             deepEquals(list(Html.element("table", list(
                 Html.element("tr", list(
+                    Html.FORCE_WRITE,
                     Html.element("td", map("rowspan", "2"), list(Html.FORCE_WRITE))
                 ))
             ))))

@@ -5,6 +5,8 @@
 * Fix: default style mappings caused footnotes, endnotes and comments
   containing multiple paragraphs to be converted into a single paragraph.
 
+* Preserve empty table rows.
+
 # 1.4.0
 
 * Add anchor on hyperlinks as fragment if present.
