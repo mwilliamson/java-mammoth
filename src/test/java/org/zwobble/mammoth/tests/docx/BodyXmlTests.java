@@ -1441,7 +1441,10 @@ public class BodyXmlTests {
 
     private static Numbering numberingMap(Map<String, Map<String, NumberingLevel>> numbering) {
         return new Numbering(
-            numbering,
+            numbering.entrySet().stream().collect(Collectors.toMap(
+                entry -> entry.getKey(),
+                entry -> new Numbering.AbstractNum(entry.getValue())
+            )),
             numbering.keySet().stream().collect(Collectors.toMap(
                 numId -> numId,
                 numId -> new Numbering.Num(Optional.of(numId))

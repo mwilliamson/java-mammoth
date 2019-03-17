@@ -12,19 +12,19 @@ import static org.zwobble.mammoth.internal.util.Maps.toMap;
 
 public class NumberingXml {
     public static Numbering readNumberingXmlElement(XmlElement element) {
-        Map<String, Map<String, NumberingLevel>> abstractNums = readAbstractNums(element.findChildren("w:abstractNum"));
+        Map<String, Numbering.AbstractNum> abstractNums = readAbstractNums(element.findChildren("w:abstractNum"));
         Map<String, Numbering.Num> nums = readNums(element.findChildren("w:num"));
         return new Numbering(abstractNums, nums);
     }
 
-    private static Map<String, Map<String, NumberingLevel>> readAbstractNums(XmlElementList children) {
+    private static Map<String, Numbering.AbstractNum> readAbstractNums(XmlElementList children) {
         return toMap(children, NumberingXml::readAbstractNum);
     }
 
-    private static Map.Entry<String, Map<String, NumberingLevel>> readAbstractNum(XmlElement element) {
+    private static Map.Entry<String, Numbering.AbstractNum> readAbstractNum(XmlElement element) {
         // TODO: in python-mammoth, we allow None here. Check whether that's actually possible or not
         String abstractNumId = element.getAttribute("w:abstractNumId");
-        return entry(abstractNumId, readAbstractNumLevels(element));
+        return entry(abstractNumId, new Numbering.AbstractNum(readAbstractNumLevels(element)));
     }
 
     private static Map<String, NumberingLevel> readAbstractNumLevels(XmlElement element) {
