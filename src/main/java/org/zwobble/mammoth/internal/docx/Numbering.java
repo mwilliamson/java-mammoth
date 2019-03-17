@@ -9,16 +9,31 @@ import static org.zwobble.mammoth.internal.util.Maps.lookup;
 import static org.zwobble.mammoth.internal.util.Maps.map;
 
 public class Numbering {
-    public static final Numbering EMPTY = new Numbering(map());
+    public static class Num {
+        private final Optional<String> abstractNumId;
 
-    private final Map<String, Map<String, NumberingLevel>> numbering;
+        public Num(Optional<String> abstractNumId) {
+            this.abstractNumId = abstractNumId;
+        }
+    }
 
-    public Numbering(Map<String, Map<String, NumberingLevel>> numbering) {
-        this.numbering = numbering;
+    public static final Numbering EMPTY = new Numbering(map(), map());
+
+    private final Map<String, Map<String, NumberingLevel>> abstractNums;
+    private final Map<String, Num> nums;
+
+    public Numbering(
+        Map<String, Map<String, NumberingLevel>> abstractNums,
+        Map<String, Num> nums
+    ) {
+        this.abstractNums = abstractNums;
+        this.nums = nums;
     }
 
     public Optional<NumberingLevel> findLevel(String numId, String level) {
-        return lookup(numbering, numId)
+        return lookup(nums, numId)
+            .flatMap(num -> num.abstractNumId)
+            .flatMap(abstractNumId -> lookup(this.abstractNums, abstractNumId))
             .flatMap(levels -> lookup(levels, level));
     }
 }

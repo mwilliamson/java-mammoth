@@ -8,13 +8,13 @@ import java.util.Map;
 import java.util.Optional;
 
 import static org.zwobble.mammoth.internal.util.Maps.entry;
-import static org.zwobble.mammoth.internal.util.Maps.lookup;
 import static org.zwobble.mammoth.internal.util.Maps.toMap;
 
 public class NumberingXml {
     public static Numbering readNumberingXmlElement(XmlElement element) {
         Map<String, Map<String, NumberingLevel>> abstractNums = readAbstractNums(element.findChildren("w:abstractNum"));
-        return new Numbering(readNums(element.findChildren("w:num"), abstractNums));
+        Map<String, Numbering.Num> nums = readNums(element.findChildren("w:num"));
+        return new Numbering(abstractNums, nums);
     }
 
     private static Map<String, Map<String, NumberingLevel>> readAbstractNums(XmlElementList children) {
@@ -38,20 +38,14 @@ public class NumberingXml {
         return entry(levelIndex, new NumberingLevel(levelIndex, isOrdered));
     }
 
-    private static Map<String, Map<String, NumberingLevel>> readNums(
-        XmlElementList numElements,
-        Map<String, Map<String, NumberingLevel>> abstractNums
-    ) {
-        return toMap(numElements, numElement -> readNum(numElement, abstractNums));
+    private static Map<String, Numbering.Num> readNums(XmlElementList numElements) {
+        return toMap(numElements, NumberingXml::readNum);
     }
 
-    private static Map.Entry<String,Map<String,NumberingLevel>> readNum(
-        XmlElement numElement,
-        Map<String, Map<String, NumberingLevel>> abstractNums
-    ) {
+    private static Map.Entry<String, Numbering.Num> readNum(XmlElement numElement) {
         // TODO: in python-mammoth, we allow None here. Check whether that's actually possible or not
         String numId = numElement.getAttribute("w:numId");
-        String abstractNumId = numElement.findChild("w:abstractNumId").get().getAttribute("w:val");
-        return entry(numId, lookup(abstractNums, abstractNumId).get());
+        Optional<String> abstractNumId = numElement.findChildOrEmpty("w:abstractNumId").getAttributeOrNone("w:val");
+        return entry(numId, new Numbering.Num(abstractNumId));
     }
 }

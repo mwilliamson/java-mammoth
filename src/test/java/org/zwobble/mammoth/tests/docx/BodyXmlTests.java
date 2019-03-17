@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -197,7 +198,7 @@ public class BodyXmlTests {
                     element("w:ilvl", map("w:val", "1")),
                     element("w:numId", map("w:val", "42"))))))));
 
-        Numbering numbering = new Numbering(map("42", map("1", NumberingLevel.ordered("1"))));
+        Numbering numbering = numberingMap(map("42", map("1", NumberingLevel.ordered("1"))));
 
         assertThat(
             readSuccess(bodyReader(numbering), element),
@@ -212,7 +213,7 @@ public class BodyXmlTests {
                 element("w:numPr", map(), list(
                     element("w:numId", map("w:val", "42"))))))));
 
-        Numbering numbering = new Numbering(map("42", map("1", NumberingLevel.ordered("1"))));
+        Numbering numbering = numberingMap(map("42", map("1", NumberingLevel.ordered("1"))));
 
         assertThat(
             readSuccess(bodyReader(numbering), element),
@@ -227,7 +228,7 @@ public class BodyXmlTests {
                 element("w:numPr", map(), list(
                     element("w:ilvl", map("w:val", "1"))))))));
 
-        Numbering numbering = new Numbering(map("42", map("1", NumberingLevel.ordered("1"))));
+        Numbering numbering = numberingMap(map("42", map("1", NumberingLevel.ordered("1"))));
 
         assertThat(
             readSuccess(bodyReader(numbering), element),
@@ -1436,5 +1437,15 @@ public class BodyXmlTests {
 
     private static Relationship imageRelationship(String relationshipId, String target) {
         return new Relationship(relationshipId, target, "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image");
+    }
+
+    private static Numbering numberingMap(Map<String, Map<String, NumberingLevel>> numbering) {
+        return new Numbering(
+            numbering,
+            numbering.keySet().stream().collect(Collectors.toMap(
+                numId -> numId,
+                numId -> new Numbering.Num(Optional.of(numId))
+            ))
+        );
     }
 }
