@@ -1,6 +1,7 @@
 package org.zwobble.mammoth.tests.docx;
 
 import org.junit.jupiter.api.Test;
+import org.zwobble.mammoth.internal.documents.NumberingStyle;
 import org.zwobble.mammoth.internal.docx.Numbering;
 import org.zwobble.mammoth.internal.docx.Styles;
 import org.zwobble.mammoth.internal.xml.XmlElement;
@@ -47,6 +48,36 @@ public class NumberingXmlTests {
         Numbering numbering = readNumbering(SAMPLE_NUMBERING_XML);
         assertEquals(true, numbering.findLevel("47", "1").get().isOrdered());
     }
+
+    @Test
+    public void whenAbstractNumHasNumStyleLinkThenStyleIsUsedToFindNum() {
+        Numbering numbering = readNumberingXmlElement(
+            element("w:numbering", list(
+                element("w:abstractNum", map("w:abstractNumId", "100"), list(
+                    element("w:lvl", map("w:ilvl", "0"), list(
+                        element("w:numFmt", map("w:val", "decimal"))
+                    ))
+                )),
+                element("w:abstractNum", map("w:abstractNumId", "101"), list(
+                    element("w:numStyleLink", map("w:val", "List1"))
+                )),
+                element("w:num", map("w:numId", "200"), list(
+                    element("w:abstractNumId", map("w:val", "100"))
+                )),
+                element("w:num", map("w:numId", "201"), list(
+                    element("w:abstractNumId", map("w:val", "101"))
+                ))
+            )),
+            new Styles(
+                map(),
+                map(),
+                map(),
+                map("List1", new NumberingStyle(Optional.of("200")))
+            )
+        );
+        assertEquals(true, numbering.findLevel("201", "0").get().isOrdered());
+    }
+
 
     private Numbering readNumbering(XmlElement element) {
         return readNumberingXmlElement(element, Styles.EMPTY);

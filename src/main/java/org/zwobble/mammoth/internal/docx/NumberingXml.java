@@ -14,7 +14,7 @@ public class NumberingXml {
     public static Numbering readNumberingXmlElement(XmlElement element, Styles styles) {
         Map<String, Numbering.AbstractNum> abstractNums = readAbstractNums(element.findChildren("w:abstractNum"));
         Map<String, Numbering.Num> nums = readNums(element.findChildren("w:num"));
-        return new Numbering(abstractNums, nums);
+        return new Numbering(abstractNums, nums, styles);
     }
 
     private static Map<String, Numbering.AbstractNum> readAbstractNums(XmlElementList children) {
@@ -24,7 +24,11 @@ public class NumberingXml {
     private static Map.Entry<String, Numbering.AbstractNum> readAbstractNum(XmlElement element) {
         // TODO: in python-mammoth, we allow None here. Check whether that's actually possible or not
         String abstractNumId = element.getAttribute("w:abstractNumId");
-        return entry(abstractNumId, new Numbering.AbstractNum(readAbstractNumLevels(element)));
+        Numbering.AbstractNum abstractNum = new Numbering.AbstractNum(
+            readAbstractNumLevels(element),
+            element.findChildOrEmpty("w:numStyleLink").getAttributeOrNone("w:val")
+        );
+        return entry(abstractNumId, abstractNum);
     }
 
     private static Map<String, NumberingLevel> readAbstractNumLevels(XmlElement element) {
