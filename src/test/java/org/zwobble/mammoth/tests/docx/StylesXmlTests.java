@@ -81,6 +81,43 @@ public class StylesXmlTests {
         assertEquals(Optional.empty(), styles.findCharacterStyleById("Heading1Char").get().getName());
     }
 
+    @Test
+    public void numberingStyleIsNoneIfNoStyleWithThatIdExists() {
+        XmlElement element = element("w:styles");
+
+        Styles styles = readStylesXmlElement(element);
+
+        assertEquals(Optional.empty(), styles.findNumberingStyleById("List1"));
+    }
+
+    @Test
+    public void numberingStyleHasNoneNumIdIfStyleHasNoParagraphProperties() {
+        XmlElement element = element("w:styles", list(
+            element("w:style", map("w:type", "numbering", "w:styleId", "List1"))
+        ));
+
+        Styles styles = readStylesXmlElement(element);
+
+        assertEquals(Optional.empty(), styles.findNumberingStyleById("List1").get().getNumId());
+    }
+
+    @Test
+    public void numberingStyleHasNumIdReadFromParagraphProperties() {
+        XmlElement element = element("w:styles", list(
+            element("w:style", map("w:type", "numbering", "w:styleId", "List1"), list(
+                element("w:pPr", list(
+                    element("w:numPr", list(
+                        element("w:numId", map("w:val", "42"))
+                    ))
+                ))
+            ))
+        ));
+
+        Styles styles = readStylesXmlElement(element);
+
+        assertEquals(Optional.of("42"), styles.findNumberingStyleById("List1").get().getNumId());
+    }
+
     private XmlElement nameElement(String name) {
         return element("w:name", map("w:val", name));
     }

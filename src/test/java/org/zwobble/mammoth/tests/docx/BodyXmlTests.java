@@ -82,6 +82,7 @@ public class BodyXmlTests {
         Styles styles = new Styles(
             map("Heading1", style),
             map(),
+            map(),
             map()
         );
         assertThat(
@@ -441,6 +442,7 @@ public class BodyXmlTests {
         Styles styles = new Styles(
             map(),
             map("Heading1Char", style),
+            map(),
             map()
         );
         assertThat(
@@ -772,7 +774,8 @@ public class BodyXmlTests {
         Styles styles = new Styles(
             map(),
             map(),
-            map("TableNormal", style)
+            map("TableNormal", style),
+            map()
         );
         assertThat(
             readSuccess(bodyReader(styles), element),
