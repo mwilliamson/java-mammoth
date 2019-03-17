@@ -26,7 +26,7 @@ public class DocumentReader {
         PartPaths partPaths = findPartPaths(zipFile);
 
         Styles styles = readStyles(zipFile, partPaths);
-        Numbering numbering = readNumbering(zipFile, partPaths);
+        Numbering numbering = readNumbering(zipFile, partPaths, styles);
         ContentTypes contentTypes = readContentTypes(zipFile);
         FileReader fileReader = new PathRelativeFileReader(path);
         PartWithBodyReader partReader = new PartWithBodyReader(zipFile, contentTypes, fileReader, numbering, styles);
@@ -212,9 +212,9 @@ public class DocumentReader {
             .orElse(Styles.EMPTY);
     }
 
-    private static Numbering readNumbering(Archive file, PartPaths partPaths) {
+    private static Numbering readNumbering(Archive file, PartPaths partPaths, Styles styles) {
         return tryParseOfficeXml(file, partPaths.getNumbering())
-            .map(NumberingXml::readNumberingXmlElement)
+            .map((XmlElement element) -> NumberingXml.readNumberingXmlElement(element, styles))
             .orElse(Numbering.EMPTY);
     }
 

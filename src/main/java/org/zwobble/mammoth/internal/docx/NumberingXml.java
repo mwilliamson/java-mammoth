@@ -11,7 +11,7 @@ import static org.zwobble.mammoth.internal.util.Maps.entry;
 import static org.zwobble.mammoth.internal.util.Maps.toMap;
 
 public class NumberingXml {
-    public static Numbering readNumberingXmlElement(XmlElement element) {
+    public static Numbering readNumberingXmlElement(XmlElement element, Styles styles) {
         Map<String, Numbering.AbstractNum> abstractNums = readAbstractNums(element.findChildren("w:abstractNum"));
         Map<String, Numbering.Num> nums = readNums(element.findChildren("w:num"));
         return new Numbering(abstractNums, nums);

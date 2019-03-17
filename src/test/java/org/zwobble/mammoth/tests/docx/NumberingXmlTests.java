@@ -2,6 +2,7 @@ package org.zwobble.mammoth.tests.docx;
 
 import org.junit.jupiter.api.Test;
 import org.zwobble.mammoth.internal.docx.Numbering;
+import org.zwobble.mammoth.internal.docx.Styles;
 import org.zwobble.mammoth.internal.xml.XmlElement;
 
 import java.util.Optional;
@@ -24,26 +25,30 @@ public class NumberingXmlTests {
 
     @Test
     public void findLevelReturnsNoneIfNumWithIdCannotBeFound() {
-        Numbering numbering = readNumberingXmlElement(element("w:numbering"));
+        Numbering numbering = readNumbering(element("w:numbering"));
         assertEquals(Optional.empty(), numbering.findLevel("47", "0"));
     }
 
     @Test
     public void levelIncludesLevelIndex() {
-        Numbering numbering = readNumberingXmlElement(SAMPLE_NUMBERING_XML);
+        Numbering numbering = readNumbering(SAMPLE_NUMBERING_XML);
         assertEquals("0", numbering.findLevel("47", "0").get().getLevelIndex());
         assertEquals("1", numbering.findLevel("47", "1").get().getLevelIndex());
     }
 
     @Test
     public void listIsNotOrderedIfFormattedAsBullet() {
-        Numbering numbering = readNumberingXmlElement(SAMPLE_NUMBERING_XML);
+        Numbering numbering = readNumbering(SAMPLE_NUMBERING_XML);
         assertEquals(false, numbering.findLevel("47", "0").get().isOrdered());
     }
 
     @Test
     public void listIsOrderedIfFormattedAsDecimal() {
-        Numbering numbering = readNumberingXmlElement(SAMPLE_NUMBERING_XML);
+        Numbering numbering = readNumbering(SAMPLE_NUMBERING_XML);
         assertEquals(true, numbering.findLevel("47", "1").get().isOrdered());
+    }
+
+    private Numbering readNumbering(XmlElement element) {
+        return readNumberingXmlElement(element, Styles.EMPTY);
     }
 }
