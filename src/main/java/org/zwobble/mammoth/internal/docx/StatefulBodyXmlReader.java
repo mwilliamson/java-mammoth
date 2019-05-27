@@ -164,6 +164,8 @@ class StatefulBodyXmlReader {
                 return EMPTY_SUCCESS;
 
             case "m:oMathPara":
+            	return readElements(element.getChildren());
+            case "m:oMath":
             	return readMathPara(element);
             default:
                 String warning = "An unrecognised element was ignored: " + element.getName();
