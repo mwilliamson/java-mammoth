@@ -23,7 +23,7 @@ public class XmlWriter {
 
     private static XMLStreamWriter createXmlWriter(ByteArrayOutputStream outputStream) throws XMLStreamException {
         XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
-        return outputFactory.createXMLStreamWriter(outputStream);
+        return outputFactory.createXMLStreamWriter(outputStream, "UTF-8");
     }
 
     private final XMLStreamWriter writer;

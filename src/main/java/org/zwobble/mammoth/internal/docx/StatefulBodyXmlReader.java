@@ -81,6 +81,9 @@ class StatefulBodyXmlReader {
                 return readRun(element);
             case "w:p":
                 return readParagraph(element);
+           
+            case "w:sym":
+            	return readSymbol(element);
 
             case "w:fldChar":
                 return readFieldChar(element);
@@ -189,6 +192,20 @@ class StatefulBodyXmlReader {
         );
     }
 
+    private ReadResult readSymbol(XmlElement element) {
+	  	ReadResult readResult = ReadResult.EMPTY_SUCCESS;
+	  	try {
+	  		String charAttr = element.getAttribute("w:char");
+	  		int intChar = Integer.parseInt(charAttr, 16);
+	  		String symbol = Character.toString((char)intChar);
+	  		readResult = success(new Text(symbol));
+	  	} catch (Exception e) {
+	  		 String warning = "A symbol element cannot be read: " + element.getName();
+	  		 readResult = ReadResult.emptyWithWarning(warning);
+			}
+			return readResult;
+		}
+    
     private Optional<String> currentHyperlinkHref() {
         return tryGetLast(lazyFilter(this.complexFieldStack, HyperlinkComplexField.class))
             .map(field -> field.href);
