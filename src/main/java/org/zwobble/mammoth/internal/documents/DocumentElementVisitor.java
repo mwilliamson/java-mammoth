@@ -18,5 +18,7 @@ public interface DocumentElementVisitor<T, U> {
     T visit(CommentReference commentReference, U context);
 
     T visit(Image image, U context);
+    
+    T visit(Math math, U context);
 
 }

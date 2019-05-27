@@ -90,6 +90,15 @@ public class Html {
             public List<HtmlNode> visit(HtmlForceWrite forceWrite) {
                 return list(forceWrite);
             }
+
+						@Override
+						public List<HtmlNode> visit(HtmlCommentElement commentElement) {
+							 if (commentElement.getCommentContent().isEmpty()) {
+                 return list();
+             } else {
+                 return list(commentElement);
+             }
+						}
         });
     }
 
@@ -129,6 +138,11 @@ public class Html {
             public HtmlNode visit(HtmlForceWrite forceWrite) {
                 return forceWrite;
             }
+
+						@Override
+						public HtmlNode visit(HtmlCommentElement commentElement) {
+							return commentElement;
+						}
         });
     }
 

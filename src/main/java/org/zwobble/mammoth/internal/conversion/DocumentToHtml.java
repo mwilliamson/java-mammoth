@@ -2,7 +2,9 @@ package org.zwobble.mammoth.internal.conversion;
 
 import org.zwobble.mammoth.images.ImageConverter;
 import org.zwobble.mammoth.internal.documents.*;
+import org.zwobble.mammoth.internal.documents.Math;
 import org.zwobble.mammoth.internal.html.Html;
+import org.zwobble.mammoth.internal.html.HtmlCommentElement;
 import org.zwobble.mammoth.internal.html.HtmlNode;
 import org.zwobble.mammoth.internal.results.InternalResult;
 import org.zwobble.mammoth.internal.styles.HtmlPath;
@@ -359,6 +361,16 @@ public class DocumentToHtml {
                     }
                 })
                 .orElse(list());
+        }
+        
+        @Override
+        public List<HtmlNode> visit(Math math, Context context) {
+        	String mathXmlFragment = math.getMathXMLFragment();
+        	if (mathXmlFragment.isEmpty()) {
+        		return list();
+        	} else {
+        		return list(new HtmlCommentElement(mathXmlFragment));
+        	}
         }
     }
 

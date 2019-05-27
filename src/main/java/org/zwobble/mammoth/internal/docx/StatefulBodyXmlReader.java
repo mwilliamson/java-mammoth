@@ -3,12 +3,14 @@ package org.zwobble.mammoth.internal.docx;
 import org.zwobble.mammoth.internal.archives.Archive;
 import org.zwobble.mammoth.internal.archives.Archives;
 import org.zwobble.mammoth.internal.documents.*;
+import org.zwobble.mammoth.internal.documents.Math;
 import org.zwobble.mammoth.internal.results.InternalResult;
 import org.zwobble.mammoth.internal.util.*;
 import org.zwobble.mammoth.internal.xml.XmlElement;
 import org.zwobble.mammoth.internal.xml.XmlElementLike;
 import org.zwobble.mammoth.internal.xml.XmlElementList;
 import org.zwobble.mammoth.internal.xml.XmlNode;
+import org.zwobble.mammoth.internal.xml.XmlWriter;
 
 import java.util.*;
 import java.util.function.Function;
@@ -161,6 +163,8 @@ class StatefulBodyXmlReader {
             case "w:tcPr":
                 return EMPTY_SUCCESS;
 
+            case "m:oMathPara":
+            	return readMathPara(element);
             default:
                 String warning = "An unrecognised element was ignored: " + element.getName();
                 return ReadResult.emptyWithWarning(warning);
@@ -206,6 +210,18 @@ class StatefulBodyXmlReader {
 			return readResult;
 		}
     
+    private ReadResult readMathPara(XmlElement element) {
+    	ReadResult readResult = ReadResult.EMPTY_SUCCESS;
+    	try { 
+    		String string = XmlWriter.toString(element, OfficeXml.XML_NAMESPACES, true);
+    		readResult = ReadResult.success(new Math(string));
+    	} catch (Throwable e) {
+    		String warning = "A math element cannot be read: " + element.getName();
+    		readResult = ReadResult.emptyWithWarning(warning);
+			}
+			return readResult;
+    }
+
     private Optional<String> currentHyperlinkHref() {
         return tryGetLast(lazyFilter(this.complexFieldStack, HyperlinkComplexField.class))
             .map(field -> field.href);

@@ -11,15 +11,24 @@ import java.util.Optional;
 
 public class XmlWriter {
     public static String toString(XmlElement element, NamespacePrefixes namespaces) {
-        try {
-            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            XmlWriter writer = new XmlWriter(createXmlWriter(outputStream), namespaces);
-            writer.writeDocument(element);
-            return new String(outputStream.toByteArray(), StandardCharsets.UTF_8);
-        } catch (XMLStreamException exception) {
-            throw new RuntimeException(exception);
-        }
+      return toString(element, namespaces, false);
     }
+    
+    public static String toString(XmlElement element, NamespacePrefixes namespaces, boolean shouldCreateDocumentFragment) {
+      try {
+          ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+          XmlWriter writer = new XmlWriter(createXmlWriter(outputStream), namespaces);
+          if(shouldCreateDocumentFragment) {
+          	writer.writeDocumentFragment(element);
+          } else {
+          	writer.writeDocument(element);
+          }
+          
+          return new String(outputStream.toByteArray(), StandardCharsets.UTF_8);
+      } catch (XMLStreamException exception) {
+          throw new RuntimeException(exception);
+      }
+  }
 
     private static XMLStreamWriter createXmlWriter(ByteArrayOutputStream outputStream) throws XMLStreamException {
         XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
@@ -34,13 +43,17 @@ public class XmlWriter {
         this.namespaces = namespaces;
     }
 
+    private void writeDocumentFragment(XmlElement element) throws XMLStreamException {
+      writeStartElement(element);
+      writeNamespaces(namespaces);
+      writeAttributes(element);
+      writeNodes(element.getChildren());
+      writer.writeEndElement();
+  }
+    
     private void writeDocument(XmlElement element) throws XMLStreamException {
         writer.writeStartDocument("UTF-8", "1.0");
-        writeStartElement(element);
-        writeNamespaces(namespaces);
-        writeAttributes(element);
-        writeNodes(element.getChildren());
-        writer.writeEndElement();
+        writeDocumentFragment(element);
         writer.writeEndDocument();
     }
 

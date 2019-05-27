@@ -8,11 +8,13 @@ public interface HtmlNode {
         void visit(HtmlElement element);
         void visit(HtmlTextNode node);
         void visit(HtmlForceWrite forceWrite);
+        void visit(HtmlCommentElement commentElement);
     }
 
     interface Mapper<T> {
         T visit(HtmlElement element);
         T visit(HtmlTextNode node);
         T visit(HtmlForceWrite forceWrite);
+        T visit(HtmlCommentElement commentElement);
     }
 }

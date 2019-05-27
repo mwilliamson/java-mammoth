@@ -10,7 +10,7 @@ import static org.zwobble.mammoth.internal.util.Lists.eagerFlatMap;
 import static org.zwobble.mammoth.internal.util.Lists.list;
 
 public class OfficeXml {
-    private static final NamespacePrefixes XML_NAMESPACES = NamespacePrefixes.builder()
+    protected static final NamespacePrefixes XML_NAMESPACES = NamespacePrefixes.builder()
         .put("w", "http://schemas.openxmlformats.org/wordprocessingml/2006/main")
         .put("wp", "http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing")
         .put("a", "http://schemas.openxmlformats.org/drawingml/2006/main")
@@ -21,6 +21,7 @@ public class OfficeXml {
         .put("v", "urn:schemas-microsoft-com:vml")
         .put("mc", "http://schemas.openxmlformats.org/markup-compatibility/2006")
         .put("office-word", "urn:schemas-microsoft-com:office:word")
+        .put("m", "http://schemas.openxmlformats.org/officeDocument/2006/math")
         .build();
 
     public static XmlElement parseXml(InputStream inputStream) {

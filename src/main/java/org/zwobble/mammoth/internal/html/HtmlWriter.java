@@ -35,6 +35,15 @@ public class HtmlWriter {
             @Override
             public void visit(HtmlForceWrite forceWrite) {
             }
+
+            @Override
+            public void visit(HtmlCommentElement commentElement) {
+            	builder
+            	.append("<!--")
+            	.append(commentElement.getCommentContent())
+            	.append("-->");
+
+            }
         });
     }
 
