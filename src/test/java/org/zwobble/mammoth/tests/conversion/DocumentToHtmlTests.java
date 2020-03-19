@@ -483,6 +483,7 @@ public class DocumentToHtmlTests {
     public void imagesAreConvertedToImageTagsWithDataUriByDefault() {
         Image image = new Image(
             Optional.empty(),
+            "",
             Optional.of("image/png"),
             () -> new ByteArrayInputStream(new byte[]{97, 98, 99}));
         assertThat(
@@ -494,6 +495,7 @@ public class DocumentToHtmlTests {
     public void imagesHaveAltTagsIfAvailable() {
         Image image = new Image(
             Optional.of("It's a hat"),
+            "",
             Optional.of("image/png"),
             () -> new ByteArrayInputStream(new byte[]{97, 98, 99}));
         assertThat(

@@ -344,6 +344,11 @@ public class DocumentToHtml {
                             }
 
                             @Override
+                            public String getPath() {
+                              return image.getPath();
+                            }
+                            
+                            @Override
                             public String getContentType() {
                                 return contentType;
                             }

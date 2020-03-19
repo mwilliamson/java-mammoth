@@ -600,7 +600,7 @@ class StatefulBodyXmlReader {
 
     private ReadResult readImage(String imagePath, Optional<String> altText, InputStreamSupplier open) {
         Optional<String> contentType = contentTypes.findContentType(imagePath);
-        Image image = new Image(altText, contentType, open);
+        Image image = new Image(altText, imagePath, contentType, open);
 
         String contentTypeString = contentType.orElse("(unknown)");
         if (IMAGE_TYPES_SUPPORTED_BY_BROWSERS.contains(contentTypeString)) {

@@ -6,6 +6,7 @@ import java.util.Optional;
 
 public interface Image {
     Optional<String> getAltText();
+    String getPath();
     String getContentType();
     InputStream getInputStream() throws IOException;
 }

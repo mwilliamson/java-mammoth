@@ -9,11 +9,15 @@ import java.util.Optional;
 public class Image implements DocumentElement {
 
     private final Optional<String> altText;
+    private String path = "";
     private final Optional<String> contentType;
     private final InputStreamSupplier open;
 
-    public Image(Optional<String> altText, Optional<String> contentType, InputStreamSupplier open) {
+    public Image(Optional<String> altText, String path, Optional<String> contentType, InputStreamSupplier open) {
         this.altText = altText;
+        if(path != null) {
+          this.path = path;
+        }
         this.contentType = contentType;
         this.open = open;
     }
@@ -24,6 +28,10 @@ public class Image implements DocumentElement {
 
     public Optional<String> getContentType() {
         return contentType;
+    }
+    
+    public String getPath() {
+      return path;
     }
 
     public InputStream open() throws IOException {
