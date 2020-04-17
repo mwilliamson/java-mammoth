@@ -105,7 +105,7 @@ Mammoth maps some common .docx styles to HTML elements.
 For instance,
 a paragraph with the style name `Heading 1` is converted to a `h1` element.
 You can add custom style maps by calling `addStyleMap(String)`.
-A description of the syntax for style maps can be found in the section "Writing style maps".
+A description of the syntax for style maps can be found in the section ["Writing style maps"](#writing-style-maps).
 For instance, if paragraphs with the style name `Section Title` should be converted to `h1` elements,
 and paragraphs with the style name `Subsection Title` should be converted to `h2` elements:
 
@@ -241,7 +241,7 @@ Methods:
 * `DocumentConverter addStyleMap(String styleMap)`:
   add a style map to specify the mapping of Word styles to HTML.
   The most recently added style map has the greatest precedence.
-  See the section "Writing style maps" for a description of the syntax.
+  See the section ["Writing style maps"](#writing-style-maps) for a description of the syntax.
 
 * `DocumentConverter disableDefaultStyleMap()`: by default,
   any added style maps are combined with the default style map.
