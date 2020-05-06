@@ -252,7 +252,7 @@ class StatefulBodyXmlReader {
     private boolean readBooleanElement(XmlElementLike properties, String tagName) {
         return properties.findChild(tagName)
             .map(child -> child.getAttributeOrNone("w:val")
-                .map(value -> !value.equals("false") && !value.equals("0"))
+                .map(value -> !value.equals("false") && !value.equals("none") && !value.equals("0"))
                 .orElse(true))
             .orElse(false);
     }
