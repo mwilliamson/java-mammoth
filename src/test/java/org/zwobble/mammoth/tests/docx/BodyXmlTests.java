@@ -688,6 +688,16 @@ public class BodyXmlTests {
     }
 
     @Test
+    public void softHyphenElementIsReadAsSoftHyphenCharacter() {
+        XmlElement element = element("w:softHyphen");
+
+        assertThat(
+            readSuccess(bodyReader(), element),
+            isTextElement("\u00ad")
+        );
+    }
+
+    @Test
     public void brWithoutExplicitTypeIsReadAsLineBreak() {
         XmlElement element = element("w:br");
 

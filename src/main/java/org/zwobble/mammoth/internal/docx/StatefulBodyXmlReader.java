@@ -91,6 +91,8 @@ class StatefulBodyXmlReader {
                 return success(Tab.TAB);
             case "w:noBreakHyphen":
                 return success(new Text("\u2011"));
+            case "w:softHyphen":
+                return success(new Text("\u00ad"));
             case "w:br":
                 return readBreak(element);
 

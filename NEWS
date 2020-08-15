@@ -1,3 +1,7 @@
+# 1.4.2
+
+* Support soft hyphens.
+
 # 1.4.1
 
 * Read the children of v:rect elements.
