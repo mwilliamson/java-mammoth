@@ -205,7 +205,11 @@ class StatefulBodyXmlReader {
     }
 
     private boolean isUnderline(XmlElementLike properties) {
-        return readBooleanElement(properties, "w:u");
+        return properties.findChild("w:u")
+            .map(child -> child.getAttributeOrNone("w:val")
+                .map(value -> !value.equals("false") && !value.equals("0") && !value.equals("none"))
+                .orElse(true))
+            .orElse(false);
     }
 
     private boolean isStrikethrough(XmlElementLike properties) {

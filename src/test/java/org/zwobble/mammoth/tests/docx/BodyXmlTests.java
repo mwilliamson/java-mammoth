@@ -506,16 +506,58 @@ public class BodyXmlTests {
 
         assertThat(
             readSuccess(bodyReader(), element),
-            hasProperty("underline", equalTo(false)));
+            hasProperty("underline", equalTo(false))
+        );
     }
 
     @Test
-    public void runIsUnderlinedIfUnderlineElementIsPresent() {
+    public void runIsUnderlinedIfUnderlineElementIsPresentWithoutValAttribute() {
         XmlElement element = runXmlWithProperties(element("w:u"));
 
         assertThat(
             readSuccess(bodyReader(), element),
-            hasProperty("underline", equalTo(true)));
+            hasProperty("underline", equalTo(true))
+        );
+    }
+
+    @Test
+    public void runIsNotUnderlinedIfUnderlineElementIsPresentAndValIsFalse() {
+        XmlElement element = runXmlWithProperties(element("w:u", map("w:val", "false")));
+
+        assertThat(
+            readSuccess(bodyReader(), element),
+            hasProperty("underline", equalTo(false))
+        );
+    }
+
+    @Test
+    public void runIsNotUnderlinedIfUnderlineElementIsPresentAndValIs0() {
+        XmlElement element = runXmlWithProperties(element("w:u", map("w:val", "0")));
+
+        assertThat(
+            readSuccess(bodyReader(), element),
+            hasProperty("underline", equalTo(false))
+        );
+    }
+
+    @Test
+    public void runIsNotUnderlinedIfUnderlineElementIsPresentAndValIsNone() {
+        XmlElement element = runXmlWithProperties(element("w:u", map("w:val", "none")));
+
+        assertThat(
+            readSuccess(bodyReader(), element),
+            hasProperty("underline", equalTo(false))
+        );
+    }
+
+    @Test
+    public void runIsUnderlinedIfUnderlineElementIsPresentAndValIsNotNoneNorFalsy() {
+        XmlElement element = runXmlWithProperties(element("w:u", map("w:val", "single")));
+
+        assertThat(
+            readSuccess(bodyReader(), element),
+            hasProperty("underline", equalTo(true))
+        );
     }
 
     @Test
