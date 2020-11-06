@@ -12,7 +12,7 @@ public class Matchers {
     private Matchers() {}
 
     public static <T> Matcher<Iterable<? extends T>> isSameSequence(Matcher<? super T>... matchers) {
-        return isSameSequence(asList(matchers));
+        return Matchers.<T>isSameSequence(asList(matchers));
     }
 
     public static <T> Matcher<Iterable<? extends T>> isSameSequence(List<Matcher<? super T>> matchers) {
