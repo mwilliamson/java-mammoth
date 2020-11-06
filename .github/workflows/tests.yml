@@ -1,0 +1,22 @@
+name: Tests
+
+on: [push, pull_request]
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+
+        strategy:
+            matrix:
+                java-version: [8]
+
+        steps:
+
+        - uses: actions/checkout@v2
+
+        - name: Use Java ${{ matrix.java-version }}
+          uses: actions/setup-java@v1
+          with:
+              java-version: ${{ matrix.java-version }}
+
+        - run: mvn package
