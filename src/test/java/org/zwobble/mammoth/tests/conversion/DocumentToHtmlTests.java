@@ -174,6 +174,26 @@ public class DocumentToHtmlTests {
     }
 
     @Test
+    public void allCapsIsIgnoredByDefault() {
+        assertThat(
+            convertToHtml(run(withAllCaps(true), withChildren(new Text("Hello")))),
+            deepEquals(list(Html.text("Hello")))
+        );
+    }
+
+    @Test
+    public void allCapsCanBeMappedUsingStyleMapping() {
+        assertThat(
+            convertToHtml(
+                run(withAllCaps(true), withChildren(new Text("Hello"))),
+                StyleMap.builder().allCaps(HtmlPath.element("span")).build()
+            ),
+
+            deepEquals(list(Html.element("span", list(Html.text("Hello")))))
+        );
+    }
+
+    @Test
     public void smallCapsIsIgnoredByDefault() {
         assertThat(
             convertToHtml(run(withSmallCaps(true), withChildren(new Text("Hello")))),

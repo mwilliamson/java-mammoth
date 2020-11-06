@@ -166,6 +166,9 @@ public class DocumentToHtml {
             if (run.isSmallCaps()) {
                 nodes = styleMap.getSmallCaps().orElse(HtmlPath.EMPTY).wrap(nodes);
             }
+            if (run.isAllCaps()) {
+                nodes = styleMap.getAllCaps().orElse(HtmlPath.EMPTY).wrap(nodes);
+            }
             if (run.isStrikethrough()) {
                 nodes = styleMap.getStrikethrough().orElse(HtmlPath.collapsibleElement("s")).wrap(nodes);
             }

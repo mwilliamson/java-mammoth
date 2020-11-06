@@ -613,6 +613,7 @@ public class BodyXmlTests {
             new TestCase("underline", "w:u"),
             new TestCase("italic", "w:i"),
             new TestCase("strikethrough", "w:strike"),
+            new TestCase("allCaps", "w:caps"),
             new TestCase("smallCaps", "w:smallCaps")
         );
 

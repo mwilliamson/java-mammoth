@@ -182,6 +182,7 @@ class StatefulBodyXmlReader {
                     isItalic(properties),
                     isUnderline(properties),
                     isStrikethrough(properties),
+                    isAllCaps(properties),
                     isSmallCaps(properties),
                     readVerticalAlignment(properties),
                     style,
@@ -214,6 +215,10 @@ class StatefulBodyXmlReader {
 
     private boolean isStrikethrough(XmlElementLike properties) {
         return readBooleanElement(properties, "w:strike");
+    }
+
+    private boolean isAllCaps(XmlElementLike properties) {
+        return readBooleanElement(properties, "w:caps");
     }
 
     private boolean isSmallCaps(XmlElementLike properties) {
