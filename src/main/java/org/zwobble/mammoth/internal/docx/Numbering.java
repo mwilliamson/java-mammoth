@@ -4,18 +4,44 @@ import org.zwobble.mammoth.internal.documents.NumberingLevel;
 
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static org.zwobble.mammoth.internal.util.Maps.lookup;
 import static org.zwobble.mammoth.internal.util.Maps.map;
 
 public class Numbering {
+
     public static class AbstractNum {
-        private final Map<String, NumberingLevel> levels;
+        private final Map<String, AbstractNumLevel> levels;
         private final Optional<String> numStyleLink;
 
-        public AbstractNum(Map<String, NumberingLevel> levels, Optional<String> numStyleLink) {
+        public AbstractNum(Map<String, AbstractNumLevel> levels, Optional<String> numStyleLink) {
             this.levels = levels;
             this.numStyleLink = numStyleLink;
+        }
+    }
+
+    public static class AbstractNumLevel {
+        public static AbstractNumLevel ordered(String levelIndex) {
+            return new AbstractNumLevel(levelIndex, true, Optional.empty());
+        }
+
+        public static AbstractNumLevel unordered(String levelIndex) {
+            return new AbstractNumLevel(levelIndex, false, Optional.empty());
+        }
+
+        private final String levelIndex;
+        private final boolean isOrdered;
+        private final Optional<String> paragraphStyleId;
+
+        public AbstractNumLevel(String levelIndex, boolean isOrdered, Optional<String> paragraphStyleId) {
+            this.levelIndex = levelIndex;
+            this.isOrdered = isOrdered;
+            this.paragraphStyleId = paragraphStyleId;
+        }
+
+        public NumberingLevel toNumberingLevel() {
+            return new NumberingLevel(levelIndex, isOrdered);
         }
     }
 
@@ -30,6 +56,7 @@ public class Numbering {
     public static final Numbering EMPTY = new Numbering(map(), map(), Styles.EMPTY);
 
     private final Map<String, AbstractNum> abstractNums;
+    private final Map<String, AbstractNumLevel> levelsByParagraphStyleId;
     private final Map<String, Num> nums;
     private final Styles styles;
 
@@ -39,6 +66,10 @@ public class Numbering {
         Styles styles
     ) {
         this.abstractNums = abstractNums;
+        this.levelsByParagraphStyleId = abstractNums.values().stream()
+            .flatMap(abstractNum -> abstractNum.levels.values().stream())
+            .filter(level -> level.paragraphStyleId.isPresent())
+            .collect(Collectors.toMap(level -> level.paragraphStyleId.get(), level -> level));
         this.nums = nums;
         this.styles = styles;
     }
@@ -54,8 +85,12 @@ public class Numbering {
                         .flatMap(style -> style.getNumId())
                         .flatMap(linkedNumId -> findLevel(linkedNumId, level));
                 } else {
-                    return lookup(abstractNum.levels, level);
+                    return lookup(abstractNum.levels, level).map(value -> value.toNumberingLevel());
                 }
             });
+    }
+
+    public Optional<NumberingLevel> findLevelByParagraphStyleId(String styleId) {
+        return lookup(levelsByParagraphStyleId, styleId).map(value -> value.toNumberingLevel());
     }
 }

@@ -6,6 +6,8 @@
 
 * Add style mapping for all caps.
 
+* Support numbering defined by paragraph style.
+
 # 1.4.1
 
 * Read the children of v:rect elements.

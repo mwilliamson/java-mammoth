@@ -78,6 +78,28 @@ public class NumberingXmlTests {
         assertEquals(true, numbering.findLevel("201", "0").get().isOrdered());
     }
 
+    // See: 17.9.23 pStyle (Paragraph Style's Associated Numbering Level) in ECMA-376, 4th Edition
+    @Test
+    public void numberingLevelCanBeFoundByParagraphStyleId() {
+        Numbering numbering = readNumbering(
+            element("w:numbering", list(
+                element("w:abstractNum", map("w:abstractNumId", "42"), list(
+                    element("w:lvl", map("w:ilvl", "0"), list(
+                        element("w:numFmt", map("w:val", "bullet"))
+                    ))
+                )),
+                element("w:abstractNum", map("w:abstractNumId", "43"), list(
+                    element("w:lvl", map("w:ilvl", "0"), list(
+                        element("w:pStyle", map("w:val", "List")),
+                        element("w:numFmt", map("w:val", "decimal"))
+                    ))
+                ))
+            ))
+        );
+        assertEquals(true, numbering.findLevelByParagraphStyleId("List").get().isOrdered());
+        assertEquals(false, numbering.findLevelByParagraphStyleId("Paragraph").isPresent());
+    }
+
 
     private Numbering readNumbering(XmlElement element) {
         return readNumberingXmlElement(element, Styles.EMPTY);

@@ -108,7 +108,7 @@
   </profiles>
 
   <properties>
-    <junit.jupiter.version>5.0.2</junit.jupiter.version>
+    <junit.jupiter.version>5.7.0</junit.jupiter.version>
     <junit.platform.version>1.0.2</junit.platform.version>
   </properties>
 

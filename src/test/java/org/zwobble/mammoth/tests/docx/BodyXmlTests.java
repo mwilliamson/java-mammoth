@@ -198,11 +198,40 @@ public class BodyXmlTests {
                     element("w:ilvl", map("w:val", "1")),
                     element("w:numId", map("w:val", "42"))))))));
 
-        Numbering numbering = numberingMap(map("42", map("1", NumberingLevel.ordered("1"))));
+        Numbering numbering = numberingMap(map("42", map("1", Numbering.AbstractNumLevel.ordered("1"))));
 
         assertThat(
             readSuccess(bodyReader(numbering), element),
             hasNumbering(NumberingLevel.ordered("1")));
+    }
+
+    @Test
+    public void numberingOnParagraphStyleTakesPrecedenceOverNumPr() {
+        XmlElement element = paragraphXml(list(
+            element("w:pPr", list(
+                element("w:pStyle", map("w:val", "List")),
+                element("w:numPr", map(), list(
+                    element("w:ilvl", map("w:val", "1")),
+                    element("w:numId", map("w:val", "42"))
+                ))
+            ))
+        ));
+
+        Numbering numbering = numberingMap(map(
+            "42", map("1", new Numbering.AbstractNumLevel("1", false, Optional.empty())),
+            "43", map("1", new Numbering.AbstractNumLevel("1", true, Optional.of("List")))
+        ));
+        Styles styles = new Styles(
+            map("List", new Style("List", Optional.empty())),
+            map(),
+            map(),
+            map()
+        );
+
+        assertThat(
+            readSuccess(bodyReader(numbering, styles), element),
+            hasNumbering(NumberingLevel.ordered("1"))
+        );
     }
 
     @Test
@@ -213,7 +242,7 @@ public class BodyXmlTests {
                 element("w:numPr", map(), list(
                     element("w:numId", map("w:val", "42"))))))));
 
-        Numbering numbering = numberingMap(map("42", map("1", NumberingLevel.ordered("1"))));
+        Numbering numbering = numberingMap(map("42", map("1", Numbering.AbstractNumLevel.ordered("1"))));
 
         assertThat(
             readSuccess(bodyReader(numbering), element),
@@ -228,7 +257,7 @@ public class BodyXmlTests {
                 element("w:numPr", map(), list(
                     element("w:ilvl", map("w:val", "1"))))))));
 
-        Numbering numbering = numberingMap(map("42", map("1", NumberingLevel.ordered("1"))));
+        Numbering numbering = numberingMap(map("42", map("1", Numbering.AbstractNumLevel.ordered("1"))));
 
         assertThat(
             readSuccess(bodyReader(numbering), element),
@@ -1492,7 +1521,7 @@ public class BodyXmlTests {
         return new Relationship(relationshipId, target, "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image");
     }
 
-    private static Numbering numberingMap(Map<String, Map<String, NumberingLevel>> numbering) {
+    private static Numbering numberingMap(Map<String, Map<String, Numbering.AbstractNumLevel>> numbering) {
         return new Numbering(
             numbering.entrySet().stream().collect(Collectors.toMap(
                 entry -> entry.getKey(),

@@ -1,6 +1,5 @@
 package org.zwobble.mammoth.internal.docx;
 
-import org.zwobble.mammoth.internal.documents.NumberingLevel;
 import org.zwobble.mammoth.internal.xml.XmlElement;
 import org.zwobble.mammoth.internal.xml.XmlElementList;
 
@@ -31,15 +30,16 @@ public class NumberingXml {
         return entry(abstractNumId, abstractNum);
     }
 
-    private static Map<String, NumberingLevel> readAbstractNumLevels(XmlElement element) {
+    private static Map<String, Numbering.AbstractNumLevel> readAbstractNumLevels(XmlElement element) {
         return toMap(element.findChildren("w:lvl"), NumberingXml::readAbstractNumLevel);
     }
 
-    private static Map.Entry<String, NumberingLevel> readAbstractNumLevel(XmlElement element) {
+    private static Map.Entry<String, Numbering.AbstractNumLevel> readAbstractNumLevel(XmlElement element) {
         String levelIndex = element.getAttribute("w:ilvl");
         Optional<String> numFmt = element.findChildOrEmpty("w:numFmt").getAttributeOrNone("w:val");
         boolean isOrdered = !numFmt.equals(Optional.of("bullet"));
-        return entry(levelIndex, new NumberingLevel(levelIndex, isOrdered));
+        Optional<String> paragraphStyleId = element.findChildOrEmpty("w:pStyle").getAttributeOrNone("w:val");
+        return entry(levelIndex, new Numbering.AbstractNumLevel(levelIndex, isOrdered, paragraphStyleId));
     }
 
     private static Map<String, Numbering.Num> readNums(XmlElementList numElements) {
