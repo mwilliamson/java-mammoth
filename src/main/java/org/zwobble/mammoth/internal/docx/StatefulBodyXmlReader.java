@@ -15,8 +15,7 @@ import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.zwobble.mammoth.internal.docx.ReadResult.EMPTY_SUCCESS;
-import static org.zwobble.mammoth.internal.docx.ReadResult.success;
+import static org.zwobble.mammoth.internal.docx.ReadResult.*;
 import static org.zwobble.mammoth.internal.docx.Uris.uriToZipEntryName;
 import static org.zwobble.mammoth.internal.util.Iterables.lazyFilter;
 import static org.zwobble.mammoth.internal.util.Iterables.tryGetLast;
@@ -93,6 +92,8 @@ class StatefulBodyXmlReader {
                 return success(new Text("\u2011"));
             case "w:softHyphen":
                 return success(new Text("\u00ad"));
+            case "w:sym":
+                return readSymbol(element);
             case "w:br":
                 return readBreak(element);
 
@@ -357,6 +358,35 @@ class StatefulBodyXmlReader {
             indent.getAttributeOrNone("w:firstLine"),
             indent.getAttributeOrNone("w:hanging")
         );
+    }
+
+    private ReadResult readSymbol(XmlElement element) {
+        Optional<String> font = element.getAttributeOrNone("w:font");
+        Optional<String> charValue = element.getAttributeOrNone("w:char");
+        if (font.isPresent() && charValue.isPresent()) {
+            Optional<Integer> dingbat = Dingbats.findDingbat(font.get(), Integer.parseInt(charValue.get(), 16));
+
+            if (!dingbat.isPresent() && Pattern.matches("F0..", charValue.get())) {
+                dingbat = Dingbats.findDingbat(font.get(), Integer.parseInt(charValue.get().substring(2), 16));
+            }
+
+            if (dingbat.isPresent()) {
+                return ReadResult.success(new Text(codepointToString(dingbat.get())));
+            }
+        }
+        return emptyWithWarning(
+            "A w:sym element with an unsupported character was ignored: char " +
+                charValue.orElse("null") + " in font " + font.orElse("null")
+        );
+    }
+
+    public String codepointToString(int codePoint) {
+        if (Character.isBmpCodePoint(codePoint)) {
+            return String.valueOf((char) codePoint);
+        } else {
+            return String.valueOf(Character.highSurrogate(codePoint)) +
+                Character.lowSurrogate(codePoint);
+        }
     }
 
     private ReadResult readBreak(XmlElement element) {

@@ -770,6 +770,42 @@ public class BodyXmlTests {
     }
 
     @Test
+    public void symWithSupportedFontAndSupportedCodePointInAsciiRangeIsConvertedToText() {
+        XmlElement element = element("w:sym", map("w:font", "Wingdings", "w:char", "28"));
+
+        DocumentElement result = readSuccess(bodyReader(), element);
+
+        assertThat(
+            result,
+            isTextElement("\uD83D\uDD7F")
+        );
+    }
+
+    @Test
+    public void symWithSupportedFontAndSupportedCodePointInPrivateUseAreaIsConvertedToText() {
+        XmlElement element = element("w:sym", map("w:font", "Wingdings", "w:char", "F028"));
+
+        DocumentElement result = readSuccess(bodyReader(), element);
+
+        assertThat(
+            result,
+            isTextElement("\uD83D\uDD7F")
+        );
+    }
+
+    @Test
+    public void symWithUnsupportedFontAndCodePointProducesEmptyResultWithWarning() {
+        XmlElement element = element("w:sym", map("w:font", "Dingwings", "w:char", "28"));
+
+        InternalResult<List<DocumentElement>> result = readAll(bodyReader(), element);
+
+        assertThat(result, isInternalResult(
+            equalTo(list()),
+            list("A w:sym element with an unsupported character was ignored: char 28 in font Dingwings")
+        ));
+    }
+
+    @Test
     public void brWithoutExplicitTypeIsReadAsLineBreak() {
         XmlElement element = element("w:br");
 
