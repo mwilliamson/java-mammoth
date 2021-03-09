@@ -317,7 +317,13 @@ class StatefulBodyXmlReader {
         if (matcher.lookingAt()) {
             return Optional.of(matcher.group(1));
         } else {
+          Pattern patternHyperlinkRef = Pattern.compile("\\s*REF ([^ ]*) [^h]*\\s*\\\\h\\s*[^h]*");
+          Matcher matcherHyperlinkRef = patternHyperlinkRef.matcher(instrText);
+          if (matcherHyperlinkRef.lookingAt()) {
+            return Optional.of('#' + matcherHyperlinkRef.group(1));
+          } else {
             return Optional.empty();
+          }
         }
     }
 
