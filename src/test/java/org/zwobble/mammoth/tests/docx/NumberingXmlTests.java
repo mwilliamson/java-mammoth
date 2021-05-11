@@ -50,6 +50,19 @@ public class NumberingXmlTests {
     }
 
     @Test
+    public void numReferencingNonExistentAbstractNumIsIgnored() {
+        XmlElement element = element("w:numbering", list(
+            element("w:num", map("w:numId", "47"), list(
+                element("w:abstractNumId", map("w:val", "42"))
+            ))
+        ));
+
+        Numbering numbering = readNumbering(element);
+
+        assertEquals(Optional.empty(), numbering.findLevel("47", "0"));
+    }
+
+    @Test
     public void whenAbstractNumHasNumStyleLinkThenStyleIsUsedToFindNum() {
         Numbering numbering = readNumberingXmlElement(
             element("w:numbering", list(
