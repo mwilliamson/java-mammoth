@@ -22,14 +22,16 @@ public class RawText {
     }
 
     public static String extractRawText(DocumentElement node) {
-        return tryCast(Text.class, node)
-            .map(Text::getValue)
-            .orElseGet(() -> {
-                List<DocumentElement> children = tryCast(HasChildren.class, node)
-                    .map(HasChildren::getChildren)
-                    .orElse(list());
-                String suffix = tryCast(Paragraph.class, node).map(paragraph -> "\n\n").orElse("");
-                return extractRawText(children) + suffix;
-            });
+        if (node instanceof Text) {
+            return ((Text) node).getValue();
+        } else if (node instanceof Tab) {
+            return "\t";
+        } else {
+            List<DocumentElement> children = tryCast(HasChildren.class, node)
+                .map(HasChildren::getChildren)
+                .orElse(list());
+            String suffix = tryCast(Paragraph.class, node).map(paragraph -> "\n\n").orElse("");
+            return extractRawText(children) + suffix;
+        }
     }
 }

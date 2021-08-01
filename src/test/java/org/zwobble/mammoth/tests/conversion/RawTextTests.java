@@ -2,10 +2,7 @@ package org.zwobble.mammoth.tests.conversion;
 
 import org.junit.jupiter.api.Test;
 import org.zwobble.mammoth.internal.conversion.RawText;
-import org.zwobble.mammoth.internal.documents.Break;
-import org.zwobble.mammoth.internal.documents.Document;
-import org.zwobble.mammoth.internal.documents.DocumentElement;
-import org.zwobble.mammoth.internal.documents.Text;
+import org.zwobble.mammoth.internal.documents.*;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -19,6 +16,15 @@ public class RawTextTests {
         String result = RawText.extractRawText(element);
 
         assertThat(result, equalTo("Hello."));
+    }
+
+    @Test
+    public void tabElementIsConvertedToTabCharacter() {
+        DocumentElement element = Tab.TAB;
+
+        String result = RawText.extractRawText(element);
+
+        assertThat(result, equalTo("\t"));
     }
 
     @Test
