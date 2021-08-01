@@ -291,7 +291,7 @@ public class BodyXmlTests {
         }
 
         @Test
-        public void runsInAComplexFieldForHyperlinksAreReadAsHyperlinks() {
+        public void runsInAComplexFieldForHyperlinksWithoutSwitchAreReadAsExternalHyperlinks() {
             XmlElement hyperlinkRunXml = runXml("this is a hyperlink");
             XmlElement element = paragraphXml(list(
                 BEGIN_COMPLEX_FIELD,
@@ -307,6 +307,33 @@ public class BodyXmlTests {
                 isEmptyHyperlinkedRun(),
                 isHyperlinkedRun(
                     hasHref(URI),
+                    hasChildren(
+                        isTextElement("this is a hyperlink")
+                    )
+                ),
+                isEmptyRun()
+            )));
+        }
+
+        @Test
+        public void runsInAComplexFieldForHyperlinksWithLSwitchAreReadAsInternalHyperlinks() {
+            XmlElement hyperlinkRunXml = runXml("this is a hyperlink");
+            XmlElement element = paragraphXml(list(
+                BEGIN_COMPLEX_FIELD,
+                element("w:instrText", list(
+                    XmlNodes.text(" HYPERLINK \\l \"InternalLink\"")
+                )),
+                SEPARATE_COMPLEX_FIELD,
+                hyperlinkRunXml,
+                END_COMPLEX_FIELD
+            ));
+            DocumentElement paragraph = readSuccess(bodyReader(), element);
+
+            assertThat(paragraph, isParagraph(hasChildren(
+                isEmptyRun(),
+                isEmptyHyperlinkedRun(),
+                isHyperlinkedRun(
+                    hasAnchor("InternalLink"),
                     hasChildren(
                         isTextElement("this is a hyperlink")
                     )

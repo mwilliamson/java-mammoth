@@ -4,6 +4,8 @@
 
 * When extracting raw text, convert tab elements to tab characters.
 
+* Handle internal hyperlinks created with complex fields.
+
 # 1.4.2
 
 * Support soft hyphens.

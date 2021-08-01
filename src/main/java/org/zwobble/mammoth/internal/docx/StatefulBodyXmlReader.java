@@ -40,16 +40,16 @@ class StatefulBodyXmlReader {
     private interface ComplexField {
         ComplexField UNKNOWN = new ComplexField() {};
 
-        static ComplexField hyperlink(String href) {
-            return new HyperlinkComplexField(href);
+        static ComplexField hyperlink(Function<List<DocumentElement>, Hyperlink> childrenToHyperlink) {
+            return new HyperlinkComplexField(childrenToHyperlink);
         }
     }
 
     private static class HyperlinkComplexField implements ComplexField {
-        private final String href;
+        private final Function<List<DocumentElement>, Hyperlink> childrenToHyperlink;
 
-        private HyperlinkComplexField(String href) {
-            this.href = href;
+        private HyperlinkComplexField(Function<List<DocumentElement>, Hyperlink> childrenToHyperlink) {
+            this.childrenToHyperlink = childrenToHyperlink;
         }
     }
 
@@ -173,9 +173,9 @@ class StatefulBodyXmlReader {
             readRunStyle(properties),
             readElements(element.getChildren()),
             (style, children) -> {
-                Optional<String> hyperlinkHref = currentHyperlinkHref();
-                if (hyperlinkHref.isPresent()) {
-                    children = list(Hyperlink.href(hyperlinkHref.get(), Optional.empty(), children));
+                Optional<HyperlinkComplexField> hyperlinkComplexField = currentHyperlinkComplexField();
+                if (hyperlinkComplexField.isPresent()) {
+                    children = list(hyperlinkComplexField.get().childrenToHyperlink.apply(children));
                 }
 
                 return new Run(
@@ -193,9 +193,8 @@ class StatefulBodyXmlReader {
         );
     }
 
-    private Optional<String> currentHyperlinkHref() {
-        return tryGetLast(lazyFilter(this.complexFieldStack, HyperlinkComplexField.class))
-            .map(field -> field.href);
+    private Optional<HyperlinkComplexField> currentHyperlinkComplexField() {
+        return tryGetLast(lazyFilter(this.complexFieldStack, HyperlinkComplexField.class));
     }
 
     private boolean isBold(XmlElementLike properties) {
@@ -287,14 +286,22 @@ class StatefulBodyXmlReader {
         return ReadResult.EMPTY_SUCCESS;
     }
 
-    private Optional<String> parseHyperlinkFieldCode(String instrText) {
-        Pattern pattern = Pattern.compile("\\s*HYPERLINK \"(.*)\"");
-        Matcher matcher = pattern.matcher(instrText);
-        if (matcher.lookingAt()) {
-            return Optional.of(matcher.group(1));
-        } else {
-            return Optional.empty();
+    private Optional<Function<List<DocumentElement>, Hyperlink>> parseHyperlinkFieldCode(String instrText) {
+        Pattern externalLinkPattern = Pattern.compile("\\s*HYPERLINK \"(.*)\"");
+        Matcher externalLinkMatcher = externalLinkPattern.matcher(instrText);
+        if (externalLinkMatcher.lookingAt()) {
+            String href = externalLinkMatcher.group(1);
+            return Optional.of(children -> Hyperlink.href(href, Optional.empty(), children));
         }
+
+        Pattern internalLinkPattern = Pattern.compile("\\s*HYPERLINK\\s+\\\\l\\s+\"(.*)\"");
+        Matcher internalLinkMatcher = internalLinkPattern.matcher(instrText);
+        if (internalLinkMatcher.lookingAt()) {
+            String anchor = internalLinkMatcher.group(1);
+            return Optional.of(children -> Hyperlink.anchor(anchor, Optional.empty(), children));
+        }
+
+        return Optional.empty();
     }
 
     private InternalResult<Optional<Style>> readParagraphStyle(XmlElementLike properties) {
