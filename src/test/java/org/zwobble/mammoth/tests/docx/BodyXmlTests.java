@@ -286,10 +286,7 @@ public class BodyXmlTests {
         @SafeVarargs
         private final Matcher<DocumentElement> isHyperlinkedRun(Matcher<? super Hyperlink>... matchers) {
             return isRun(hasChildren(
-                allOf(
-                    isHyperlink(hasHref(URI)),
-                    isHyperlink(matchers)
-                )
+                isHyperlink(matchers)
             ));
         }
 
@@ -308,9 +305,12 @@ public class BodyXmlTests {
             assertThat(paragraph, isParagraph(hasChildren(
                 isEmptyRun(),
                 isEmptyHyperlinkedRun(),
-                isHyperlinkedRun(hasChildren(
-                    isTextElement("this is a hyperlink")
-                )),
+                isHyperlinkedRun(
+                    hasHref(URI),
+                    hasChildren(
+                        isTextElement("this is a hyperlink")
+                    )
+                ),
                 isEmptyRun()
             )));
         }
@@ -357,9 +357,12 @@ public class BodyXmlTests {
             assertThat(paragraph, isParagraph(hasChildren(
                 isEmptyRun(),
                 isEmptyHyperlinkedRun(),
-                isHyperlinkedRun(hasChildren(
-                    isTextElement("this is a hyperlink")
-                )),
+                isHyperlinkedRun(
+                    hasHref(URI),
+                    hasChildren(
+                        isTextElement("this is a hyperlink")
+                    )
+                ),
                 isEmptyRun()
             )));
         }
@@ -389,9 +392,12 @@ public class BodyXmlTests {
                 isEmptyHyperlinkedRun(),
                 isEmptyHyperlinkedRun(),
                 isEmptyHyperlinkedRun(),
-                isHyperlinkedRun(hasChildren(
-                    isTextElement("this is a hyperlink")
-                )),
+                isHyperlinkedRun(
+                    hasHref(URI),
+                    hasChildren(
+                        isTextElement("this is a hyperlink")
+                    )
+                ),
                 isEmptyRun()
             )));
         }
@@ -419,9 +425,12 @@ public class BodyXmlTests {
                 isEmptyHyperlinkedRun(),
                 isEmptyHyperlinkedRun(),
                 isEmptyHyperlinkedRun(),
-                isHyperlinkedRun(hasChildren(
-                    isTextElement("John Doe")
-                )),
+                isHyperlinkedRun(
+                    hasHref(URI),
+                    hasChildren(
+                        isTextElement("John Doe")
+                    )
+                ),
                 isEmptyHyperlinkedRun(),
                 isEmptyRun()
             )));
@@ -446,9 +455,12 @@ public class BodyXmlTests {
                 isEmptyHyperlinkedRun(),
                 isEmptyHyperlinkedRun(),
                 isEmptyHyperlinkedRun(),
-                isHyperlinkedRun(hasChildren(
-                    isTextElement("this is a hyperlink")
-                )),
+                isHyperlinkedRun(
+                    hasHref(URI),
+                    hasChildren(
+                        isTextElement("this is a hyperlink")
+                    )
+                ),
                 isEmptyRun()
             )));
         }
