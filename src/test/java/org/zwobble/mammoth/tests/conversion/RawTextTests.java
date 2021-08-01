@@ -1,0 +1,58 @@
+package org.zwobble.mammoth.tests.conversion;
+
+import org.junit.jupiter.api.Test;
+import org.zwobble.mammoth.internal.conversion.RawText;
+import org.zwobble.mammoth.internal.documents.Break;
+import org.zwobble.mammoth.internal.documents.Document;
+import org.zwobble.mammoth.internal.documents.DocumentElement;
+import org.zwobble.mammoth.internal.documents.Text;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.zwobble.mammoth.tests.documents.DocumentElementMakers.*;
+
+public class RawTextTests {
+    @Test
+    public void textElementIsConvertedToTextContent() {
+        DocumentElement element = new Text("Hello.");
+
+        String result = RawText.extractRawText(element);
+
+        assertThat(result, equalTo("Hello."));
+    }
+
+    @Test
+    public void paragraphsAreTerminatedWithNewlines() {
+        DocumentElement element = paragraph(
+            withChildren(new Text("Hello "), new Text("world."))
+        );
+
+        String result = RawText.extractRawText(element);
+
+        assertThat(result, equalTo("Hello world.\n\n"));
+    }
+
+    @Test
+    public void childrenAreRecursivelyConvertedToText() {
+        Document element = document(
+            withChildren(
+                paragraph(
+                    withChildren(new Text("Hello "), new Text("world."))
+                )
+            )
+        );
+
+        String result = RawText.extractRawText(element);
+
+        assertThat(result, equalTo("Hello world.\n\n"));
+    }
+
+    @Test
+    public void nonTextElementWithoutChildrenIsConvertedToEmptyString() {
+        DocumentElement element = Break.LINE_BREAK;
+
+        String result = RawText.extractRawText(element);
+
+        assertThat(result, equalTo(""));
+    }
+}
