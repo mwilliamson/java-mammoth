@@ -1282,10 +1282,10 @@ public class BodyXmlTests {
     }
 
     @Test
-    public void altTextTitleIsUsedIfAltTextDescriptionIsBlank() throws IOException {
+    public void altTextTitleIsUsedIfAltTextDescriptionIsMissing() throws IOException {
         XmlElement element = inlineImageXml(
             embeddedBlipXml(IMAGE_RELATIONSHIP_ID),
-            Optional.of(" "),
+            Optional.empty(),
             Optional.of("It's a hat")
         );
 
@@ -1295,10 +1295,10 @@ public class BodyXmlTests {
     }
 
     @Test
-    public void altTextTitleIsUsedIfAltTextDescriptionIsMissing() throws IOException {
+    public void altTextTitleIsUsedIfAltTextDescriptionIsBlank() throws IOException {
         XmlElement element = inlineImageXml(
             embeddedBlipXml(IMAGE_RELATIONSHIP_ID),
-            Optional.empty(),
+            Optional.of(" "),
             Optional.of("It's a hat")
         );
 
@@ -1363,6 +1363,22 @@ public class BodyXmlTests {
     }
 
     @Test
+    public void canReadLinkedPictures() throws IOException {
+        XmlElement element = inlineImageXml(linkedBlipXml(IMAGE_RELATIONSHIP_ID), "");
+        Relationships relationships = new Relationships(list(
+            imageRelationship(IMAGE_RELATIONSHIP_ID, "file:///media/hat.png")
+        ));
+
+        Image image = (Image) readSuccess(
+            bodyReader(relationships, new InMemoryFileReader(map("file:///media/hat.png", IMAGE_BYTES))),
+            element);
+
+        assertThat(
+            toString(image.open()),
+            equalTo(IMAGE_BYTES));
+    }
+
+    @Test
     public void warningIfImageTypeIsUnsupportedByWebBrowsers() {
         XmlElement element = inlineImageXml(embeddedBlipXml(IMAGE_RELATIONSHIP_ID), "");
         Relationships relationships = new Relationships(list(
@@ -1378,22 +1394,6 @@ public class BodyXmlTests {
         assertThat(
             result,
             hasWarnings(list("Image of type image/x-emf is unlikely to display in web browsers")));
-    }
-
-    @Test
-    public void canReadLinkedPictures() throws IOException {
-        XmlElement element = inlineImageXml(linkedBlipXml(IMAGE_RELATIONSHIP_ID), "");
-        Relationships relationships = new Relationships(list(
-            imageRelationship(IMAGE_RELATIONSHIP_ID, "file:///media/hat.png")
-        ));
-
-        Image image = (Image) readSuccess(
-            bodyReader(relationships, new InMemoryFileReader(map("file:///media/hat.png", IMAGE_BYTES))),
-            element);
-
-        assertThat(
-            toString(image.open()),
-            equalTo(IMAGE_BYTES));
     }
 
     private XmlElement inlineImageXml(XmlElement blip, String description) {
