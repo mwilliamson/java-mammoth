@@ -1396,6 +1396,24 @@ public class BodyXmlTests {
             hasWarnings(list("Image of type image/x-emf is unlikely to display in web browsers")));
     }
 
+    @Test
+    public void noElementsCreatedIfImageCannotBeFoundInWDrawing() {
+        XmlElement element = element("w:drawing");
+
+        InternalResult<List<DocumentElement>> result = readAll(bodyReader(), element);
+
+        assertThat(result, isInternalSuccess(empty()));
+    }
+
+    @Test
+    public void noElementsCreatedIfImageCannotBeFoundInWpInline() {
+        XmlElement element = element("wp:inline");
+
+        InternalResult<List<DocumentElement>> result = readAll(bodyReader(), element);
+
+        assertThat(result, isInternalSuccess(empty()));
+    }
+
     private XmlElement inlineImageXml(XmlElement blip, String description) {
         return inlineImageXml(blip, Optional.of(description), Optional.empty());
     }
