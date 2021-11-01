@@ -613,8 +613,7 @@ class StatefulBodyXmlReader {
             String imagePath = relationships.findTargetByRelationshipId(linkRelationshipId.get());
             return readImage(imagePath, altText, () -> fileReader.getInputStream(imagePath));
         } else {
-            // TODO: emit warning
-            return ReadResult.EMPTY_SUCCESS;
+            return ReadResult.emptyWithWarning("Could not find image file for a:blip element");
         }
     }
 

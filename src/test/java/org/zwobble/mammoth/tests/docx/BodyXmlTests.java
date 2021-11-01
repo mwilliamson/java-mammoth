@@ -1379,6 +1379,18 @@ public class BodyXmlTests {
     }
 
     @Test
+    public void warningIfBlipHasNoImageFile() {
+        XmlElement element = inlineImageXml(element("a:blip"), "");
+
+        InternalResult<?> result = readAll(bodyReader(), element);
+
+        assertThat(result, isInternalResult(
+            equalTo(list()),
+            list("Could not find image file for a:blip element")
+        ));
+    }
+
+    @Test
     public void warningIfImageTypeIsUnsupportedByWebBrowsers() {
         XmlElement element = inlineImageXml(embeddedBlipXml(IMAGE_RELATIONSHIP_ID), "");
         Relationships relationships = new Relationships(list(
