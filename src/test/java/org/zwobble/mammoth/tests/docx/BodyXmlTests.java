@@ -579,12 +579,12 @@ public class BodyXmlTests {
     }
 
     @Test
-    public void runIsUnderlinedIfUnderlineElementIsPresentWithoutValAttribute() {
+    public void runIsNotUnderlinedIfUnderlineElementIsPresentWithoutValAttribute() {
         XmlElement element = runXmlWithProperties(element("w:u"));
 
         assertThat(
             readSuccess(bodyReader(), element),
-            hasProperty("underline", equalTo(true))
+            hasProperty("underline", equalTo(false))
         );
     }
 

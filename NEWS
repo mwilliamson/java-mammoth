@@ -9,6 +9,8 @@
 * Emit warning instead of throwing exception when image file cannot be found for
   a:blip elements.
 
+* Ignore w:u elements when w:val is missing.
+
 # 1.4.2
 
 * Support soft hyphens.

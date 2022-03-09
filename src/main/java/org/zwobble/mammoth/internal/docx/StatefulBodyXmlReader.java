@@ -209,7 +209,7 @@ class StatefulBodyXmlReader {
         return properties.findChild("w:u")
             .map(child -> child.getAttributeOrNone("w:val")
                 .map(value -> !value.equals("false") && !value.equals("0") && !value.equals("none"))
-                .orElse(true))
+                .orElse(false))
             .orElse(false);
     }
 
