@@ -54,4 +54,23 @@ public class InternalImageConverterTests {
             deepEquals(list(Html.element("img", map("alt", "<alt>", "src", "<src>"))))
         );
     }
+
+    @Test
+    public void imageAltTextCanBeOverriddenByAltAttributeReturnedFromFunction() throws IOException {
+        Image internalImage = new Image(
+            Optional.of("<alt>"),
+            Optional.of("image/jpeg"),
+            () -> new ByteArrayInputStream(new byte[]{97, 98, 99})
+        );
+
+        InternalImageConverter imageConverter = InternalImageConverter.imgElement(image -> {
+            return map("alt", "<alt override>", "src", "<src>");
+        });
+        List<HtmlNode> result = imageConverter.convert(internalImage);
+
+        assertThat(
+            result,
+            deepEquals(list(Html.element("img", map("alt", "<alt override>", "src", "<src>"))))
+        );
+    }
 }

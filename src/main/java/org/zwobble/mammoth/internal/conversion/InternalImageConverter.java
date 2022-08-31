@@ -48,8 +48,9 @@ public class InternalImageConverter {
                         }
                     };
 
-                    Map<String, String> attributes = new HashMap<>(PassThroughException.wrap(() -> imgElement.convert(image)));
+                    Map<String, String> attributes = new HashMap<>();
                     internalImage.getAltText().ifPresent(altText -> attributes.put("alt", altText));
+                    attributes.putAll(PassThroughException.wrap(() -> imgElement.convert(image)));
                     return list(Html.element("img", attributes));
                 })
                 .orElse(list());
