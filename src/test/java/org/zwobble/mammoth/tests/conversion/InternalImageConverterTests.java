@@ -39,13 +39,13 @@ public class InternalImageConverterTests {
     @Test
     public void whenElementHasAltTextThenAltAttributeIsSet() throws IOException {
         Image internalImage = new Image(
-            Optional.empty(),
+            Optional.of("<alt>"),
             Optional.of("image/jpeg"),
             () -> new ByteArrayInputStream(new byte[]{97, 98, 99})
         );
 
         InternalImageConverter imageConverter = InternalImageConverter.imgElement(image -> {
-            return map("alt", "<alt>", "src", "<src>");
+            return map("src", "<src>");
         });
         List<HtmlNode> result = imageConverter.convert(internalImage);
 
