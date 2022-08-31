@@ -1,7 +1,6 @@
 package org.zwobble.mammoth.internal.conversion;
 
 import org.zwobble.mammoth.images.ImageConverter;
-import org.zwobble.mammoth.internal.InternalImageConverter;
 import org.zwobble.mammoth.internal.styles.DefaultStyles;
 import org.zwobble.mammoth.internal.styles.StyleMap;
 import org.zwobble.mammoth.internal.styles.parsing.StyleMapParser;

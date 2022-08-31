@@ -1,6 +1,5 @@
 package org.zwobble.mammoth.internal.conversion;
 
-import org.zwobble.mammoth.internal.InternalImageConverter;
 import org.zwobble.mammoth.internal.documents.*;
 import org.zwobble.mammoth.internal.html.Html;
 import org.zwobble.mammoth.internal.html.HtmlNode;
