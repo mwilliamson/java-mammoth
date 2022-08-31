@@ -1,6 +1,7 @@
 package org.zwobble.mammoth.internal.conversion;
 
 import org.zwobble.mammoth.images.ImageConverter;
+import org.zwobble.mammoth.internal.InternalImageConverter;
 import org.zwobble.mammoth.internal.styles.DefaultStyles;
 import org.zwobble.mammoth.internal.styles.StyleMap;
 import org.zwobble.mammoth.internal.styles.parsing.StyleMapParser;
@@ -16,11 +17,11 @@ public class DocumentToHtmlOptions {
         StyleMap.EMPTY,
         false,
         false,
-        image -> {
+        InternalImageConverter.imgElement(image -> {
             String base64 = Base64Encoding.streamToBase64(image::getInputStream);
             String src = "data:" + image.getContentType() + ";base64," + base64;
             return map("src", src);
-        }
+        })
 
     );
 
@@ -30,7 +31,7 @@ public class DocumentToHtmlOptions {
     private final StyleMap embeddedStyleMap;
     private final boolean disableDefaultStyleMap;
     private final boolean disableEmbeddedStyleMap;
-    private final ImageConverter.ImgElement imageConverter;
+    private final InternalImageConverter imageConverter;
 
     public DocumentToHtmlOptions(
         String idPrefix,
@@ -39,7 +40,7 @@ public class DocumentToHtmlOptions {
         StyleMap embeddedStyleMap,
         boolean disableDefaultStyleMap,
         boolean disableEmbeddedStyleMap,
-        ImageConverter.ImgElement imageConverter
+        InternalImageConverter imageConverter
     ) {
         this.idPrefix = idPrefix;
         this.preserveEmptyParagraphs = preserveEmptyParagraphs;
@@ -79,7 +80,15 @@ public class DocumentToHtmlOptions {
     }
 
     public DocumentToHtmlOptions imageConverter(ImageConverter.ImgElement imageConverter) {
-        return new DocumentToHtmlOptions(idPrefix, preserveEmptyParagraphs, styleMap, embeddedStyleMap, disableDefaultStyleMap, disableEmbeddedStyleMap, imageConverter);
+        return new DocumentToHtmlOptions(
+            idPrefix,
+            preserveEmptyParagraphs,
+            styleMap,
+            embeddedStyleMap,
+            disableDefaultStyleMap,
+            disableEmbeddedStyleMap,
+            InternalImageConverter.imgElement(imageConverter)
+        );
     }
 
     public String idPrefix() {
@@ -102,7 +111,7 @@ public class DocumentToHtmlOptions {
         return styleMap;
     }
 
-    public ImageConverter.ImgElement imageConverter() {
+    public InternalImageConverter imageConverter() {
         return imageConverter;
     }
 }

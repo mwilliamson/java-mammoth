@@ -1,6 +1,6 @@
 package org.zwobble.mammoth.internal.conversion;
 
-import org.zwobble.mammoth.images.ImageConverter;
+import org.zwobble.mammoth.internal.InternalImageConverter;
 import org.zwobble.mammoth.internal.documents.*;
 import org.zwobble.mammoth.internal.html.Html;
 import org.zwobble.mammoth.internal.html.HtmlNode;
@@ -11,16 +11,13 @@ import org.zwobble.mammoth.internal.util.Lists;
 import org.zwobble.mammoth.internal.util.Maps;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.*;
 import java.util.function.Supplier;
 
 import static org.zwobble.mammoth.internal.util.Casts.tryCast;
 import static org.zwobble.mammoth.internal.util.Iterables.findIndex;
 import static org.zwobble.mammoth.internal.util.Lists.*;
-import static org.zwobble.mammoth.internal.util.Maps.mutableMap;
-import static org.zwobble.mammoth.internal.util.Maps.lookup;
-import static org.zwobble.mammoth.internal.util.Maps.map;
+import static org.zwobble.mammoth.internal.util.Maps.*;
 
 public class DocumentToHtml {
     public static InternalResult<List<HtmlNode>> convertToHtml(Document document, DocumentToHtmlOptions options) {
@@ -57,7 +54,7 @@ public class DocumentToHtml {
     private final String idPrefix;
     private final boolean preserveEmptyParagraphs;
     private final StyleMap styleMap;
-    private final ImageConverter.ImgElement imageConverter;
+    private final InternalImageConverter imageConverter;
     private final Map<String, Comment> comments;
     private final List<NoteReference> noteReferences = new ArrayList<>();
     private final List<ReferencedComment> referencedComments = new ArrayList<>();
@@ -334,34 +331,12 @@ public class DocumentToHtml {
         @Override
         public List<HtmlNode> visit(Image image, Context context) {
             // TODO: custom image handlers
-            // TODO: handle empty content type
-            return image.getContentType()
-                .map(contentType -> {
-                    try {
-                        Map<String, String> attributes = new HashMap<>(imageConverter.convert(new org.zwobble.mammoth.images.Image() {
-                            @Override
-                            public Optional<String> getAltText() {
-                                return image.getAltText();
-                            }
-
-                            @Override
-                            public String getContentType() {
-                                return contentType;
-                            }
-
-                            @Override
-                            public InputStream getInputStream() throws IOException {
-                                return image.open();
-                            }
-                        }));
-                        image.getAltText().ifPresent(altText -> attributes.put("alt", altText));
-                        return list(Html.element("img", attributes));
-                    } catch (IOException exception) {
-                        warnings.add(exception.getMessage());
-                        return Lists.<HtmlNode>list();
-                    }
-                })
-                .orElse(list());
+            try {
+                return imageConverter.convert(image);
+            } catch (IOException exception) {
+                warnings.add(exception.getMessage());
+                return Lists.<HtmlNode>list();
+            }
         }
     }
 
