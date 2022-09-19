@@ -35,6 +35,11 @@ public class HtmlWriter {
             @Override
             public void visit(HtmlForceWrite forceWrite) {
             }
+            
+            @Override
+            public void visit(HtmlBreakMergingFakeElement fakeElement) {
+              // Do nothing. This is a fake element
+            }
         });
     }
 

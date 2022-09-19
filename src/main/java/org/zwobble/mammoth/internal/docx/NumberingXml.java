@@ -31,15 +31,15 @@ public class NumberingXml {
     }
 
     private static Map<String, Numbering.AbstractNumLevel> readAbstractNumLevels(XmlElement element) {
-        return toMap(element.findChildren("w:lvl"), NumberingXml::readAbstractNumLevel);
+      return toMap(element.findChildren("w:lvl"), levelElement -> readAbstractNumLevel(element, levelElement));
     }
 
-    private static Map.Entry<String, Numbering.AbstractNumLevel> readAbstractNumLevel(XmlElement element) {
-        String levelIndex = element.getAttribute("w:ilvl");
-        Optional<String> numFmt = element.findChildOrEmpty("w:numFmt").getAttributeOrNone("w:val");
-        boolean isOrdered = !numFmt.equals(Optional.of("bullet"));
-        Optional<String> paragraphStyleId = element.findChildOrEmpty("w:pStyle").getAttributeOrNone("w:val");
-        return entry(levelIndex, new Numbering.AbstractNumLevel(levelIndex, isOrdered, paragraphStyleId));
+    private static Map.Entry<String, Numbering.AbstractNumLevel> readAbstractNumLevel(XmlElement parentAbstractNum, XmlElement levelElement) {
+      String levelIndex = levelElement.getAttribute("w:ilvl");
+      Optional<String> numFmt = levelElement.findChildOrEmpty("w:numFmt").getAttributeOrNone("w:val");
+      boolean isOrdered = !numFmt.equals(Optional.of("bullet"));
+      Optional<String> paragraphStyleId = levelElement.findChildOrEmpty("w:pStyle").getAttributeOrNone("w:val");
+      return entry(levelIndex, new Numbering.AbstractNumLevel(parentAbstractNum.getAttributeOrNone("w:abstractNumId"), levelIndex, isOrdered, paragraphStyleId));
     }
 
     private static Map<String, Numbering.Num> readNums(XmlElementList numElements) {

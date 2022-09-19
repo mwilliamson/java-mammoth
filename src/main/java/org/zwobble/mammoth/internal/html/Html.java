@@ -90,6 +90,12 @@ public class Html {
             public List<HtmlNode> visit(HtmlForceWrite forceWrite) {
                 return list(forceWrite);
             }
+            
+            @Override
+            public List<HtmlNode> visit(HtmlBreakMergingFakeElement fakeElement) {
+              // Do nothing. This is a fake element
+              return list(fakeElement);
+            }
         });
     }
 
@@ -128,6 +134,11 @@ public class Html {
             @Override
             public HtmlNode visit(HtmlForceWrite forceWrite) {
                 return forceWrite;
+            }
+            
+            @Override
+            public HtmlNode visit(HtmlBreakMergingFakeElement fakeElement) {
+              return fakeElement;
             }
         });
     }

@@ -309,7 +309,14 @@ public class MammothTests {
             new DocumentConverter().extractRawText(TestData.file("simple-list.docx").toURI().toURL().openStream()),
             isSuccess("Apple\n\nBanana\n\n"));
     }
-
+    
+    @Test
+    public void testSiblingLists() throws IOException {
+        assertThat(
+            convertToHtml("sibling-lists.docx"),
+            isSuccess("<ol><li>Li1</li></ol><ol><li>NewLi1</li></ol>"));
+    }
+    
     private Result<String> convertToHtml(String name) throws IOException {
         File file = TestData.file(name);
         return new DocumentConverter().convertToHtml(file);

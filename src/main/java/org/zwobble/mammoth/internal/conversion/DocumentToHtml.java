@@ -2,6 +2,7 @@ package org.zwobble.mammoth.internal.conversion;
 
 import org.zwobble.mammoth.internal.documents.*;
 import org.zwobble.mammoth.internal.html.Html;
+import org.zwobble.mammoth.internal.html.HtmlBreakMergingFakeElement;
 import org.zwobble.mammoth.internal.html.HtmlNode;
 import org.zwobble.mammoth.internal.results.InternalResult;
 import org.zwobble.mammoth.internal.styles.HtmlPath;
@@ -140,6 +141,9 @@ public class DocumentToHtml {
     }
 
     private class ElementConverterVisitor implements DocumentElementVisitor<List<HtmlNode>, Context> {
+      
+        private Optional<Paragraph> previousParagraph = Optional.empty();
+      
         @Override
         public List<HtmlNode> visit(Paragraph paragraph, Context context) {
             Supplier<List<HtmlNode>> children = () -> {
@@ -153,7 +157,27 @@ public class DocumentToHtml {
                     }
                     return HtmlPath.element("p");
                 });
-            return mapping.wrap(children).get();
+            
+            
+            List<HtmlNode> toRet = mapping.wrap(children).get();
+            if(previousParagraph.isPresent() && previousParagraph.get().getNumbering().isPresent()
+                && paragraph.getNumbering().isPresent()) {
+              NumberingLevel previousNumbering = previousParagraph.get().getNumbering().get();
+              NumberingLevel currentNumbering = paragraph.getNumbering().get();
+              if (previousNumbering.isOrdered() == currentNumbering.isOrdered()
+                  && previousNumbering.getLevelIndex().equalsIgnoreCase(currentNumbering.getLevelIndex())
+                  && ! previousNumbering.getNumberingID().equals(currentNumbering.getNumberingID())
+                  ) {
+                // Prevent merging between list elements. They may look the same type but they are not because they have different numbering ID.
+                List<HtmlNode> auxList = new ArrayList<>();
+                auxList.add(new HtmlBreakMergingFakeElement());
+                auxList.addAll(toRet);
+                toRet = auxList;
+              }
+            }
+            
+            previousParagraph = Optional.of(paragraph);
+            return toRet;
         }
 
         @Override
@@ -339,8 +363,13 @@ public class DocumentToHtml {
         }
     }
 
+    /**
+     * An instance of converter visitor
+     */
+    ElementConverterVisitor converterVisitor = new ElementConverterVisitor();
+    
     private List<HtmlNode> convertToHtml(DocumentElement element, Context context) {
-        return element.accept(new ElementConverterVisitor(), context);
+        return element.accept(converterVisitor, context);
     }
 
     private String generateNoteHtmlId(NoteType noteType, String noteId) {

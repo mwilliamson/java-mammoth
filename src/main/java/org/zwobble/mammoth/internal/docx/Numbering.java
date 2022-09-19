@@ -33,15 +33,21 @@ public class Numbering {
         private final String levelIndex;
         private final boolean isOrdered;
         private final Optional<String> paragraphStyleId;
+        private final Optional<String> numberingID;
 
+        public AbstractNumLevel(Optional<String> numberingID, String levelIndex, boolean isOrdered, Optional<String> paragraphStyleId) {
+          this.numberingID = numberingID;
+          this.levelIndex = levelIndex;
+          this.isOrdered = isOrdered;
+          this.paragraphStyleId = paragraphStyleId;
+       }
+        
         public AbstractNumLevel(String levelIndex, boolean isOrdered, Optional<String> paragraphStyleId) {
-            this.levelIndex = levelIndex;
-            this.isOrdered = isOrdered;
-            this.paragraphStyleId = paragraphStyleId;
+          this(Optional.empty(), levelIndex, isOrdered, paragraphStyleId);
         }
 
         public NumberingLevel toNumberingLevel() {
-            return new NumberingLevel(levelIndex, isOrdered);
+           return new NumberingLevel(numberingID, levelIndex, isOrdered);
         }
     }
 
