@@ -7,6 +7,7 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 import org.zwobble.mammoth.internal.util.PassThroughException;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -31,6 +32,9 @@ class SimpleSax {
         SAXParserFactory parserFactory = SAXParserFactory.newInstance();
         parserFactory.setNamespaceAware(true);
         try {
+            parserFactory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+            parserFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+            parserFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, false);
             SAXParser saxParser = parserFactory.newSAXParser();
             XMLReader xmlReader = saxParser.getXMLReader();
             xmlReader.setContentHandler(new DefaultHandler() {
