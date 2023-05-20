@@ -264,6 +264,62 @@ public class BodyXmlTests {
             hasNumbering(Optional.empty()));
     }
 
+    @Test
+    public void contentOfDeletedParagraphIsPreprendedToNextParagraph() {
+        Style heading1 = new Style("Heading1", Optional.of("Heading 1"));
+        Style heading2 = new Style("Heading2", Optional.of("Heading 2"));
+        Styles styles = new Styles(
+            map(
+                "Heading1", heading1,
+                "Heading2", heading2
+            ),
+            map(),
+            map(),
+            map()
+        );
+        List<XmlElement> bodyXml = list(
+            element("w:p", list(
+                element("w:pPr", list(
+                    element("w:pStyle", map("w:val", "Heading1")),
+                    element("w:rPr", list(
+                        element("w:del")
+                    ))
+                )),
+                runXml("One")
+            )),
+            element("w:p", list(
+                element("w:pPr", list(
+                    element("w:pStyle", map("w:val", "Heading2"))
+                )),
+                runXml("Two")
+            )),
+            // Include a second paragraph that isn't deleted to ensure we only add
+            // the deleted paragraph contents once.
+            element("w:p", list(
+                runXml("Three")
+            ))
+        );
+
+        BodyXmlReader reader = bodyReader(styles);
+        InternalResult<List<DocumentElement>> result = reader.readElements(bodyXml).toResult();
+
+        assertThat(result.getWarnings(), emptyIterable());
+        assertThat(result.getValue(), contains(
+            isParagraph(
+                hasParagraphStyle(equalTo(Optional.of(heading2))),
+                hasChildren(
+                    isRun(run(withChildren(text("One")))),
+                    isRun(run(withChildren(text("Two"))))
+                )
+            ),
+            isParagraph(
+                hasChildren(
+                    isRun(run(withChildren(text("Three"))))
+                )
+            )
+        ));
+    }
+
     @Nested
     public class ComplexFieldsTests {
         private final String URI = "http://example.com";

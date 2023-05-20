@@ -29,7 +29,7 @@ public class BodyXmlReader {
         this.fileReader = fileReader;
     }
 
-    ReadResult readElements(Iterable<XmlNode> nodes) {
+    public ReadResult readElements(Iterable<? extends XmlNode> nodes) {
         return new StatefulBodyXmlReader(
             styles,
             numbering,

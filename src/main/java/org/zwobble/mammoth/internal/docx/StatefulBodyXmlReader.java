@@ -19,6 +19,7 @@ import static org.zwobble.mammoth.internal.docx.ReadResult.*;
 import static org.zwobble.mammoth.internal.docx.Uris.uriToZipEntryName;
 import static org.zwobble.mammoth.internal.util.Iterables.lazyFilter;
 import static org.zwobble.mammoth.internal.util.Iterables.tryGetLast;
+import static org.zwobble.mammoth.internal.util.Lists.eagerConcat;
 import static org.zwobble.mammoth.internal.util.Lists.list;
 import static org.zwobble.mammoth.internal.util.Maps.entry;
 import static org.zwobble.mammoth.internal.util.Maps.lookup;
@@ -36,6 +37,7 @@ class StatefulBodyXmlReader {
     private final FileReader fileReader;
     private final StringBuilder currentInstrText;
     private final Queue<ComplexField> complexFieldStack;
+    private List<XmlNode> deletedParagraphContents;
 
     private interface ComplexField {
         ComplexField UNKNOWN = new ComplexField() {};
@@ -70,6 +72,7 @@ class StatefulBodyXmlReader {
         this.fileReader = fileReader;
         this.currentInstrText = new StringBuilder();
         this.complexFieldStack = Queues.stack();
+        this.deletedParagraphContents = new ArrayList<>();
     }
 
     ReadResult readElement(XmlElement element) {
@@ -249,17 +252,33 @@ class StatefulBodyXmlReader {
         return readStyle(properties, "w:rStyle", "Run", styles::findCharacterStyleById);
     }
 
-    ReadResult readElements(Iterable<XmlNode> nodes) {
+    ReadResult readElements(Iterable<? extends XmlNode> nodes) {
         return ReadResult.flatMap(lazyFilter(nodes, XmlElement.class), this::readElement);
     }
 
     private ReadResult readParagraph(XmlElement element) {
         XmlElementLike properties = element.findChildOrEmpty("w:pPr");
-        ParagraphIndent indent = readParagraphIndent(properties);
-        return ReadResult.map(
-            readParagraphStyle(properties),
-            readElements(element.getChildren()),
-            (style, children) -> new Paragraph(style, readNumbering(style, properties), indent, children)).appendExtra();
+
+        boolean isDeleted = properties
+            .findChildOrEmpty("w:rPr")
+            .findChild("w:del")
+            .isPresent();
+
+        if (isDeleted) {
+            deletedParagraphContents.addAll(element.getChildren());
+            return ReadResult.success(list());
+        } else {
+            ParagraphIndent indent = readParagraphIndent(properties);
+            List<XmlNode> childrenXml = element.getChildren();
+            if (!deletedParagraphContents.isEmpty()) {
+                childrenXml = eagerConcat(deletedParagraphContents, childrenXml);
+                deletedParagraphContents = new ArrayList<>();
+            }
+            return ReadResult.map(
+                readParagraphStyle(properties),
+                readElements(childrenXml),
+                (style, children) -> new Paragraph(style, readNumbering(style, properties), indent, children)).appendExtra();
+        }
     }
 
     private ReadResult readFieldChar(XmlElement element) {

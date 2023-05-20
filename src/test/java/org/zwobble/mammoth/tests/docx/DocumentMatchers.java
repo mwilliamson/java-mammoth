@@ -37,6 +37,10 @@ public class DocumentMatchers {
         return cast(Paragraph.class, allOf(matchers));
     }
 
+    static Matcher<Paragraph> hasParagraphStyle(Matcher<Optional<Style>> style) {
+        return hasProperty("style", style);
+    }
+
     static Matcher<DocumentElement> isEmptyRun() {
         return isRun(hasChildren());
     }
