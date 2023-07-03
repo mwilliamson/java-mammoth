@@ -20,7 +20,7 @@ import static org.zwobble.mammoth.internal.util.Maps.lookup;
 
 public class InMemoryArchive implements MutableArchive {
     public static InMemoryArchive fromStream(InputStream stream) throws IOException {
-        ZipInputStream zipStream = new ZipInputStream(stream);
+        ZipInputStream zipStream = new ZipInputStream(stream, StandardCharsets.UTF_8);
         Map<String, byte[]> entries = new HashMap<>();
         ZipEntry entry;
         while ((entry = zipStream.getNextEntry()) != null) {
@@ -62,7 +62,7 @@ public class InMemoryArchive implements MutableArchive {
     public byte[] toByteArray() {
         return PassThroughException.wrap(() -> {
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            try (ZipOutputStream zipStream = new ZipOutputStream(outputStream)) {
+            try (ZipOutputStream zipStream = new ZipOutputStream(outputStream, StandardCharsets.UTF_8)) {
                 for (Map.Entry<String, byte[]> entry : entries.entrySet()) {
                     zipStream.putNextEntry(new ZipEntry(entry.getKey()));
                     zipStream.write(entry.getValue());
