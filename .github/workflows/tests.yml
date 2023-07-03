@@ -20,4 +20,6 @@ jobs:
               distribution: 'temurin'
               java-version: ${{ matrix.java-version }}
 
-        - run: mvn package
+        - run: mvn test package
+
+        - run: mvn -Dfile.encoding=Cp1252 test

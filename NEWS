@@ -2,6 +2,8 @@
 
 * Support merged paragraphs when revisions are tracked.
 
+* Fix writing of embedded style maps when default encoding is not UTF-8.
+
 # 1.5.0
 
 * Convert symbols in supported fonts to corresponding Unicode characters.
