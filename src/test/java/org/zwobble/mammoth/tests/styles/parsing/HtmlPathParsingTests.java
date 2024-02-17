@@ -61,6 +61,20 @@ public class HtmlPathParsingTests {
     }
 
     @Test
+    public void canReadAttributeOnElement() {
+        assertThat(
+            parseHtmlPath("p[lang='fr']"),
+            deepEquals(HtmlPath.collapsibleElement("p", map("lang", "fr"))));
+    }
+
+    @Test
+    public void canReadMultipleAttributesOnElement() {
+        assertThat(
+            parseHtmlPath("p[lang='fr'][data-x='y']"),
+            deepEquals(HtmlPath.collapsibleElement("p", map("lang", "fr", "data-x", "y"))));
+    }
+
+    @Test
     public void canReadWhenElementMustBeFresh() {
         assertThat(
             parseHtmlPath("p:fresh"),

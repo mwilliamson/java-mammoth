@@ -5,13 +5,10 @@ import org.zwobble.mammoth.internal.styles.HtmlPath;
 import org.zwobble.mammoth.internal.styles.HtmlPathElement;
 import org.zwobble.mammoth.internal.styles.HtmlPathElements;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import static org.zwobble.mammoth.internal.styles.parsing.TokenParser.parseIdentifier;
-import static org.zwobble.mammoth.internal.util.Maps.map;
+import static org.zwobble.mammoth.internal.styles.parsing.TokenParser.parseString;
 
 public class HtmlPathParser {
     public static HtmlPath parse(TokenIterator<TokenType> tokens) {
@@ -19,6 +16,18 @@ public class HtmlPathParser {
             return HtmlPath.IGNORE;
         } else {
             return parseHtmlPathElements(tokens);
+        }
+    }
+
+    private static class Attribute {
+        private final String name;
+        private final String value;
+        private final boolean append;
+
+        private Attribute(String name, String value, boolean append) {
+            this.name = name;
+            this.value = value;
+            this.append = append;
         }
     }
 
@@ -41,10 +50,20 @@ public class HtmlPathParser {
 
     private static HtmlPathElement parseElement(TokenIterator<TokenType> tokens) {
         List<String> tagNames = parseTagNames(tokens);
-        List<String> classNames = parseClassNames(tokens);
-        Map<String, String> attributes = classNames.isEmpty()
-            ? map()
-            : map("class", String.join(" ", classNames));
+
+        List<Attribute> attributeList = parseAttributeOrClassNames(tokens);
+        Map<String, String> attributes = new HashMap<>();
+        for (Attribute attribute : attributeList) {
+            if (attribute.append && attributes.containsKey(attribute.name)) {
+                attributes.put(
+                    attribute.name,
+                    attributes.get(attribute.name) + " " + attribute.value
+                );
+            } else {
+                attributes.put(attribute.name, attribute.value);
+            }
+        }
+
         boolean isFresh = parseIsFresh(tokens);
         String separator = parseSeparator(tokens);
         return new HtmlPathElement(new HtmlTag(tagNames, attributes, !isFresh, separator));
@@ -59,16 +78,41 @@ public class HtmlPathParser {
         return tagNames;
     }
 
-    private static List<String> parseClassNames(TokenIterator<TokenType> tokens) {
-        List<String> classNames = new ArrayList<>();
+    private static List<Attribute> parseAttributeOrClassNames(TokenIterator<TokenType> tokens) {
+        List<Attribute> attributes = new ArrayList<>();
         while (true) {
-            Optional<String> className = TokenParser.parseClassName(tokens);
-            if (className.isPresent()) {
-                classNames.add(className.get());
+            Optional<Attribute> attribute = parseAttributeOrClassName(tokens);
+            if (attribute.isPresent()) {
+                attributes.add(attribute.get());
             } else {
-                return classNames;
+                return attributes;
             }
         }
+    }
+
+    private static Optional<Attribute> parseAttributeOrClassName(TokenIterator<TokenType> tokens) {
+        if (tokens.isNext(TokenType.SYMBOL, "[")) {
+            return Optional.of(parseAttribute(tokens));
+        } else if (tokens.isNext(TokenType.SYMBOL, ".")) {
+            return Optional.of(parseClassName(tokens));
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    private static Attribute parseAttribute(TokenIterator<TokenType> tokens) {
+        tokens.skip(TokenType.SYMBOL, "[");
+        String name = parseIdentifier(tokens);
+        tokens.skip(TokenType.SYMBOL, "=");
+        String value = parseString(tokens);
+        tokens.skip(TokenType.SYMBOL, "]");
+        return new Attribute(name, value, true);
+    }
+
+    private static Attribute parseClassName(TokenIterator<TokenType> tokens) {
+        tokens.skip(TokenType.SYMBOL, ".");
+        String className = parseIdentifier(tokens);
+        return new Attribute("class", className, true);
     }
 
     private static boolean parseIsFresh(TokenIterator<TokenType> tokens) {
