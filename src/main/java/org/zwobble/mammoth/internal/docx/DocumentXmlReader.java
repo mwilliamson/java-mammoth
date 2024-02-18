@@ -5,9 +5,9 @@ import org.zwobble.mammoth.internal.documents.Document;
 import org.zwobble.mammoth.internal.documents.Notes;
 import org.zwobble.mammoth.internal.results.InternalResult;
 import org.zwobble.mammoth.internal.xml.XmlElement;
-import org.zwobble.mammoth.internal.xml.XmlElementLike;
 
 import java.util.List;
+import java.util.Optional;
 
 public class DocumentXmlReader {
     private final BodyXmlReader bodyReader;
@@ -21,8 +21,13 @@ public class DocumentXmlReader {
     }
 
     public InternalResult<Document> readElement(XmlElement element) {
-        XmlElementLike body = element.findChildOrEmpty("w:body");
-        return bodyReader.readElements(body.getChildren())
+        Optional<XmlElement> body = element.findChild("w:body");
+
+        if (!body.isPresent()) {
+            throw new IllegalArgumentException("Could not find the body element: are you sure this is a docx file?");
+        }
+
+        return bodyReader.readElements(body.get().getChildren())
             .toResult()
             .map(children -> new Document(children, notes, comments));
     }
