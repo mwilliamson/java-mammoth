@@ -310,6 +310,14 @@ public class MammothTests {
             isSuccess("Apple\n\nBanana\n\n"));
     }
 
+    @Test
+    public void canReadStrictFormat() throws IOException {
+        assertThat(
+            convertToHtml("strict-format.docx"),
+            isSuccess("<p>Test</p>")
+        );
+    }
+
     private Result<String> convertToHtml(String name) throws IOException {
         File file = TestData.file(name);
         return new DocumentConverter().convertToHtml(file);

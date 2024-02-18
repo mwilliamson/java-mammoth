@@ -11,15 +11,25 @@ import static org.zwobble.mammoth.internal.util.Lists.list;
 
 public class OfficeXml {
     private static final NamespacePrefixes XML_NAMESPACES = NamespacePrefixes.builder()
+        // Transitional format
         .put("w", "http://schemas.openxmlformats.org/wordprocessingml/2006/main")
+        .put("r", "http://schemas.openxmlformats.org/officeDocument/2006/relationships")
         .put("wp", "http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing")
         .put("a", "http://schemas.openxmlformats.org/drawingml/2006/main")
         .put("pic", "http://schemas.openxmlformats.org/drawingml/2006/picture")
+
+        // Strict format
+        .put("w", "http://purl.oclc.org/ooxml/wordprocessingml/main")
+        .put("r", "http://purl.oclc.org/ooxml/officeDocument/relationships")
+        .put("wp", "http://purl.oclc.org/ooxml/drawingml/wordprocessingDrawing")
+        .put("a", "http://purl.oclc.org/ooxml/drawingml/main")
+        .put("pic", "http://purl.oclc.org/ooxml/drawingml/picture")
+
+        // Common
         .put("content-types", "http://schemas.openxmlformats.org/package/2006/content-types")
-        .put("r", "http://schemas.openxmlformats.org/officeDocument/2006/relationships")
         .put("relationships", "http://schemas.openxmlformats.org/package/2006/relationships")
-        .put("v", "urn:schemas-microsoft-com:vml")
         .put("mc", "http://schemas.openxmlformats.org/markup-compatibility/2006")
+        .put("v", "urn:schemas-microsoft-com:vml")
         .put("office-word", "urn:schemas-microsoft-com:office:word")
         .build();
 

@@ -4,6 +4,8 @@
 
 * Throw error when failing to find the body element in a document.
 
+* Add support for the strict document format.
+
 # 1.6.0
 
 * Support merged paragraphs when revisions are tracked.
