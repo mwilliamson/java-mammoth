@@ -206,7 +206,31 @@ public class BodyXmlTests {
     }
 
     @Test
-    public void numberingOnParagraphStyleTakesPrecedenceOverNumPr() {
+    public void paragraphHasNumberingFromParagraphStyleIfPresent() {
+        XmlElement element = paragraphXml(list(
+            element("w:pPr", list(
+                element("w:pStyle", map("w:val", "List"))
+            ))
+        ));
+
+        Numbering numbering = numberingMap(map(
+            "43", map("1", new Numbering.AbstractNumLevel("1", true, Optional.of("List")))
+        ));
+        Styles styles = new Styles(
+            map("List", new Style("List", Optional.empty())),
+            map(),
+            map(),
+            map()
+        );
+
+        assertThat(
+            readSuccess(bodyReader(numbering, styles), element),
+            hasNumbering(NumberingLevel.ordered("1"))
+        );
+    }
+
+    @Test
+    public void numberingPropertiesInParagraphPropertiesTakesPrecedenceOverNumberingInParagraphStyle() {
         XmlElement element = paragraphXml(list(
             element("w:pPr", list(
                 element("w:pStyle", map("w:val", "List")),
@@ -218,8 +242,8 @@ public class BodyXmlTests {
         ));
 
         Numbering numbering = numberingMap(map(
-            "42", map("1", new Numbering.AbstractNumLevel("1", false, Optional.empty())),
-            "43", map("1", new Numbering.AbstractNumLevel("1", true, Optional.of("List")))
+            "42", map("1", new Numbering.AbstractNumLevel("1", true, Optional.empty())),
+            "43", map("1", new Numbering.AbstractNumLevel("2", true, Optional.of("List")))
         ));
         Styles styles = new Styles(
             map("List", new Style("List", Optional.empty())),

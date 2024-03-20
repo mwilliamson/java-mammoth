@@ -354,6 +354,13 @@ class StatefulBodyXmlReader {
     }
 
     private Optional<NumberingLevel> readNumbering(Optional<Style> style, XmlElementLike properties) {
+        XmlElementLike numberingProperties = properties.findChildOrEmpty("w:numPr");
+        Optional<String> numId = readVal(numberingProperties, "w:numId");
+        Optional<String> levelIndex = readVal(numberingProperties, "w:ilvl");
+        if (numId.isPresent() && levelIndex.isPresent()) {
+            return numbering.findLevel(numId.get(), levelIndex.get());
+        }
+
         if (style.isPresent()) {
             String styleId = style.get().getStyleId();
             Optional<NumberingLevel> level = numbering.findLevelByParagraphStyleId(styleId);
@@ -362,11 +369,7 @@ class StatefulBodyXmlReader {
             }
         }
 
-        XmlElementLike numberingProperties = properties.findChildOrEmpty("w:numPr");
-        return Optionals.flatMap(
-            readVal(numberingProperties, "w:numId"),
-            readVal(numberingProperties, "w:ilvl"),
-            numbering::findLevel);
+        return Optional.empty();
     }
 
     private ParagraphIndent readParagraphIndent(XmlElementLike properties) {
