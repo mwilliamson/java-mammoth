@@ -50,6 +50,22 @@ public class NumberingXmlTests {
     }
 
     @Test
+    public void listIsOrderedIfThereIsNotExplicitFormat() {
+        XmlElement element = element("w:numbering", list(
+            element("w:abstractNum", map("w:abstractNumId", "42"), list(
+                element("w:lvl", map("w:ilvl", "0"))
+            )),
+            element("w:num", map("w:numId", "47"), list(
+                element("w:abstractNumId", map("w:val", "42"))
+            ))
+        ));
+
+        Numbering numbering = readNumbering(element);
+
+        assertEquals(true, numbering.findLevel("47", "0").get().isOrdered());
+    }
+
+    @Test
     public void numReferencingNonExistentAbstractNumIsIgnored() {
         XmlElement element = element("w:numbering", list(
             element("w:num", map("w:numId", "47"), list(
