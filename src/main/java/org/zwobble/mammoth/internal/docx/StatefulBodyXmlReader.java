@@ -24,6 +24,7 @@ import static org.zwobble.mammoth.internal.util.Lists.list;
 import static org.zwobble.mammoth.internal.util.Maps.entry;
 import static org.zwobble.mammoth.internal.util.Maps.lookup;
 import static org.zwobble.mammoth.internal.util.Sets.set;
+import static org.zwobble.mammoth.internal.util.Strings.codepointToString;
 
 class StatefulBodyXmlReader {
     private static final Set<String> IMAGE_TYPES_SUPPORTED_BY_BROWSERS = set(
@@ -406,15 +407,6 @@ class StatefulBodyXmlReader {
             "A w:sym element with an unsupported character was ignored: char " +
                 charValue.orElse("null") + " in font " + font.orElse("null")
         );
-    }
-
-    public String codepointToString(int codePoint) {
-        if (Character.isBmpCodePoint(codePoint)) {
-            return String.valueOf((char) codePoint);
-        } else {
-            return String.valueOf(Character.highSurrogate(codePoint)) +
-                Character.lowSurrogate(codePoint);
-        }
     }
 
     private ReadResult readBreak(XmlElement element) {
