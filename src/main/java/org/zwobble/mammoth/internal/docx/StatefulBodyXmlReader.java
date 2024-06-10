@@ -253,7 +253,7 @@ class StatefulBodyXmlReader {
         return readStyle(properties, "w:rStyle", "Run", styles::findCharacterStyleById);
     }
 
-    ReadResult readElements(Iterable<? extends XmlNode> nodes) {
+    ReadResult readElements(Iterable<XmlNode> nodes) {
         return ReadResult.flatMap(lazyFilter(nodes, XmlElement.class), this::readElement);
     }
 

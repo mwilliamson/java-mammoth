@@ -301,7 +301,7 @@ public class BodyXmlTests {
             map(),
             map()
         );
-        List<XmlElement> bodyXml = list(
+        List<XmlNode> bodyXml = list(
             element("w:p", list(
                 element("w:pPr", list(
                     element("w:pStyle", map("w:val", "Heading1")),
