@@ -9,6 +9,7 @@ import java.util.*;
 
 import static org.zwobble.mammoth.internal.styles.parsing.TokenParser.parseIdentifier;
 import static org.zwobble.mammoth.internal.styles.parsing.TokenParser.parseString;
+import static org.zwobble.mammoth.internal.util.Maps.lookup;
 
 public class HtmlPathParser {
     public static HtmlPath parse(TokenIterator<TokenType> tokens) {
@@ -57,7 +58,7 @@ public class HtmlPathParser {
             if (attribute.append && attributes.containsKey(attribute.name)) {
                 attributes.put(
                     attribute.name,
-                    attributes.get(attribute.name) + " " + attribute.value
+                    lookup(attributes, attribute.name).get() + " " + attribute.value
                 );
             } else {
                 attributes.put(attribute.name, attribute.value);
