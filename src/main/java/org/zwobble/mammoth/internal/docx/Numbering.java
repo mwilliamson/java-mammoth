@@ -1,10 +1,11 @@
 package org.zwobble.mammoth.internal.docx;
 
 import org.zwobble.mammoth.internal.documents.NumberingLevel;
+import org.zwobble.mammoth.internal.util.Iterables;
+import org.zwobble.mammoth.internal.util.Maps;
 
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static org.zwobble.mammoth.internal.util.Maps.lookup;
 import static org.zwobble.mammoth.internal.util.Maps.map;
@@ -66,10 +67,16 @@ public class Numbering {
         Styles styles
     ) {
         this.abstractNums = abstractNums;
-        this.levelsByParagraphStyleId = abstractNums.values().stream()
-            .flatMap(abstractNum -> abstractNum.levels.values().stream())
-            .filter(level -> level.paragraphStyleId.isPresent())
-            .collect(Collectors.toMap(level -> level.paragraphStyleId.get(), level -> level));
+        this.levelsByParagraphStyleId = Maps.toMapWithKey(
+            Iterables.lazyFilter(
+                Iterables.lazyFlatMap(
+                    abstractNums.values(),
+                    abstractNum -> abstractNum.levels.values()
+                ),
+                level -> level.paragraphStyleId.isPresent()
+            ),
+            level -> level.paragraphStyleId.get()
+        );
         this.nums = nums;
         this.styles = styles;
     }
