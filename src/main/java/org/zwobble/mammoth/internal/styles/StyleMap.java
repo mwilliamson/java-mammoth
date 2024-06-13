@@ -30,7 +30,8 @@ public class StyleMap {
             Lists.eagerConcat(high.paragraphStyles, low.paragraphStyles),
             Lists.eagerConcat(high.runStyles, low.runStyles),
             Lists.eagerConcat(high.tableStyles, low.tableStyles),
-            Lists.eagerConcat(high.breakStyles, low.breakStyles)
+            Lists.eagerConcat(high.breakStyles, low.breakStyles),
+            Lists.eagerConcat(high.highlightStyles, low.highlightStyles)
         );
     }
 
@@ -47,6 +48,7 @@ public class StyleMap {
     private final List<StyleMapping<Run>> runStyles;
     private final List<StyleMapping<Table>> tableStyles;
     private final List<StyleMapping<Break>> breakStyles;
+    private final List<StyleMapping<String>> highlightStyles;
 
     public StyleMap(
         Optional<HtmlPath> bold,
@@ -59,7 +61,8 @@ public class StyleMap {
         List<StyleMapping<Paragraph>> paragraphStyles,
         List<StyleMapping<Run>> runStyles,
         List<StyleMapping<Table>> tableStyles,
-        List<StyleMapping<Break>> breakStyles
+        List<StyleMapping<Break>> breakStyles,
+        List<StyleMapping<String>> highlightStyles
     )
     {
         this.bold = bold;
@@ -73,6 +76,7 @@ public class StyleMap {
         this.runStyles = runStyles;
         this.tableStyles = tableStyles;
         this.breakStyles = breakStyles;
+        this.highlightStyles = highlightStyles;
     }
 
     public StyleMap update(StyleMap styleMap) {

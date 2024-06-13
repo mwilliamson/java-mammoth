@@ -8,6 +8,8 @@ import org.zwobble.mammoth.internal.styles.parsing.StyleMappingTokeniser;
 import org.zwobble.mammoth.internal.styles.parsing.TokenIterator;
 import org.zwobble.mammoth.internal.styles.parsing.TokenType;
 
+import java.util.Optional;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.zwobble.mammoth.tests.DeepReflectionMatcher.deepEquals;
 
@@ -144,6 +146,30 @@ public class DocumentMatcherParsingTests {
         assertThat(
             parseDocumentMatcher("small-caps"),
             deepEquals(new StyleMapBuilder().smallCaps(HTML_PATH).build())
+        );
+    }
+
+    @Test
+    public void readsHighlightWithoutColor() {
+        assertThat(
+            parseDocumentMatcher("highlight"),
+            deepEquals(
+                new StyleMapBuilder()
+                    .mapHighlight(new HighlightMatcher(Optional.empty()), HTML_PATH)
+                    .build()
+            )
+        );
+    }
+
+    @Test
+    public void readsHighlightWithColor() {
+        assertThat(
+            parseDocumentMatcher("highlight[color='yellow']"),
+            deepEquals(
+                new StyleMapBuilder()
+                    .mapHighlight(new HighlightMatcher(Optional.of("yellow")), HTML_PATH)
+                    .build()
+            )
         );
     }
 

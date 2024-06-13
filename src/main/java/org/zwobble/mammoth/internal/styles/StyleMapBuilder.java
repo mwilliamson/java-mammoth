@@ -21,6 +21,7 @@ public class StyleMapBuilder {
     private final List<StyleMapping<Run>> runStyles = new ArrayList<>();
     private final List<StyleMapping<Table>> tableStyles = new ArrayList<>();
     private final List<StyleMapping<Break>> breakStyles = new ArrayList<>();
+    private final List<StyleMapping<String>> highlightStyles = new ArrayList<>();
 
     public StyleMapBuilder() {
         this.bold = Optional.empty();
@@ -62,6 +63,11 @@ public class StyleMapBuilder {
         return this;
     }
 
+    public StyleMapBuilder mapHighlight(HighlightMatcher matcher, HtmlPath path) {
+        this.highlightStyles.add(new StyleMapping<>(matcher, path));
+        return this;
+    }
+
     public StyleMapBuilder commentReference(HtmlPath path) {
         this.commentReference = Optional.of(path);
         return this;
@@ -99,7 +105,8 @@ public class StyleMapBuilder {
             paragraphStyles,
             runStyles,
             tableStyles,
-            breakStyles
+            breakStyles,
+            highlightStyles
         );
     }
 }

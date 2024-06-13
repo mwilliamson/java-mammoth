@@ -34,6 +34,9 @@ public class DocumentMatcherParser {
                 return StyleMapBuilder::allCaps;
             case "small-caps":
                 return StyleMapBuilder::smallCaps;
+            case "highlight":
+                HighlightMatcher highlight = parseHighlightMatcher(tokens);
+                return (builder, path) -> builder.mapHighlight(highlight, path);
             case "comment-reference":
                 return StyleMapBuilder::commentReference;
             case "br":
@@ -110,6 +113,21 @@ public class DocumentMatcherParser {
             default:
                 throw lineParseException(listType, "Unrecognised list type: " + listType);
         }
+    }
+
+    private static HighlightMatcher parseHighlightMatcher(TokenIterator<TokenType> tokens) {
+        Optional<String> color;
+
+        if (tokens.trySkip(TokenType.SYMBOL, "[")) {
+            tokens.skip(TokenType.IDENTIFIER, "color");
+            tokens.skip(TokenType.SYMBOL, "=");
+            color = Optional.of(TokenParser.parseString(tokens));
+            tokens.skip(TokenType.SYMBOL, "]");
+        } else {
+            color = Optional.empty();
+        }
+
+        return new HighlightMatcher(color);
     }
 
     private static BreakMatcher parseBreakMatcher(TokenIterator<TokenType> tokens) {
