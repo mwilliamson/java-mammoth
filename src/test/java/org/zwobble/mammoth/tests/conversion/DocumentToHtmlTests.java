@@ -250,10 +250,19 @@ public class DocumentToHtmlTests {
     public void breaksCanBeMappedUsingStyleMappings() {
         assertThat(
             convertToHtml(
-                Break.PAGE_BREAK,
-                StyleMap.builder().mapBreak(BreakMatcher.PAGE_BREAK, HtmlPath.element("hr")).build()
+                run(withChildren(
+                    Break.PAGE_BREAK,
+                    Break.LINE_BREAK
+                )),
+                StyleMap.builder()
+                    .mapBreak(BreakMatcher.PAGE_BREAK, HtmlPath.element("hr"))
+                    .mapBreak(BreakMatcher.LINE_BREAK, HtmlPath.element("br", map("class", "line-break")))
+                    .build()
             ),
-            deepEquals(list(Html.element("hr")))
+            deepEquals(list(
+                Html.element("hr"),
+                Html.element("br", map("class", "line-break"))
+            ))
         );
     }
 
