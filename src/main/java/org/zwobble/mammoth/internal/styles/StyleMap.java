@@ -131,4 +131,9 @@ public class StyleMap {
         return tryFind(breakStyles, styleMapping -> styleMapping.matches(breakElement))
             .map(StyleMapping::getHtmlPath);
     }
+
+    public Optional<HtmlPath> getHighlightHtmlPath(String color) {
+        return tryFind(highlightStyles, styleMapping -> styleMapping.matches(color))
+            .map(StyleMapping::getHtmlPath);
+    }
 }

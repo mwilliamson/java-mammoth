@@ -211,6 +211,50 @@ public class DocumentToHtmlTests {
     }
 
     @Test
+    public void highlightedRunsAreIgnoredByDefault() {
+        Run run = run(withHighlight("yellow"), withChildren(new Text("Hello")));
+
+        List<HtmlNode> result = convertToHtml(run);
+
+        assertThat(result, deepEquals(list(Html.text("Hello"))));
+    }
+
+    @Test
+    public void highlightedRunsCanBeConfiguredWithStyleMappingForAllHighlights() {
+        Run run = run(withHighlight("yellow"), withChildren(new Text("Hello")));
+        StyleMap styleMap = StyleMap.builder()
+            .mapHighlight(new HighlightMatcher(Optional.empty()), HtmlPath.element("mark"))
+            .build();
+
+        List<HtmlNode> result = convertToHtml(run, styleMap);
+
+        assertThat(result, deepEquals(list(
+            Html.element("mark", list(Html.text("Hello")))
+        )));
+    }
+
+    @Test
+    public void highlightedRunsCanBeConfiguredWithStyleMappingForSpecificHighlightColor() {
+        Paragraph paragraph = paragraph(withChildren(
+            run(withHighlight("yellow"), withChildren(new Text("Yellow"))),
+            run(withHighlight("red"), withChildren(new Text("Red")))
+        ));
+        StyleMap styleMap = StyleMap.builder()
+            .mapHighlight(new HighlightMatcher(Optional.of("yellow")), HtmlPath.element("mark", map("class", "yellow")))
+            .mapHighlight(new HighlightMatcher(Optional.empty()), HtmlPath.element("mark"))
+            .build();
+
+        List<HtmlNode> result = convertToHtml(paragraph, styleMap);
+
+        assertThat(result, deepEquals(list(
+            Html.element("p", list(
+                Html.element("mark", map("class", "yellow"), list(Html.text("Yellow"))),
+                Html.element("mark", list(Html.text("Red")))
+            ))
+        )));
+    }
+
+    @Test
     public void superscriptRunsAreWrappedInSuperscriptTags() {
         assertThat(
             convertToHtml(run(withVerticalAlignment(SUPERSCRIPT), withChildren(new Text("Hello")))),

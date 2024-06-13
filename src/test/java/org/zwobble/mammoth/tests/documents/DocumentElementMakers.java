@@ -64,6 +64,10 @@ public class DocumentElementMakers {
         return arg(SMALL_CAPS, smallCaps);
     }
 
+    public static Argument<Optional<String>> withHighlight(String highlight) {
+        return arg(HIGHLIGHT, Optional.of(highlight));
+    }
+
     public static Argument<VerticalAlignment> withVerticalAlignment(VerticalAlignment verticalAlignment) {
         return arg(VERTICAL_ALIGNMENT, verticalAlignment);
     }
