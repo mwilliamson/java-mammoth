@@ -99,6 +99,54 @@ public class DocumentMatcherParsingTests {
             hasTableMatcher(TableMatcher.styleName("Normal Table")));
     }
 
+    @Test
+    public void readsBold() {
+        assertThat(
+            parseDocumentMatcher("b"),
+            deepEquals(new StyleMapBuilder().bold(HTML_PATH).build())
+        );
+    }
+
+    @Test
+    public void readsItalic() {
+        assertThat(
+            parseDocumentMatcher("i"),
+            deepEquals(new StyleMapBuilder().italic(HTML_PATH).build())
+        );
+    }
+
+    @Test
+    public void readsUnderline() {
+        assertThat(
+            parseDocumentMatcher("u"),
+            deepEquals(new StyleMapBuilder().underline(HTML_PATH).build())
+        );
+    }
+
+    @Test
+    public void readsStrikethrough() {
+        assertThat(
+            parseDocumentMatcher("strike"),
+            deepEquals(new StyleMapBuilder().strikethrough(HTML_PATH).build())
+        );
+    }
+
+    @Test
+    public void readsAllCaps() {
+        assertThat(
+            parseDocumentMatcher("all-caps"),
+            deepEquals(new StyleMapBuilder().allCaps(HTML_PATH).build())
+        );
+    }
+
+    @Test
+    public void readsSmallCaps() {
+        assertThat(
+            parseDocumentMatcher("small-caps"),
+            deepEquals(new StyleMapBuilder().smallCaps(HTML_PATH).build())
+        );
+    }
+
     private static final HtmlPath HTML_PATH = HtmlPath.element("placeholder");
 
     private StyleMap parseDocumentMatcher(String input) {
