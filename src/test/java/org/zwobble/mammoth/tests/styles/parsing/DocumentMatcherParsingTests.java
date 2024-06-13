@@ -173,6 +173,50 @@ public class DocumentMatcherParsingTests {
         );
     }
 
+    @Test
+    public void readsCommentReference() {
+        assertThat(
+            parseDocumentMatcher("comment-reference"),
+            deepEquals(new StyleMapBuilder().commentReference(HTML_PATH).build())
+        );
+    }
+
+    @Test
+    public void readsLineBreaks() {
+        assertThat(
+            parseDocumentMatcher("br[type='line']"),
+            deepEquals(
+                new StyleMapBuilder()
+                    .mapBreak(BreakMatcher.LINE_BREAK, HTML_PATH)
+                    .build()
+            )
+        );
+    }
+
+    @Test
+    public void readsPageBreaks() {
+        assertThat(
+            parseDocumentMatcher("br[type='page']"),
+            deepEquals(
+                new StyleMapBuilder()
+                    .mapBreak(BreakMatcher.PAGE_BREAK, HTML_PATH)
+                    .build()
+            )
+        );
+    }
+
+    @Test
+    public void readsColumnBreaks() {
+        assertThat(
+            parseDocumentMatcher("br[type='column']"),
+            deepEquals(
+                new StyleMapBuilder()
+                    .mapBreak(BreakMatcher.COLUMN_BREAK, HTML_PATH)
+                    .build()
+            )
+        );
+    }
+
     private static final HtmlPath HTML_PATH = HtmlPath.element("placeholder");
 
     private StyleMap parseDocumentMatcher(String input) {
