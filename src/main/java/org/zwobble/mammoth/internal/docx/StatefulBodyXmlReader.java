@@ -203,7 +203,8 @@ class StatefulBodyXmlReader {
     }
 
     private Optional<String> readHighlight(XmlElementLike properties) {
-        return readVal(properties, "w:highlight");
+        return readVal(properties, "w:highlight")
+            .filter(value -> !value.isEmpty() && !value.equals("none"));
     }
 
     private boolean isBold(XmlElementLike properties) {

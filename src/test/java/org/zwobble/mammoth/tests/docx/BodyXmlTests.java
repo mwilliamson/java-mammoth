@@ -880,6 +880,17 @@ public class BodyXmlTests {
     }
 
     @Test
+    public void whenHighlightIsNoneThenRunhasNoHighlight() {
+        XmlElement element = runXmlWithProperties(
+            element("w:highlight", map("w:val", "none"))
+        );
+
+        DocumentElement result = readSuccess(bodyReader(), element);
+
+        assertThat(result, hasProperty("highlight", equalTo(Optional.empty())));
+    }
+
+    @Test
     public void canReadTabElement() {
         XmlElement element = element("w:tab");
 
