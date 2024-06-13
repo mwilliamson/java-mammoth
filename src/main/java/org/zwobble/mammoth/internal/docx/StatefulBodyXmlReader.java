@@ -183,6 +183,7 @@ class StatefulBodyXmlReader {
                 }
 
                 return new Run(
+                    readHighlight(properties),
                     isBold(properties),
                     isItalic(properties),
                     isUnderline(properties),
@@ -199,6 +200,10 @@ class StatefulBodyXmlReader {
 
     private Optional<HyperlinkComplexField> currentHyperlinkComplexField() {
         return tryGetLast(lazyFilter(this.complexFieldStack, HyperlinkComplexField.class));
+    }
+
+    private Optional<String> readHighlight(XmlElementLike properties) {
+        return readVal(properties, "w:highlight");
     }
 
     private boolean isBold(XmlElementLike properties) {

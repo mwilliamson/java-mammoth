@@ -860,6 +860,26 @@ public class BodyXmlTests {
     }
 
     @Test
+    public void runHasNoHighlightByDefault() {
+        XmlElement element = runXmlWithProperties();
+
+        DocumentElement result = readSuccess(bodyReader(), element);
+
+        assertThat(result, hasProperty("highlight", equalTo(Optional.empty())));
+    }
+
+    @Test
+    public void runHasHighlightReadFromProperties() {
+        XmlElement element = runXmlWithProperties(
+            element("w:highlight", map("w:val", "yellow"))
+        );
+
+        DocumentElement result = readSuccess(bodyReader(), element);
+
+        assertThat(result, hasProperty("highlight", equalTo(Optional.of("yellow"))));
+    }
+
+    @Test
     public void canReadTabElement() {
         XmlElement element = element("w:tab");
 

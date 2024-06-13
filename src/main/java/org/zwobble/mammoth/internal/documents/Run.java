@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 public class Run implements DocumentElement, HasChildren {
+    private final Optional<String> highlight;
     private final boolean isBold;
     private final boolean isItalic;
     private final boolean isUnderline;
@@ -15,6 +16,7 @@ public class Run implements DocumentElement, HasChildren {
     private final List<DocumentElement> children;
 
     public Run(
+        Optional<String> highlight,
         boolean isBold,
         boolean isItalic,
         boolean isUnderline,
@@ -25,6 +27,7 @@ public class Run implements DocumentElement, HasChildren {
         Optional<Style> style,
         List<DocumentElement> children
     ) {
+        this.highlight = highlight;
         this.isBold = isBold;
         this.isItalic = isItalic;
         this.isUnderline = isUnderline;
@@ -34,6 +37,10 @@ public class Run implements DocumentElement, HasChildren {
         this.verticalAlignment = verticalAlignment;
         this.style = style;
         this.children = children;
+    }
+
+    public Optional<String> getHighlight() {
+        return highlight;
     }
 
     public boolean isBold() {
