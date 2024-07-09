@@ -90,6 +90,7 @@ public class DocumentMatcherParser {
                 if (tokens.peekTokenType() == TokenType.WHITESPACE) tokens.skip(TokenType.WHITESPACE);
                 if (tokens.isNext(TokenType.SYMBOL, ",")) tokens.skip(TokenType.SYMBOL, ",");
                 else {
+                    // can not use break because couscous fails converting it.
                     tokens.skip(TokenType.SYMBOL, "]");
                     return result;
                 }
