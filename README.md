@@ -505,6 +505,20 @@ Modifiers must be used in the correct order:
 h1.section-title:fresh
 ```
 
+#### Text Alignment
+
+To convert text alignment, it is possible to match paragraphs with text-align attribute.
+
+```
+p[text-align='center'] => p.center:fresh
+p[text-align='right'] => p.right:fresh
+p[text-align='justify'] => p.justify:fresh
+p[style-name='Heading 1', text-align='center'] => h1.center:fresh
+p[style-name='Heading 1', text-align='right'] => h1.right:fresh
+```
+
+Note: Order is important. Last selector wins!
+
 #### Separators
 
 To specify a separator to place between the contents of paragraphs that are collapsed together,
