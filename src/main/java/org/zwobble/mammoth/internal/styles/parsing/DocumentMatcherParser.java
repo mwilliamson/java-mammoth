@@ -4,10 +4,15 @@ import org.zwobble.mammoth.internal.documents.NumberingLevel;
 import org.zwobble.mammoth.internal.styles.*;
 
 import java.math.BigInteger;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.BiConsumer;
+import java.util.function.Function;
 
 import static org.zwobble.mammoth.internal.styles.parsing.LineParseException.lineParseException;
+import static org.zwobble.mammoth.internal.util.Lists.list;
 
 public class DocumentMatcherParser {
     public static BiConsumer<StyleMapBuilder, HtmlPath> parse(TokenIterator<TokenType> tokens) {
@@ -46,9 +51,11 @@ public class DocumentMatcherParser {
 
     private static ParagraphMatcher parseParagraphMatcher(TokenIterator<TokenType> tokens) {
         Optional<String> styleId = parseStyleId(tokens);
-        Optional<StringMatcher> styleName = parseStyleName(tokens);
+        Function<String, Optional<StringMatcher>> options = parseOptions(tokens, list("style-name", "text-align"));
+        Optional<StringMatcher> styleName = options.apply("style-name");
+        Optional<StringMatcher> textAlign = options.apply("text-align");
         Optional<NumberingLevel> numbering = parseNumbering(tokens);
-        return new ParagraphMatcher(styleId, styleName, numbering);
+        return new ParagraphMatcher(styleId, styleName, numbering, textAlign);
     }
 
     private static RunMatcher parseRunMatcher(TokenIterator<TokenType> tokens) {
@@ -65,6 +72,34 @@ public class DocumentMatcherParser {
 
     private static Optional<String> parseStyleId(TokenIterator<TokenType> tokens) {
         return TokenParser.parseClassName(tokens);
+    }
+
+    private static Function<String, Optional<StringMatcher>> parseOptions(TokenIterator<TokenType> tokens, List<String> properties) {
+        if (tokens.trySkip(TokenType.SYMBOL, "[")) {
+            Map<String, StringMatcher> options = new HashMap<String, StringMatcher>();
+            Function<String, Optional<StringMatcher>> result = property -> options.containsKey(property) ? Optional.of(options.get(property)) : Optional.empty();
+            while (tokens.peekTokenType() == TokenType.IDENTIFIER) {
+                String identifier = tokens.nextValue(TokenType.IDENTIFIER);
+                if (properties.contains(identifier)) {
+                    StringMatcher stringMatcher = parseStringMatcher(tokens);
+                    options.put(identifier, stringMatcher);
+                }
+                else {
+                    throw lineParseException(tokens.next(), "Expected " + String.join(" or ", properties) + " but got token " + tokens.next().getValue());
+                }
+                if (tokens.peekTokenType() == TokenType.WHITESPACE) tokens.skip(TokenType.WHITESPACE);
+                if (tokens.isNext(TokenType.SYMBOL, ",")) tokens.skip(TokenType.SYMBOL, ",");
+                else {
+                    tokens.skip(TokenType.SYMBOL, "]");
+                    return result;
+                }
+                if (tokens.peekTokenType() == TokenType.WHITESPACE) tokens.skip(TokenType.WHITESPACE);
+            }
+            tokens.skip(TokenType.SYMBOL, "]");
+            return result;
+        } else {
+            return property -> Optional.empty();
+        }
     }
 
     private static Optional<StringMatcher> parseStyleName(TokenIterator<TokenType> tokens) {

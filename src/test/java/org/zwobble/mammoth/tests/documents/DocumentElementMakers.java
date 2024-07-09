@@ -21,6 +21,7 @@ public class DocumentElementMakers {
     private static final ArgumentKey<Boolean> STRIKETHROUGH = new ArgumentKey<>("strikethrough");
     private static final ArgumentKey<Boolean> ALL_CAPS = new ArgumentKey<>("allCaps");
     private static final ArgumentKey<Boolean> SMALL_CAPS = new ArgumentKey<>("smallCaps");
+    private static final ArgumentKey<Optional<Alignment>> ALIGNMENT = new ArgumentKey<>("Alignment");
     private static final ArgumentKey<VerticalAlignment> VERTICAL_ALIGNMENT = new ArgumentKey<>("verticalAlignment");
     private static final ArgumentKey<List<DocumentElement>> CHILDREN = new ArgumentKey<>("children");
     private static final ArgumentKey<Boolean> IS_HEADER = new ArgumentKey<>("isHeader");
@@ -53,6 +54,10 @@ public class DocumentElementMakers {
 
     public static Argument<Boolean> withStrikethrough(boolean strikethrough) {
         return arg(STRIKETHROUGH, strikethrough);
+    }
+
+    public static Argument<Optional<Alignment>> withAlignment(Optional<Alignment> alignment) {
+        return arg(ALIGNMENT, alignment);
     }
 
     public static Argument<Boolean> withAllCaps(boolean allCaps) {
@@ -100,6 +105,7 @@ public class DocumentElementMakers {
         Arguments arguments = new Arguments(args);
         return new Paragraph(
             arguments.get(STYLE, Optional.empty()),
+            arguments.get(ALIGNMENT, Optional.empty()),
             arguments.get(NUMBERING, Optional.empty()),
             new ParagraphIndent(
                 Optional.empty(),
