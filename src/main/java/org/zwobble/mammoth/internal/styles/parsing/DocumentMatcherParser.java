@@ -116,7 +116,7 @@ public class DocumentMatcherParser {
     }
 
     private static HighlightMatcher parseHighlightMatcher(TokenIterator<TokenType> tokens) {
-        Optional<String> color;
+        Optional<String> color = Optional.empty();
 
         if (tokens.trySkip(TokenType.SYMBOL, "[")) {
             tokens.skip(TokenType.IDENTIFIER, "color");
