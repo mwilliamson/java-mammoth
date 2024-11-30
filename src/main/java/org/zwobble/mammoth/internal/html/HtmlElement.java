@@ -47,7 +47,7 @@ public class HtmlElement implements HtmlNode {
         return children.isEmpty() && isVoidTag(getTagName());
     }
 
-    private static final Set<String> VOID_TAG_NAMES = set("img", "br", "hr");
+    private static final Set<String> VOID_TAG_NAMES = set("br", "hr", "img", "input");
 
     private static boolean isVoidTag(String tagName) {
         return VOID_TAG_NAMES.contains(tagName);
