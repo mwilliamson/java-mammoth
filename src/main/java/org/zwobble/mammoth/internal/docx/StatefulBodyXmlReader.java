@@ -362,7 +362,9 @@ class StatefulBodyXmlReader {
                 .findChildOrEmpty("w:ffData")
                 .findChildOrEmpty("w:checkBox");
 
-            boolean checked = readBooleanElement(checkboxElement, "w:default");
+            boolean checked = checkboxElement.hasChild("w:checked")
+                ? readBooleanElement(checkboxElement, "w:checked")
+                : readBooleanElement(checkboxElement, "w:default");
 
             return ComplexField.checkbox(checked);
         }

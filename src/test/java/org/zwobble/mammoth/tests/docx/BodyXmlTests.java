@@ -682,6 +682,46 @@ public class BodyXmlTests {
             )));
         }
 
+        @Test
+        public void complexFieldCheckboxWithDefault1AndChecked0IsUnchecked() {
+            XmlElement element = complexFieldCheckboxParagraph(list(
+                element("w:checkBox", list(
+                    element("w:default", map("w:val", "1")),
+                    element("w:checked", map("w:val", "0"))
+                ))
+            ));
+
+            DocumentElement paragraph = readSuccess(bodyReader(), element);
+
+            assertThat(paragraph, isParagraph(hasChildren(
+                isEmptyRun(),
+                isEmptyRun(),
+                isRun(hasChildren(
+                    isCheckbox(false)
+                ))
+            )));
+        }
+
+        @Test
+        public void complexFieldCheckboxWithDefault0AndChecked1IsUnchecked() {
+            XmlElement element = complexFieldCheckboxParagraph(list(
+                element("w:checkBox", list(
+                    element("w:default", map("w:val", "0")),
+                    element("w:checked", map("w:val", "1"))
+                ))
+            ));
+
+            DocumentElement paragraph = readSuccess(bodyReader(), element);
+
+            assertThat(paragraph, isParagraph(hasChildren(
+                isEmptyRun(),
+                isEmptyRun(),
+                isRun(hasChildren(
+                    isCheckbox(true)
+                ))
+            )));
+        }
+
         private XmlElement complexFieldCheckboxParagraph(List<XmlNode> ffDataChildren) {
             return element("w:p", list(
                 element("w:r", list(
