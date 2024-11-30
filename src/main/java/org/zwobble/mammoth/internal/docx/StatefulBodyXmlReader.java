@@ -5,10 +5,7 @@ import org.zwobble.mammoth.internal.archives.Archives;
 import org.zwobble.mammoth.internal.documents.*;
 import org.zwobble.mammoth.internal.results.InternalResult;
 import org.zwobble.mammoth.internal.util.*;
-import org.zwobble.mammoth.internal.xml.XmlElement;
-import org.zwobble.mammoth.internal.xml.XmlElementLike;
-import org.zwobble.mammoth.internal.xml.XmlElementList;
-import org.zwobble.mammoth.internal.xml.XmlNode;
+import org.zwobble.mammoth.internal.xml.*;
 
 import java.util.*;
 import java.util.function.Function;
@@ -335,10 +332,15 @@ class StatefulBodyXmlReader {
 
     private ComplexField parseCurrentInstrText(ComplexField complexField) {
         String instrText = currentInstrText.toString();
-        return parseInstrText(instrText, complexField);
+
+        XmlElementLike fldChar = complexField instanceof BeginComplexField
+            ? ((BeginComplexField) complexField).fldChar
+            : NullXmlElement.INSTANCE;
+
+        return parseInstrText(instrText, fldChar);
     }
 
-    private ComplexField parseInstrText(String instrText, ComplexField complexField) {
+    private ComplexField parseInstrText(String instrText, XmlElementLike fldChar) {
         Pattern externalLinkPattern = Pattern.compile("\\s*HYPERLINK \"(.*)\"");
         Matcher externalLinkMatcher = externalLinkPattern.matcher(instrText);
         if (externalLinkMatcher.lookingAt()) {
@@ -356,7 +358,13 @@ class StatefulBodyXmlReader {
         Pattern checkboxPattern = Pattern.compile("\\s*FORMCHECKBOX\\s*");
         Matcher checkboxMatcher = checkboxPattern.matcher(instrText);
         if (checkboxMatcher.lookingAt()) {
-            return ComplexField.checkbox(false);
+            XmlElementLike checkboxElement = fldChar
+                .findChildOrEmpty("w:ffData")
+                .findChildOrEmpty("w:checkBox");
+
+            boolean checked = readBooleanElement(checkboxElement, "w:default");
+
+            return ComplexField.checkbox(checked);
         }
 
         return ComplexField.UNKNOWN;

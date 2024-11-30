@@ -626,6 +626,80 @@ public class BodyXmlTests {
                 ))
             )));
         }
+
+        @Test
+        public void complexFieldCheckboxWithoutDefaultNorCheckedIsUnchecked() {
+            XmlElement element = complexFieldCheckboxParagraph(list(
+                element("w:checkBox")
+            ));
+
+            DocumentElement paragraph = readSuccess(bodyReader(), element);
+
+            assertThat(paragraph, isParagraph(hasChildren(
+                isEmptyRun(),
+                isEmptyRun(),
+                isRun(hasChildren(
+                    isCheckbox(false)
+                ))
+            )));
+        }
+
+        @Test
+        public void complexFieldCheckboxWithDefault0AndWithoutCheckedIsUnchecked() {
+            XmlElement element = complexFieldCheckboxParagraph(list(
+                element("w:checkBox", list(
+                    element("w:default", map("w:val", "0"))
+                ))
+            ));
+
+            DocumentElement paragraph = readSuccess(bodyReader(), element);
+
+            assertThat(paragraph, isParagraph(hasChildren(
+                isEmptyRun(),
+                isEmptyRun(),
+                isRun(hasChildren(
+                    isCheckbox(false)
+                ))
+            )));
+        }
+
+        @Test
+        public void complexFieldCheckboxWithDefault1AndWithoutCheckedIsChecked() {
+            XmlElement element = complexFieldCheckboxParagraph(list(
+                element("w:checkBox", list(
+                    element("w:default", map("w:val", "1"))
+                ))
+            ));
+
+            DocumentElement paragraph = readSuccess(bodyReader(), element);
+
+            assertThat(paragraph, isParagraph(hasChildren(
+                isEmptyRun(),
+                isEmptyRun(),
+                isRun(hasChildren(
+                    isCheckbox(true)
+                ))
+            )));
+        }
+
+        private XmlElement complexFieldCheckboxParagraph(List<XmlNode> ffDataChildren) {
+            return element("w:p", list(
+                element("w:r", list(
+                    element("w:fldChar", map("w:fldCharType", "begin"), list(
+                        element("w:ffData", ffDataChildren)
+                    ))
+                )),
+                element("w:instrText", list(
+                    textXml(" FORMCHECKBOX ")
+                )),
+                element("w:r", list(
+                    element("w:fldChar", map("w:fldCharType", "separate"))
+                )),
+                element("w:r", list(
+                    element("w:fldChar", map("w:fldCharType", "end"))
+                ))
+            ));
+        }
     }
 
     @Test

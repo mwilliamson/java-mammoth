@@ -91,9 +91,12 @@ public class DocumentMatchers {
         return cast(Hyperlink.class, allOf(matchers));
     }
 
-    @SafeVarargs
-    static Matcher<DocumentElement> isCheckbox(Matcher<? super Checkbox>... matchers) {
-        return cast(Checkbox.class, allOf(matchers));
+    static Matcher<DocumentElement> isCheckbox() {
+        return instanceOf(Checkbox.class);
+    }
+
+    static Matcher<DocumentElement> isCheckbox(boolean checked) {
+        return new DeepReflectionMatcher<>(new Checkbox(checked));
     }
 
     static Matcher<Hyperlink> hasHref(String href) {
