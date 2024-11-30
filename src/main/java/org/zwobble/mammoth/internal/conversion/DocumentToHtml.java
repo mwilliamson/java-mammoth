@@ -299,6 +299,18 @@ public class DocumentToHtml {
         }
 
         @Override
+        public List<HtmlNode> visit(Checkbox checkbox, Context context) {
+            Map<String, String> attributes = new HashMap<>();
+            attributes.put("type", "checkbox");
+
+            if (checkbox.checked()) {
+                attributes.put("checked", "checked");
+            }
+
+            return list(Html.element("input", attributes));
+        }
+
+        @Override
         public List<HtmlNode> visit(Bookmark bookmark, Context context) {
             return list(Html.element("a", map("id", generateId(bookmark.getName())), list(Html.FORCE_WRITE)));
         }

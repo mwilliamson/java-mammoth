@@ -455,6 +455,22 @@ public class DocumentToHtmlTests {
     }
 
     @Test
+    public void uncheckedCheckboxIsConvertedToUncheckedCheckboxInput() {
+        assertThat(
+            convertToHtml(checkbox(false)),
+            deepEquals(list(Html.element("input", map("type", "checkbox"))))
+        );
+    }
+
+    @Test
+    public void checkedCheckboxIsConvertedToCheckedCheckboxInput() {
+        assertThat(
+            convertToHtml(checkbox(true)),
+            deepEquals(list(Html.element("input", map("type", "checkbox", "checked", "checked"))))
+        );
+    }
+
+    @Test
     public void bookmarksAreConvertedToAnchorsWithIds() {
         assertThat(
             convertToHtml(new Bookmark("start")),

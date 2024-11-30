@@ -184,4 +184,8 @@ public class DocumentElementMakers {
     public static Argument<Optional<String>> withTargetFrame(String targetFrame) {
         return arg(TARGET_FRAME, Optional.of(targetFrame));
     }
+
+    public static Checkbox checkbox(boolean checked) {
+        return new Checkbox(checked);
+    }
 }

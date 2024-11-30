@@ -13,6 +13,7 @@ public interface DocumentElementVisitor<T, U> {
     T visit(TableCell tableCell, U context);
 
     T visit(Hyperlink hyperlink, U context);
+    T visit(Checkbox checkbox, U context);
     T visit(Bookmark bookmark, U context);
     T visit(NoteReference noteReference, U context);
     T visit(CommentReference commentReference, U context);
