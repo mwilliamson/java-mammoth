@@ -43,8 +43,24 @@ class StatefulBodyXmlReader {
     private interface ComplexField {
         ComplexField UNKNOWN = new ComplexField() {};
 
+        static ComplexField begin(XmlElement fldChar) {
+            return new BeginComplexField(fldChar);
+        }
+
         static ComplexField hyperlink(Function<List<DocumentElement>, Hyperlink> childrenToHyperlink) {
             return new HyperlinkComplexField(childrenToHyperlink);
+        }
+
+        static ComplexField checkbox(boolean checked) {
+            return new CheckboxComplexField(checked);
+        }
+    }
+
+    private static class BeginComplexField implements ComplexField {
+        private final XmlElement fldChar;
+
+        private BeginComplexField(XmlElement fldChar) {
+            this.fldChar = fldChar;
         }
     }
 
@@ -53,6 +69,14 @@ class StatefulBodyXmlReader {
 
         private HyperlinkComplexField(Function<List<DocumentElement>, Hyperlink> childrenToHyperlink) {
             this.childrenToHyperlink = childrenToHyperlink;
+        }
+    }
+
+    private static class CheckboxComplexField implements ComplexField {
+        private final boolean checked;
+
+        private CheckboxComplexField(boolean checked) {
+            this.checked = checked;
         }
     }
 
@@ -291,42 +315,56 @@ class StatefulBodyXmlReader {
     private ReadResult readFieldChar(XmlElement element) {
         String type = element.getAttributeOrNone("w:fldCharType").orElse("");
         if (type.equals("begin")) {
-            complexFieldStack.add(ComplexField.UNKNOWN);
+            complexFieldStack.add(ComplexField.begin(element));
             currentInstrText.setLength(0);
         } else if (type.equals("end")) {
-            complexFieldStack.remove();
+            ComplexField complexField = complexFieldStack.remove();
+            if (complexField instanceof BeginComplexField) {
+                complexField = parseCurrentInstrText(complexField);
+            }
+            if (complexField instanceof CheckboxComplexField) {
+                return success(new Checkbox(((CheckboxComplexField) complexField).checked));
+            }
         } else if (type.equals("separate")) {
-            String instrText = currentInstrText.toString();
-            ComplexField complexField = parseHyperlinkFieldCode(instrText)
-                .map(href -> ComplexField.hyperlink(href))
-                .orElse(ComplexField.UNKNOWN);
-            complexFieldStack.remove();
+            ComplexField complexFieldSeparate = complexFieldStack.remove();
+            ComplexField complexField = parseCurrentInstrText(complexFieldSeparate);
             complexFieldStack.add(complexField);
         }
         return ReadResult.EMPTY_SUCCESS;
     }
 
-    private ReadResult readInstrText(XmlElement element) {
-        currentInstrText.append(element.innerText());
-        return ReadResult.EMPTY_SUCCESS;
+    private ComplexField parseCurrentInstrText(ComplexField complexField) {
+        String instrText = currentInstrText.toString();
+        return parseInstrText(instrText, complexField);
     }
 
-    private Optional<Function<List<DocumentElement>, Hyperlink>> parseHyperlinkFieldCode(String instrText) {
+    private ComplexField parseInstrText(String instrText, ComplexField complexField) {
         Pattern externalLinkPattern = Pattern.compile("\\s*HYPERLINK \"(.*)\"");
         Matcher externalLinkMatcher = externalLinkPattern.matcher(instrText);
         if (externalLinkMatcher.lookingAt()) {
             String href = externalLinkMatcher.group(1);
-            return Optional.of(children -> Hyperlink.href(href, Optional.empty(), children));
+            return ComplexField.hyperlink(children -> Hyperlink.href(href, Optional.empty(), children));
         }
 
         Pattern internalLinkPattern = Pattern.compile("\\s*HYPERLINK\\s+\\\\l\\s+\"(.*)\"");
         Matcher internalLinkMatcher = internalLinkPattern.matcher(instrText);
         if (internalLinkMatcher.lookingAt()) {
             String anchor = internalLinkMatcher.group(1);
-            return Optional.of(children -> Hyperlink.anchor(anchor, Optional.empty(), children));
+            return ComplexField.hyperlink(children -> Hyperlink.anchor(anchor, Optional.empty(), children));
         }
 
-        return Optional.empty();
+        Pattern checkboxPattern = Pattern.compile("\\s*FORMCHECKBOX\\s*");
+        Matcher checkboxMatcher = checkboxPattern.matcher(instrText);
+        if (checkboxMatcher.lookingAt()) {
+            return ComplexField.checkbox(false);
+        }
+
+        return ComplexField.UNKNOWN;
+    }
+
+    private ReadResult readInstrText(XmlElement element) {
+        currentInstrText.append(element.innerText());
+        return ReadResult.EMPTY_SUCCESS;
     }
 
     private InternalResult<Optional<Style>> readParagraphStyle(XmlElementLike properties) {

@@ -91,6 +91,11 @@ public class DocumentMatchers {
         return cast(Hyperlink.class, allOf(matchers));
     }
 
+    @SafeVarargs
+    static Matcher<DocumentElement> isCheckbox(Matcher<? super Checkbox>... matchers) {
+        return cast(Checkbox.class, allOf(matchers));
+    }
+
     static Matcher<Hyperlink> hasHref(String href) {
         return hasProperty("href", equalTo(Optional.of(href)));
     }

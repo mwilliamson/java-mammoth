@@ -573,6 +573,61 @@ public class BodyXmlTests {
         }
     }
 
+    @Nested
+    public class CheckboxTests {
+        @Test
+        public void complexFieldCheckboxWithoutSeparateIsRead() {
+            XmlElement element = element("w:p", list(
+                element("w:r", list(
+                    element("w:fldChar", map("w:fldCharType", "begin"))
+                )),
+                element("w:instrText", list(
+                    textXml(" FORMCHECKBOX ")
+                )),
+                element("w:r", list(
+                    element("w:fldChar", map("w:fldCharType", "end"))
+                ))
+            ));
+
+            DocumentElement paragraph = readSuccess(bodyReader(), element);
+
+            assertThat(paragraph, isParagraph(hasChildren(
+                isEmptyRun(),
+                isRun(hasChildren(
+                    isCheckbox()
+                ))
+            )));
+        }
+
+        @Test
+        public void complexFieldCheckboxWithSeparateIsRead() {
+            XmlElement element = element("w:p", list(
+                element("w:r", list(
+                    element("w:fldChar", map("w:fldCharType", "begin"))
+                )),
+                element("w:instrText", list(
+                    textXml(" FORMCHECKBOX ")
+                )),
+                element("w:r", list(
+                    element("w:fldChar", map("w:fldCharType", "separate"))
+                )),
+                element("w:r", list(
+                    element("w:fldChar", map("w:fldCharType", "end"))
+                ))
+            ));
+
+            DocumentElement paragraph = readSuccess(bodyReader(), element);
+
+            assertThat(paragraph, isParagraph(hasChildren(
+                isEmptyRun(),
+                isEmptyRun(),
+                isRun(hasChildren(
+                    isCheckbox()
+                ))
+            )));
+        }
+    }
+
     @Test
     public void runHasNoStyleIfItHasNoProperties() {
         XmlElement element = runXml(list());
