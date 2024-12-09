@@ -49,7 +49,7 @@ Available on [Maven Central](http://search.maven.org/#artifactdetails|org.zwobbl
 <dependency>
   <groupId>org.zwobble.mammoth</groupId>
   <artifactId>mammoth</artifactId>
-  <version>1.8.0</version>
+  <version>1.7.0</version>
 </dependency>
 ```
 
