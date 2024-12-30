@@ -31,6 +31,11 @@ public class OfficeXml {
         .put("mc", "http://schemas.openxmlformats.org/markup-compatibility/2006")
         .put("v", "urn:schemas-microsoft-com:vml")
         .put("office-word", "urn:schemas-microsoft-com:office:word")
+
+        // [MS-DOCX]: Word Extensions to the Office Open XML (.docx) File Format
+        // https://learn.microsoft.com/en-us/openspecs/office_standards/ms-docx/b839fe1f-e1ca-4fa6-8c26-5954d0abbccd
+        .put("wordml", "http://schemas.microsoft.com/office/word/2010/wordml")
+
         .build();
 
     public static XmlElement parseXml(InputStream inputStream) {

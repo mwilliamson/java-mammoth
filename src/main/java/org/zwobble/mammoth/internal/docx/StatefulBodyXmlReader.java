@@ -257,10 +257,14 @@ class StatefulBodyXmlReader {
 
     private boolean readBooleanElement(XmlElementLike properties, String tagName) {
         return properties.findChild(tagName)
-            .map(child -> child.getAttributeOrNone("w:val")
-                .map(value -> !value.equals("false") && !value.equals("0"))
-                .orElse(true))
+            .map(child -> readBooleanAttributeValue(child.getAttributeOrNone("w:val")))
             .orElse(false);
+    }
+
+    private boolean readBooleanAttributeValue(Optional<String> valAttributeValue) {
+        return valAttributeValue
+            .map(value -> !value.equals("false") && !value.equals("0"))
+            .orElse(true);
     }
 
     private VerticalAlignment readVerticalAlignment(XmlElementLike properties) {
@@ -697,7 +701,18 @@ class StatefulBodyXmlReader {
     }
 
     private ReadResult readSdt(XmlElement element) {
-        return readElements(element.findChildOrEmpty("w:sdtContent").getChildren());
+        Optional<XmlElement> checkbox = element
+            .findChildOrEmpty("w:sdtPr")
+            .findChild("wordml:checkbox");
+
+        if (checkbox.isPresent()) {
+            Optional<XmlElement> checkedElement = checkbox.get().findChild("wordml:checked");
+            boolean isChecked = checkedElement.isPresent() &&
+                readBooleanAttributeValue(checkedElement.get().getAttributeOrNone("wordml:val"));
+            return success(new Checkbox(isChecked));
+        } else {
+            return readElements(element.findChildOrEmpty("w:sdtContent").getChildren());
+        }
     }
 
     private String relationshipIdToDocxPath(String relationshipId) {

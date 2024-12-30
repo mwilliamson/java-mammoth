@@ -722,6 +722,49 @@ public class BodyXmlTests {
             )));
         }
 
+        @Test
+        public void structuredDocumentTagCheckboxWithoutCheckedIsNotChecked() {
+            XmlElement element = element("w:sdt", list(
+                element("w:sdtPr", list(
+                    element("wordml:checkbox")
+                ))
+            ));
+
+            DocumentElement result = readSuccess(bodyReader(), element);
+
+            assertThat(result, isCheckbox(false));
+        }
+
+        @Test
+        public void structuredDocumentTagCheckboxWithChecked0IsNotChecked() {
+            XmlElement element = element("w:sdt", list(
+                element("w:sdtPr", list(
+                    element("wordml:checkbox", list(
+                        element("wordml:checked", map("wordml:val", "0"))
+                    ))
+                ))
+            ));
+
+            DocumentElement result = readSuccess(bodyReader(), element);
+
+            assertThat(result, isCheckbox(false));
+        }
+
+        @Test
+        public void structuredDocumentTagCheckboxWithChecked1IsChecked() {
+            XmlElement element = element("w:sdt", list(
+                element("w:sdtPr", list(
+                    element("wordml:checkbox", list(
+                        element("wordml:checked", map("wordml:val", "1"))
+                    ))
+                ))
+            ));
+
+            DocumentElement result = readSuccess(bodyReader(), element);
+
+            assertThat(result, isCheckbox(true));
+        }
+
         private XmlElement complexFieldCheckboxParagraph(List<XmlNode> ffDataChildren) {
             return element("w:p", list(
                 element("w:r", list(
