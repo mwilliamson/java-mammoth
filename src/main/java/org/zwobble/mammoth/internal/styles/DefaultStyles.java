@@ -25,6 +25,10 @@ public class DefaultStyles {
         "p[style-name='heading 5'] => h5:fresh",
         "p[style-name='heading 6'] => h6:fresh",
 
+        // Apple Pages
+        "p.Heading => h1:fresh",
+        "p[style-name='Heading'] => h1:fresh",
+
         "r[style-name='Strong'] => strong",
 
         "p[style-name='footnote text'] => p:fresh",
@@ -53,5 +57,10 @@ public class DefaultStyles {
 
         "r[style-name='Hyperlink'] =>",
 
-        "p[style-name='Normal'] => p:fresh"));
+        "p[style-name='Normal'] => p:fresh",
+
+        // Apple Pages
+        "p.Body => p:fresh",
+        "p[style-name='Body'] => p:fresh"
+    ));
 }
