@@ -7,6 +7,8 @@
   elements, such as table cells. Previously, the wrapping elements would have
   been ignored.
 
+* Ignore deleted table rows.
+
 # 1.9.0
 
 * Detect checkboxes, both as complex fields and structured document tags, and

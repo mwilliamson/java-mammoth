@@ -562,6 +562,13 @@ class StatefulBodyXmlReader {
 
     private ReadResult readTableRow(XmlElement element) {
         XmlElementLike properties = element.findChildOrEmpty("w:trPr");
+
+        // See 17.13.5.12 del (Deleted Table Row) of ECMA-376 4th edition Part 1
+        boolean deleted = properties.hasChild("w:del");
+        if (deleted) {
+            return ReadResult.EMPTY_SUCCESS;
+        }
+
         boolean isHeader = properties.hasChild("w:tblHeader");
         return readElements(element.getChildren())
             .map(children -> list(new TableRow(children, isHeader)));

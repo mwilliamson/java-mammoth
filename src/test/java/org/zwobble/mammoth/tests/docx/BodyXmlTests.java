@@ -1489,6 +1489,47 @@ public class BodyXmlTests {
     }
 
     @Test
+    public void whenRowIsMarkedAsDeletedInRowPropertiesThenRowIsIgnored() {
+        XmlElement element = element("w:tbl", list(
+            element("w:tr", list(
+                element("w:tc", list(
+                    element("w:p", list(
+                        runXml("Row 1")
+                    ))
+                ))
+            )),
+
+            element("w:tr", list(
+                element("w:trPr", list(
+                    element("w:del")
+                )),
+                element("w:tc", list(
+                    element("w:p", list(
+                        runXml("Row 2")
+                    ))
+                ))
+            ))
+        ));
+
+        DocumentElement result = readSuccess(bodyReader(), element);
+
+        assertThat(
+            result,
+            deepEquals(table(list(
+                tableRow(list(
+                    tableCell(
+                        withChildren(
+                            paragraph(withChildren(
+                                runWithText("Row 1")
+                            ))
+                        )
+                    )
+                ))
+            )))
+        );
+    }
+
+    @Test
     public void warningIfNonRowInTable() {
         XmlElement element = element("w:tbl", list(
             element("w:p")
