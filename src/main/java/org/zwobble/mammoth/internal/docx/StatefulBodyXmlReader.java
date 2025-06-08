@@ -711,18 +711,69 @@ class StatefulBodyXmlReader {
     }
 
     private ReadResult readSdt(XmlElement element) {
-        Optional<XmlElement> checkbox = element
-            .findChildOrEmpty("w:sdtPr")
-            .findChild("wordml:checkbox");
+        ReadResult contentResult = readElements(
+            element.findChildOrEmpty("w:sdtContent").getChildren()
+        );
+        return contentResult.map(content -> {
+            // From the WordML standard: https://learn.microsoft.com/en-us/openspecs/office_standards/ms-docx/3350cb64-931f-41f7-8824-f18b2568ce66
+            //
+            // > A CT_SdtCheckbox element that specifies that the parent
+            // > structured document tag is a checkbox when displayed in the
+            // > document. The parent structured document tag contents MUST
+            // > contain a single character and optionally an additional
+            // > character in a deleted run.
 
-        if (checkbox.isPresent()) {
+            Optional<XmlElement> checkbox = element
+                .findChildOrEmpty("w:sdtPr")
+                .findChild("wordml:checkbox");
+
+            if (!checkbox.isPresent()) {
+                return content;
+            }
+
             Optional<XmlElement> checkedElement = checkbox.get().findChild("wordml:checked");
             boolean isChecked = checkedElement.isPresent() &&
                 readBooleanAttributeValue(checkedElement.get().getAttributeOrNone("wordml:val"));
-            return success(new Checkbox(isChecked));
-        } else {
-            return readElements(element.findChildOrEmpty("w:sdtContent").getChildren());
-        }
+            Checkbox documentCheckbox = new Checkbox(isChecked);
+
+            MutableBoolean hasCheckbox = new MutableBoolean(false);
+            List<DocumentElement> replacedContent = Lists.eagerMap(
+                content,
+                transformElementsOfType(Text.class, text -> {
+                    if (text.getValue().length() > 0 && !hasCheckbox.get()) {
+                        hasCheckbox.set(true);
+                        return documentCheckbox;
+                    } else {
+                        return text;
+                    }
+                })
+            );
+
+            if (hasCheckbox.get()) {
+                return replacedContent;
+            } else {
+                return list(documentCheckbox);
+            }
+        });
+    }
+
+    private <T extends DocumentElement> Function<DocumentElement, DocumentElement> transformElementsOfType(
+        Class<T> elementClass,
+        Function<T, DocumentElement> transform
+    ) {
+        return element -> {
+            if (element instanceof HasChildren) {
+                element = ((HasChildren<DocumentElement>) element).replaceChildren(
+                    Lists.eagerMap(((HasChildren<?>) element).getChildren(), transformElementsOfType(elementClass, transform))
+                );
+            }
+
+            if (elementClass.isInstance(element)) {
+                return transform.apply((T) element);
+            } else {
+                return element;
+            }
+        };
     }
 
     private String relationshipIdToDocxPath(String relationshipId) {

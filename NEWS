@@ -3,6 +3,10 @@
 * Add "Heading" and "Body" styles, as found in documents created by Apple Pages,
   to the default style map.
 
+* Handle structured document tags representing checkboxes wrapped in other
+  elements, such as table cells. Previously, the wrapping elements would have
+  been ignored.
+
 # 1.9.0
 
 * Detect checkboxes, both as complex fields and structured document tags, and

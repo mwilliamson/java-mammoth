@@ -765,6 +765,97 @@ public class BodyXmlTests {
             assertThat(result, isCheckbox(true));
         }
 
+        @Test
+        public void whenStructuredDocumentTagCheckboxHasSdtContentThenCheckboxReplacesSingleCharacter() {
+            XmlElement element = element("w:tbl", list(
+                wTr(
+                    element("w:sdt", list(
+                        element("w:sdtPr", list(
+                            element("wordml:checkbox", list(
+                                element("wordml:checked", map("wordml:val", "1"))
+                            ))
+                        )),
+                        element("w:sdtContent", list(
+                            element("w:tc", list(
+                                element("w:p", list(
+                                    element("w:r", list(
+                                        element("w:t", list(
+                                            textXml("☐")
+                                        ))
+                                    ))
+                                ))
+                            ))
+                        ))
+                    ))
+                )
+            ));
+
+            DocumentElement result = readSuccess(bodyReader(), element);
+
+            assertThat(result, deepEquals(table(list(
+                tableRow(list(
+                    tableCell(
+                        withChildren(
+                            paragraph(withChildren(
+                                run(withChildren(
+                                    checkbox(true)
+                                ))
+                            ))
+                        )
+                    )
+                ))
+            ))));
+        }
+
+        @Test
+        public void whenStructuredDocumentTagCheckboxHasSdtContentThenDeletedContentIsIgnored() {
+            XmlElement element = element("w:tbl", list(
+                wTr(
+                    element("w:sdt", list(
+                        element("w:sdtPr", list(
+                            element("wordml:checkbox", list(
+                                element("wordml:checked", map("wordml:val", "1"))
+                            ))
+                        )),
+                        element("w:sdtContent", list(
+                            element("w:tc", list(
+                                element("w:p", list(
+                                    element("w:r", list(
+                                        element("w:t", list(
+                                            textXml("☐")
+                                        ))
+                                    )),
+                                    element("w:del", list(
+                                        element("w:r", list(
+                                            element("w:t", list(
+                                                textXml("☐")
+                                            ))
+                                        ))
+                                    ))
+                                ))
+                            ))
+                        ))
+                    ))
+                )
+            ));
+
+            DocumentElement result = readSuccess(bodyReader(), element);
+
+            assertThat(result, deepEquals(table(list(
+                tableRow(list(
+                    tableCell(
+                        withChildren(
+                            paragraph(withChildren(
+                                run(withChildren(
+                                    checkbox(true)
+                                ))
+                            ))
+                        )
+                    )
+                ))
+            ))));
+        }
+
         private XmlElement complexFieldCheckboxParagraph(List<XmlNode> ffDataChildren) {
             return element("w:p", list(
                 element("w:r", list(
