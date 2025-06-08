@@ -63,9 +63,9 @@ public class ReadResult {
         this.warnings = warnings;
     }
 
-    public ReadResult map(Function<List<DocumentElement>, DocumentElement> function) {
+    public ReadResult map(Function<List<DocumentElement>, List<DocumentElement>> function) {
         return new ReadResult(
-            list(function.apply(elements)),
+            function.apply(elements),
             extra,
             warnings);
     }

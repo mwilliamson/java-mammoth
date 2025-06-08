@@ -564,7 +564,7 @@ class StatefulBodyXmlReader {
         XmlElementLike properties = element.findChildOrEmpty("w:trPr");
         boolean isHeader = properties.hasChild("w:tblHeader");
         return readElements(element.getChildren())
-            .map(children -> new TableRow(children, isHeader));
+            .map(children -> list(new TableRow(children, isHeader)));
     }
 
     private ReadResult readTableCell(XmlElement element) {
@@ -574,7 +574,7 @@ class StatefulBodyXmlReader {
             .getAttributeOrNone("w:val");
         int colspan = gridSpan.map(Integer::parseInt).orElse(1);
         return readElements(element.getChildren())
-            .map(children -> new UnmergedTableCell(readVmerge(properties), colspan, children));
+            .map(children -> list(new UnmergedTableCell(readVmerge(properties), colspan, children)));
     }
 
     private boolean readVmerge(XmlElementLike properties) {
@@ -612,11 +612,11 @@ class StatefulBodyXmlReader {
             String href = anchor.map(fragment -> Uris.replaceFragment(targetHref, anchor.get()))
                 .orElse(targetHref);
             return childrenResult.map(children ->
-                Hyperlink.href(href, targetFrame, children)
+                list(Hyperlink.href(href, targetFrame, children))
             );
         } else if (anchor.isPresent()) {
             return childrenResult.map(children ->
-                Hyperlink.anchor(anchor.get(), targetFrame, children)
+                list(Hyperlink.anchor(anchor.get(), targetFrame, children))
             );
         } else {
             return childrenResult;
