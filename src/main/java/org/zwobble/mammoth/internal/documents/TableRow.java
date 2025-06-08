@@ -2,7 +2,7 @@ package org.zwobble.mammoth.internal.documents;
 
 import java.util.List;
 
-public class TableRow implements DocumentElement, HasChildren {
+public class TableRow implements DocumentElement, HasChildren<TableRow> {
     private final List<DocumentElement> children;
     private final boolean isHeader;
 
@@ -14,6 +14,11 @@ public class TableRow implements DocumentElement, HasChildren {
     @Override
     public List<DocumentElement> getChildren() {
         return children;
+    }
+
+    @Override
+    public TableRow replaceChildren(List<DocumentElement> newChildren) {
+        return new TableRow(newChildren, this.isHeader);
     }
 
     @Override

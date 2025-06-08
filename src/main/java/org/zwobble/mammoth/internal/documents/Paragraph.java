@@ -3,7 +3,7 @@ package org.zwobble.mammoth.internal.documents;
 import java.util.List;
 import java.util.Optional;
 
-public class Paragraph implements DocumentElement, HasChildren {
+public class Paragraph implements DocumentElement, HasChildren<Paragraph> {
     private final Optional<Style> style;
     private final Optional<NumberingLevel> numbering;
     private final ParagraphIndent indent;
@@ -33,8 +33,14 @@ public class Paragraph implements DocumentElement, HasChildren {
         return indent;
     }
 
+    @Override
     public List<DocumentElement> getChildren() {
         return children;
+    }
+
+    @Override
+    public Paragraph replaceChildren(List<DocumentElement> newChildren) {
+        return new Paragraph(this.style, this.numbering, this.indent, newChildren);
     }
 
     @Override

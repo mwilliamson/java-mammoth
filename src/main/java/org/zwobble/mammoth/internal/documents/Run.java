@@ -3,7 +3,7 @@ package org.zwobble.mammoth.internal.documents;
 import java.util.List;
 import java.util.Optional;
 
-public class Run implements DocumentElement, HasChildren {
+public class Run implements DocumentElement, HasChildren<Run> {
     private final Optional<String> highlight;
     private final boolean isBold;
     private final boolean isItalic;
@@ -75,8 +75,25 @@ public class Run implements DocumentElement, HasChildren {
         return style;
     }
 
+    @Override
     public List<DocumentElement> getChildren() {
         return children;
+    }
+
+    @Override
+    public Run replaceChildren(List<DocumentElement> newChildren) {
+        return new Run(
+            this.highlight,
+            this.isBold,
+            this.isItalic,
+            this.isUnderline,
+            this.isStrikethrough,
+            this.isAllCaps,
+            this.isSmallCaps,
+            this.verticalAlignment,
+            this.style,
+            newChildren
+        );
     }
 
     @Override

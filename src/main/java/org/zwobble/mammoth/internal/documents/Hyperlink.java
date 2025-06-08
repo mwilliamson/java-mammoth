@@ -3,7 +3,7 @@ package org.zwobble.mammoth.internal.documents;
 import java.util.List;
 import java.util.Optional;
 
-public class Hyperlink implements DocumentElement, HasChildren {
+public class Hyperlink implements DocumentElement, HasChildren<Hyperlink> {
     public static Hyperlink href(String href, Optional<String> targetFrame, List<DocumentElement> children) {
         return new Hyperlink(Optional.of(href), Optional.empty(), targetFrame, children);
     }
@@ -39,6 +39,11 @@ public class Hyperlink implements DocumentElement, HasChildren {
     @Override
     public List<DocumentElement> getChildren() {
         return children;
+    }
+
+    @Override
+    public Hyperlink replaceChildren(List<DocumentElement> newChildren) {
+        return new Hyperlink(this.href, this.anchor, this.targetFrame, newChildren);
     }
 
     @Override

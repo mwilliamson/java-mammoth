@@ -2,7 +2,7 @@ package org.zwobble.mammoth.internal.documents;
 
 import java.util.List;
 
-public class TableCell implements DocumentElement, HasChildren {
+public class TableCell implements DocumentElement, HasChildren<TableCell> {
     private final int rowspan;
     private final int colspan;
     private final List<DocumentElement> children;
@@ -24,6 +24,11 @@ public class TableCell implements DocumentElement, HasChildren {
     @Override
     public List<DocumentElement> getChildren() {
         return children;
+    }
+
+    @Override
+    public TableCell replaceChildren(List<DocumentElement> newChildren) {
+        return new TableCell(this.rowspan, this.colspan, newChildren);
     }
 
     @Override

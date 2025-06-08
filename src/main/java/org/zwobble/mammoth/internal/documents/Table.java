@@ -3,7 +3,7 @@ package org.zwobble.mammoth.internal.documents;
 import java.util.List;
 import java.util.Optional;
 
-public class Table implements DocumentElement, HasChildren {
+public class Table implements DocumentElement, HasChildren<Table> {
     private final Optional<Style> style;
     private final List<DocumentElement> children;
 
@@ -19,6 +19,11 @@ public class Table implements DocumentElement, HasChildren {
     @Override
     public List<DocumentElement> getChildren() {
         return children;
+    }
+
+    @Override
+    public Table replaceChildren(List<DocumentElement> newChildren) {
+        return new Table(this.style, newChildren);
     }
 
     @Override

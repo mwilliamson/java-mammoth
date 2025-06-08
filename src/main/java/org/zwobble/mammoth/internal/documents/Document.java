@@ -2,7 +2,7 @@ package org.zwobble.mammoth.internal.documents;
 
 import java.util.List;
 
-public class Document implements HasChildren {
+public class Document implements HasChildren<Document> {
     private final List<DocumentElement> children;
     private final Notes notes;
     private final List<Comment> comments;
@@ -13,8 +13,14 @@ public class Document implements HasChildren {
         this.comments = comments;
     }
 
+    @Override
     public List<DocumentElement> getChildren() {
         return children;
+    }
+
+    @Override
+    public Document replaceChildren(List<DocumentElement> newChildren) {
+        return new Document(newChildren, this.notes, this.comments);
     }
 
     public Notes getNotes() {
