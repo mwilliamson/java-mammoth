@@ -583,7 +583,7 @@ class StatefulBodyXmlReader {
             .orElse(false);
     }
 
-    private static class UnmergedTableCell implements DocumentElement {
+    private static class UnmergedTableCell implements DocumentElement, HasChildren<UnmergedTableCell> {
         private final boolean vmerge;
         private final int colspan;
         private final List<DocumentElement> children;
@@ -592,6 +592,16 @@ class StatefulBodyXmlReader {
             this.vmerge = vmerge;
             this.colspan = colspan;
             this.children = children;
+        }
+
+        @Override
+        public List<DocumentElement> getChildren() {
+            return children;
+        }
+
+        @Override
+        public UnmergedTableCell replaceChildren(List<DocumentElement> newChildren) {
+            return new UnmergedTableCell(this.vmerge, this.colspan, newChildren);
         }
 
         @Override
