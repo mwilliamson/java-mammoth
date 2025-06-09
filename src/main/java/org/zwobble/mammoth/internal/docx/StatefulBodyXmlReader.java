@@ -301,6 +301,7 @@ class StatefulBodyXmlReader {
             return ReadResult.success(list());
         } else {
             ParagraphIndent indent = readParagraphIndent(properties);
+            Optional<Alignment> alignment = readParagraphAlignment(properties);
             List<XmlNode> childrenXml = element.getChildren();
             if (!deletedParagraphContents.isEmpty()) {
                 childrenXml = eagerConcat(deletedParagraphContents, childrenXml);
@@ -309,7 +310,7 @@ class StatefulBodyXmlReader {
             return ReadResult.map(
                 readParagraphStyle(properties),
                 readElements(childrenXml),
-                (style, children) -> new Paragraph(style, readNumbering(style, properties), indent, children)).appendExtra();
+                (style, children) -> new Paragraph(style, alignment, readNumbering(style, properties), indent, children)).appendExtra();
         }
     }
 
@@ -445,6 +446,21 @@ class StatefulBodyXmlReader {
             indent.getAttributeOrNone("w:firstLine"),
             indent.getAttributeOrNone("w:hanging")
         );
+    }
+
+    private Optional<Alignment> readParagraphAlignment(XmlElementLike properties) {
+        String align = properties
+        .findChild("w:jc")
+        .map(jc -> jc.getAttributeOrNone("w:val").orElse(""))
+        .orElse("");
+
+        switch (align) {
+            case "left": return Optional.of(new Alignment("left"));
+            case "center": return Optional.of(new Alignment("center"));
+            case "right": return Optional.of(new Alignment("right"));
+            case "both": return Optional.of(new Alignment("justify"));
+            default: return Optional.empty();
+        }
     }
 
     private ReadResult readSymbol(XmlElement element) {
