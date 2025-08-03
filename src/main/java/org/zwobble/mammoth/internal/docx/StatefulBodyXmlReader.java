@@ -14,6 +14,7 @@ import java.util.regex.Pattern;
 
 import static org.zwobble.mammoth.internal.docx.ReadResult.*;
 import static org.zwobble.mammoth.internal.docx.Uris.uriToZipEntryName;
+import static org.zwobble.mammoth.internal.util.Casts.tryCast;
 import static org.zwobble.mammoth.internal.util.Iterables.lazyFilter;
 import static org.zwobble.mammoth.internal.util.Iterables.tryGetLast;
 import static org.zwobble.mammoth.internal.util.Lists.eagerConcat;
@@ -546,7 +547,7 @@ class StatefulBodyXmlReader {
 
     private Optional<String> checkTableRows(List<DocumentElement> rows) {
         for (DocumentElement rowElement : rows) {
-            Optional<TableRow> row = Casts.tryCast(TableRow.class, rowElement);
+            Optional<TableRow> row = tryCast(TableRow.class, rowElement);
             if (!row.isPresent()) {
                 return Optional.of("unexpected non-row element in table, cell merging may be incorrect");
             } else {
@@ -775,11 +776,9 @@ class StatefulBodyXmlReader {
                 );
             }
 
-            if (elementClass.isInstance(element)) {
-                return transform.apply((T) element);
-            } else {
-                return element;
-            }
+            return tryCast(elementClass, element)
+                .map(transform)
+                .orElse(element);
         };
     }
 
