@@ -81,22 +81,6 @@ public class DocumentToHtml {
         this.comments = Maps.toMapWithKey(comments, Comment::getCommentId);
     }
 
-    private List<HtmlNode> convertToHtml(Document document, Context context) {
-        List<HtmlNode> mainBody = convertChildrenToHtml(document, context);
-        // TODO: can you have note references inside a note?
-        List<Note> notes = findNotes(document, noteReferences);
-
-        List<HtmlNode> noteNodes = notes.isEmpty()
-            ? list()
-            : list(Html.element("ol", eagerMap(notes, note -> convertToHtml(note, context))));
-
-        List<HtmlNode> commentNodes = referencedComments.isEmpty()
-            ? list()
-            : list(Html.element("dl", eagerFlatMap(referencedComments, comment -> convertToHtml(comment, context))));
-
-        return eagerConcat(mainBody, noteNodes, commentNodes);
-    }
-
     private HtmlNode convertToHtml(Note note, Context context) {
         String id = generateNoteHtmlId(note.getNoteType(), note.getId());
         String referenceId = generateNoteRefHtmlId(note.getNoteType(), note.getId());
@@ -135,11 +119,28 @@ public class DocumentToHtml {
         );
     }
 
-    private <T> List<HtmlNode> convertChildrenToHtml(HasChildren<T> element, Context context) {
+    private <T> List<HtmlNode> convertChildrenToHtml(HasChildren element, Context context) {
         return convertToHtml(element.getChildren(), context);
     }
 
     private class ElementConverterVisitor implements DocumentElementVisitor<List<HtmlNode>, Context> {
+        @Override
+        public List<HtmlNode> visit(Document document, Context context) {
+            List<HtmlNode> mainBody = convertChildrenToHtml(document, context);
+            // TODO: can you have note references inside a note?
+            List<Note> notes = findNotes(document, noteReferences);
+
+            List<HtmlNode> noteNodes = notes.isEmpty()
+                ? list()
+                : list(Html.element("ol", eagerMap(notes, note -> convertToHtml(note, context))));
+
+            List<HtmlNode> commentNodes = referencedComments.isEmpty()
+                ? list()
+                : list(Html.element("dl", eagerFlatMap(referencedComments, comment -> convertToHtml(comment, context))));
+
+            return eagerConcat(mainBody, noteNodes, commentNodes);
+        }
+
         @Override
         public List<HtmlNode> visit(Paragraph paragraph, Context context) {
             Supplier<List<HtmlNode>> children = () -> {

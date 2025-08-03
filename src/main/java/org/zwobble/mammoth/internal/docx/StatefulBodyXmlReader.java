@@ -591,7 +591,7 @@ class StatefulBodyXmlReader {
             .orElse(false);
     }
 
-    private static class UnmergedTableCell implements DocumentElement, HasChildren<UnmergedTableCell> {
+    private static class UnmergedTableCell implements DocumentElement, HasChildren {
         private final boolean vmerge;
         private final int colspan;
         private final List<DocumentElement> children;
@@ -608,7 +608,7 @@ class StatefulBodyXmlReader {
         }
 
         @Override
-        public UnmergedTableCell replaceChildren(List<DocumentElement> newChildren) {
+        public DocumentElement replaceChildren(List<DocumentElement> newChildren) {
             return new UnmergedTableCell(this.vmerge, this.colspan, newChildren);
         }
 
@@ -771,8 +771,8 @@ class StatefulBodyXmlReader {
     ) {
         return element -> {
             if (element instanceof HasChildren) {
-                element = ((HasChildren<DocumentElement>) element).replaceChildren(
-                    Lists.eagerMap(((HasGetChildren) element).getChildren(), transformElementsOfType(elementClass, transform))
+                element = ((HasChildren) element).replaceChildren(
+                    Lists.eagerMap(((HasChildren) element).getChildren(), transformElementsOfType(elementClass, transform))
                 );
             }
 
