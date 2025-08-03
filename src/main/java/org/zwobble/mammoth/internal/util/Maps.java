@@ -63,6 +63,22 @@ public class Maps {
         return map;
     }
 
+    /**
+     * Convert an iterable to map using the given mapping function. If the
+     * mapping function generates entries with the same key, only the first
+     * entry will be used, and subsequent entries will be ignored.
+     */
+    public static <T, K, V> Map<K, V> toMapPreferFirst(Iterable<T> iterable, Function<T, Map.Entry<K, V>> function) {
+        Map<K, V> map = new HashMap<>();
+        for (T element : iterable) {
+            Map.Entry<K, V> entry = function.apply(element);
+            if (!map.containsKey(entry.getKey())) {
+                map.put(entry.getKey(), entry.getValue());
+            }
+        }
+        return map;
+    }
+
     public static <T, K> Map<K, List<T>> toMultiMapWithKey(Iterable<T> iterable, Function<T, K> function) {
         return toMultiMap(iterable, element -> entry(function.apply(element), element));
     }

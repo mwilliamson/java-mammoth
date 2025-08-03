@@ -9,8 +9,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import static org.zwobble.mammoth.internal.util.Iterables.lazyFilter;
-import static org.zwobble.mammoth.internal.util.Maps.entry;
-import static org.zwobble.mammoth.internal.util.Maps.toMap;
+import static org.zwobble.mammoth.internal.util.Maps.*;
 
 public class StylesXml {
     public static Styles readStylesXmlElement(XmlElement element) {
@@ -24,7 +23,7 @@ public class StylesXml {
     }
 
     private static Map<String, Style> readStyles(XmlElementList styleElements, String styleType) {
-        return toMap(
+        return toMapPreferFirst(
             styleElementsOfType(styleElements, styleType),
             StylesXml::readStyle
         );
@@ -37,7 +36,7 @@ public class StylesXml {
     }
 
     private static Map<String, NumberingStyle> readNumberingStyles(XmlElementList styleElements) {
-        return toMap(
+        return toMapPreferFirst(
             styleElementsOfType(styleElements, "numbering"),
             StylesXml::readNumberingStyle
         );
