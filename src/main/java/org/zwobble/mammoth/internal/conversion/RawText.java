@@ -13,7 +13,7 @@ public class RawText {
         return extractRawTextOfChildren(document);
     }
 
-    private static String extractRawTextOfChildren(HasChildren parent) {
+    private static <T> String extractRawTextOfChildren(HasChildren<T> parent) {
         return extractRawText(parent.getChildren());
     }
 

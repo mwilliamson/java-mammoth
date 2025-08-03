@@ -135,7 +135,7 @@ public class DocumentToHtml {
         );
     }
 
-    private List<HtmlNode> convertChildrenToHtml(HasChildren element, Context context) {
+    private <T> List<HtmlNode> convertChildrenToHtml(HasChildren<T> element, Context context) {
         return convertToHtml(element.getChildren(), context);
     }
 
