@@ -119,7 +119,7 @@ public class DocumentToHtml {
         );
     }
 
-    private <T> List<HtmlNode> convertChildrenToHtml(HasChildren element, Context context) {
+    private List<HtmlNode> convertChildrenToHtml(HasChildren element, Context context) {
         return convertToHtml(element.getChildren(), context);
     }
 
