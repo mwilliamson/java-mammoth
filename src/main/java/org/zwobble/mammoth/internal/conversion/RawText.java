@@ -27,8 +27,8 @@ public class RawText {
         } else if (node instanceof Tab) {
             return "\t";
         } else {
-            List<DocumentElement> children = tryCast(HasChildren.class, node)
-                .map(HasChildren::getChildren)
+            List<DocumentElement> children = tryCast(HasGetChildren.class, node)
+                .map(HasGetChildren::getChildren)
                 .orElse(list());
             String suffix = tryCast(Paragraph.class, node).map(paragraph -> "\n\n").orElse("");
             return extractRawText(children) + suffix;
