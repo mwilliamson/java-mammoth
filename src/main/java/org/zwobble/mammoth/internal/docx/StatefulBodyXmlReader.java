@@ -772,7 +772,7 @@ class StatefulBodyXmlReader {
         return element -> {
             if (element instanceof HasChildren) {
                 element = ((HasChildren<DocumentElement>) element).replaceChildren(
-                    Lists.eagerMap(((HasChildren<?>) element).getChildren(), transformElementsOfType(elementClass, transform))
+                    Lists.eagerMap(((HasGetChildren) element).getChildren(), transformElementsOfType(elementClass, transform))
                 );
             }
 
