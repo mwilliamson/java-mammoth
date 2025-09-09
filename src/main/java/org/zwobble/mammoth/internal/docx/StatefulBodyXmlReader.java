@@ -500,6 +500,7 @@ class StatefulBodyXmlReader {
     private ReadResult calculateRowspans(List<DocumentElement> rows) {
         Optional<String> error = checkTableRows(rows);
         if (error.isPresent()) {
+            rows = removeUnmergedTableCells(rows);
             return ReadResult.withWarning(rows, error.get());
         }
 
@@ -559,6 +560,16 @@ class StatefulBodyXmlReader {
             }
         }
         return Optional.empty();
+    }
+
+    private List<DocumentElement> removeUnmergedTableCells(List<DocumentElement> rows) {
+        return Lists.eagerMap(
+            rows,
+            transformElementsOfType(
+                UnmergedTableCell.class,
+                cell -> new TableCell(1, cell.colspan, cell.children)
+            )
+        );
     }
 
     private ReadResult readTableRow(XmlElement element) {
