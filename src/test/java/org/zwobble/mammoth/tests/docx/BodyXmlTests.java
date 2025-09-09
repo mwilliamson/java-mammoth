@@ -1579,14 +1579,41 @@ public class BodyXmlTests {
 
     @Test
     public void warningIfNonCellInTableRow() {
+        // Include normal cells to ensure they're still read correctly.
         XmlElement element = element("w:tbl", list(
-            wTr(element("w:p"))
+            wTr(
+                element("w:tc", list(
+                    element("w:p", list(
+                        runXml("Cell 1")
+                    ))
+                )),
+                element("w:p"),
+                element("w:tc", list(
+                    element("w:p", list(
+                        runXml("Cell 2")
+                    ))
+                ))
+            )
         ));
 
         assertThat(
             read(bodyReader(), element),
             isInternalResult(
-                deepEquals(table(list(tableRow(list(paragraph()))))),
+                deepEquals(table(list(
+                    tableRow(list(
+                        tableCell(withChildren(
+                            paragraph(withChildren(
+                                runWithText("Cell 1")
+                            ))
+                        )),
+                        paragraph(),
+                        tableCell(withChildren(
+                            paragraph(withChildren(
+                                runWithText("Cell 2")
+                            ))
+                        ))
+                    ))
+                ))),
                 list("unexpected non-cell element in table row, cell merging may be incorrect")
             )
         );
