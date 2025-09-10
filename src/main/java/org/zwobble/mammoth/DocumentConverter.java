@@ -61,6 +61,15 @@ public class DocumentConverter {
     }
 
     /**
+     * Source documents may reference files outside of the source document.
+     * Call this to disable access to any such external files during the conversion process.
+     * This is highly recommended when converting untrusted user input.
+     */
+    public DocumentConverter disableExternalFileAccess() {
+        return new DocumentConverter(options.disableExternalFileAccess());
+    }
+
+    /**
      * By default, images are converted to {@code <img>} elements with the source included inline in the {@code src} attribute.
      * Call this to change how images are converted.
      */

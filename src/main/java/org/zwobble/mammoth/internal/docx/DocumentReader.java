@@ -22,13 +22,21 @@ import static org.zwobble.mammoth.internal.util.Lists.*;
 import static org.zwobble.mammoth.internal.util.Strings.trimLeft;
 
 public class DocumentReader {
-    public static InternalResult<Document> readDocument(Optional<Path> path, Archive zipFile) {
+    public static InternalResult<Document> readDocument(
+        Optional<Path> path,
+        Archive zipFile,
+        boolean externalFileAccess
+    ) {
         PartPaths partPaths = findPartPaths(zipFile);
 
         Styles styles = readStyles(zipFile, partPaths);
         Numbering numbering = readNumbering(zipFile, partPaths, styles);
         ContentTypes contentTypes = readContentTypes(zipFile);
-        FileReader fileReader = new PathRelativeFileReader(path);
+
+        FileReader fileReader = externalFileAccess
+            ? new PathRelativeFileReader(path)
+            : new DisabledFileReader();
+
         PartWithBodyReader partReader = new PartWithBodyReader(zipFile, contentTypes, fileReader, numbering, styles);
         return InternalResult.flatMap(
             readNotes(partReader, partPaths),

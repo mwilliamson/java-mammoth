@@ -121,6 +121,29 @@ public class MammothTests {
     }
 
     @Test
+    public void warnIfDocumentHasImagesStoredOutsideOfDocumentWhenExternalFileAccessIsDisabled() throws IOException {
+        Path tempDirectory = Files.createTempDirectory("mammoth-");
+        try {
+            Path documentPath = tempDirectory.resolve("external-picture.docx");
+            Files.copy(TestData.file("external-picture.docx").toPath(), documentPath);
+            Files.copy(TestData.file("tiny-picture.png").toPath(), tempDirectory.resolve("tiny-picture.png"));
+            assertThat(
+                new DocumentConverter()
+                    .disableExternalFileAccess()
+                    .convertToHtml(documentPath.toFile()),
+                allOf(
+                    hasProperty("value", equalTo("")),
+                    hasProperty("warnings", contains(
+                        equalTo("could not open external image 'tiny-picture.png': external file access is disabled")
+                    ))
+                )
+            );
+        } finally {
+            tempDirectory.toFile().delete();
+        }
+    }
+
+    @Test
     public void warnIfImagesStoredOutsideOfDocumentAreNotFound() throws IOException {
         Path tempDirectory = Files.createTempDirectory("mammoth-");
         try {

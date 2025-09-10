@@ -45,7 +45,7 @@ public class InternalDocumentConverter {
         Optional<StyleMap> styleMap = readEmbeddedStyleMap(zipFile).map(StyleMapParser::parse);
         DocumentToHtmlOptions conversionOptions = styleMap.map(options::addEmbeddedStyleMap).orElse(options);
 
-        return readDocument(path, zipFile)
+        return readDocument(path, zipFile, conversionOptions.externalFileAccess())
             .flatMap(nodes -> DocumentToHtml.convertToHtml(nodes, conversionOptions))
             .map(Html::stripEmpty)
             .map(Html::collapse)
@@ -69,7 +69,7 @@ public class InternalDocumentConverter {
     }
 
     private InternalResult<String> extractRawText(Optional<Path> path, Archive zipFile) {
-        return readDocument(path, zipFile)
+        return readDocument(path, zipFile, options.externalFileAccess())
             .map(RawText::extractRawText);
     }
 

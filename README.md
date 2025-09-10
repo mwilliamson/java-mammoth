@@ -255,6 +255,10 @@ Methods:
   if the document contains an embedded style map, then it is combined with the default style map.
   Call this to ignore any embedded style maps.
 
+* `DocumentConvert disableExternalFileAccess()`: Source documents may reference files outside of the source document.
+  Call this to disable access to any such external files during the conversion process.
+  This is highly recommended when converting untrusted user input.
+
 * `DocumentConverter preserveEmptyParagraphs()`: by default, empty paragraphs are ignored.
   Call this to preserve empty paragraphs in the output.
 

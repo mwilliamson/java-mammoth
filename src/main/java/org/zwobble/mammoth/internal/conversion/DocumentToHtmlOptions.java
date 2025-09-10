@@ -16,6 +16,7 @@ public class DocumentToHtmlOptions {
         StyleMap.EMPTY,
         false,
         false,
+        false,
         InternalImageConverter.imgElement(image -> {
             String base64 = Base64Encoding.streamToBase64(image::getInputStream);
             String src = "data:" + image.getContentType() + ";base64," + base64;
@@ -30,6 +31,7 @@ public class DocumentToHtmlOptions {
     private final StyleMap embeddedStyleMap;
     private final boolean disableDefaultStyleMap;
     private final boolean disableEmbeddedStyleMap;
+    private final boolean disableExternalFileAccess;
     private final InternalImageConverter imageConverter;
 
     public DocumentToHtmlOptions(
@@ -39,6 +41,7 @@ public class DocumentToHtmlOptions {
         StyleMap embeddedStyleMap,
         boolean disableDefaultStyleMap,
         boolean disableEmbeddedStyleMap,
+        boolean disableExternalFileAccess,
         InternalImageConverter imageConverter
     ) {
         this.idPrefix = idPrefix;
@@ -47,15 +50,34 @@ public class DocumentToHtmlOptions {
         this.embeddedStyleMap = embeddedStyleMap;
         this.disableDefaultStyleMap = disableDefaultStyleMap;
         this.disableEmbeddedStyleMap = disableEmbeddedStyleMap;
+        this.disableExternalFileAccess = disableExternalFileAccess;
         this.imageConverter = imageConverter;
     }
 
     public DocumentToHtmlOptions idPrefix(String prefix) {
-        return new DocumentToHtmlOptions(prefix, preserveEmptyParagraphs, styleMap, embeddedStyleMap, disableDefaultStyleMap, disableEmbeddedStyleMap, imageConverter);
+        return new DocumentToHtmlOptions(
+            prefix,
+            preserveEmptyParagraphs,
+            styleMap,
+            embeddedStyleMap,
+            disableDefaultStyleMap,
+            disableEmbeddedStyleMap,
+            disableExternalFileAccess,
+            imageConverter
+        );
     }
 
     public DocumentToHtmlOptions preserveEmptyParagraphs() {
-        return new DocumentToHtmlOptions(idPrefix, true, styleMap, embeddedStyleMap, disableDefaultStyleMap, disableEmbeddedStyleMap, imageConverter);
+        return new DocumentToHtmlOptions(
+            idPrefix,
+            true,
+            styleMap,
+            embeddedStyleMap,
+            disableDefaultStyleMap,
+            disableEmbeddedStyleMap,
+            disableExternalFileAccess,
+            imageConverter
+        );
     }
 
     public DocumentToHtmlOptions addStyleMap(String styleMap) {
@@ -63,19 +85,68 @@ public class DocumentToHtmlOptions {
     }
 
     public DocumentToHtmlOptions addStyleMap(StyleMap styleMap) {
-        return new DocumentToHtmlOptions(idPrefix, preserveEmptyParagraphs, this.styleMap.update(styleMap), embeddedStyleMap, disableDefaultStyleMap, disableEmbeddedStyleMap, imageConverter);
+        return new DocumentToHtmlOptions(
+            idPrefix,
+            preserveEmptyParagraphs,
+            this.styleMap.update(styleMap),
+            embeddedStyleMap,
+            disableDefaultStyleMap,
+            disableEmbeddedStyleMap,
+            disableExternalFileAccess,
+            imageConverter
+        );
     }
 
     public DocumentToHtmlOptions disableDefaultStyleMap() {
-        return new DocumentToHtmlOptions(idPrefix, preserveEmptyParagraphs, styleMap, embeddedStyleMap, true, disableEmbeddedStyleMap, imageConverter);
+        return new DocumentToHtmlOptions(
+            idPrefix,
+            preserveEmptyParagraphs,
+            styleMap,
+            embeddedStyleMap,
+            true,
+            disableEmbeddedStyleMap,
+            disableExternalFileAccess,
+            imageConverter
+        );
     }
 
     public DocumentToHtmlOptions disableEmbeddedStyleMap() {
-        return new DocumentToHtmlOptions(idPrefix, preserveEmptyParagraphs, styleMap, embeddedStyleMap, disableDefaultStyleMap, true, imageConverter);
+        return new DocumentToHtmlOptions(
+            idPrefix,
+            preserveEmptyParagraphs,
+            styleMap,
+            embeddedStyleMap,
+            disableDefaultStyleMap,
+            true,
+            disableExternalFileAccess,
+            imageConverter
+        );
+    }
+
+    public DocumentToHtmlOptions disableExternalFileAccess() {
+        return new DocumentToHtmlOptions(
+            idPrefix,
+            preserveEmptyParagraphs,
+            styleMap,
+            embeddedStyleMap,
+            disableDefaultStyleMap,
+            disableEmbeddedStyleMap,
+            true,
+            imageConverter
+        );
     }
 
     public DocumentToHtmlOptions addEmbeddedStyleMap(StyleMap embeddedStyleMap) {
-        return new DocumentToHtmlOptions(idPrefix, preserveEmptyParagraphs, styleMap, embeddedStyleMap, disableDefaultStyleMap, disableEmbeddedStyleMap, imageConverter);
+        return new DocumentToHtmlOptions(
+            idPrefix,
+            preserveEmptyParagraphs,
+            styleMap,
+            embeddedStyleMap,
+            disableDefaultStyleMap,
+            disableEmbeddedStyleMap,
+            disableExternalFileAccess,
+            imageConverter
+        );
     }
 
     public DocumentToHtmlOptions imageConverter(ImageConverter.ImgElement imageConverter) {
@@ -86,6 +157,7 @@ public class DocumentToHtmlOptions {
             embeddedStyleMap,
             disableDefaultStyleMap,
             disableEmbeddedStyleMap,
+            disableExternalFileAccess,
             InternalImageConverter.imgElement(imageConverter)
         );
     }
@@ -108,6 +180,10 @@ public class DocumentToHtmlOptions {
         }
         styleMap = styleMap.update(this.styleMap);
         return styleMap;
+    }
+
+    public boolean externalFileAccess() {
+        return !this.disableExternalFileAccess;
     }
 
     public InternalImageConverter imageConverter() {
