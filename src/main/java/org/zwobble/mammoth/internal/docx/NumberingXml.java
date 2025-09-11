@@ -3,6 +3,7 @@ package org.zwobble.mammoth.internal.docx;
 import org.zwobble.mammoth.internal.xml.XmlElement;
 import org.zwobble.mammoth.internal.xml.XmlElementList;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -31,15 +32,42 @@ public class NumberingXml {
     }
 
     private static Map<String, Numbering.AbstractNumLevel> readAbstractNumLevels(XmlElement element) {
-        return toMap(element.findChildren("w:lvl"), NumberingXml::readAbstractNumLevel);
+        Map<String, Numbering.AbstractNumLevel> levels = new HashMap<>();
+
+        // Some malformed documents define numbering levels without an index, and
+        // reference the numbering using a w:numPr element without a w:ilvl child.
+        // To handle such cases, we assume a level of 0 as a fallback.
+        Optional<Numbering.AbstractNumLevel> levelWithoutIndex = Optional.empty();
+
+        for (XmlElement levelElement : element.findChildren("w:lvl")) {
+            Map.Entry<Optional<String>, Numbering.AbstractNumLevel> entry =
+                readAbstractNumLevel(levelElement);
+
+            if (entry.getKey().isPresent()) {
+                levels.put(entry.getKey().get(), entry.getValue());
+            } else {
+                levelWithoutIndex = Optional.of(entry.getValue());
+            }
+        }
+
+        if (levelWithoutIndex.isPresent() && !levels.containsKey(levelWithoutIndex.get().levelIndex())) {
+            levels.put(levelWithoutIndex.get().levelIndex(), levelWithoutIndex.get());
+        }
+
+        return levels;
     }
 
-    private static Map.Entry<String, Numbering.AbstractNumLevel> readAbstractNumLevel(XmlElement element) {
-        String levelIndex = element.getAttribute("w:ilvl");
+    private static Map.Entry<Optional<String>, Numbering.AbstractNumLevel> readAbstractNumLevel(XmlElement element) {
+        Optional<String> levelIndex = element.getAttributeOrNone("w:ilvl");
         Optional<String> numFmt = element.findChildOrEmpty("w:numFmt").getAttributeOrNone("w:val");
         boolean isOrdered = !numFmt.equals(Optional.of("bullet"));
         Optional<String> paragraphStyleId = element.findChildOrEmpty("w:pStyle").getAttributeOrNone("w:val");
-        return entry(levelIndex, new Numbering.AbstractNumLevel(levelIndex, isOrdered, paragraphStyleId));
+        Numbering.AbstractNumLevel abstractNumLevel = new Numbering.AbstractNumLevel(
+            levelIndex.orElse("0"),
+            isOrdered,
+            paragraphStyleId
+        );
+        return entry(levelIndex, abstractNumLevel);
     }
 
     private static Map<String, Numbering.Num> readNums(XmlElementList numElements) {

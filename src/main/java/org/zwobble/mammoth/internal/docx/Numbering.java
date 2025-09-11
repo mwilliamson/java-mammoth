@@ -41,6 +41,10 @@ public class Numbering {
             this.paragraphStyleId = paragraphStyleId;
         }
 
+        public String levelIndex() {
+            return levelIndex;
+        }
+
         public NumberingLevel toNumberingLevel() {
             return new NumberingLevel(levelIndex, isOrdered);
         }

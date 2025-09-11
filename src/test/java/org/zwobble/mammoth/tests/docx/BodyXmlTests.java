@@ -259,18 +259,21 @@ public class BodyXmlTests {
     }
 
     @Test
-    public void numberingPropertiesAreIgnoredIfLevelIsMissing() {
+    public void whenNumberingPropertiesAreMissingLevelThenLevelOf0IsAssumed() {
         // TODO: emit warning
         XmlElement element = paragraphXml(list(
             element("w:pPr", list(
                 element("w:numPr", map(), list(
-                    element("w:numId", map("w:val", "42"))))))));
+                    element("w:numId", map("w:val", "42"))
+                ))
+            ))
+        ));
 
-        Numbering numbering = numberingMap(map("42", map("1", Numbering.AbstractNumLevel.ordered("1"))));
+        Numbering numbering = numberingMap(map("42", map("0", Numbering.AbstractNumLevel.ordered("0"))));
 
         assertThat(
             readSuccess(bodyReader(numbering), element),
-            hasNumbering(Optional.empty()));
+            hasNumbering(NumberingLevel.ordered("0")));
     }
 
     @Test

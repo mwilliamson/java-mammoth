@@ -79,6 +79,66 @@ public class NumberingXmlTests {
     }
 
     @Test
+    public void givenNoOtherLevelsWithIndexOf0WhenLevelIsMissingIlvlThenLevelIndexIs0() {
+        XmlElement element = element("w:numbering", list(
+            element("w:abstractNum", map("w:abstractNumId", "42"), list(
+                element("w:lvl", map(), list(
+                    element("w:numFmt", map("w:val", "decimal"))
+                ))
+            )),
+            element("w:num", map("w:numId", "47"), list(
+                element("w:abstractNumId", map("w:val", "42"))
+            ))
+        ));
+
+        Numbering numbering = readNumbering(element);
+
+        assertEquals(true, numbering.findLevel("47", "0").get().isOrdered());
+    }
+
+    @Test
+    public void givenPreviousOtherLevelWithIndexOf0WhenLevelIsMissingIlvlThenLevelIsIgnored() {
+        XmlElement element = element("w:numbering", list(
+            element("w:abstractNum", map("w:abstractNumId", "42"), list(
+                element("w:lvl", map("w:ilvl", "0"), list(
+                    element("w:numFmt", map("w:val", "bullet"))
+                )),
+                element("w:lvl", map(), list(
+                    element("w:numFmt", map("w:val", "decimal"))
+                ))
+            )),
+            element("w:num", map("w:numId", "47"), list(
+                element("w:abstractNumId", map("w:val", "42"))
+            ))
+        ));
+
+        Numbering numbering = readNumbering(element);
+
+        assertEquals(false, numbering.findLevel("47", "0").get().isOrdered());
+    }
+
+    @Test
+    public void givenSubsequentOtherLevelWithIndexOf0WhenLevelIsMissingIlvlThenLevelIsIgnored() {
+        XmlElement element = element("w:numbering", list(
+            element("w:abstractNum", map("w:abstractNumId", "42"), list(
+                element("w:lvl", map(), list(
+                    element("w:numFmt", map("w:val", "decimal"))
+                )),
+                element("w:lvl", map("w:ilvl", "0"), list(
+                    element("w:numFmt", map("w:val", "bullet"))
+                ))
+            )),
+            element("w:num", map("w:numId", "47"), list(
+                element("w:abstractNumId", map("w:val", "42"))
+            ))
+        ));
+
+        Numbering numbering = readNumbering(element);
+
+        assertEquals(false, numbering.findLevel("47", "0").get().isOrdered());
+    }
+
+    @Test
     public void whenAbstractNumHasNumStyleLinkThenStyleIsUsedToFindNum() {
         Numbering numbering = readNumberingXmlElement(
             element("w:numbering", list(

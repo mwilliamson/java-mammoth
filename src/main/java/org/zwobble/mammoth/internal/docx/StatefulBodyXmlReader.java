@@ -429,6 +429,13 @@ class StatefulBodyXmlReader {
             }
         }
 
+        // Some malformed documents define numbering levels without an index, and
+        // reference the numbering using a w:numPr element without a w:ilvl child.
+        // To handle such cases, we assume a level of 0 as a fallback.
+        if (numId.isPresent()) {
+            return numbering.findLevel(numId.get(), "0");
+        }
+
         return Optional.empty();
     }
 
