@@ -31,7 +31,7 @@ public class DocumentToHtmlOptions {
     private final StyleMap embeddedStyleMap;
     private final boolean disableDefaultStyleMap;
     private final boolean disableEmbeddedStyleMap;
-    private final boolean disableExternalFileAccess;
+    private final boolean enableExternalFileAccess;
     private final InternalImageConverter imageConverter;
 
     public DocumentToHtmlOptions(
@@ -41,7 +41,7 @@ public class DocumentToHtmlOptions {
         StyleMap embeddedStyleMap,
         boolean disableDefaultStyleMap,
         boolean disableEmbeddedStyleMap,
-        boolean disableExternalFileAccess,
+        boolean enableExternalFileAccess,
         InternalImageConverter imageConverter
     ) {
         this.idPrefix = idPrefix;
@@ -50,7 +50,7 @@ public class DocumentToHtmlOptions {
         this.embeddedStyleMap = embeddedStyleMap;
         this.disableDefaultStyleMap = disableDefaultStyleMap;
         this.disableEmbeddedStyleMap = disableEmbeddedStyleMap;
-        this.disableExternalFileAccess = disableExternalFileAccess;
+        this.enableExternalFileAccess = enableExternalFileAccess;
         this.imageConverter = imageConverter;
     }
 
@@ -62,7 +62,7 @@ public class DocumentToHtmlOptions {
             embeddedStyleMap,
             disableDefaultStyleMap,
             disableEmbeddedStyleMap,
-            disableExternalFileAccess,
+            enableExternalFileAccess,
             imageConverter
         );
     }
@@ -75,7 +75,7 @@ public class DocumentToHtmlOptions {
             embeddedStyleMap,
             disableDefaultStyleMap,
             disableEmbeddedStyleMap,
-            disableExternalFileAccess,
+            enableExternalFileAccess,
             imageConverter
         );
     }
@@ -92,7 +92,7 @@ public class DocumentToHtmlOptions {
             embeddedStyleMap,
             disableDefaultStyleMap,
             disableEmbeddedStyleMap,
-            disableExternalFileAccess,
+            enableExternalFileAccess,
             imageConverter
         );
     }
@@ -105,7 +105,7 @@ public class DocumentToHtmlOptions {
             embeddedStyleMap,
             true,
             disableEmbeddedStyleMap,
-            disableExternalFileAccess,
+            enableExternalFileAccess,
             imageConverter
         );
     }
@@ -118,12 +118,12 @@ public class DocumentToHtmlOptions {
             embeddedStyleMap,
             disableDefaultStyleMap,
             true,
-            disableExternalFileAccess,
+            enableExternalFileAccess,
             imageConverter
         );
     }
 
-    public DocumentToHtmlOptions disableExternalFileAccess() {
+    public DocumentToHtmlOptions enableExternalFileAccess() {
         return new DocumentToHtmlOptions(
             idPrefix,
             preserveEmptyParagraphs,
@@ -144,7 +144,7 @@ public class DocumentToHtmlOptions {
             embeddedStyleMap,
             disableDefaultStyleMap,
             disableEmbeddedStyleMap,
-            disableExternalFileAccess,
+            enableExternalFileAccess,
             imageConverter
         );
     }
@@ -157,7 +157,7 @@ public class DocumentToHtmlOptions {
             embeddedStyleMap,
             disableDefaultStyleMap,
             disableEmbeddedStyleMap,
-            disableExternalFileAccess,
+            enableExternalFileAccess,
             InternalImageConverter.imgElement(imageConverter)
         );
     }
@@ -183,7 +183,7 @@ public class DocumentToHtmlOptions {
     }
 
     public boolean externalFileAccess() {
-        return !this.disableExternalFileAccess;
+        return this.enableExternalFileAccess;
     }
 
     public InternalImageConverter imageConverter() {

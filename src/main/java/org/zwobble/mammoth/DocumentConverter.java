@@ -62,11 +62,11 @@ public class DocumentConverter {
 
     /**
      * Source documents may reference files outside of the source document.
-     * Call this to disable access to any such external files during the conversion process.
-     * This is highly recommended when converting untrusted user input.
+     * Access to any such external files is disabled by default.
+     * Call this to enable access when converting trusted source documents.
      */
-    public DocumentConverter disableExternalFileAccess() {
-        return new DocumentConverter(options.disableExternalFileAccess());
+    public DocumentConverter enableExternalFileAccess() {
+        return new DocumentConverter(options.enableExternalFileAccess());
     }
 
     /**

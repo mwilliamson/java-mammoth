@@ -89,14 +89,16 @@ public class MammothTests {
     }
 
     @Test
-    public void imagesStoredOutsideOfDocumentAreIncludedInOutput() throws IOException {
+    public void whenExternalFileAccessIsEnabledThenImagesStoredOutsideOfDocumentAreIncludedInOutput() throws IOException {
         Path tempDirectory = Files.createTempDirectory("mammoth-");
         try {
             Path documentPath = tempDirectory.resolve("external-picture.docx");
             Files.copy(TestData.file("external-picture.docx").toPath(), documentPath);
             Files.copy(TestData.file("tiny-picture.png").toPath(), tempDirectory.resolve("tiny-picture.png"));
             assertThat(
-                new DocumentConverter().convertToHtml(documentPath.toFile()),
+                new DocumentConverter()
+                    .enableExternalFileAccess()
+                    .convertToHtml(documentPath.toFile()),
                 isSuccess("<p><img src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAIAAAACUFjqAAAAAXNSR0IArs4c6QAAAAlwSFlzAAAOvgAADr4B6kKxwAAAABNJREFUKFNj/M+ADzDhlWUYqdIAQSwBE8U+X40AAAAASUVORK5CYII=\" /></p>"));
         } finally {
             tempDirectory.toFile().delete();
@@ -104,13 +106,15 @@ public class MammothTests {
     }
 
     @Test
-    public void warnIfDocumentHasImagesStoredOutsideOfDocumentWhenPathOfDocumentIsUnknown() throws IOException {
+    public void whenExternalFileAccessIsEnabledThenWarnIfDocumentHasImagesStoredOutsideOfDocumentWhenPathOfDocumentIsUnknown() throws IOException {
         Path tempDirectory = Files.createTempDirectory("mammoth-");
         try {
             Path documentPath = tempDirectory.resolve("external-picture.docx");
             Files.copy(TestData.file("external-picture.docx").toPath(), documentPath);
             assertThat(
-                new DocumentConverter().convertToHtml(documentPath.toUri().toURL().openStream()),
+                new DocumentConverter()
+                    .enableExternalFileAccess()
+                    .convertToHtml(documentPath.toUri().toURL().openStream()),
                 allOf(
                     hasProperty("value", equalTo("")),
                     hasProperty("warnings", contains(
@@ -121,16 +125,14 @@ public class MammothTests {
     }
 
     @Test
-    public void warnIfDocumentHasImagesStoredOutsideOfDocumentWhenExternalFileAccessIsDisabled() throws IOException {
+    public void givenExternalFileAccessIsDisabledByDefaultThenWarnIfDocumentHasImagesStoredOutsideOfDocument() throws IOException {
         Path tempDirectory = Files.createTempDirectory("mammoth-");
         try {
             Path documentPath = tempDirectory.resolve("external-picture.docx");
             Files.copy(TestData.file("external-picture.docx").toPath(), documentPath);
             Files.copy(TestData.file("tiny-picture.png").toPath(), tempDirectory.resolve("tiny-picture.png"));
             assertThat(
-                new DocumentConverter()
-                    .disableExternalFileAccess()
-                    .convertToHtml(documentPath.toFile()),
+                new DocumentConverter().convertToHtml(documentPath.toFile()),
                 allOf(
                     hasProperty("value", equalTo("")),
                     hasProperty("warnings", contains(
@@ -144,13 +146,15 @@ public class MammothTests {
     }
 
     @Test
-    public void warnIfImagesStoredOutsideOfDocumentAreNotFound() throws IOException {
+    public void whenExternalFileAccessIsEnabledWarnIfImagesStoredOutsideOfDocumentAreNotFound() throws IOException {
         Path tempDirectory = Files.createTempDirectory("mammoth-");
         try {
             Path documentPath = tempDirectory.resolve("external-picture.docx");
             Files.copy(TestData.file("external-picture.docx").toPath(), documentPath);
             assertThat(
-                new DocumentConverter().convertToHtml(documentPath.toFile()),
+                new DocumentConverter()
+                    .enableExternalFileAccess()
+                    .convertToHtml(documentPath.toFile()),
                 allOf(
                     hasProperty("value", equalTo("")),
                     hasProperty("warnings", contains(

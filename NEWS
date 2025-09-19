@@ -2,7 +2,8 @@
 
 * Ignore style definitions using a style ID that has already been used.
 
-* Support disabling external file accesses using the external_file_access argument.
+* Disable external file accesses by default. External file access can be enabled
+  using enableExternalFileAccess().
 
 * Handle numbering levels defined without an index.
 
