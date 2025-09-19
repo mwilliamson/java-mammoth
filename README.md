@@ -330,7 +330,6 @@ For instance:
   automatically convert the document into HTML on the server,
   and embed the HTML into your website,
   this may allow arbitrary files on the server to be read and exfiltrated.
-* 
   To avoid this issue, access to any such external files is disabled by default.
   To enable access when converting trusted source documents,
   call `enableExternalFileAccess()`.
