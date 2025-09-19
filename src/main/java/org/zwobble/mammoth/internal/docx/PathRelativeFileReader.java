@@ -8,9 +8,13 @@ import java.nio.file.Path;
 import java.util.Optional;
 
 public class PathRelativeFileReader implements FileReader {
+    public static FileReader relativeTo(Optional<Path> path) {
+        return new PathRelativeFileReader(path);
+    }
+
     private final Optional<Path> path;
 
-    public PathRelativeFileReader(Optional<Path> path) {
+    private PathRelativeFileReader(Optional<Path> path) {
         this.path = path;
     }
 

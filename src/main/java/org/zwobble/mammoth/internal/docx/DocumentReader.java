@@ -34,8 +34,8 @@ public class DocumentReader {
         ContentTypes contentTypes = readContentTypes(zipFile);
 
         FileReader fileReader = externalFileAccess
-            ? new PathRelativeFileReader(path)
-            : new DisabledFileReader();
+            ? PathRelativeFileReader.relativeTo(path)
+            : DisabledFileReader.INSTANCE;
 
         PartWithBodyReader partReader = new PartWithBodyReader(zipFile, contentTypes, fileReader, numbering, styles);
         return InternalResult.flatMap(
