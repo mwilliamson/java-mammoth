@@ -122,4 +122,9 @@ public class DocumentMatchers {
     static Matcher<Hyperlink> hasNoTargetFrame() {
         return hasProperty("targetFrame", equalTo(Optional.empty()));
     }
+
+    @SafeVarargs
+    static Matcher<DocumentElement> isImage(Matcher<? super Image>... matchers) {
+        return cast(Image.class, allOf(matchers));
+    }
 }

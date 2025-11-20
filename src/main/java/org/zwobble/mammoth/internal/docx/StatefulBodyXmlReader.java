@@ -694,34 +694,52 @@ class StatefulBodyXmlReader {
 
     private ReadResult readInline(XmlElement element) {
         XmlElementLike properties = element.findChildOrEmpty("wp:docPr");
+
         Optional<String> altText = Optionals.first(
             properties.getAttributeOrNone("descr").filter(description -> !description.trim().isEmpty()),
             properties.getAttributeOrNone("title")
         );
+
+        XmlElementLike hlinkClickElement = properties.findChildOrEmpty("a:hlinkClick");
+        Optional<String> href = hlinkClickElement.getAttributeOrNone("r:id")
+            .map(relationships::findTargetByRelationshipId);
+
         XmlElementList blips = element.findChildren("a:graphic")
             .findChildren("a:graphicData")
             .findChildren("pic:pic")
             .findChildren("pic:blipFill")
             .findChildren("a:blip");
-        return readBlips(blips, altText);
+        return readBlips(blips, altText, href);
     }
 
-    private ReadResult readBlips(XmlElementList blips, Optional<String> altText) {
-        return ReadResult.flatMap(blips, blip -> readBlip(blip, altText));
+    private ReadResult readBlips(
+        XmlElementList blips,
+        Optional<String> altText,
+        Optional<String> href
+    ) {
+        return ReadResult.flatMap(blips, blip -> readBlip(blip, altText, href));
     }
 
-    private ReadResult readBlip(XmlElement blip, Optional<String> altText) {
-        Optional<String> embedRelationshipId = blip.getAttributeOrNone("r:embed");
-        Optional<String> linkRelationshipId = blip.getAttributeOrNone("r:link");
-        if (embedRelationshipId.isPresent()) {
-            String imagePath = relationshipIdToDocxPath(embedRelationshipId.get());
-            return readImage(imagePath, altText, () -> Archives.getInputStream(file, imagePath));
-        } else if (linkRelationshipId.isPresent()) {
-            String imagePath = relationships.findTargetByRelationshipId(linkRelationshipId.get());
-            return readImage(imagePath, altText, () -> fileReader.getInputStream(imagePath));
-        } else {
+    private ReadResult readBlip(
+        XmlElement blip,
+        Optional<String> altText,
+        Optional<String> href
+    ) {
+        Optional<BlipImage> blipImage = findBlipImage(blip);
+
+        if (!blipImage.isPresent()) {
             return ReadResult.emptyWithWarning("Could not find image file for a:blip element");
         }
+
+        ReadResult result = readImage(blipImage.get().path, altText, blipImage.get().open);
+
+        if (!href.isPresent()) {
+            return result;
+        }
+
+        return result.map(imageElements -> list(
+            new Hyperlink(href, Optional.empty(), Optional.empty(), imageElements)
+        ));
     }
 
     private ReadResult readImage(String imagePath, Optional<String> altText, InputStreamSupplier open) {
@@ -733,6 +751,36 @@ class StatefulBodyXmlReader {
             return success(image);
         } else {
             return ReadResult.withWarning(image, "Image of type " + contentTypeString + " is unlikely to display in web browsers");
+        }
+    }
+
+    private static class BlipImage {
+        private final String path;
+        private final InputStreamSupplier open;
+
+        public BlipImage(String path, InputStreamSupplier open) {
+            this.path = path;
+            this.open = open;
+        }
+    }
+
+    private Optional<BlipImage> findBlipImage(XmlElement blip) {
+        Optional<String> embedRelationshipId = blip.getAttributeOrNone("r:embed");
+        Optional<String> linkRelationshipId = blip.getAttributeOrNone("r:link");
+        if (embedRelationshipId.isPresent()) {
+            String imagePath = relationshipIdToDocxPath(embedRelationshipId.get());
+            return Optional.of(new BlipImage(
+                imagePath,
+                () -> Archives.getInputStream(file, imagePath)
+            ));
+        } else if (linkRelationshipId.isPresent()) {
+            String imagePath = relationships.findTargetByRelationshipId(linkRelationshipId.get());
+            return Optional.of(new BlipImage(
+                imagePath,
+                () -> fileReader.getInputStream(imagePath)
+            ));
+        } else {
+            return Optional.empty();
         }
     }
 

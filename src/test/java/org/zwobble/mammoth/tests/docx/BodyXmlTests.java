@@ -1944,6 +1944,42 @@ public class BodyXmlTests {
         assertThat(result, isInternalSuccess(empty()));
     }
 
+    @Test
+    public void canReadPicturesWithHyperlinkSpecifiedInDocumentProperties() throws IOException {
+        XmlElement element = element("w:drawing", list(
+            element("wp:inline", list(
+                element("wp:docPr", map(), list(
+                    element("a:hlinkClick", map("r:id", "rId42"))
+                )),
+                graphicXml(embeddedBlipXml(IMAGE_RELATIONSHIP_ID))
+            ))
+        ));
+        Relationships relationships = new Relationships(list(
+            imageRelationship(IMAGE_RELATIONSHIP_ID, "media/hat.png"),
+            hyperlinkRelationship("rId42", "http://example.com")
+        ));
+        Archive file = InMemoryArchive.fromStrings(map("word/media/hat.png", IMAGE_BYTES));
+
+        DocumentElement result = readSuccess(
+            bodyReader(relationships, file),
+            element
+        );
+
+        assertThat(result, isHyperlink(
+            hasHref("http://example.com"),
+            hasChildren(
+                isImage(
+                    hasProperty("contentType", deepEquals(Optional.of("image/png")))
+                )
+            )
+        ));
+        Image image = (Image) ((Hyperlink) result).getChildren().get(0);
+        assertThat(
+            toString(image.open()),
+            equalTo(IMAGE_BYTES)
+        );
+    }
+
     private XmlElement inlineImageXml(XmlElement blip, String description) {
         return inlineImageXml(blip, Optional.of(description), Optional.empty());
     }
@@ -1965,10 +2001,18 @@ public class BodyXmlTests {
 
         return list(
             element("wp:docPr", properties),
-            element("a:graphic", list(
-                element("a:graphicData", list(
-                    element("pic:pic", list(
-                        element("pic:blipFill", list(blip)))))))));
+            graphicXml(blip)
+        );
+    }
+
+    private XmlNode graphicXml(XmlElement blip) {
+        return element("a:graphic", list(
+            element("a:graphicData", list(
+                element("pic:pic", list(
+                    element("pic:blipFill", list(blip))
+                ))
+            ))
+        ));
     }
 
     private XmlElement embeddedBlipXml(String relationshipId) {
