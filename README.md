@@ -43,7 +43,7 @@ The following features are currently supported:
 
 ## Installation
 
-Available on [Maven Central](http://search.maven.org/#artifactdetails|org.zwobble.mammoth|mammoth|1.11.0|jar).
+Available on [Maven Central](https://central.sonatype.com/artifact/org.zwobble.mammoth/mammoth).
 
 ```xml
 <dependency>
