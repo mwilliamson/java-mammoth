@@ -49,7 +49,7 @@ Available on [Maven Central](https://central.sonatype.com/artifact/org.zwobble.m
 <dependency>
   <groupId>org.zwobble.mammoth</groupId>
   <artifactId>mammoth</artifactId>
-  <version>1.11.0</version>
+  <version>1.12.0</version>
 </dependency>
 ```
 
