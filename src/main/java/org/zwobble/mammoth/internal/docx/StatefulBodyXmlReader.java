@@ -346,18 +346,15 @@ class StatefulBodyXmlReader {
     }
 
     private ComplexField parseInstrText(String instrText, XmlElementLike fldChar) {
-        Pattern externalLinkPattern = Pattern.compile("\\s*HYPERLINK \"(.*)\"");
-        Matcher externalLinkMatcher = externalLinkPattern.matcher(instrText);
-        if (externalLinkMatcher.lookingAt()) {
-            String href = externalLinkMatcher.group(1);
-            return ComplexField.hyperlink(children -> Hyperlink.href(href, Optional.empty(), children));
-        }
-
-        Pattern internalLinkPattern = Pattern.compile("\\s*HYPERLINK\\s+\\\\l\\s+\"(.*)\"");
-        Matcher internalLinkMatcher = internalLinkPattern.matcher(instrText);
-        if (internalLinkMatcher.lookingAt()) {
-            String anchor = internalLinkMatcher.group(1);
-            return ComplexField.hyperlink(children -> Hyperlink.anchor(anchor, Optional.empty(), children));
+        Pattern linkPattern = Pattern.compile("^\\s*HYPERLINK\\s+(\\\\l\\s+)?(?:\"(.*)\"|([^\\\\]\\S*))");
+        Matcher linkMatcher = linkPattern.matcher(instrText);
+        if (linkMatcher.lookingAt()) {
+            String location = linkMatcher.group(2) == null ? linkMatcher.group(3) : linkMatcher.group(2);
+            if (linkMatcher.group(1) == null) {
+                return ComplexField.hyperlink(children -> Hyperlink.href(location, Optional.empty(), children));
+            } else {
+                return ComplexField.hyperlink(children -> Hyperlink.anchor(location, Optional.empty(), children));
+            }
         }
 
         Pattern checkboxPattern = Pattern.compile("\\s*FORMCHECKBOX\\s*");
