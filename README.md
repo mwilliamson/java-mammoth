@@ -335,6 +335,13 @@ For instance:
   To enable access when converting trusted source documents,
   call `enableExternalFileAccess()`.
 
+* The conversion may exhibit pathological performance on certain documents:
+  it's likely possible to craft a source document that causes high CPU or memory usage.
+  Depending on the performance constraints of your application and the likelihood of receiving untrusted input,
+  you may wish to consider isolating any calls to Mammoth,
+  such as running Mammoth in a separate thread with a timeout,
+  to prevent denial-of-service attacks.
+
 ## Writing style maps
 
 A style map is made up of a number of style mappings separated by new lines.
