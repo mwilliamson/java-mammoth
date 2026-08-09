@@ -167,6 +167,27 @@ public class NumberingXmlTests {
         assertEquals(true, numbering.findLevel("201", "0").get().isOrdered());
     }
 
+    @Test
+    public void whenAbstractNumHasSelfRecursiveNumStyleLinkThenLevelIsNotFound() {
+        Numbering numbering = readNumberingXmlElement(
+            element("w:numbering", list(
+                element("w:abstractNum", map("w:abstractNumId", "100"), list(
+                    element("w:numStyleLink", map("w:val", "List1"))
+                )),
+                element("w:num", map("w:numId", "200"), list(
+                    element("w:abstractNumId", map("w:val", "100"))
+                ))
+            )),
+            new Styles(
+                map(),
+                map(),
+                map(),
+                map("List1", new NumberingStyle(Optional.of("200")))
+            )
+        );
+        assertEquals(Optional.empty(), numbering.findLevel("200", "0"));
+    }
+
     // See: 17.9.23 pStyle (Paragraph Style's Associated Numbering Level) in ECMA-376, 4th Edition
     @Test
     public void numberingLevelCanBeFoundByParagraphStyleId() {

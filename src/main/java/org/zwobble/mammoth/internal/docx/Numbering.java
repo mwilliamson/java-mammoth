@@ -4,8 +4,10 @@ import org.zwobble.mammoth.internal.documents.NumberingLevel;
 import org.zwobble.mammoth.internal.util.Iterables;
 import org.zwobble.mammoth.internal.util.Maps;
 
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.zwobble.mammoth.internal.util.Maps.lookup;
 import static org.zwobble.mammoth.internal.util.Maps.map;
@@ -86,6 +88,15 @@ public class Numbering {
     }
 
     public Optional<NumberingLevel> findLevel(String numId, String level) {
+        return findLevelWithSeenNumIds(numId, level, new HashSet<>());
+    }
+
+    public Optional<NumberingLevel> findLevelWithSeenNumIds(String numId, String level, Set<String> seenNumIds) {
+        if (seenNumIds.contains(numId)) {
+            return Optional.empty();
+        }
+        seenNumIds.add(numId);
+
         return lookup(nums, numId)
             .flatMap(num -> num.abstractNumId)
             .flatMap(abstractNumId -> lookup(this.abstractNums, abstractNumId))
@@ -94,7 +105,7 @@ public class Numbering {
                     return abstractNum.numStyleLink
                         .flatMap(numStyleLink -> styles.findNumberingStyleById(numStyleLink))
                         .flatMap(style -> style.getNumId())
-                        .flatMap(linkedNumId -> findLevel(linkedNumId, level));
+                        .flatMap(linkedNumId -> findLevelWithSeenNumIds(linkedNumId, level, seenNumIds));
                 } else {
                     return lookup(abstractNum.levels, level).map(value -> value.toNumberingLevel());
                 }
