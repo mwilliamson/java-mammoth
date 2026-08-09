@@ -12,6 +12,7 @@ import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static java.util.Objects.isNull;
 import static org.zwobble.mammoth.internal.docx.ReadResult.*;
 import static org.zwobble.mammoth.internal.docx.Uris.uriToZipEntryName;
 import static org.zwobble.mammoth.internal.util.Casts.tryCast;
@@ -349,8 +350,8 @@ class StatefulBodyXmlReader {
         Pattern linkPattern = Pattern.compile("^\\s*HYPERLINK\\s+(\\\\l\\s+)?(?:\"(.*)\"|([^\\\\]\\S*))");
         Matcher linkMatcher = linkPattern.matcher(instrText);
         if (linkMatcher.lookingAt()) {
-            String location = linkMatcher.group(2) == null ? linkMatcher.group(3) : linkMatcher.group(2);
-            if (linkMatcher.group(1) == null) {
+            String location = isNull(linkMatcher.group(2)) ? linkMatcher.group(3) : linkMatcher.group(2);
+            if (isNull(linkMatcher.group(1))) {
                 return ComplexField.hyperlink(children -> Hyperlink.href(location, Optional.empty(), children));
             } else {
                 return ComplexField.hyperlink(children -> Hyperlink.anchor(location, Optional.empty(), children));
