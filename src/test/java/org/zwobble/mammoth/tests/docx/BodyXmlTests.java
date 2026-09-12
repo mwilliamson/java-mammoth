@@ -626,6 +626,38 @@ public class BodyXmlTests {
                 isEmptyRun()
             )));
         }
+
+        @Test
+        public void separatorCharacterWithoutCorrespondingStartCharacterIsIgnored() {
+            XmlElement element = paragraphXml(list(
+                SEPARATE_COMPLEX_FIELD
+            ));
+
+            InternalResult<DocumentElement> result = read(bodyReader(), element);
+
+            assertThat(result, isInternalResult(
+                isParagraph(hasChildren(
+                    isEmptyRun()
+                )),
+                list("Ignoring complex field separator character without corresponding start character")
+            ));
+        }
+
+        @Test
+        public void endCharacterWithoutCorrespondingStartCharacterIsIgnored() {
+            XmlElement element = paragraphXml(list(
+                END_COMPLEX_FIELD
+            ));
+
+            InternalResult<DocumentElement> result = read(bodyReader(), element);
+
+            assertThat(result, isInternalResult(
+                isParagraph(hasChildren(
+                    isEmptyRun()
+                )),
+                list("Ignoring complex field end character without corresponding start character")
+            ));
+        }
     }
 
     @Nested

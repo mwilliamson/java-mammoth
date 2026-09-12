@@ -321,6 +321,12 @@ class StatefulBodyXmlReader {
             complexFieldStack.add(ComplexField.begin(element));
             currentInstrText.setLength(0);
         } else if (type.equals("end")) {
+            if (complexFieldStack.isEmpty()) {
+                return emptyWithWarning(
+                    "Ignoring complex field end character without corresponding start character"
+                );
+            }
+
             ComplexField complexField = complexFieldStack.remove();
             if (complexField instanceof BeginComplexField) {
                 complexField = parseCurrentInstrText(complexField);
@@ -329,6 +335,12 @@ class StatefulBodyXmlReader {
                 return success(new Checkbox(((CheckboxComplexField) complexField).checked));
             }
         } else if (type.equals("separate")) {
+            if (complexFieldStack.isEmpty()) {
+                return emptyWithWarning(
+                    "Ignoring complex field separator character without corresponding start character"
+                );
+            }
+
             ComplexField complexFieldSeparate = complexFieldStack.remove();
             ComplexField complexField = parseCurrentInstrText(complexFieldSeparate);
             complexFieldStack.add(complexField);
