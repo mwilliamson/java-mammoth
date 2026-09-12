@@ -13,7 +13,7 @@ public class StyleMappingTokeniser {
     }
 
     public static List<Token<TokenType>> tokeniseToList(String line) {
-        String stringPrefix = "'(?:(?:\\\\.|[^'])*)";
+        String stringPrefix = "'(?:(?:\\\\(?:.|$)|[^'\\\\])*)";
         String identifierCharacter = "(?:[a-zA-Z\\-_]|\\\\.)";
 
         RegexTokeniser<TokenType> tokeniser = new RegexTokeniser<>(

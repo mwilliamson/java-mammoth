@@ -1,3 +1,15 @@
+# 1.12.2
+
+* Avoid excessive backtracking when parsing an unterminated string with many
+  escape sequences. The previous behaviour would allow maliciously crafted
+  documents to cause a denial of service in other implementations of Mammoth.
+  While the exact test case did not cause the same issue in the Java
+  implementation, the behaviour has been updated out of an abundance of caution
+  and for consistency.
+
+  Note that it is still strongly recommended to process untrusted documents in
+  a separate thread with a timeout to avoid potential similar issues.
+
 # 1.12.1
 
 * Detect and ignore numbering levels that use numStyleLink to refer to

@@ -47,13 +47,33 @@ public class StyleMappingTokeniserTests {
     }
 
     @Test
-    public void escapeSequencesInStringsAreTokenised() {
+    public void escapedStringTerminatorsInStringsAreTokenised() {
         assertTokens("'Tristan\\''", isToken(TokenType.STRING, "'Tristan\\''"));
+    }
+
+    @Test
+    public void escapeSequencesInStringsAreTokenised() {
+        assertTokens("'Tristan\\\\'", isToken(TokenType.STRING, "'Tristan\\\\'"));
     }
 
     @Test
     public void unterminatedStringsAreTokenised() {
         assertTokens("'Tristan", isToken(TokenType.UNTERMINATED_STRING, "'Tristan"));
+    }
+
+    @Test
+    public void unterminatedStringsEndingWithEscapedStringTerminatorAreTokenised() {
+        assertTokens("'Tristan\\'", isToken(TokenType.UNTERMINATED_STRING, "'Tristan\\'"));
+    }
+
+    @Test
+    public void unterminatedStringsWithUnterminatedEscapeAreTokenised() {
+        assertTokens("'Tristan\\", isToken(TokenType.UNTERMINATED_STRING, "'Tristan\\"));
+    }
+
+    @Test
+    public void unterminatedStringsWithManyEscapeSequencesAreTokenised() {
+        assertTokens("'" + repeatString("\\a", 50), isToken(TokenType.UNTERMINATED_STRING, "'" + repeatString("\\a", 50)));
     }
 
     @Test
@@ -137,5 +157,15 @@ public class StyleMappingTokeniserTests {
             hasProperty("tokenType", equalTo(tokenType)),
             hasProperty("value", equalTo(value))
         );
+    }
+
+    private String repeatString(String value, int repeats) {
+        StringBuilder builder = new StringBuilder();
+
+        for (int i = 0; i < repeats; i++) {
+            builder.append(value);
+        }
+
+        return builder.toString();
     }
 }
