@@ -157,6 +157,11 @@ class StatefulBodyXmlReader {
 
             case "w:customXml":
             case "w:ins":
+            case "w:moveFromRangeEnd":
+            case "w:moveFromRangeStart":
+            case "w:moveTo":
+            case "w:moveToRangeEnd":
+            case "w:moveToRangeStart":
             case "w:object":
             case "w:smartTag":
             case "w:drawing":
@@ -181,6 +186,7 @@ class StatefulBodyXmlReader {
             case "w:footnoteRef":
             case "w:endnoteRef":
             case "w:annotationRef":
+            case "w:moveFrom":
             case "w:pPr":
             case "w:rPr":
             case "w:tblPr":

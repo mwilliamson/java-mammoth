@@ -2124,6 +2124,11 @@ public class BodyXmlTests {
     public void appropriateElementsHaveTheirChildrenReadNormally() {
         assertChildrenAreReadNormally("w:customXml");
         assertChildrenAreReadNormally("w:ins");
+        assertChildrenAreReadNormally("w:moveFromRangeEnd");
+        assertChildrenAreReadNormally("w:moveFromRangeStart");
+        assertChildrenAreReadNormally("w:moveTo");
+        assertChildrenAreReadNormally("w:moveToRangeEnd");
+        assertChildrenAreReadNormally("w:moveToRangeStart");
         assertChildrenAreReadNormally("w:object");
         assertChildrenAreReadNormally("w:smartTag");
         assertChildrenAreReadNormally("w:drawing");
@@ -2158,6 +2163,7 @@ public class BodyXmlTests {
         assertIsIgnored("w:footnoteRef");
         assertIsIgnored("w:endnoteRef");
         assertIsIgnored("w:annotationRef");
+        assertIsIgnored("w:moveFrom");
         assertIsIgnored("w:pPr");
         assertIsIgnored("w:rPr");
         assertIsIgnored("w:tblPr");
