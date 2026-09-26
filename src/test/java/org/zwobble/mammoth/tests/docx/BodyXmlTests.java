@@ -2122,6 +2122,7 @@ public class BodyXmlTests {
 
     @Test
     public void appropriateElementsHaveTheirChildrenReadNormally() {
+        assertChildrenAreReadNormally("w:customXml");
         assertChildrenAreReadNormally("w:ins");
         assertChildrenAreReadNormally("w:object");
         assertChildrenAreReadNormally("w:smartTag");
