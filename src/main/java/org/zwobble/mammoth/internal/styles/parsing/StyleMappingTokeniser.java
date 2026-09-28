@@ -20,7 +20,7 @@ public class StyleMappingTokeniser {
             TokenType.UNKNOWN,
             list(
                 RegexTokeniser.rule(TokenType.IDENTIFIER, identifierCharacter + "(?:" + identifierCharacter + "|[0-9])*"),
-                RegexTokeniser.rule(TokenType.SYMBOL, ":|>|=>|\\^=|=|\\(|\\)|\\[|\\]|\\||!|\\."),
+                RegexTokeniser.rule(TokenType.SYMBOL, ":|>|=>|\\^=|=|\\(|\\)|\\[|\\]|\\||!|\\.|,"),
                 RegexTokeniser.rule(TokenType.WHITESPACE, "\\s+"),
                 RegexTokeniser.rule(TokenType.STRING, stringPrefix + "'"),
                 RegexTokeniser.rule(TokenType.UNTERMINATED_STRING, stringPrefix),
